@@ -1,0 +1,95 @@
+run:
+  timeout: 10m
+  tests: true
+
+output:
+  sort-results: true
+
+issues:
+  exclude-use-default: false
+  include:
+    - EXC0002 # golint (comment on exported (method|function|type|const)|should have( a package)? comment|comment should be of the form)
+    - EXC0003 # golint func name will be used as test\.Test.* by other packages, and that stutters; consider calling this
+    - EXC0004 # govet (possible misuse of unsafe.Pointer|should have signature)
+    - EXC0005 # staticcheck ineffective break statement. Did you mean to break out of the outer loop
+    - EXC0011 # stylecheck (comment on exported (method|function|type|const)|should have( a package)? comment|comment should be of the form)
+
+  exclude-rules:
+    - path: .*_test.go
+      linters:
+        - noctx
+        - dupl
+        - cyclop
+        - errcheck
+        - gosec
+        - lll
+        - funlen
+        - gocognit
+        - goconst
+        - goerr113
+        - wrapcheck
+        - bodyclose
+  max-same-issues: 0
+  new: false
+  max-issues-per-linter: 0
+
+linters:
+  disable:
+    # obnoxious
+    - wsl # annoying cuddle rules
+    - nlreturn # sometimes don't want to have a blank line before return
+    - stylecheck # don't want to have package comments
+    - testpackage # don't want to use separate _test packages
+    - ireturn # want to return interfaces
+    - nilnil # want to return nil,nil
+    - goerr113 # sometimes don't want to use static errors
+    - exhaustruct # don't want to initialize all struct fields
+    - nosnakecase # allow underscores
+    - errchkjson # don't want to check encoding error return value in tests
+    - depguard # don't need dependencies restrictions
+    - tagalign # don't want to force tag alignment
+
+    # deprecated
+    - golint
+    - interfacer
+    - maligned
+    - scopelint
+    - ifshort
+    - exhaustivestruct
+    - varcheck
+    - deadcode
+    - structcheck
+  enable-all: true
+
+linters-settings:
+  govet:
+    check-shadowing: true
+  wrapcheck:
+    ignoreSigs:
+      - errors.Wrap(
+      - errors.Wrapf(
+      - errors.New(
+      - fmt.Errorf(
+      - triperr.New
+      - triperr.Wrap
+  lll:
+    line-length: 180
+  errcheck:
+    exclude-functions:
+      - (*github.com/gin-gonic/gin.Context).AbortWithError
+  varnamelen:
+    min-name-length: 2
+    ignore-decls:
+      - sb strings.Builder
+      - wg sync.WaitGroup
+      - wg *sync.WaitGroup
+      - r *http.Request
+  gci:
+    custom-order: true
+    skip-generated: true
+    sections:
+      - standard # captures all standard packages.
+      - default # contains all imports that could not be matched to another section type.
+      - prefix(github.com/my-pet-projects/collection) # groups all application-wide imports
+  revive:
+    confidence: 0.8
