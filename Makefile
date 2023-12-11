@@ -15,3 +15,7 @@ test:
 .PHONY: lint
 lint:
 	golangci-lint run
+
+.PHONY: watch
+watch:
+	templ generate -watch

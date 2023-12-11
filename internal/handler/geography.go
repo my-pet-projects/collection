@@ -1,11 +1,11 @@
 package handler
 
 import (
-	"fmt"
 	"log/slog"
-	"net/http"
 
 	"github.com/labstack/echo/v4"
+
+	"github.com/my-pet-projects/collection/internal/component"
 	"github.com/my-pet-projects/collection/internal/service"
 )
 
@@ -26,5 +26,5 @@ func (h GeographyHandler) ListCountries(ctx echo.Context) error {
 	if countriesErr != nil {
 
 	}
-	return ctx.String(http.StatusOK, fmt.Sprintln(countries))
+	return component.Page(countries).Render(ctx.Request().Context(), ctx.Response().Writer)
 }
