@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"log"
+	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
@@ -15,7 +15,7 @@ func main() {
 	appErr := app.Start(ctx)
 	cancel()
 	if appErr != nil {
-		log.Println(appErr)
+		slog.Error("Failed to start application", appErr)
 		os.Exit(1)
 	}
 	os.Exit(0)
