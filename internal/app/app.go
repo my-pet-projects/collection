@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/pkg/errors"
 	"golang.org/x/sync/errgroup"
 
@@ -35,6 +36,7 @@ func InitializeRouter() (http.Handler, error) {
 	geoHandler := handler.NewGeographyHandler(logger, geoService)
 
 	e := echo.New()
+	e.Use(middleware.Logger())
 	e.GET("/geo", geoHandler.ListCountries)
 
 	return e, nil
