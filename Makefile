@@ -1,4 +1,5 @@
-SHELL=/bin/bash
+#!make
+include .env
 
 .PHONY: default
 default: test lint
@@ -19,3 +20,7 @@ lint:
 .PHONY: watch
 watch:
 	templ generate -watch
+
+.PHONY: air
+air:
+	air
