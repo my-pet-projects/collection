@@ -37,6 +37,8 @@ func InitializeRouter() (http.Handler, error) {
 
 	e := echo.New()
 	e.Use(middleware.Logger())
+	e.Static("/", "./assets")
+
 	e.GET("/geo", geoHandler.ListCountries)
 
 	return e, nil

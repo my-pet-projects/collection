@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "build": "npm run tailwind",
+    "tailwind": "npx tailwindcss -i ./assets/css/tailwind-input.css -o ./assets/css/tailwind-output.gen.css"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.3.6"
+  }
+}
