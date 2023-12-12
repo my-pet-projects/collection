@@ -1,5 +1,7 @@
-#!make
 include .env
+export $(shell sed 's/=.*//' .env)
+
+SHELL=/bin/bash
 
 .PHONY: default
 default: test lint
@@ -17,10 +19,8 @@ test:
 lint:
 	golangci-lint run
 
-.PHONY: watch
-watch:
-	templ generate -watch
-
-.PHONY: air
-air:
-	air
+.PHONY: dev
+dev:
+	@echo -n "Starting application in hot-reload mode ..." ;\
+	air ;\
+	
