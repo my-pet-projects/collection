@@ -25,3 +25,9 @@ go.work
 
 # air output
 tmp/
+
+# node modules
+node_modules/
+
+# tailwind generated styles
+assets/css/tailwind-output.gen.css
