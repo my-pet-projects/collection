@@ -11,21 +11,21 @@ import (
 )
 
 type GeographyHandler struct {
-	logger     *slog.Logger
 	geoService service.GeographyService
+	logger     *slog.Logger
 }
 
-func NewGeographyHandler(logger *slog.Logger, geoService service.GeographyService) GeographyHandler {
+func NewGeographyHandler(geoService service.GeographyService, logger *slog.Logger) GeographyHandler {
 	return GeographyHandler{
-		logger:     logger,
 		geoService: geoService,
+		logger:     logger,
 	}
 }
 
 func (h GeographyHandler) ListCountries(ctx echo.Context) error {
 	countries, countriesErr := h.geoService.GetCountries()
 	if countriesErr != nil {
-
+		return ctx.HTML(http.StatusOK, countriesErr.Error())
 	}
 	return component.Page(countries).Render(ctx.Request().Context(), ctx.Response().Writer)
 }
@@ -34,7 +34,6 @@ func (h GeographyHandler) ListCities(ctx echo.Context) error {
 	cities, citiesErr := h.geoService.GetCities()
 	if citiesErr != nil {
 		return ctx.HTML(http.StatusOK, citiesErr.Error())
-
 	}
 	return component.ComboboxC(cities).Render(ctx.Request().Context(), ctx.Response().Writer)
 }
@@ -43,7 +42,6 @@ func (h GeographyHandler) GetCities(ctx echo.Context) error {
 	cities, citiesErr := h.geoService.GetCities()
 	if citiesErr != nil {
 		return ctx.HTML(http.StatusOK, citiesErr.Error())
-
 	}
 	return component.ComboboxC(cities).Render(ctx.Request().Context(), ctx.Response().Writer)
 }

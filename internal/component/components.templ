@@ -118,3 +118,21 @@ templ ComboboxC(cities []db.City) {
 		</div>
 	</div>
 }
+
+templ BreweriesPage(breweries []db.Brewery) {
+	<div>breweries</div>
+	for _, brewery := range breweries {
+		<div>
+			{ brewery.Name }
+		</div>
+	}
+}
+
+templ BeersPage(beers []db.Beer) {
+	<div>beers</div>
+	for _, beer := range beers {
+		<div>
+			{ beer.Brand }
+		</div>
+	}
+}

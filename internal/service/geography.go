@@ -3,8 +3,9 @@ package service
 import (
 	"log/slog"
 
-	"github.com/my-pet-projects/collection/internal/db"
 	"github.com/pkg/errors"
+
+	"github.com/my-pet-projects/collection/internal/db"
 )
 
 type GeographyService struct {
@@ -12,7 +13,7 @@ type GeographyService struct {
 	logger   *slog.Logger
 }
 
-func NewGeography(store *db.GeographyStore, logger *slog.Logger) GeographyService {
+func NewGeographyService(store *db.GeographyStore, logger *slog.Logger) GeographyService {
 	return GeographyService{
 		geoStore: store,
 		logger:   logger,
@@ -33,4 +34,12 @@ func (s GeographyService) GetCities() ([]db.City, error) {
 		return nil, errors.Wrap(citiesErr, "fetch cities")
 	}
 	return cities, nil
+}
+
+func (s GeographyService) GetCity(geoId int) (*db.City, error) {
+	city, cityErr := s.geoStore.GetCity(geoId)
+	if cityErr != nil {
+		return nil, errors.Wrap(cityErr, "get city")
+	}
+	return city, nil
 }

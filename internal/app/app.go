@@ -32,8 +32,16 @@ func InitializeRouter() (http.Handler, error) {
 	}
 
 	geoStore := db.NewGeographyStore(dbClient, logger)
-	geoService := service.NewGeography(&geoStore, logger)
-	geoHandler := handler.NewGeographyHandler(logger, geoService)
+	beerStore := db.NewBeerStore(dbClient, logger)
+	breweryStore := db.NewBreweryStore(dbClient, logger)
+
+	geoService := service.NewGeographyService(&geoStore, logger)
+	breweryService := service.NewBreweryService(&breweryStore, &geoStore, logger)
+	beerService := service.NewBeerService(&beerStore, &breweryStore, logger)
+
+	geoHandler := handler.NewGeographyHandler(geoService, logger)
+	breweryHandler := handler.NewBreweryHandler(breweryService, geoService, logger)
+	beerHandler := handler.NewBeerHandler(beerService, breweryService, logger)
 
 	e := echo.New()
 	e.Use(middleware.Logger())
@@ -42,6 +50,9 @@ func InitializeRouter() (http.Handler, error) {
 	e.GET("/geo", geoHandler.ListCountries)
 	e.GET("/geo/city", geoHandler.ListCities)
 	e.GET("/geo/country", geoHandler.GetCities)
+
+	e.GET("/brewery", breweryHandler.ListBreweries)
+	e.GET("/beer", beerHandler.ListBeers)
 
 	return e, nil
 }
