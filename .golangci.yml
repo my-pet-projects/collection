@@ -70,8 +70,8 @@ linters-settings:
       - errors.Wrapf(
       - errors.New(
       - fmt.Errorf(
-      - triperr.New
-      - triperr.Wrap
+      - (github.com/a-h/templ.Component).Render(
+      - (github.com/labstack/echo/v4.Context).HTML(
   lll:
     line-length: 180
   errcheck:
@@ -88,8 +88,8 @@ linters-settings:
     custom-order: true
     skip-generated: true
     sections:
-      - standard # captures all standard packages.
-      - default # contains all imports that could not be matched to another section type.
+      - standard # captures all standard packages
+      - default # contains all imports that could not be matched to another section type
       - prefix(github.com/my-pet-projects/collection) # groups all application-wide imports
   revive:
     confidence: 0.8
