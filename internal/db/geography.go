@@ -1,6 +1,7 @@
 package db
 
 import (
+	"database/sql"
 	"log/slog"
 
 	"github.com/pkg/errors"
@@ -23,7 +24,7 @@ type Country struct {
 }
 
 type City struct {
-	Id               string
+	Id               int
 	Name             string
 	AlternateNames   *string
 	CountryCode      string
@@ -47,10 +48,10 @@ func NewGeographyStore(db *DbClient, logger *slog.Logger) GeographyStore {
 func (s GeographyStore) FetchCountries() ([]Country, error) {
 	query := "SELECT * FROM Country"
 	res, resErr := s.db.Query(query)
-	if resErr != nil {
+	if resErr != nil || res.Err() != nil {
 		return nil, errors.Wrap(resErr, "query countries")
 	}
-	defer res.Close()
+	defer res.Close() //nolint:errcheck
 
 	countries := []Country{}
 	for res.Next() {
@@ -71,10 +72,10 @@ func (s GeographyStore) FetchCitiesByCountry(countryCode string) ([]City, error)
 					 modificationDate, population, latitude, longitude 
 			  FROM City WHERE countryCode = ? LIMIT 10000`
 	res, resErr := s.db.Query(query, countryCode)
-	if resErr != nil {
+	if resErr != nil || res.Err() != nil {
 		return nil, errors.Wrap(resErr, "query cities")
 	}
-	defer res.Close()
+	defer res.Close() //nolint:errcheck
 
 	cities := []City{}
 	for res.Next() {
@@ -88,4 +89,25 @@ func (s GeographyStore) FetchCitiesByCountry(countryCode string) ([]City, error)
 		cities = append(cities, city)
 	}
 	return cities, nil
+}
+
+func (s GeographyStore) GetCity(geoId int) (*City, error) {
+	query := `SELECT id, name, alternateNames, countryCode, 
+					 admin1Code, admin2Code, admin3Code, admin4Code,
+					 modificationDate, population, latitude, longitude 
+			  FROM City WHERE id = ?`
+	res := s.db.QueryRow(query, geoId)
+
+	var city City
+	scanErr := res.Scan(&city.Id, &city.Name, &city.AlternateNames, &city.CountryCode,
+		&city.Admin1Code, &city.Admin2Code, &city.Admin3Code, &city.Admin4Code,
+		&city.ModificationDate, &city.Population, &city.Latitude, &city.Longitude)
+	if scanErr == sql.ErrNoRows {
+		return nil, errors.New("no city")
+	}
+	if scanErr != nil {
+		return nil, errors.Wrap(scanErr, "scan result")
+	}
+
+	return &city, nil
 }
