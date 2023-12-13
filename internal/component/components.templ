@@ -39,7 +39,7 @@ templ Page(countries []db.Country) {
 			<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png"/>
 			<link rel="manifest" href="/assets/favicon/site.webmanifest"/>
 			<link href="/css/tailwind-output.gen.css" rel="stylesheet"/>
-			<script src="/assets/js/htmx.min.js"></script>
+			<script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
 		</head>
 		<body class="bg-gray-100">
 			<header class="hero is-primary">
@@ -59,6 +59,9 @@ templ Page(countries []db.Country) {
 				</div>
 			</section>
 			<div>
+				@combobox(countries)
+			</div>
+			<div>
 				for _, country:=range countries {
 					<div>
 						{ country.NameCommon }
@@ -67,4 +70,51 @@ templ Page(countries []db.Country) {
 			</div>
 		</body>
 	</html>
+}
+
+templ combobox(countries []db.Country) {
+	<div>
+		<label>Make</label>
+		<select name="make" hx-get="/models" hx-target="#models" hx-indicator=".htmx-indicator">
+			<option value="audi">Audi</option>
+			<option value="toyota">Toyota</option>
+			<option value="bmw">BMW</option>
+		</select>
+	</div>
+	<div>
+		<label>Model</label>
+		<select id="models" name="model">
+			<option value="a1">A1</option>
+			...
+		</select>
+	</div>
+	<div class="sm:col-span-3">
+		<label for="country" class="block text-sm font-medium leading-6 text-gray-900">Country</label>
+		<div class="mt-2">
+			<select id="country" name="country" hx-push-url="true" autocomplete="country-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+				<option value="" disabled selected>Select a country</option>
+				for _, country:=range countries {
+					<option>
+						{ country.NameCommon }
+					</option>
+				}
+			</select>
+		</div>
+	</div>
+}
+
+templ ComboboxC(cities []db.City) {
+	<div class="sm:col-span-3">
+		<label for="country" class="block text-sm font-medium leading-6 text-gray-900">Country</label>
+		<div class="mt-2">
+			<select id="country" name="country" autocomplete="country-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+				<option value="" disabled selected>Select a country</option>
+				for _, city:=range cities {
+					<option>
+						{ city.Name }
+					</option>
+				}
+			</select>
+		</div>
+	</div>
 }

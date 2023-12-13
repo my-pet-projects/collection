@@ -26,3 +26,11 @@ func (s GeographyService) GetCountries() ([]db.Country, error) {
 	}
 	return countries, nil
 }
+
+func (s GeographyService) GetCities() ([]db.City, error) {
+	cities, citiesErr := s.geoStore.FetchCitiesByCountry("ru")
+	if citiesErr != nil {
+		return nil, errors.Wrap(citiesErr, "fetch cities")
+	}
+	return cities, nil
+}

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"log/slog"
+	"net/http"
 
 	"github.com/labstack/echo/v4"
 
@@ -27,4 +28,22 @@ func (h GeographyHandler) ListCountries(ctx echo.Context) error {
 
 	}
 	return component.Page(countries).Render(ctx.Request().Context(), ctx.Response().Writer)
+}
+
+func (h GeographyHandler) ListCities(ctx echo.Context) error {
+	cities, citiesErr := h.geoService.GetCities()
+	if citiesErr != nil {
+		return ctx.HTML(http.StatusOK, citiesErr.Error())
+
+	}
+	return component.ComboboxC(cities).Render(ctx.Request().Context(), ctx.Response().Writer)
+}
+
+func (h GeographyHandler) GetCities(ctx echo.Context) error {
+	cities, citiesErr := h.geoService.GetCities()
+	if citiesErr != nil {
+		return ctx.HTML(http.StatusOK, citiesErr.Error())
+
+	}
+	return component.ComboboxC(cities).Render(ctx.Request().Context(), ctx.Response().Writer)
 }
