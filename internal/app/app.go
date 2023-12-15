@@ -56,6 +56,8 @@ func InitializeRouter() (http.Handler, error) {
 	e.GET("/beer", beerHandler.ListBeers)
 
 	e.GET("/workspace", workspaceHandler.GetWorkspace)
+	e.GET("/workspace/beer", workspaceHandler.GetBeerWorkspace)
+	e.GET("/workspace/brewery", workspaceHandler.GetBreweryWorkspace)
 
 	return e, nil
 }

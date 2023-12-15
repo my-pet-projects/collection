@@ -24,5 +24,16 @@ func NewWorkspaceHandler(beerService service.BeerService, breweryService service
 }
 
 func (h WorkspaceHandler) GetWorkspace(ctx echo.Context) error {
-	return workspace.AdminPage().Render(ctx.Request().Context(), ctx.Response().Writer)
+	page := workspace.NewPage(ctx, "Workspace")
+	return workspace.WorkspacePage(page).Render(ctx.Request().Context(), ctx.Response().Writer)
+}
+
+func (h WorkspaceHandler) GetBreweryWorkspace(ctx echo.Context) error {
+	page := workspace.NewPage(ctx, "Brewery Workspace")
+	return workspace.WorkspaceBreweryPage(page).Render(ctx.Request().Context(), ctx.Response().Writer)
+}
+
+func (h WorkspaceHandler) GetBeerWorkspace(ctx echo.Context) error {
+	page := workspace.NewPage(ctx, "Beer Workspace")
+	return workspace.WorkspaceBeerPage(page).Render(ctx.Request().Context(), ctx.Response().Writer)
 }
