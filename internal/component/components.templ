@@ -27,21 +27,25 @@ templ counts() {
 	</form>
 }
 
+templ headerComponent(title string) {
+	<head>
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<title>{ title }</title>
+		<link rel="stylesheet" href="/assets/css/bulma.min.css"/>
+		<link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/apple-touch-icon.png"/>
+		<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png"/>
+		<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png"/>
+		<link rel="manifest" href="/assets/favicon/site.webmanifest"/>
+		<link href="/css/tailwind-output.gen.css" rel="stylesheet"/>
+		<script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
+	</head>
+}
+
 templ Page(countries []db.Country) {
 	<html>
-		<head>
-			<meta charset="UTF-8"/>
-			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-			<title>Counts</title>
-			<link rel="stylesheet" href="/assets/css/bulma.min.css"/>
-			<link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/apple-touch-icon.png"/>
-			<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png"/>
-			<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png"/>
-			<link rel="manifest" href="/assets/favicon/site.webmanifest"/>
-			<link href="/css/tailwind-output.gen.css" rel="stylesheet"/>
-			<script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
-			<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
-		</head>
+		@headerComponent("qwe")
 		<body class="bg-gray-100">
 			<header class="hero is-primary">
 				<div class="hero-body">
