@@ -42,6 +42,7 @@ func InitializeRouter() (http.Handler, error) {
 	geoHandler := handler.NewGeographyHandler(geoService, logger)
 	breweryHandler := handler.NewBreweryHandler(breweryService, geoService, logger)
 	beerHandler := handler.NewBeerHandler(beerService, breweryService, logger)
+	workspaceHandler := handler.NewWorkspaceHandler(beerService, breweryService, logger)
 
 	e := echo.New()
 	e.Use(middleware.Logger())
@@ -53,6 +54,8 @@ func InitializeRouter() (http.Handler, error) {
 
 	e.GET("/brewery", breweryHandler.ListBreweries)
 	e.GET("/beer", beerHandler.ListBeers)
+
+	e.GET("/workspace", workspaceHandler.GetWorkspace)
 
 	return e, nil
 }
