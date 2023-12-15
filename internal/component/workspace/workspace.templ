@@ -1,13 +1,15 @@
 package workspace
 
-templ adminLayout(title string) {
-	@headerComponent(title)
+templ adminLayout(page Page, contents templ.Component) {
+	@headerComponent(page.Title)
 	@navBar()
 	<div class="flex pt-16 overflow-hidden bg-gray-50">
-		@sideBar()
+		@sideBar(page)
 		<div id="main-content" class="relative w-full h-full overflow-y-auto bg-gray-50 lg:ml-64">
 			<main>
-				sdfdsf
+				if (contents != nil) {
+					@contents
+				}
 			</main>
 		</div>
 	</div>
@@ -38,8 +40,28 @@ templ adminLayout(title string) {
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
 }
 
-templ AdminPage() {
-	@adminLayout("Workspace")
+templ WorkspacePage(page Page) {
+	@adminLayout(page, nil)
+}
+
+templ WorkspaceBeerPage(page Page) {
+	@adminLayout(page, beersList())
+}
+
+templ WorkspaceBreweryPage(page Page) {
+	@adminLayout(page, breweriesList())
+}
+
+templ beersList() {
+	<div>
+		beersList
+	</div>
+}
+
+templ breweriesList() {
+	<div>
+		breweriesList
+	</div>
 }
 
 templ headerComponent(title string) {
