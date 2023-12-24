@@ -56,11 +56,17 @@ templ beersList() {
 	<div>
 		beersList
 	</div>
+	<div hx-get="/beer" hx-trigger="load">
+		<img alt="Loading..." width="30" src="/img/tail-spin.svg"/>
+	</div>
 }
 
 templ breweriesList() {
 	<div>
 		breweriesList
+	</div>
+	<div hx-get="/brewery" hx-trigger="load">
+		<img alt="Loading..." width="30" src="/img/tail-spin.svg"/>
 	</div>
 }
 
