@@ -139,20 +139,99 @@ templ ComboboxC(cities []db.City) {
 }
 
 templ BreweriesPage(breweries []db.Brewery) {
-	<div>
-		<button
- 			class="middle none center rounded-lg bg-pink-500 py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-pink-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
- 			data-ripple-light="true"
-		>
-			Button
-		</button>
-	</div>
-	<div>breweries</div>
-	for _, brewery := range breweries {
-		<div>
-			{ brewery.Name }
-		</div>
-	}
+	<table class="min-w-full divide-y divide-gray-200 table-fixed dark:divide-gray-600">
+		<thead class="bg-gray-100 dark:bg-gray-700">
+			<tr>
+				<th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
+					Name
+				</th>
+				<th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
+					Geography
+				</th>
+				<th>
+					Action
+				</th>
+			</tr>
+		</thead>
+		<tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+			for _, brewery := range breweries {
+				<tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
+					<td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">{ brewery.Name }</td>
+					<td class="flex items-center p-4 mr-12 space-x-6 whitespace-nowrap">
+						<div class="text-sm font-normal text-gray-500 dark:text-gray-400">
+							<div class="text-base font-semibold text-gray-900 dark:text-white">.name</div>
+							<div class="text-sm font-normal text-gray-500 dark:text-gray-400">.email</div>
+						</div>
+					</td>
+					<td class="p-4 space-x-2 whitespace-nowrap">
+						<div class="flex items-center gap-2">
+							<button class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10">
+								<svg
+ 									xmlns="http://www.w3.org/2000/svg"
+ 									width="24"
+ 									height="24"
+ 									viewBox="0 0 24 24"
+ 									fill="none"
+ 									stroke="currentColor"
+ 									stroke-width="2"
+ 									stroke-linecap="round"
+ 									stroke-linejoin="round"
+ 									class="h-4 w-4"
+ 									data-darkreader-inline-stroke=""
+ 									style="--darkreader-inline-stroke: currentColor;"
+								>
+									<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+									<circle cx="12" cy="12" r="3"></circle>
+								</svg>
+								<span class="sr-only">View</span>
+							</button>
+							<button class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10">
+								<svg
+ 									xmlns="http://www.w3.org/2000/svg"
+ 									width="24"
+ 									height="24"
+ 									viewBox="0 0 24 24"
+ 									fill="none"
+ 									stroke="currentColor"
+ 									stroke-width="2"
+ 									stroke-linecap="round"
+ 									stroke-linejoin="round"
+ 									class="h-4 w-4"
+ 									data-darkreader-inline-stroke=""
+ 									style="--darkreader-inline-stroke: currentColor;"
+								>
+									<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
+									<path d="m15 5 4 4"></path>
+								</svg>
+								<span class="sr-only">Edit</span>
+							</button>
+							<button class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10">
+								<svg
+ 									xmlns="http://www.w3.org/2000/svg"
+ 									width="24"
+ 									height="24"
+ 									viewBox="0 0 24 24"
+ 									fill="none"
+ 									stroke="currentColor"
+ 									stroke-width="2"
+ 									stroke-linecap="round"
+ 									stroke-linejoin="round"
+ 									class="h-4 w-4"
+ 									data-darkreader-inline-stroke=""
+ 									style="--darkreader-inline-stroke: currentColor;"
+								>
+									<path d="M3 6h18"></path>
+									<path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+									<path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+								</svg>
+								<span class="sr-only">Delete</span>
+							</button>
+						</div>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
 }
 
 templ BeersPage(beers []db.Beer) {
