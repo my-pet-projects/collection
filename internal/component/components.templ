@@ -38,8 +38,14 @@ templ headerComponent(title string) {
 		<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png"/>
 		<link rel="manifest" href="/assets/favicon/site.webmanifest"/>
 		<link href="/css/tailwind-output.gen.css" rel="stylesheet"/>
+		<link
+ 			rel="stylesheet"
+ 			href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"
+		/>
 		<script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+		<script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
 	</head>
 }
 
@@ -63,71 +69,82 @@ templ Page(countries []db.Country) {
 					</div>
 				</div>
 			</section>
-			<div>
-				<div class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-					<a href="#">
-						<h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Noteworthy technology acquisitions 2021</h5>
-					</a>
-					<p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p>
-					<a href="#" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-						Read more
-						<svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-							<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"></path>
-						</svg>
-					</a>
-				</div>
+			<div class="container mx-auto mt-8">
+				@ComboboxCountries(countries)
 			</div>
-			<div>
-				@combobox(countries)
-			</div>
-			<div>
-				for _, country:=range countries {
-					<div>
-						{ country.NameCommon }
-					</div>
-				}
-			</div>
+			<script type="text/javascript">
+			 document.body.addEventListener("custom-event", () => {
+				console.log("send-message event emitted in document");
+			});
+			</script>
 		</body>
 	</html>
 }
 
-templ combobox(countries []db.Country) {
-	<div>
-		<label>Make</label>
-		<select name="make" hx-get="/models" hx-target="#models" hx-indicator=".htmx-indicator">
-			<option value="audi">Audi</option>
-			<option value="toyota">Toyota</option>
-			<option value="bmw">BMW</option>
+templ ComboboxCountries(countries []db.Country) {
+	<label for="country" class="block text-sm font-medium leading-6 text-gray-900">Country</label>
+	<div class="mt-2">
+		<select
+ 			id="country"
+ 			name="country"
+ 			autocomplete="off"
+ 			hx-get="/geo/country"
+ 			hx-trigger="change"
+		>
+			<option value="" disabled selected>Select a country</option>
+			for _, country:=range countries {
+				<option value={ country.Cca2 }>{ country.NameCommon }</option>
+			}
 		</select>
 	</div>
-	<div>
-		<label>Model</label>
-		<select id="models" name="model">
-			<option value="a1">A1</option>
-			...
-		</select>
-	</div>
-	<div class="sm:col-span-3">
-		<label for="country" class="block text-sm font-medium leading-6 text-gray-900">Country</label>
-		<div class="mt-2">
-			<select id="country" name="country" hx-push-url="true" autocomplete="country-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
-				<option value="" disabled selected>Select a country</option>
-				for _, country:=range countries {
-					<option>
-						{ country.NameCommon }
-					</option>
+	<script type="text/javascript">
+		const choices = new Choices('#country', {
+          allowHTML: true,
+          shouldSort: false,
+		  callbackOnCreateTemplates: function(template) {
+			return {
+				item: ({ classNames }, data) => {
+					return template(`
+					<div class="${classNames.item} ${
+					data.highlighted
+						? classNames.highlightedState
+						: classNames.itemSelectable
+					} ${
+					data.placeholder ? classNames.placeholder : ''
+					}" data-item data-id="${data.id}" data-value="${data.value}" ${
+					data.active ? 'aria-selected="true"' : ''
+					} ${data.disabled ? 'aria-disabled="true"' : ''}>
+						<span>&bigstar;</span> ${data.label}
+					</div>
+					`);
+				},
+				choice: ({ classNames }, data) => {
+					return template(`
+					<div class="${classNames.item} ${classNames.itemChoice} ${
+					data.disabled ? classNames.itemDisabled : classNames.itemSelectable
+					}" data-select-text="${this.config.itemSelectText}" data-choice ${
+					data.disabled
+						? 'data-choice-disabled aria-disabled="true"'
+						: 'data-choice-selectable'
+					} data-id="${data.id}" data-value="${data.value}" ${
+					data.groupId > 0 ? 'role="treeitem"' : 'role="option"'
+					}>
+						<span>&bigstar;</span> ${data.label}
+					</div>
+					`);
 				}
-			</select>
-		</div>
-	</div>
+			};
+		},
+        });
+	</script>
 }
 
-templ ComboboxC(cities []db.City) {
+templ ComboboxCities(cities []db.City) {
 	<div class="sm:col-span-3">
-		<label for="country" class="block text-sm font-medium leading-6 text-gray-900">Country</label>
+		<label for="city" class="block text-sm font-medium leading-6 text-gray-900">City</label>
 		<div class="mt-2">
-			<select id="country" name="country" autocomplete="country-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
-				<option value="" disabled selected>Select a country</option>
+			<select id="city" name="city" autocomplete="off" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+				<option value="" disabled selected>Select a city</option>
 				for _, city:=range cities {
 					<option>
 						{ city.Name }
