@@ -170,11 +170,13 @@ func headerComponent(title string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</script><script src=\"https://unpkg.com/htmx.org@1.9.11/dist/ext/path-params.js\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var13 := ``
+		templ_7745c5c3_Var13 := `
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js">`
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var13)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -300,7 +302,7 @@ func ComboboxCountries(countries []db.Country) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</label><div class=\"mt-2\"><select id=\"country\" name=\"country\" autocomplete=\"off\" hx-get=\"/geo/country\" hx-trigger=\"change\"><option value=\"\" disabled selected>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</label><div class=\"mt-2\" hx-ext=\"path-params\"><select id=\"country\" name=\"country\" autocomplete=\"off\" hx-get=\"/geo/countries/{countryIso}/cities\" hx-vals=\"js:{countryIso: event.target.value.toLowerCase()}\" hx-trigger=\"change\" hx-target=\"#city\" hx-params=\"countryIso\"><option value=\"\" disabled selected>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -336,7 +338,7 @@ func ComboboxCountries(countries []db.Country) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</select></div><script type=\"text/javascript\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</select></div><div id=\"city\"></div><script type=\"text/javascript\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
