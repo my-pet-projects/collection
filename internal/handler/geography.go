@@ -31,7 +31,7 @@ func (h GeographyHandler) ListCountries(ctx echo.Context) error {
 }
 
 func (h GeographyHandler) ListCities(ctx echo.Context) error {
-	cities, citiesErr := h.geoService.GetCities()
+	cities, citiesErr := h.geoService.GetCities(ctx.Param("countryIso"))
 	if citiesErr != nil {
 		return ctx.HTML(http.StatusOK, citiesErr.Error())
 	}
@@ -39,7 +39,7 @@ func (h GeographyHandler) ListCities(ctx echo.Context) error {
 }
 
 func (h GeographyHandler) GetCities(ctx echo.Context) error {
-	cities, citiesErr := h.geoService.GetCities()
+	cities, citiesErr := h.geoService.GetCities("ru")
 	if citiesErr != nil {
 		return ctx.HTML(http.StatusOK, citiesErr.Error())
 	}
