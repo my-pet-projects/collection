@@ -43,6 +43,8 @@ templ headerComponent(title string) {
  			href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"
 		/>
 		<script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
+		<script src="https://unpkg.com/htmx.org@1.9.11/dist/ext/path-params.js">
+
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 		<script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
@@ -83,13 +85,16 @@ templ Page(countries []db.Country) {
 
 templ ComboboxCountries(countries []db.Country) {
 	<label for="country" class="block text-sm font-medium leading-6 text-gray-900">Country</label>
-	<div class="mt-2">
+	<div class="mt-2" hx-ext="path-params">
 		<select
  			id="country"
  			name="country"
  			autocomplete="off"
- 			hx-get="/geo/country"
+ 			hx-get="/geo/countries/{countryIso}/cities"
+ 			hx-vals="js:{countryIso: event.target.value.toLowerCase()}"
  			hx-trigger="change"
+ 			hx-target="#city"
+ 			hx-params="countryIso"
 		>
 			<option value="" disabled selected>Select a country</option>
 			for _, country:=range countries {
@@ -97,6 +102,7 @@ templ ComboboxCountries(countries []db.Country) {
 			}
 		</select>
 	</div>
+	<div id="city"></div>
 	<script type="text/javascript">
 		const choices = new Choices('#country', {
           allowHTML: true,
