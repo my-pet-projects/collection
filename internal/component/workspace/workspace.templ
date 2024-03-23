@@ -123,6 +123,11 @@ templ breweriesList() {
 					</a>
 				</div>
 			</div>
+			<div>
+				<div hx-get="/geo/countries" hx-trigger="load">
+					<img alt="Loading..." width="30" src="/img/tail-spin.svg"/>
+				</div>
+			</div>
 		</div>
 	</div>
 	<div hx-get="/brewery" hx-trigger="load">
@@ -137,8 +142,14 @@ templ headerComponent(title string) {
 		<title>{ title }</title>
 		<link rel="icon" type="image/svg" sizes="32x32" href="/img/pint-of-beer-svgrepo-com.svg"/>
 		<link href="/css/tailwind-output.gen.css" rel="stylesheet"/>
+		<link
+ 			rel="stylesheet"
+ 			href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"
+		/>
 		<script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
 		// <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.css" rel="stylesheet"/>
 		// <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+		<script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
 	</head>
 }

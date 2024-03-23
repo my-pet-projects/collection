@@ -70,7 +70,7 @@ func (s GeographyStore) FetchCitiesByCountry(countryCode string) ([]City, error)
 	query := `SELECT id, name, alternateNames, countryCode, 
 					 admin1Code, admin2Code, admin3Code, admin4Code,
 					 modificationDate, population, latitude, longitude 
-			  FROM City WHERE countryCode = ? LIMIT 10000`
+			  FROM City WHERE countryCode = ? LIMIT 100000`
 	res, resErr := s.db.Query(query, countryCode)
 	if resErr != nil || res.Err() != nil {
 		return nil, errors.Wrap(resErr, "query cities")

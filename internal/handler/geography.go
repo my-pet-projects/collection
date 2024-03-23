@@ -27,7 +27,7 @@ func (h GeographyHandler) ListCountries(ctx echo.Context) error {
 	if countriesErr != nil {
 		return ctx.HTML(http.StatusOK, countriesErr.Error())
 	}
-	return component.Page(countries).Render(ctx.Request().Context(), ctx.Response().Writer)
+	return component.ComboboxCountries(countries).Render(ctx.Request().Context(), ctx.Response().Writer)
 }
 
 func (h GeographyHandler) ListCities(ctx echo.Context) error {
@@ -35,7 +35,7 @@ func (h GeographyHandler) ListCities(ctx echo.Context) error {
 	if citiesErr != nil {
 		return ctx.HTML(http.StatusOK, citiesErr.Error())
 	}
-	return component.ComboboxC(cities).Render(ctx.Request().Context(), ctx.Response().Writer)
+	return component.ComboboxCities(cities).Render(ctx.Request().Context(), ctx.Response().Writer)
 }
 
 func (h GeographyHandler) GetCities(ctx echo.Context) error {
@@ -43,5 +43,6 @@ func (h GeographyHandler) GetCities(ctx echo.Context) error {
 	if citiesErr != nil {
 		return ctx.HTML(http.StatusOK, citiesErr.Error())
 	}
-	return component.ComboboxC(cities).Render(ctx.Request().Context(), ctx.Response().Writer)
+	// ctx.Response().Header().Set("HX-Redirect", "asdasd")
+	return component.ComboboxCities(cities).Render(ctx.Request().Context(), ctx.Response().Writer)
 }

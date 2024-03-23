@@ -49,6 +49,7 @@ func InitializeRouter() (http.Handler, error) {
 	e.Static("/", "./assets")
 
 	e.GET("/geo", geoHandler.ListCountries)
+	e.GET("/geo/countries", geoHandler.ListCountries)
 	e.GET("/geo/city", geoHandler.ListCities)
 	e.GET("/geo/country", geoHandler.GetCities)
 
