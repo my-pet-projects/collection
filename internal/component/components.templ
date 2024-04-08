@@ -1,6 +1,7 @@
 package component
 
 import "github.com/my-pet-projects/collection/internal/db"
+import "fmt"
 
 css border() {
 	border: 1px solid #eeeeee;
@@ -39,8 +40,8 @@ templ headerComponent(title string) {
 		<link rel="manifest" href="/assets/favicon/site.webmanifest"/>
 		<link href="/css/tailwind-output.gen.css" rel="stylesheet"/>
 		<link
- 			rel="stylesheet"
- 			href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"
 		/>
 		<script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
 		<script src="https://unpkg.com/htmx.org@1.9.11/dist/ext/path-params.js">
@@ -84,80 +85,113 @@ templ Page(countries []db.Country) {
 }
 
 templ ComboboxCountries(countries []db.Country) {
-	<label for="country" class="block text-sm font-medium leading-6 text-gray-900">Country</label>
-	<div class="mt-2" hx-ext="path-params">
+	<div hx-ext="path-params">
 		<select
- 			id="country"
- 			name="country"
- 			autocomplete="off"
- 			hx-get="/geo/countries/{countryIso}/cities"
- 			hx-vals="js:{countryIso: event.target.value.toLowerCase()}"
- 			hx-trigger="change"
- 			hx-target="#city"
- 			hx-params="countryIso"
+			id="country"
+			name="country"
+			autocomplete="off"
+			hx-get="/geo/countries/{countryIso}/cities"
+			hx-vals="js:{countryIso: event.target.value.toLowerCase()}"
+			hx-trigger="change"
+			hx-target="#cityContainer"
+			hx-swap="innerHTML"
+			hx-params="countryIso"
 		>
 			<option value="" disabled selected>Select a country</option>
 			for _, country:=range countries {
-				<option value={ country.Cca2 }>{ country.NameCommon }</option>
+				<option value={ strings.ToLower(country.Cca2) }>{ country.NameCommon }</option>
 			}
 		</select>
 	</div>
-	<div id="city"></div>
 	<script type="text/javascript">
-		const choices = new Choices('#country', {
+		const countryChoices = new Choices('#country', {
           allowHTML: true,
           shouldSort: false,
+		  classNames: {
+      		containerOuter: 'choices',
+			containerInner: 'choices__inner',
+      		listSingle: '',
+		  },
 		  callbackOnCreateTemplates: function(template) {
 			return {
 				item: ({ classNames }, data) => {
 					return template(`
-					<div class="${classNames.item} ${
-					data.highlighted
-						? classNames.highlightedState
-						: classNames.itemSelectable
-					} ${
-					data.placeholder ? classNames.placeholder : ''
-					}" data-item data-id="${data.id}" data-value="${data.value}" ${
-					data.active ? 'aria-selected="true"' : ''
-					} ${data.disabled ? 'aria-disabled="true"' : ''}>
-						<span>&bigstar;</span> ${data.label}
+					<div class="flex items-center ${classNames.item} ${data.highlighted	? classNames.highlightedState : classNames.itemSelectable} ${data.placeholder ? classNames.placeholder : ''}" 
+						data-item 
+						data-id="${data.id}" 
+						data-value="${data.value.toLowerCase()}" ${data.active ? 'aria-selected="true"' : ''} ${data.disabled ? 'aria-disabled="true"' : ''}
+					>
+						<img class="rounded-md" src="https://flagcdn.com/w40/${data.value.toLowerCase()}.png" width="40" />
+						<span class="ml-2">${data.label}</span>
 					</div>
 					`);
 				},
 				choice: ({ classNames }, data) => {
 					return template(`
-					<div class="${classNames.item} ${classNames.itemChoice} ${
-					data.disabled ? classNames.itemDisabled : classNames.itemSelectable
-					}" data-select-text="${this.config.itemSelectText}" data-choice ${
-					data.disabled
-						? 'data-choice-disabled aria-disabled="true"'
-						: 'data-choice-selectable'
-					} data-id="${data.id}" data-value="${data.value}" ${
-					data.groupId > 0 ? 'role="treeitem"' : 'role="option"'
-					}>
-						<span>&bigstar;</span> ${data.label}
+					<div class="flex items-center space-x-4 ${classNames.item} ${classNames.itemChoice} ${data.disabled ? classNames.itemDisabled : classNames.itemSelectable}" 
+						data-select-text="${this.config.itemSelectText}" 
+						data-choice ${data.disabled	? 'data-choice-disabled aria-disabled="true"' : 'data-choice-selectable'} 
+						data-id="${data.id}" 
+						data-value="${data.value.toLowerCase()}" 
+						${data.groupId > 0 ? 'role="treeitem"' : 'role="option"'}>
+						<img class="rounded-md" src="https://flagcdn.com/w40/${data.value.toLowerCase()}.png" width="40" />
+						<span class="ml-2">${data.label}</span>
 					</div>
 					`);
 				}
 			};
-		},
+		  }
         });
+		countryChoices.passedElement.element.addEventListener(
+			'choice',
+			function(event) {
+				var url = new URL(window.location.href);
+				var params = new window.URLSearchParams(window.location.search);
+				params.set("country", event.detail.choice.value);
+				params.delete("city");
+				url.search = params;
+				window.history.replaceState(null, null, url);
+			},
+			false,
+		);
+		const urlParams = new URLSearchParams(window.location.search);
+		const countryParam = urlParams.get('country');
+		if (countryParam) {
+			countryChoices.setChoiceByValue(countryParam);
+		  	htmx.trigger("#country", "change", {countryIso:countryParam});
+		}
 	</script>
 }
 
 templ ComboboxCities(cities []db.City) {
-	<div class="sm:col-span-3">
-		<label for="city" class="block text-sm font-medium leading-6 text-gray-900">City</label>
-		<div class="mt-2">
-			<select id="city" name="city" autocomplete="off" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
-				<option value="" disabled selected>Select a city</option>
-				for _, city:=range cities {
-					<option>
-						{ city.Name }
-					</option>
-				}
-			</select>
-		</div>
+	<div>
+		<select
+			id="city"
+			name="city"
+			autocomplete="off"
+		>
+			<option value="" disabled selected>Select a city</option>
+			for _, city := range cities {
+				<option value={ fmt.Sprint(city.Id) }>{ city.Name }</option>
+			}
+		</select>
+		<script type="text/javascript">
+		new Choices('#city', {
+          allowHTML: true,
+          shouldSort: false
+        }).
+		passedElement.element.addEventListener(
+			'choice',
+			function(event) {
+				var url = new URL(window.location.href);
+				var params = new window.URLSearchParams(window.location.search);
+				params.set("city", event.detail.choice.value);
+				url.search = params;
+				window.history.replaceState(null, null, url);
+			},
+			false,
+		);
+	</script>
 	</div>
 }
 
@@ -190,18 +224,18 @@ templ BreweriesPage(breweries []db.Brewery) {
 						<div class="flex items-center gap-2">
 							<button class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10">
 								<svg
- 									xmlns="http://www.w3.org/2000/svg"
- 									width="24"
- 									height="24"
- 									viewBox="0 0 24 24"
- 									fill="none"
- 									stroke="currentColor"
- 									stroke-width="2"
- 									stroke-linecap="round"
- 									stroke-linejoin="round"
- 									class="h-4 w-4"
- 									data-darkreader-inline-stroke=""
- 									style="--darkreader-inline-stroke: currentColor;"
+									xmlns="http://www.w3.org/2000/svg"
+									width="24"
+									height="24"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									class="h-4 w-4"
+									data-darkreader-inline-stroke=""
+									style="--darkreader-inline-stroke: currentColor;"
 								>
 									<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
 									<circle cx="12" cy="12" r="3"></circle>
@@ -210,18 +244,18 @@ templ BreweriesPage(breweries []db.Brewery) {
 							</button>
 							<button class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10">
 								<svg
- 									xmlns="http://www.w3.org/2000/svg"
- 									width="24"
- 									height="24"
- 									viewBox="0 0 24 24"
- 									fill="none"
- 									stroke="currentColor"
- 									stroke-width="2"
- 									stroke-linecap="round"
- 									stroke-linejoin="round"
- 									class="h-4 w-4"
- 									data-darkreader-inline-stroke=""
- 									style="--darkreader-inline-stroke: currentColor;"
+									xmlns="http://www.w3.org/2000/svg"
+									width="24"
+									height="24"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									class="h-4 w-4"
+									data-darkreader-inline-stroke=""
+									style="--darkreader-inline-stroke: currentColor;"
 								>
 									<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
 									<path d="m15 5 4 4"></path>
@@ -230,18 +264,18 @@ templ BreweriesPage(breweries []db.Brewery) {
 							</button>
 							<button class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10">
 								<svg
- 									xmlns="http://www.w3.org/2000/svg"
- 									width="24"
- 									height="24"
- 									viewBox="0 0 24 24"
- 									fill="none"
- 									stroke="currentColor"
- 									stroke-width="2"
- 									stroke-linecap="round"
- 									stroke-linejoin="round"
- 									class="h-4 w-4"
- 									data-darkreader-inline-stroke=""
- 									style="--darkreader-inline-stroke: currentColor;"
+									xmlns="http://www.w3.org/2000/svg"
+									width="24"
+									height="24"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									class="h-4 w-4"
+									data-darkreader-inline-stroke=""
+									style="--darkreader-inline-stroke: currentColor;"
 								>
 									<path d="M3 6h18"></path>
 									<path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
