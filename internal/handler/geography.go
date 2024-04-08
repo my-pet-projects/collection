@@ -35,6 +35,14 @@ func (h GeographyHandler) ListCities(ctx echo.Context) error {
 	if citiesErr != nil {
 		return ctx.HTML(http.StatusOK, citiesErr.Error())
 	}
+	// currentUrl, urlErr := url.Parse(ctx.Request().Header.Get("HX-Current-URL"))
+	// if urlErr != nil {
+	// 	return ctx.HTML(http.StatusInternalServerError, urlErr.Error())
+	// }
+	// queryValues := currentUrl.Query()
+	// queryValues.Set("country", ctx.Param("countryIso"))
+	// currentUrl.RawQuery = queryValues.Encode()
+	// ctx.Response().Header().Set("HX-Replace-Url", currentUrl.String())
 	return component.ComboboxCities(cities).Render(ctx.Request().Context(), ctx.Response().Writer)
 }
 
@@ -43,6 +51,5 @@ func (h GeographyHandler) GetCities(ctx echo.Context) error {
 	if citiesErr != nil {
 		return ctx.HTML(http.StatusOK, citiesErr.Error())
 	}
-	// ctx.Response().Header().Set("HX-Redirect", "asdasd")
 	return component.ComboboxCities(cities).Render(ctx.Request().Context(), ctx.Response().Writer)
 }

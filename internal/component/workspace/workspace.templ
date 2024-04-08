@@ -123,9 +123,39 @@ templ breweriesList() {
 					</a>
 				</div>
 			</div>
-			<div>
-				<div hx-get="/geo/countries" hx-trigger="load">
-					<img alt="Loading..." width="30" src="/img/tail-spin.svg"/>
+			<div class="w-full">
+				<div class="flex space-x-3">
+					<div class="md:w-1/4">
+						<input type="text" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5" placeholder="Search for breweries"/>
+					</div>
+					<div class="md:w-1/4">
+						<div hx-get="/geo/countries" hx-trigger="load">
+							<img alt="Loading..." width="30" src="/img/tail-spin.svg"/>
+						</div>
+					</div>
+					<div class="md:w-1/4">
+						<div id="cityContainer"></div>
+					</div>
+					<div class="md:w-1/4">
+						<button class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 bg-primary text-primary-foreground hover:bg-primary/90 h-10">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="24"
+								height="24"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								class="w-4 h-4"
+							>
+								<circle cx="11" cy="11" r="8"></circle>
+								<path d="m21 21-4.3-4.3"></path>
+							</svg>
+							<span class="ml-2">Search</span>
+						</button>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -143,8 +173,8 @@ templ headerComponent(title string) {
 		<link rel="icon" type="image/svg" sizes="32x32" href="/img/pint-of-beer-svgrepo-com.svg"/>
 		<link href="/css/tailwind-output.gen.css" rel="stylesheet"/>
 		<link
- 			rel="stylesheet"
- 			href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"
 		/>
 		<script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
 		<script src="https://unpkg.com/htmx.org@1.9.11/dist/ext/path-params.js">
@@ -152,5 +182,6 @@ templ headerComponent(title string) {
 		// <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 		<script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
+		// <script src="https://cdn.tailwindcss.com"></script>
 	</head>
 }
