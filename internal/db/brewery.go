@@ -17,6 +17,8 @@ type Brewery struct {
 	Website *string
 	GeoId   int
 	OldId   string
+	Country *Country
+	City    *City
 }
 
 func NewBreweryStore(db *DbClient, logger *slog.Logger) BreweryStore {
@@ -27,7 +29,12 @@ func NewBreweryStore(db *DbClient, logger *slog.Logger) BreweryStore {
 }
 
 func (s BreweryStore) FetchBreweries() ([]Brewery, error) {
-	query := "SELECT id, name, website, geo_id, old_id FROM breweries"
+	query := `SELECT breweries.id, breweries.name, breweries.website, breweries.geo_id, breweries.old_id, 
+					 cities.name, cities.country_code, cities.admin1_code, cities.admin2_code, cities.admin3_code, cities.admin4_code, 
+					 countries.cca3, countries.ccn3, countries.name_common, countries.name_official, countries.region, countries.subregion
+			    FROM breweries 
+		  INNER JOIN cities ON breweries.geo_id = cities.id 
+		  INNER JOIN countries ON cities.country_code = countries.cca2`
 	res, resErr := s.db.Query(query)
 	if resErr != nil || res.Err() != nil {
 		return nil, errors.Wrap(resErr, "query breweries")
@@ -37,10 +44,18 @@ func (s BreweryStore) FetchBreweries() ([]Brewery, error) {
 	breweries := []Brewery{}
 	for res.Next() {
 		var brewery Brewery
-		scanErr := res.Scan(&brewery.Id, &brewery.Name, &brewery.Website, &brewery.GeoId, &brewery.OldId)
+		var city City
+		var country Country
+		scanErr := res.Scan(
+			&brewery.Id, &brewery.Name, &brewery.Website, &brewery.GeoId, &brewery.OldId,
+			&city.Name, &city.CountryCode, &city.Admin1Code, &city.Admin2Code, &city.Admin3Code, &city.Admin4Code,
+			&country.Cca3, &country.Ccn3, &country.NameCommon, &country.NameOfficial, &country.Region, &country.Subregion,
+		)
 		if scanErr != nil {
 			return nil, errors.Wrap(scanErr, "scan query results")
 		}
+		brewery.City = &city
+		brewery.Country = &country
 		breweries = append(breweries, brewery)
 	}
 	return breweries, nil
