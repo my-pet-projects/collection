@@ -2,6 +2,8 @@ package handler
 
 import (
 	"log/slog"
+	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 
@@ -30,10 +32,24 @@ func (h WorkspaceHandler) GetWorkspace(ctx echo.Context) error {
 
 func (h WorkspaceHandler) GetBreweryWorkspace(ctx echo.Context) error {
 	page := workspace.NewPage(ctx, "Brewery Workspace")
-	return workspace.WorkspaceBreweryPage(page).Render(ctx.Request().Context(), ctx.Response().Writer)
+	return workspace.WorkspaceBreweriesListPage(page).Render(ctx.Request().Context(), ctx.Response().Writer)
 }
 
 func (h WorkspaceHandler) GetBeerWorkspace(ctx echo.Context) error {
 	page := workspace.NewPage(ctx, "Beer Workspace")
 	return workspace.WorkspaceBeerPage(page).Render(ctx.Request().Context(), ctx.Response().Writer)
+}
+
+func (h WorkspaceHandler) GetBreweryPage(ctx echo.Context) error {
+	page := workspace.NewPage(ctx, "Brewery Workspace")
+	breweryId, parseErr := strconv.Atoi(ctx.Param("id"))
+	if parseErr != nil {
+		// ... handle error
+		panic(parseErr)
+	}
+	brewery, breweryErr := h.breweryService.GetBrewery(breweryId)
+	if breweryErr != nil {
+		return ctx.HTML(http.StatusOK, breweryErr.Error())
+	}
+	return workspace.WorkspaceBreweryPage(page, brewery).Render(ctx.Request().Context(), ctx.Response().Writer)
 }
