@@ -11,7 +11,6 @@ import "io"
 import "bytes"
 
 import "github.com/my-pet-projects/collection/internal/db"
-import "strings"
 
 func WorkspaceBreweryPage(page Page, brewery db.Brewery) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
@@ -57,112 +56,13 @@ func breweryC(brewery db.Brewery) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(brewery.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/workspace/brewery_page.templ`, Line: 28, Col: 26}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/workspace/brewery_page.templ`, Line: 27, Col: 26}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" autocapitalize=\"none\" autocomplete=\"name\" autocorrect=\"off\" class=\"flex rounded w-full border border-input border-gray-300 bg-transparent px-3 py-3 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50\"></div><div><label for=\"name\" class=\"text-sm font-medium leading-10 peer-disabled:opacity-70\"><span>Country</span></label> <input type=\"text\" id=\"country\" name=\"country\" placeholder=\"\" value=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(brewery.Name)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/workspace/brewery_page.templ`, Line: 44, Col: 26}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" autocapitalize=\"none\" autocomplete=\"name\" autocorrect=\"off\" class=\"flex rounded w-full border border-input border-gray-300 bg-transparent px-3 py-3 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50\"></div><div class=\"mt-6\"><button class=\"whitespace-nowrap bg-blue-700 px-6 py-3 text-sm border-blue-700 text-white\" type=\"submit\"><span class=\"btn-content\">Update brewery</span></button></div></form></div></div><div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var5 string
-		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(brewery.Name)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/workspace/brewery_page.templ`, Line: 60, Col: 16}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"flex justify-center items-center h-screen\"><div class=\"rounded-lg border bg-card text-card-foreground shadow-sm w-full max-w-md\" data-v0-t=\"card\"><div class=\"flex flex-col space-y-1.5 p-6\"><h3 class=\"whitespace-nowrap text-2xl font-semibold leading-none tracking-tight\">Edit Product</h3><p class=\"text-sm text-muted-foreground\">Update the details of your product.</p></div><div class=\"p-6\"><form class=\"space-y-4\"><div class=\"space-y-2\"><label class=\"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70\" for=\"name\">Name</label> <input class=\"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50\" id=\"name\" placeholder=\"Enter brewery name\" value=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var6 string
-		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(brewery.Name)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/workspace/brewery_page.templ`, Line: 81, Col: 27}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"></div><div class=\"space-y-2\"><label class=\"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70\" for=\"country\">Country</label><div hx-get=\"/geo/countries\" hx-trigger=\"load\"><img alt=\"Loading...\" width=\"30\" src=\"/img/tail-spin.svg\"></div></div><div class=\"space-y-2\"><label class=\"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70\" for=\"city\">City</label> <button type=\"button\" role=\"combobox\" aria-controls=\"radix-:r2l:\" aria-expanded=\"false\" aria-autocomplete=\"none\" dir=\"ltr\" data-state=\"closed\" data-placeholder=\"\" class=\"flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50\"><span style=\"pointer-events: none;\">Select status</span> <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"h-4 w-4 opacity-50\" aria-hidden=\"true\" data-darkreader-inline-stroke=\"\" style=\"--darkreader-inline-stroke: currentColor;\"><path d=\"m6 9 6 6 6-6\"></path></svg></button> <select aria-hidden=\"true\" tabindex=\"-1\" style=\"position: absolute; border: 0px; width: 1px; height: 1px; padding: 0px; margin: -1px; overflow: hidden; clip: rect(0px, 0px, 0px, 0px); white-space: nowrap; overflow-wrap: normal; --darkreader-inline-border-top: 0px; --darkreader-inline-border-right: 0px; --darkreader-inline-border-bottom: 0px; --darkreader-inline-border-left: 0px;\" data-darkreader-inline-border-top=\"\" data-darkreader-inline-border-right=\"\" data-darkreader-inline-border-bottom=\"\" data-darkreader-inline-border-left=\"\"><option value=\"\"></option> <option value=\"draft\">Draft</option> <option value=\"published\">Published</option> <option value=\"archived\">Archived</option></select></div></form></div><div class=\"items-center p-6 flex justify-end\"><button class=\"inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2\" type=\"submit\">Save Changes</button></div></div></div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		if !templ_7745c5c3_IsBuffer {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteTo(templ_7745c5c3_W)
-		}
-		return templ_7745c5c3_Err
-	})
-}
-
-func ComboboxCountries(countries []db.Country, selectedCountry *string) templ.Component {
-	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
-		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
-		if !templ_7745c5c3_IsBuffer {
-			templ_7745c5c3_Buffer = templ.GetBuffer()
-			defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
-		}
-		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var7 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var7 == nil {
-			templ_7745c5c3_Var7 = templ.NopComponent
-		}
-		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div hx-ext=\"path-params\"><select id=\"country\" name=\"country\" autocomplete=\"off\" hx-get=\"/geo/countries/{countryIso}/cities\" hx-vals=\"js:{countryIso: event.target.value.toLowerCase()}\" hx-trigger=\"change\" hx-target=\"#cityContainer\" hx-swap=\"innerHTML\" hx-params=\"countryIso\"><option value=\"\" disabled selected>Select a country</option> ")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		for _, country := range countries {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<option value=\"")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var8 string
-			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(strings.ToLower(country.Cca2))
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/workspace/brewery_page.templ`, Line: 176, Col: 49}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var9 string
-			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(country.NameCommon)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/workspace/brewery_page.templ`, Line: 176, Col: 72}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</option>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</select></div><script type=\"text/javascript\">\n\t\tconst countryChoices = new Choices('#country', {\n          allowHTML: true,\n          shouldSort: false,\n\t\t  classNames: {\n      \t\tcontainerOuter: 'choices',\n\t\t\tcontainerInner: 'choices__inner',\n      \t\tlistSingle: '',\n\t\t  },\n\t\t  callbackOnCreateTemplates: function(template) {\n\t\t\treturn {\n\t\t\t\titem: ({ classNames }, data) => {\n\t\t\t\t\treturn template(`\n\t\t\t\t\t<div class=\"flex items-center ${classNames.item} ${data.highlighted\t? classNames.highlightedState : classNames.itemSelectable} ${data.placeholder ? classNames.placeholder : ''}\" \n\t\t\t\t\t\tdata-item \n\t\t\t\t\t\tdata-id=\"${data.id}\" \n\t\t\t\t\t\tdata-value=\"${data.value.toLowerCase()}\" ${data.active ? 'aria-selected=\"true\"' : ''} ${data.disabled ? 'aria-disabled=\"true\"' : ''}\n\t\t\t\t\t>\n\t\t\t\t\t\t<span>\n\t\t\t\t\t\t\t<img class=\"rounded-md\" src=\"https://flagcdn.com/w40/${data.value.toLowerCase()}.png\" width=\"40\" />\n\t\t\t\t\t\t</span>\n\t\t\t\t\t\t<span class=\"ml-2\">${data.label}</span>\n\t\t\t\t\t</div>\n\t\t\t\t\t`);\n\t\t\t\t},\n\t\t\t\tchoice: ({ classNames }, data) => {\n\t\t\t\t\treturn template(`\n\t\t\t\t\t<div class=\"flex items-center space-x-4 ${classNames.item} ${classNames.itemChoice} ${data.disabled ? classNames.itemDisabled : classNames.itemSelectable}\" \n\t\t\t\t\t\tdata-select-text=\"${this.config.itemSelectText}\" \n\t\t\t\t\t\tdata-choice ${data.disabled\t? 'data-choice-disabled aria-disabled=\"true\"' : 'data-choice-selectable'} \n\t\t\t\t\t\tdata-id=\"${data.id}\" \n\t\t\t\t\t\tdata-value=\"${data.value.toLowerCase()}\" \n\t\t\t\t\t\t${data.groupId > 0 ? 'role=\"treeitem\"' : 'role=\"option\"'}>\n\t\t\t\t\t\t<img class=\"rounded-md\" src=\"https://flagcdn.com/w40/${data.value.toLowerCase()}.png\" width=\"40\" />\n\t\t\t\t\t\t<span class=\"ml-2\">${data.label}</span>\n\t\t\t\t\t</div>\n\t\t\t\t\t`);\n\t\t\t\t}\n\t\t\t};\n\t\t  }\n        });\n\t\tcountryChoices.passedElement.element.addEventListener(\n\t\t\t'choice',\n\t\t\tfunction(event) {\n\t\t\t\tvar url = new URL(window.location.href);\n\t\t\t\tvar params = new window.URLSearchParams(window.location.search);\n\t\t\t\tparams.set(\"country\", event.detail.choice.value);\n\t\t\t\tparams.delete(\"city\");\n\t\t\t\turl.search = params;\n\t\t\t\twindow.history.replaceState(null, null, url);\n\t\t\t},\n\t\t\tfalse,\n\t\t);\n\t\tconst urlParams = new URLSearchParams(window.location.search);\n\t\tconst countryParam = urlParams.get('country');\n\t\tif (countryParam) {\n\t\t\tcountryChoices.setChoiceByValue(countryParam);\n\t\t  \thtmx.trigger(\"#country\", \"change\", {countryIso:countryParam});\n\t\t}\n\t</script>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" autocapitalize=\"none\" autocomplete=\"name\" autocorrect=\"off\" class=\"flex rounded w-full border border-input border-gray-300 bg-transparent px-3 py-3 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50\"></div><div><label for=\"name\" class=\"text-sm font-medium leading-10 peer-disabled:opacity-70\"><span>Country</span></label><div hx-get=\"/geo/countries\" hx-trigger=\"load\"><img alt=\"Loading ...\" width=\"30\" src=\"/img/tail-spin.svg\"></div></div><div><label for=\"city\" class=\"text-sm font-medium leading-10 peer-disabled:opacity-70\"><span>City</span></label><div hx-get=\"/geo/countries\" hx-trigger=\"load\"><img alt=\"Loading ...\" width=\"30\" src=\"/img/tail-spin.svg\"></div></div><div class=\"mt-6\"><button class=\"whitespace-nowrap bg-blue-700 px-6 py-3 text-sm border-blue-700 text-white\" type=\"submit\"><span class=\"btn-content\">Update brewery</span></button></div></form></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
