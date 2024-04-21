@@ -36,6 +36,14 @@ func (s BreweryService) CreateBrewery(name string, website *string, geoId int, o
 	return &brewery, nil
 }
 
+func (s BreweryService) GetBrewery(id int) (db.Brewery, error) {
+	brewery, breweryErr := s.breweryStore.GetBrewery(id)
+	if breweryErr != nil {
+		return db.Brewery{}, errors.Wrap(breweryErr, "get brewery")
+	}
+	return brewery, nil
+}
+
 func (s BreweryService) ListBreweries() ([]db.Brewery, error) {
 	breweries, breweriesErr := s.breweryStore.FetchBreweries()
 	if breweriesErr != nil {

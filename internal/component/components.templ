@@ -121,8 +121,10 @@ templ ComboboxCountries(countries []db.Country) {
 						data-id="${data.id}" 
 						data-value="${data.value.toLowerCase()}" ${data.active ? 'aria-selected="true"' : ''} ${data.disabled ? 'aria-disabled="true"' : ''}
 					>
-						<img class="rounded-md" src="https://flagcdn.com/w40/${data.value.toLowerCase()}.png" width="40" />
-						<span class="ml-2">${data.label}</span>
+						<span>
+							<img class="rounded-md" src="https://flagcdn.com/w20/${data.value.toLowerCase()}.png" width="40" />
+						</span>
+						<span class="ml-4">${data.label}</span>
 					</div>
 					`);
 				},
@@ -242,7 +244,7 @@ templ BreweriesPage(breweries []db.Brewery) {
 								</svg>
 								<span class="sr-only">View</span>
 							</button>
-							<button class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10">
+							<a href={ templ.URL(fmt.Sprintf("/workspace/brewery/%d", brewery.Id)) } class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10">
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
 									width="24"
@@ -261,7 +263,7 @@ templ BreweriesPage(breweries []db.Brewery) {
 									<path d="m15 5 4 4"></path>
 								</svg>
 								<span class="sr-only">Edit</span>
-							</button>
+							</a>
 							<button class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10">
 								<svg
 									xmlns="http://www.w3.org/2000/svg"

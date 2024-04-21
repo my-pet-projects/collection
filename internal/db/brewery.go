@@ -28,6 +28,24 @@ func NewBreweryStore(db *DbClient, logger *slog.Logger) BreweryStore {
 	}
 }
 
+func (s BreweryStore) GetBrewery(id int) (Brewery, error) {
+	var brewery Brewery
+	var city City
+	query := `SELECT breweries.id, breweries.name, breweries.website, breweries.geo_id, breweries.old_id,
+					 cities.name, cities.country_code, cities.admin1_code, cities.admin2_code, cities.admin3_code, cities.admin4_code 
+			    FROM breweries 
+		  INNER JOIN cities ON breweries.geo_id = cities.id 
+		  	   WHERE breweries.id = ?`
+	resErr := s.db.QueryRow(query, id).Scan(
+		&brewery.Id, &brewery.Name, &brewery.Website, &brewery.GeoId, &brewery.OldId,
+		&city.Name, &city.CountryCode, &city.Admin1Code, &city.Admin2Code, &city.Admin3Code, &city.Admin4Code,
+	)
+	if resErr != nil {
+		return brewery, errors.Wrap(resErr, "get brewery")
+	}
+	return brewery, nil
+}
+
 func (s BreweryStore) FetchBreweries() ([]Brewery, error) {
 	query := `SELECT breweries.id, breweries.name, breweries.website, breweries.geo_id, breweries.old_id, 
 					 cities.name, cities.country_code, cities.admin1_code, cities.admin2_code, cities.admin3_code, cities.admin4_code, 
