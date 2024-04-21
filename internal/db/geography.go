@@ -46,7 +46,7 @@ func NewGeographyStore(db *DbClient, logger *slog.Logger) GeographyStore {
 }
 
 func (s GeographyStore) FetchCountries() ([]Country, error) {
-	query := "SELECT * FROM Country"
+	query := "SELECT * FROM countries"
 	res, resErr := s.db.Query(query)
 	if resErr != nil || res.Err() != nil {
 		return nil, errors.Wrap(resErr, "query countries")
@@ -67,10 +67,10 @@ func (s GeographyStore) FetchCountries() ([]Country, error) {
 }
 
 func (s GeographyStore) FetchCitiesByCountry(countryCode string) ([]City, error) {
-	query := `SELECT id, name, alternateNames, countryCode, 
-					 admin1Code, admin2Code, admin3Code, admin4Code,
-					 modificationDate, population, latitude, longitude 
-			  FROM City WHERE countryCode = ? LIMIT 100000`
+	query := `SELECT id, name, alternate_names, country_code, 
+					 admin1_code, admin2_code, admin3_code, admin4_code,
+					 modification_date, population, latitude, longitude 
+			  FROM cities WHERE country_code = ? LIMIT 100000`
 	res, resErr := s.db.Query(query, countryCode)
 	if resErr != nil || res.Err() != nil {
 		return nil, errors.Wrap(resErr, "query cities")
@@ -92,10 +92,10 @@ func (s GeographyStore) FetchCitiesByCountry(countryCode string) ([]City, error)
 }
 
 func (s GeographyStore) GetCity(geoId int) (*City, error) {
-	query := `SELECT id, name, alternateNames, countryCode, 
-					 admin1Code, admin2Code, admin3Code, admin4Code,
-					 modificationDate, population, latitude, longitude 
-			  FROM City WHERE id = ?`
+	query := `SELECT id, name, alternate_names, country_code, 
+					 admin1_code, admin2_code, admin3_code, admin4_code,
+					 modification_date, population, latitude, longitude 
+			  FROM cities WHERE id = ?`
 	res := s.db.QueryRow(query, geoId)
 
 	var city City
