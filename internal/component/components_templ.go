@@ -13,6 +13,7 @@ import "strings"
 
 import "github.com/my-pet-projects/collection/internal/db"
 import "fmt"
+import "encoding/json"
 
 func border() templ.CSSClass {
 	var templ_7745c5c3_CSSBuilder strings.Builder
@@ -116,7 +117,7 @@ func headerComponent(title string) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/components.templ`, Line: 35, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/components.templ`, Line: 36, Col: 16}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -181,6 +182,34 @@ func Page(countries []db.Country) templ.Component {
 	})
 }
 
+type choicesType struct {
+	Value    string `json:"value"`
+	Label    string `json:"label"`
+	Selected bool   `json:"selected"`
+	Disabled bool   `json:"disabled"`
+}
+
+func countriesJson(countries []db.Country) string {
+	choices := make([]choicesType, 0)
+	choices = append(choices, choicesType{
+		Value:    "",
+		Label:    "Select a country",
+		Selected: true,
+		Disabled: false,
+	})
+	for _, country := range countries {
+		choices = append(choices, choicesType{
+			Value:    strings.ToLower(country.Cca2),
+			Label:    fmt.Sprintf(`<span class="flex justify-center items-center "><img src="https://flagcdn.com/w20/%s.png" width="20" /></span><span class="ml-4">%s</span>`, strings.ToLower(country.Cca2), country.NameCommon),
+			Selected: false,
+			Disabled: false,
+		})
+	}
+	bytes, _ := json.Marshal(choices)
+	return string(bytes)
+}
+
+// const c = "[{&quot;value&quot;:&quot;+61&quot;,&quot;label&quot;:&quot;\u003cspan class=\&quot;country-flag country-flag--AU\&quot;\u003e🇦🇺\u003c/span\u003e\u003cspan class=\&quot;country-name\&quot;\u003eAustralia\u003c/span\u003e\u003cspan class=\&quot;country-code\&quot;\u003e+61\u003c/span\u003e&quot;,&quot;selected&quot;:false,&quot;disabled&quot;:false,&quot;sortValue&quot;:&quot;Australia&quot;},{&quot;value&quot;:&quot;+43&quot;,&quot;label&quot;:&quot;\u003cspan class=\&quot;country-flag country-flag--AT\&quot;\u003e🇦🇹\u003c/span\u003e\u003cspan class=\&quot;country-name\&quot;\u003eAustria\u003c/span\u003e\u003cspan class=\&quot;country-code\&quot;\u003e+43\u003c/span\u003e&quot;,&quot;selected&quot;:false,&quot;disabled&quot;:false,&quot;sortValue&quot;:&quot;Austria&quot;}]"
 func ComboboxCountries(countries []db.Country) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
@@ -194,43 +223,20 @@ func ComboboxCountries(countries []db.Country) templ.Component {
 			templ_7745c5c3_Var9 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div hx-ext=\"path-params\"><select id=\"country\" name=\"country\" autocomplete=\"off\" hx-get=\"/geo/countries/{countryIso}/cities\" hx-vals=\"js:{countryIso: event.target.value.toLowerCase()}\" hx-trigger=\"change\" hx-target=\"#cityContainer\" hx-swap=\"innerHTML\" hx-params=\"countryIso\"><option value=\"\" disabled selected>Select a country</option> ")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div hx-ext=\"path-params\"><select id=\"country\" name=\"country\" autocomplete=\"off\" hx-get=\"/geo/countries/{countryIso}/cities\" hx-vals=\"js:{countryIso: event.target.value.toLowerCase()}\" hx-trigger=\"change\" hx-target=\"#cityContainer\" hx-swap=\"innerHTML\" hx-params=\"countryIso\" data-items=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		for _, country := range countries {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<option value=\"")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var10 string
-			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(strings.ToLower(country.Cca2))
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/components.templ`, Line: 102, Col: 49}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var11 string
-			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(country.NameCommon)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/components.templ`, Line: 102, Col: 72}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</option>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
+		var templ_7745c5c3_Var10 string
+		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(countriesJson(countries))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/components.templ`, Line: 128, Col: 40}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</select></div><script type=\"text/javascript\">\n\t\tconst countryChoices = new Choices('#country', {\n          allowHTML: true,\n          shouldSort: false,\n\t\t  classNames: {\n      \t\tcontainerOuter: 'choices',\n\t\t\tcontainerInner: 'choices__inner',\n      \t\tlistSingle: '',\n\t\t  },\n\t\t  callbackOnCreateTemplates: function(template) {\n\t\t\treturn {\n\t\t\t\titem: ({ classNames }, data) => {\n\t\t\t\t\treturn template(`\n\t\t\t\t\t<div class=\"flex items-center ${classNames.item} ${data.highlighted\t? classNames.highlightedState : classNames.itemSelectable} ${data.placeholder ? classNames.placeholder : ''}\" \n\t\t\t\t\t\tdata-item \n\t\t\t\t\t\tdata-id=\"${data.id}\" \n\t\t\t\t\t\tdata-value=\"${data.value.toLowerCase()}\" ${data.active ? 'aria-selected=\"true\"' : ''} ${data.disabled ? 'aria-disabled=\"true\"' : ''}\n\t\t\t\t\t>\n\t\t\t\t\t\t<span>\n\t\t\t\t\t\t\t<img class=\"rounded-md\" src=\"https://flagcdn.com/w20/${data.value.toLowerCase()}.png\" width=\"40\" />\n\t\t\t\t\t\t</span>\n\t\t\t\t\t\t<span class=\"ml-4\">${data.label}</span>\n\t\t\t\t\t</div>\n\t\t\t\t\t`);\n\t\t\t\t},\n\t\t\t\tchoice: ({ classNames }, data) => {\n\t\t\t\t\treturn template(`\n\t\t\t\t\t<div class=\"flex items-center space-x-4 ${classNames.item} ${classNames.itemChoice} ${data.disabled ? classNames.itemDisabled : classNames.itemSelectable}\" \n\t\t\t\t\t\tdata-select-text=\"${this.config.itemSelectText}\" \n\t\t\t\t\t\tdata-choice ${data.disabled\t? 'data-choice-disabled aria-disabled=\"true\"' : 'data-choice-selectable'} \n\t\t\t\t\t\tdata-id=\"${data.id}\" \n\t\t\t\t\t\tdata-value=\"${data.value.toLowerCase()}\" \n\t\t\t\t\t\t${data.groupId > 0 ? 'role=\"treeitem\"' : 'role=\"option\"'}>\n\t\t\t\t\t\t<img class=\"rounded-md\" src=\"https://flagcdn.com/w40/${data.value.toLowerCase()}.png\" width=\"40\" />\n\t\t\t\t\t\t<span class=\"ml-2\">${data.label}</span>\n\t\t\t\t\t</div>\n\t\t\t\t\t`);\n\t\t\t\t}\n\t\t\t};\n\t\t  }\n        });\n\t\tcountryChoices.passedElement.element.addEventListener(\n\t\t\t'choice',\n\t\t\tfunction(event) {\n\t\t\t\tvar url = new URL(window.location.href);\n\t\t\t\tvar params = new window.URLSearchParams(window.location.search);\n\t\t\t\tparams.set(\"country\", event.detail.choice.value);\n\t\t\t\tparams.delete(\"city\");\n\t\t\t\turl.search = params;\n\t\t\t\twindow.history.replaceState(null, null, url);\n\t\t\t},\n\t\t\tfalse,\n\t\t);\n\t\tconst urlParams = new URLSearchParams(window.location.search);\n\t\tconst countryParam = urlParams.get('country');\n\t\tif (countryParam) {\n\t\t\tcountryChoices.setChoiceByValue(countryParam);\n\t\t  \thtmx.trigger(\"#country\", \"change\", {countryIso:countryParam});\n\t\t}\n\t</script>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"></select></div><script type=\"text/javascript\">\n\t\tconst countryEl = document.querySelector(\"#country\");\n\t\tconst countryChoices = new Choices(countryEl, {\n          \tallowHTML: true,\n          \tshouldSort: false,\n        \titemSelectText: \"\",\n        \tsearchEnabled: true,\n        \tsearchChoices: true,\n\t\t  \tchoices: JSON.parse(countryEl.getAttribute(\"data-items\"))\t\t  \n        });\n\t\tcountryChoices.passedElement.element.addEventListener(\n\t\t\t'choice',\n\t\t\tfunction(event) {\n\t\t\t\tvar url = new URL(window.location.href);\n\t\t\t\tvar params = new window.URLSearchParams(window.location.search);\n\t\t\t\tparams.set(\"country\", event.detail.choice.value);\n\t\t\t\tparams.delete(\"city\");\n\t\t\t\turl.search = params;\n\t\t\t\twindow.history.replaceState(null, null, url);\n\t\t\t},\n\t\t\tfalse,\n\t\t);\n\t\tconst urlParams = new URLSearchParams(window.location.search);\n\t\tconst countryParam = urlParams.get('country');\n\t\tif (countryParam) {\n\t\t\tcountryChoices.setChoiceByValue(countryParam);\n\t\t  \thtmx.trigger(\"#country\", \"change\", {countryIso:countryParam});\n\t\t}\n\t</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -249,9 +255,9 @@ func ComboboxCities(cities []db.City) templ.Component {
 			defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var12 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var12 == nil {
-			templ_7745c5c3_Var12 = templ.NopComponent
+		templ_7745c5c3_Var11 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var11 == nil {
+			templ_7745c5c3_Var11 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div><select id=\"city\" name=\"city\" autocomplete=\"off\"><option value=\"\" disabled selected>Select a city</option> ")
@@ -263,12 +269,12 @@ func ComboboxCities(cities []db.City) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var13 string
-			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(city.Id))
+			var templ_7745c5c3_Var12 string
+			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(city.Id))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/components.templ`, Line: 177, Col: 39}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/components.templ`, Line: 171, Col: 39}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -276,12 +282,12 @@ func ComboboxCities(cities []db.City) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var14 string
-			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(city.Name)
+			var templ_7745c5c3_Var13 string
+			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(city.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/components.templ`, Line: 177, Col: 53}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/components.templ`, Line: 171, Col: 53}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -309,9 +315,9 @@ func BreweriesPage(breweries []db.Brewery) templ.Component {
 			defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var15 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var15 == nil {
-			templ_7745c5c3_Var15 = templ.NopComponent
+		templ_7745c5c3_Var14 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var14 == nil {
+			templ_7745c5c3_Var14 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<table class=\"min-w-full divide-y divide-gray-200 table-fixed dark:divide-gray-600\"><thead class=\"bg-gray-100 dark:bg-gray-700\"><tr><th scope=\"col\" class=\"p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400\">Name</th><th scope=\"col\" class=\"p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400\">Geography</th><th>Action</th></tr></thead> <tbody class=\"bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700\">")
@@ -323,12 +329,12 @@ func BreweriesPage(breweries []db.Brewery) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var16 string
-			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(brewery.Name)
+			var templ_7745c5c3_Var15 string
+			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(brewery.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/components.templ`, Line: 218, Col: 105}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/components.templ`, Line: 212, Col: 105}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -336,12 +342,12 @@ func BreweriesPage(breweries []db.Brewery) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var17 string
-			templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(brewery.Country.NameCommon)
+			var templ_7745c5c3_Var16 string
+			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(brewery.Country.NameCommon)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/components.templ`, Line: 221, Col: 102}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/components.templ`, Line: 215, Col: 102}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -349,12 +355,12 @@ func BreweriesPage(breweries []db.Brewery) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var18 string
-			templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(brewery.City.Name)
+			var templ_7745c5c3_Var17 string
+			templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(brewery.City.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/components.templ`, Line: 222, Col: 92}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/components.templ`, Line: 216, Col: 92}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -362,8 +368,8 @@ func BreweriesPage(breweries []db.Brewery) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var19 templ.SafeURL = templ.URL(fmt.Sprintf("/workspace/brewery/%d", brewery.Id))
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var19)))
+			var templ_7745c5c3_Var18 templ.SafeURL = templ.URL(fmt.Sprintf("/workspace/brewery/%d", brewery.Id))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var18)))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -391,9 +397,9 @@ func BeersPage(beers []db.Beer) templ.Component {
 			defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var20 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var20 == nil {
-			templ_7745c5c3_Var20 = templ.NopComponent
+		templ_7745c5c3_Var19 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var19 == nil {
+			templ_7745c5c3_Var19 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div>beers</div>")
@@ -405,12 +411,12 @@ func BeersPage(beers []db.Beer) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var21 string
-			templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(beer.Brand)
+			var templ_7745c5c3_Var20 string
+			templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(beer.Brand)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/components.templ`, Line: 300, Col: 15}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/components.templ`, Line: 294, Col: 15}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
