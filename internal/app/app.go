@@ -42,7 +42,7 @@ func InitializeRouter() (http.Handler, error) {
 	geoHandler := handler.NewGeographyHandler(geoService, logger)
 	breweryHandler := handler.NewBreweryHandler(breweryService, geoService, logger)
 	beerHandler := handler.NewBeerHandler(beerService, breweryService, logger)
-	workspaceHandler := handler.NewWorkspaceHandler(beerService, breweryService, logger)
+	workspaceHandler := handler.NewWorkspaceHandler(beerService, breweryService, geoService, logger)
 
 	e := echo.New()
 	e.Use(middleware.Logger())

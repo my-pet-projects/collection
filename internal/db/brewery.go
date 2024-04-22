@@ -31,18 +31,24 @@ func NewBreweryStore(db *DbClient, logger *slog.Logger) BreweryStore {
 func (s BreweryStore) GetBrewery(id int) (Brewery, error) {
 	var brewery Brewery
 	var city City
+	var country Country
 	query := `SELECT breweries.id, breweries.name, breweries.website, breweries.geo_id, breweries.old_id,
-					 cities.name, cities.country_code, cities.admin1_code, cities.admin2_code, cities.admin3_code, cities.admin4_code 
+					 cities.id, cities.name, cities.country_code, cities.admin1_code, cities.admin2_code, cities.admin3_code, cities.admin4_code,
+					 countries.cca2, countries.cca3, countries.ccn3, countries.name_common, countries.name_official, countries.region, countries.subregion
 			    FROM breweries 
 		  INNER JOIN cities ON breweries.geo_id = cities.id 
+		  INNER JOIN countries ON cities.country_code = countries.cca2
 		  	   WHERE breweries.id = ?`
 	resErr := s.db.QueryRow(query, id).Scan(
 		&brewery.Id, &brewery.Name, &brewery.Website, &brewery.GeoId, &brewery.OldId,
-		&city.Name, &city.CountryCode, &city.Admin1Code, &city.Admin2Code, &city.Admin3Code, &city.Admin4Code,
+		&city.Id, &city.Name, &city.CountryCode, &city.Admin1Code, &city.Admin2Code, &city.Admin3Code, &city.Admin4Code,
+		&country.Cca2, &country.Cca3, &country.Ccn3, &country.NameCommon, &country.NameOfficial, &country.Region, &country.Subregion,
 	)
 	if resErr != nil {
 		return brewery, errors.Wrap(resErr, "get brewery")
 	}
+	brewery.Country = &country
+	brewery.City = &city
 	return brewery, nil
 }
 
