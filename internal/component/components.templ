@@ -1,8 +1,8 @@
 package component
 
 import "github.com/my-pet-projects/collection/internal/db"
+import "github.com/my-pet-projects/collection/internal/component/shared"
 import "fmt"
-import "encoding/json"
 
 css border() {
 	border: 1px solid #eeeeee;
@@ -74,7 +74,7 @@ templ Page(countries []db.Country) {
 				</div>
 			</section>
 			<div class="container mx-auto mt-8">
-				@ComboboxCountries(countries)
+				@shared.CountriesSelector(shared.CountriesData{Countries: countries})
 			</div>
 			<script type="text/javascript">
 			 document.body.addEventListener("custom-event", () => {
@@ -83,112 +83,6 @@ templ Page(countries []db.Country) {
 			</script>
 		</body>
 	</html>
-}
-
-type choicesType struct {
-	Value    string `json:"value"`
-	Label    string `json:"label"`
-	Selected bool   `json:"selected"`
-	Disabled bool   `json:"disabled"`
-}
-
-func countriesJson(countries []db.Country) string {
-	choices := make([]choicesType, 0)
-	choices = append(choices, choicesType{
-		Value:    "",
-		Label:    "Select a country",
-		Selected: true,
-		Disabled: false,
-	})
-	for _, country := range countries {
-		choices = append(choices, choicesType{
-			Value:    strings.ToLower(country.Cca2),
-			Label:    fmt.Sprintf(`<span class="flex justify-center items-center "><img src="https://flagcdn.com/w20/%s.png" width="20" /></span><span class="ml-4">%s</span>`, strings.ToLower(country.Cca2), country.NameCommon),
-			Selected: false,
-			Disabled: false,
-		})
-	}
-	bytes, _ := json.Marshal(choices)
-	return string(bytes)
-}
-
-// const c = "[{&quot;value&quot;:&quot;+61&quot;,&quot;label&quot;:&quot;\u003cspan class=\&quot;country-flag country-flag--AU\&quot;\u003e🇦🇺\u003c/span\u003e\u003cspan class=\&quot;country-name\&quot;\u003eAustralia\u003c/span\u003e\u003cspan class=\&quot;country-code\&quot;\u003e+61\u003c/span\u003e&quot;,&quot;selected&quot;:false,&quot;disabled&quot;:false,&quot;sortValue&quot;:&quot;Australia&quot;},{&quot;value&quot;:&quot;+43&quot;,&quot;label&quot;:&quot;\u003cspan class=\&quot;country-flag country-flag--AT\&quot;\u003e🇦🇹\u003c/span\u003e\u003cspan class=\&quot;country-name\&quot;\u003eAustria\u003c/span\u003e\u003cspan class=\&quot;country-code\&quot;\u003e+43\u003c/span\u003e&quot;,&quot;selected&quot;:false,&quot;disabled&quot;:false,&quot;sortValue&quot;:&quot;Austria&quot;}]"
-templ ComboboxCountries(countries []db.Country) {
-	<div hx-ext="path-params">
-		<select
-			id="country"
-			name="country"
-			autocomplete="off"
-			hx-get="/geo/countries/{countryIso}/cities"
-			hx-vals="js:{countryIso: event.target.value.toLowerCase()}"
-			hx-trigger="change"
-			hx-target="#cityContainer"
-			hx-swap="innerHTML"
-			hx-params="countryIso"
-			data-items={ countriesJson(countries) }
-		></select>
-	</div>
-	<script type="text/javascript">
-		const countryEl = document.querySelector("#country");
-		const countryChoices = new Choices(countryEl, {
-          	allowHTML: true,
-          	shouldSort: false,
-        	itemSelectText: "",
-        	searchEnabled: true,
-        	searchChoices: true,
-		  	choices: JSON.parse(countryEl.getAttribute("data-items"))		  
-        });
-		countryChoices.passedElement.element.addEventListener(
-			'choice',
-			function(event) {
-				var url = new URL(window.location.href);
-				var params = new window.URLSearchParams(window.location.search);
-				params.set("country", event.detail.choice.value);
-				params.delete("city");
-				url.search = params;
-				window.history.replaceState(null, null, url);
-			},
-			false,
-		);
-		const urlParams = new URLSearchParams(window.location.search);
-		const countryParam = urlParams.get('country');
-		if (countryParam) {
-			countryChoices.setChoiceByValue(countryParam);
-		  	htmx.trigger("#country", "change", {countryIso:countryParam});
-		}
-	</script>
-}
-
-templ ComboboxCities(cities []db.City) {
-	<div>
-		<select
-			id="city"
-			name="city"
-			autocomplete="off"
-		>
-			<option value="" disabled selected>Select a city</option>
-			for _, city := range cities {
-				<option value={ fmt.Sprint(city.Id) }>{ city.Name }</option>
-			}
-		</select>
-		<script type="text/javascript">
-		new Choices('#city', {
-          allowHTML: true,
-          shouldSort: false
-        }).
-		passedElement.element.addEventListener(
-			'choice',
-			function(event) {
-				var url = new URL(window.location.href);
-				var params = new window.URLSearchParams(window.location.search);
-				params.set("city", event.detail.choice.value);
-				url.search = params;
-				window.history.replaceState(null, null, url);
-			},
-			false,
-		);
-	</script>
-	</div>
 }
 
 templ BreweriesPage(breweries []db.Brewery) {

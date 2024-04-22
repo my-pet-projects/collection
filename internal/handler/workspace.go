@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"log/slog"
 	"net/http"
 	"strconv"
@@ -14,13 +15,15 @@ import (
 type WorkspaceHandler struct {
 	beerService    service.BeerService
 	breweryService service.BreweryService
+	geoService     service.GeographyService
 	logger         *slog.Logger
 }
 
-func NewWorkspaceHandler(beerService service.BeerService, breweryService service.BreweryService, logger *slog.Logger) WorkspaceHandler {
+func NewWorkspaceHandler(beerService service.BeerService, breweryService service.BreweryService, geoService service.GeographyService, logger *slog.Logger) WorkspaceHandler {
 	return WorkspaceHandler{
 		beerService:    beerService,
 		breweryService: breweryService,
+		geoService:     geoService,
 		logger:         logger,
 	}
 }
@@ -41,15 +44,18 @@ func (h WorkspaceHandler) GetBeerWorkspace(ctx echo.Context) error {
 }
 
 func (h WorkspaceHandler) GetBreweryPage(ctx echo.Context) error {
-	page := workspace.NewPage(ctx, "Brewery Workspace")
 	breweryId, parseErr := strconv.Atoi(ctx.Param("id"))
 	if parseErr != nil {
-		// ... handle error
-		panic(parseErr)
+		return ctx.HTML(http.StatusBadRequest, parseErr.Error())
 	}
 	brewery, breweryErr := h.breweryService.GetBrewery(breweryId)
 	if breweryErr != nil {
 		return ctx.HTML(http.StatusOK, breweryErr.Error())
 	}
-	return workspace.WorkspaceBreweryPage(page, brewery).Render(ctx.Request().Context(), ctx.Response().Writer)
+	page := workspace.NewPage(ctx, fmt.Sprintf("Edit Brewery - %s", brewery.Name))
+	breweryPage := workspace.BreweryPage{
+		Page:    page,
+		Brewery: brewery,
+	}
+	return workspace.WorkspaceBreweryPage(breweryPage).Render(ctx.Request().Context(), ctx.Response().Writer)
 }

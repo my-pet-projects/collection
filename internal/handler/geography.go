@@ -3,10 +3,11 @@ package handler
 import (
 	"log/slog"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 
-	"github.com/my-pet-projects/collection/internal/component"
+	"github.com/my-pet-projects/collection/internal/component/shared"
 	"github.com/my-pet-projects/collection/internal/service"
 )
 
@@ -27,7 +28,20 @@ func (h GeographyHandler) ListCountries(ctx echo.Context) error {
 	if countriesErr != nil {
 		return ctx.HTML(http.StatusOK, countriesErr.Error())
 	}
-	return component.ComboboxCountries(countries).Render(ctx.Request().Context(), ctx.Response().Writer)
+	hasBreweries := false
+	hasBreweriesParam := ctx.QueryParam("hasBreweries")
+	if hasBreweriesParam != "" {
+		parsedVal, parseErr := strconv.ParseBool(hasBreweriesParam)
+		if parseErr != nil {
+			return ctx.HTML(http.StatusBadRequest, parseErr.Error())
+		}
+		hasBreweries = parsedVal
+	}
+	data := shared.CountriesData{
+		Countries:    countries,
+		HasBreweries: hasBreweries,
+	}
+	return shared.CountriesSelector(data).Render(ctx.Request().Context(), ctx.Response().Writer)
 }
 
 func (h GeographyHandler) ListCities(ctx echo.Context) error {
@@ -43,7 +57,7 @@ func (h GeographyHandler) ListCities(ctx echo.Context) error {
 	// queryValues.Set("country", ctx.Param("countryIso"))
 	// currentUrl.RawQuery = queryValues.Encode()
 	// ctx.Response().Header().Set("HX-Replace-Url", currentUrl.String())
-	return component.ComboboxCities(cities).Render(ctx.Request().Context(), ctx.Response().Writer)
+	return shared.CitiesSelector(cities).Render(ctx.Request().Context(), ctx.Response().Writer)
 }
 
 func (h GeographyHandler) GetCities(ctx echo.Context) error {
@@ -51,5 +65,5 @@ func (h GeographyHandler) GetCities(ctx echo.Context) error {
 	if citiesErr != nil {
 		return ctx.HTML(http.StatusOK, citiesErr.Error())
 	}
-	return component.ComboboxCities(cities).Render(ctx.Request().Context(), ctx.Response().Writer)
+	return shared.CitiesSelector(cities).Render(ctx.Request().Context(), ctx.Response().Writer)
 }
