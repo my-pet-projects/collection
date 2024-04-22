@@ -37,6 +37,38 @@ templ adminLayout(page Page, contents templ.Component) {
 			});
 		}
     </script>
+	<script type="text/javascript">
+		function initializeChoices (elementId) {
+			const choicesEl = document.getElementById(elementId);
+			const name = choicesEl.getAttribute("name");
+			const eventName = `${name}-change-choice`;
+			const choices = new Choices(choicesEl, {
+				allowHTML: true,
+				shouldSort: true,
+				itemSelectText: "",
+				searchEnabled: true,
+				searchChoices: true,
+				choices: JSON.parse(choicesEl.getAttribute("data-items"))
+			});
+			choicesEl.addEventListener(
+				'choice',
+				function(event) {
+					const changeEvent = new CustomEvent(eventName, { detail: { choice: event.detail.choice } });
+					document.dispatchEvent(changeEvent);
+				},
+				false,
+			);
+			const urlParams = new URLSearchParams(window.location.search);
+			const param = urlParams.get(name);
+			const selectedValueEl = document.getElementById(`selected-${name}`);
+			const selectedValue = selectedValueEl ? selectedValueEl.value : ""
+			if (selectedValue) {
+				choices.setChoiceByValue(selectedValue.toLowerCase());
+				htmx.trigger(choicesEl, "change", {countryIso:selectedValue.toLowerCase()});
+			}
+
+		}
+	</script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
 }
 
@@ -163,6 +195,11 @@ templ breweriesList() {
 	<div hx-get="/brewery" hx-trigger="load">
 		<img alt="Loading..." width="30" src="/img/tail-spin.svg"/>
 	</div>
+	<script>
+		func handleChangeChoiseEvent() {
+			console.log('handleChangeChoiseEvent')
+		}
+	</script>
 }
 
 templ headerComponent(title string) {
