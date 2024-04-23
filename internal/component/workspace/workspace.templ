@@ -48,6 +48,10 @@ templ adminLayout(page Page, contents templ.Component) {
 				itemSelectText: "",
 				searchEnabled: true,
 				searchChoices: true,
+    			searchFields: ['label', 'value', 'customProperties.searchableValue'],	
+				fuseOptions: {
+					keys: ['label', 'value', 'customProperties.searchableValue']
+				},
 				choices: JSON.parse(choicesEl.getAttribute("data-items")),
 				renderChoiceLimit: 300
 			});
@@ -196,11 +200,6 @@ templ breweriesList() {
 	<div hx-get="/brewery" hx-trigger="load">
 		<img alt="Loading..." width="30" src="/img/tail-spin.svg"/>
 	</div>
-	<script>
-		func handleChangeChoiseEvent() {
-			console.log('handleChangeChoiseEvent')
-		}
-	</script>
 }
 
 templ headerComponent(title string) {

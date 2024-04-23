@@ -21,16 +21,21 @@ type CountriesData struct {
 	StoreSelectionInQuery bool
 }
 
-type choicesType struct {
-	Value    string `json:"value"`
-	Label    string `json:"label"`
-	Selected bool   `json:"selected"`
-	Disabled bool   `json:"disabled"`
+type choicesData struct {
+	Value            string         `json:"value"`
+	Label            string         `json:"label"`
+	Selected         bool           `json:"selected"`
+	Disabled         bool           `json:"disabled"`
+	CustomProperties customProperty `json:"customProperties"`
+}
+
+type customProperty struct {
+	SearchableValue string `json:"searchableValue"`
 }
 
 func countriesJson(countriesData CountriesData) string {
-	choices := make([]choicesType, 0)
-	emptyChoice := choicesType{
+	choices := make([]choicesData, 0)
+	emptyChoice := choicesData{
 		Value:    "",
 		Label:    "Select a country",
 		Selected: true,
@@ -38,11 +43,12 @@ func countriesJson(countriesData CountriesData) string {
 	}
 	choices = append(choices, emptyChoice)
 	for _, country := range countriesData.Countries {
-		choices = append(choices, choicesType{
-			Value:    strings.ToLower(country.Cca2),
-			Label:    fmt.Sprintf(`<span class="flex justify-center items-center "><img src="https://flagcdn.com/w20/%s.png" width="20" /></span><span class="ml-4">%s</span>`, strings.ToLower(country.Cca2), country.NameCommon),
-			Selected: false,
-			Disabled: false,
+		choices = append(choices, choicesData{
+			Value:            strings.ToLower(country.Cca2),
+			Label:            fmt.Sprintf(`<span class="flex justify-center items-center"><img src="https://flagcdn.com/w20/%s.png" width="20" /></span><span class="ml-4">%s</span>`, strings.ToLower(country.Cca2), country.NameCommon),
+			Selected:         false,
+			Disabled:         false,
+			CustomProperties: customProperty{SearchableValue: country.NameCommon},
 		})
 	}
 	bytes, _ := json.Marshal(choices)
@@ -50,8 +56,8 @@ func countriesJson(countriesData CountriesData) string {
 }
 
 func citiesJson(cities []db.City) string {
-	choices := make([]choicesType, 0)
-	emptyChoice := choicesType{
+	choices := make([]choicesData, 0)
+	emptyChoice := choicesData{
 		Value:    "",
 		Label:    "Select a city",
 		Selected: true,
@@ -59,7 +65,7 @@ func citiesJson(cities []db.City) string {
 	}
 	choices = append(choices, emptyChoice)
 	for _, city := range cities {
-		choices = append(choices, choicesType{
+		choices = append(choices, choicesData{
 			Value:    fmt.Sprint(city.Id),
 			Label:    city.Name,
 			Selected: false,
@@ -90,7 +96,7 @@ func CountriesSelector(countriesData CountriesData) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(countriesJson(countriesData))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/shared/geography.templ`, Line: 76, Col: 44}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/shared/geography.templ`, Line: 82, Col: 44}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -127,7 +133,7 @@ func CitiesSelector(cities []db.City) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(citiesJson(cities))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/shared/geography.templ`, Line: 91, Col: 34}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/shared/geography.templ`, Line: 97, Col: 34}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
