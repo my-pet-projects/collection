@@ -36,6 +36,19 @@ func (s BreweryService) CreateBrewery(name string, website *string, geoId int, o
 	return &brewery, nil
 }
 
+func (s BreweryService) UpdateBrewery(id int, name string, geoId int) error {
+	brewery := db.Brewery{
+		Id:    id,
+		Name:  name,
+		GeoId: geoId,
+	}
+	updErr := s.breweryStore.UpdateBrewery(brewery)
+	if updErr != nil {
+		return errors.Wrap(updErr, "update brewery")
+	}
+	return nil
+}
+
 func (s BreweryService) GetBrewery(id int) (db.Brewery, error) {
 	brewery, breweryErr := s.breweryStore.GetBrewery(id)
 	if breweryErr != nil {
