@@ -48,7 +48,8 @@ templ adminLayout(page Page, contents templ.Component) {
 				itemSelectText: "",
 				searchEnabled: true,
 				searchChoices: true,
-				choices: JSON.parse(choicesEl.getAttribute("data-items"))
+				choices: JSON.parse(choicesEl.getAttribute("data-items")),
+				renderChoiceLimit: 300
 			});
 			choicesEl.addEventListener(
 				'choice',
