@@ -1,18 +1,18 @@
 package workspace
 
-import "github.com/my-pet-projects/collection/internal/db"
 import "fmt"
 
 type BreweryPage struct {
 	Page
-	Brewery db.Brewery
+	FormParams BreweryFormParams
+	FormErrors BreweryFormErrors
 }
 
 templ WorkspaceBreweryPage(page BreweryPage) {
-	@adminLayout(page.Page, breweryC(page.Brewery))
+	@adminLayout(page.Page, BreweryC(page.FormParams, page.FormErrors))
 }
 
-templ breweryC(brewery db.Brewery) {
+templ BreweryC(params BreweryFormParams, errors BreweryFormErrors) {
 	<div class="flex-1 py-6 px-10">
 		<div>
 			<div class="mb-6">
@@ -20,45 +20,78 @@ templ breweryC(brewery db.Brewery) {
 			</div>
 		</div>
 		<div class="grid grid-cols-2 gap-y-5 gap-x-8">
-			<form class="col-span-1">
-				<div>
-					<label for="name" class="text-sm font-medium leading-10">
-						<span>Name</span>
-					</label>
-					<input
-						type="text"
-						id="name"
-						name="name"
-						placeholder=""
-						value={ brewery.Name }
-						autocapitalize="none"
-						autocomplete="name"
-						autocorrect="off"
-						class="flex rounded w-full border border-input border-gray-300 bg-transparent px-3 py-3 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-					/>
+			@BreweryForm(params, errors)
+		</div>
+	</div>
+}
+
+templ BreweryForm(params BreweryFormParams, errs BreweryFormErrors) {
+	<div>
+		<form
+			class="col-span-1"
+			hx-post={ fmt.Sprintf("/workspace/brewery/%d", params.Id) }
+			hx-trigger="submit"
+			hx-swap="innerHTML"
+		>
+			<input type="hidden" id="id" name="id" value={ fmt.Sprint(params.Id) }/>
+			<div
+				if errs.Name != "" {
+					class="form-group has-err"
+				}
+			>
+				<label for="name" class="text-sm font-medium leading-10">
+					<span>Name</span>
+				</label>
+				<input
+					type="text"
+					id="name"
+					name="name"
+					placeholder=""
+					value={ params.Name }
+					autocapitalize="none"
+					autocomplete="off"
+					autocorrect="off"
+					class="flex rounded w-full border border-input border-gray-300 bg-transparent px-3 py-3 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+				/>
+				<span class="mt-1 text-sm form-group-error text-red-600">{ errs.Name }</span>
+			</div>
+			<div
+				if errs.Country != "" {
+					class="form-group has-err"
+				}
+			>
+				<label for="name" class="text-sm font-medium leading-10">
+					<span>Country</span>
+				</label>
+				<input type="hidden" id="selected-country" name="selectedCountry" value={ params.CountryCode }/>
+				<div hx-get={ "/geo/countries?hasBreweries=true" } hx-trigger="load">
+					<img alt="Loading ..." width="30" src="/img/tail-spin.svg"/>
 				</div>
-				<div>
-					<label for="name" class="text-sm font-medium leading-10">
-						<span>Country</span>
-					</label>
-					<input type="hidden" id="selected-country" name="selectedCountry" value={ brewery.Country.Cca2 }/>
-					<div hx-get={ "/geo/countries?hasBreweries=true" } hx-trigger="load">
-						<img alt="Loading ..." width="30" src="/img/tail-spin.svg"/>
-					</div>
-				</div>
-				<div>
-					<label for="city" class="text-sm font-medium leading-10">
-						<span>City</span>
-					</label>
-					<input type="hidden" id="selected-city" name="selectedCity" value={ fmt.Sprint(brewery.City.Id) }/>
-					<div id="cityContainer"></div>
-				</div>
-				<div class="mt-6">
-					<button class="whitespace-nowrap bg-blue-700 px-6 py-3 text-sm border-blue-700 text-white" type="submit">
-						<span class="btn-content">Update brewery</span>
-					</button>
-				</div>
-			</form>
+				<span class="mt-1 text-sm form-group-error text-red-600">{ errs.Country }</span>
+			</div>
+			<div
+				if errs.City != "" {
+					class="form-group has-err"
+				}
+			>
+				<label for="city" class="text-sm font-medium leading-10">
+					<span>City</span>
+				</label>
+				<input type="hidden" id="selected-city" name="selectedCity" value={ fmt.Sprint(params.CityId) }/>
+				<div id="cityContainer"></div>
+				<span class="mt-1 text-sm form-group-error text-red-600">{ errs.City }</span>
+			</div>
+			<div class="mt-6">
+				<button
+					type="submit"
+					class="whitespace-nowrap bg-blue-700 px-6 py-3 text-sm border-blue-700 text-white"
+				>
+					<span class="btn-content">Update brewery</span>
+				</button>
+			</div>
+		</form>
+		<div id="alerts" hx-swap-oob="true">
+			Saved!
 		</div>
 	</div>
 }
