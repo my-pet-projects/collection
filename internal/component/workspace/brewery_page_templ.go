@@ -234,7 +234,7 @@ func BreweryForm(params BreweryFormParams, errs BreweryFormErrors) templ.Compone
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</span></div><div class=\"mt-6\"><button type=\"submit\" class=\"whitespace-nowrap bg-blue-700 px-6 py-3 text-sm border-blue-700 text-white\"><span class=\"btn-content\">Update brewery</span></button></div></form><div id=\"alerts\" hx-swap-oob=\"true\">Saved!</div></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</span></div><div class=\"mt-6\"><button type=\"submit\" class=\"whitespace-nowrap bg-blue-700 px-6 py-3 text-sm border-blue-700 text-white\"><span class=\"btn-content\">Update brewery</span></button></div></form></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
