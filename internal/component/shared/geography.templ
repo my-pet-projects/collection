@@ -66,40 +66,29 @@ func citiesJson(cities []db.City) string {
 	return string(bytes)
 }
 
+// On initial load "country-change-choice" event is being ignored for some reason, so there is a hack with hx-trigger.
+// 1. As a workaround for the lost first "country-change-choice" event, hx-trigger has "load" option, so that hx-get could be triggered
+// on document load event. For that case countryIso parameter is taken from the "selected-country" element. That is ugly, but that works.
+// 2. hx-trigger has "country-change-choice", so that hx-get is triggered on every country change, as it should be. In that case countryIso
+// parameter is taken from the event details.
 templ CountriesSelector(countriesData CountriesData) {
 	<div hx-ext="path-params">
-		<select
-			id="country"
+		<app-select
 			name="country"
-			class="choices-select"
-			autocomplete="off"
 			hx-get="/geo/countries/{countryIso}/cities"
-			hx-vals="js:{countryIso: event.target.value.toLowerCase()}"
-			hx-trigger="change"
+			hx-vals="js:{countryIso: event ? event.detail.choice.value.toLowerCase() : document.getElementById('selected-country')?.value}"
+			hx-trigger="country-change-choice from:document, load"
 			hx-target="#cityContainer"
 			hx-swap="innerHTML"
 			hx-params="countryIso"
 			data-items={ countriesJson(countriesData) }
-		></select>
+		></app-select>
 	</div>
-	<script type="text/javascript">
-		initializeChoices('country');
-	</script>
 }
 
 templ CitiesSelector(cities []db.City) {
-	<div>
-		<select
-			id="city"
-			name="city"
-			class="choices-select"
-			autocomplete="off"
-			data-items={ citiesJson(cities) }
-		>
-			<option value="" disabled selected>Select a city</option>
-		</select>
-	</div>
-	<script type="text/javascript">
-		initializeChoices('city');
-	</script>
+	<app-select
+		name="city"
+		data-items={ citiesJson(cities) }
+	></app-select>
 }

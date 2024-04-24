@@ -221,14 +221,14 @@ func BreweryForm(params BreweryFormParams, errs BreweryFormErrors) templ.Compone
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><div id=\"cityContainer\"></div><span class=\"mt-1 text-sm form-group-error text-red-600\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><div id=\"cityContainer\">city element will be here, select the country first</div><span class=\"mt-1 text-sm form-group-error text-red-600\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(errs.City)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/workspace/brewery_page.templ`, Line: 82, Col: 72}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/workspace/brewery_page.templ`, Line: 84, Col: 72}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
