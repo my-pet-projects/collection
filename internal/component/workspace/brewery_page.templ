@@ -78,7 +78,9 @@ templ BreweryForm(params BreweryFormParams, errs BreweryFormErrors) {
 					<span>City</span>
 				</label>
 				<input type="hidden" id="selected-city" name="selectedCity" value={ fmt.Sprint(params.CityId) }/>
-				<div id="cityContainer"></div>
+				<div id="cityContainer">
+					city element will be here, select the country first
+				</div>
 				<span class="mt-1 text-sm form-group-error text-red-600">{ errs.City }</span>
 			</div>
 			<div class="mt-6">
