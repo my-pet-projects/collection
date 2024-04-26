@@ -29,9 +29,9 @@ templ BreweryForm(params BreweryFormParams, errs BreweryFormErrors) {
 	<div>
 		<form
 			class="col-span-1"
-			hx-post={ fmt.Sprintf("/workspace/brewery/%d", params.Id) }
+			hx-post="/workspace/brewery"
 			hx-trigger="submit"
-			hx-swap="innerHTML"
+			hx-swap="outerHTML"
 		>
 			<input type="hidden" id="id" name="id" value={ fmt.Sprint(params.Id) }/>
 			<div
@@ -65,7 +65,7 @@ templ BreweryForm(params BreweryFormParams, errs BreweryFormErrors) {
 				</label>
 				<input type="hidden" id="selected-country" name="selectedCountry" value={ params.CountryCode }/>
 				<div hx-get={ "/geo/countries?hasBreweries=true" } hx-trigger="load">
-					<img alt="Loading ..." width="30" src="/img/tail-spin.svg"/>
+					<img alt="Loading ..." class="py-2" width="30" src="/img/tail-spin.svg"/>
 				</div>
 				<span class="mt-1 text-sm form-group-error text-red-600">{ errs.Country }</span>
 			</div>
@@ -79,7 +79,15 @@ templ BreweryForm(params BreweryFormParams, errs BreweryFormErrors) {
 				</label>
 				<input type="hidden" id="selected-city" name="selectedCity" value={ fmt.Sprint(params.CityId) }/>
 				<div id="cityContainer">
-					city element will be here, select the country first
+					<select
+						type="text"
+						id="name"
+						name="name"
+						class="flex rounded w-full border border-input border-gray-300 bg-transparent px-3 py-3 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+						disabled
+					>
+						<option>Select a country first</option>
+					</select>
 				</div>
 				<span class="mt-1 text-sm form-group-error text-red-600">{ errs.City }</span>
 			</div>
@@ -88,9 +96,22 @@ templ BreweryForm(params BreweryFormParams, errs BreweryFormErrors) {
 					type="submit"
 					class="whitespace-nowrap bg-blue-700 px-6 py-3 text-sm border-blue-700 text-white"
 				>
-					<span class="btn-content">Update brewery</span>
+					<span class="btn-content">
+						if params.IsNew() {
+							Create bewery
+						} else {
+							Update brewery
+						}
+					</span>
 				</button>
 			</div>
+			if errs.Error != "" {
+				<div class="mt-6">
+					<div class="p-4 text-sm text-red-800 rounded-lg bg-red-50" role="alert">
+						{ errs.Error }
+					</div>
+				</div>
+			}
 		</form>
 	</div>
 }

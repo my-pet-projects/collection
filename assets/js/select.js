@@ -7,6 +7,7 @@ customElements.define(
     }
     connectedCallback() {
       const name = this.getAttribute("name");
+      const placeholder = this.getAttribute("data-placeholder");
       const eventName = `${name}-change-choice`;
       const searchFields = [
         "label",
@@ -32,6 +33,9 @@ customElements.define(
         false
       );
       const choices = new Choices(choicesEl, {
+        placeholder: placeholder != null && placeholder.length > 0,
+        placeholderValue: placeholder,
+        searchPlaceholderValue: placeholder,
         itemSelectText: "",
         searchFields,
         searchEnabled: true,
