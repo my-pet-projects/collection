@@ -25,8 +25,13 @@ func (p BreweryFormParams) Validate() (BreweryFormErrors, bool) {
 	return errs, hasErrs
 }
 
+func (p BreweryFormParams) IsNew() bool {
+	return p.Id == 0
+}
+
 type BreweryFormErrors struct {
 	Name    string
 	Country string
 	City    string
+	Error   string
 }

@@ -22,17 +22,16 @@ func NewBreweryService(breweryStore *db.BreweryStore, geoStore *db.GeographyStor
 	}
 }
 
-func (s BreweryService) CreateBrewery(name string, website *string, geoId int, oldId string) (*db.Brewery, error) {
+func (s BreweryService) CreateBrewery(name string, geoId int) (*db.Brewery, error) {
 	brewery := db.Brewery{
-		Name:    name,
-		Website: website,
-		GeoId:   geoId,
-		OldId:   oldId,
+		Name:  name,
+		GeoId: geoId,
 	}
-	_, insertErr := s.breweryStore.InsertBrewery(brewery)
+	insertedId, insertErr := s.breweryStore.InsertBrewery(brewery)
 	if insertErr != nil {
 		return nil, errors.Wrap(insertErr, "insert brewery")
 	}
+	brewery.Id = insertedId
 	return &brewery, nil
 }
 

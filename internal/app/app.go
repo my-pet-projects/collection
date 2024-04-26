@@ -59,8 +59,9 @@ func InitializeRouter() (http.Handler, error) {
 	e.GET("/workspace", workspaceHandler.GetWorkspace)
 	e.GET("/workspace/beer", workspaceHandler.GetBeerWorkspace)
 	e.GET("/workspace/brewery", workspaceHandler.GetBreweryWorkspace)
+	e.GET("/workspace/brewery/create", workspaceHandler.CreateBreweryPage)
 	e.GET("/workspace/brewery/:id", workspaceHandler.GetBreweryPage)
-	e.POST("/workspace/brewery/:id", workspaceHandler.PostBreweryPage)
+	e.POST("/workspace/brewery", workspaceHandler.PostBreweryPage)
 
 	return e, nil
 }
