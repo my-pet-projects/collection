@@ -17,7 +17,7 @@ type Brewery struct {
 	Website     *string
 	GeoId       int
 	CountryCode string
-	OldId       string
+	OldId       *string
 	Country     *Country
 	City        *City
 }
@@ -86,9 +86,9 @@ func (s BreweryStore) FetchBreweries() ([]Brewery, error) {
 	return breweries, nil
 }
 
-func (s BreweryStore) InsertBrewery(brewery Brewery) (int64, error) {
-	query := "INSERT INTO breweries (name, website, geo_id, old_id) VALUES (?, ?, ?, ?)"
-	res, resErr := s.db.Exec(query, brewery.Name, brewery.Website, brewery.GeoId, brewery.OldId)
+func (s BreweryStore) InsertBrewery(brewery Brewery) (int, error) {
+	query := "INSERT INTO breweries (name, geo_id) VALUES (?, ?)"
+	res, resErr := s.db.Exec(query, brewery.Name, brewery.GeoId)
 	if resErr != nil {
 		return 0, errors.Wrap(resErr, "insert brewery")
 	}
@@ -96,7 +96,7 @@ func (s BreweryStore) InsertBrewery(brewery Brewery) (int64, error) {
 	if err != nil {
 		return 0, errors.Wrap(resErr, "last inserted brewery")
 	}
-	return id, nil
+	return int(id), nil
 }
 
 func (s BreweryStore) UpdateBrewery(brewery Brewery) error {

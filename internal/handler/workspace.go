@@ -67,18 +67,19 @@ func (h WorkspaceHandler) GetBreweryPage(ctx echo.Context) error {
 	return workspace.WorkspaceBreweryPage(breweryPage).Render(ctx.Request().Context(), ctx.Response().Writer)
 }
 
+func (h WorkspaceHandler) CreateBreweryPage(ctx echo.Context) error {
+	page := workspace.NewPage(ctx, "Create Brewery")
+	breweryPage := workspace.BreweryPage{
+		Page: page,
+	}
+	return render(ctx, workspace.WorkspaceBreweryPage(breweryPage))
+}
+
 func (h WorkspaceHandler) PostBreweryPage(ctx echo.Context) error {
 	idStr := ctx.FormValue("id")
-	id, parseErr := strconv.Atoi(idStr)
-	if parseErr != nil {
-
-	}
+	id, _ := strconv.Atoi(idStr)
 	geoIdStr := ctx.FormValue("city")
-	geoId, parseErr := strconv.Atoi(geoIdStr)
-	if parseErr != nil {
-
-	}
-
+	geoId, _ := strconv.Atoi(geoIdStr)
 	formParams := workspace.BreweryFormParams{
 		Id:          id,
 		Name:        strings.TrimSpace(ctx.FormValue("name")),
@@ -90,9 +91,20 @@ func (h WorkspaceHandler) PostBreweryPage(ctx echo.Context) error {
 		return render(ctx, workspace.BreweryForm(formParams, formErrs))
 	}
 
+	if formParams.Id == 0 {
+		newBrewery, createErr := h.breweryService.CreateBrewery(formParams.Name, formParams.CityId)
+		if createErr != nil {
+			h.logger.Error("create brewery", createErr)
+			return render(ctx, workspace.BreweryForm(formParams, workspace.BreweryFormErrors{Error: createErr.Error()}))
+		}
+		ctx.Response().Header().Set("HX-Redirect", fmt.Sprintf("/workspace/brewery/%d", newBrewery.Id))
+		return nil
+	}
+
 	updErr := h.breweryService.UpdateBrewery(formParams.Id, formParams.Name, formParams.CityId)
 	if updErr != nil {
-		return render(ctx, workspace.BreweryForm(formParams, workspace.BreweryFormErrors{}))
+		h.logger.Error("update brewery", updErr)
+		return render(ctx, workspace.BreweryForm(formParams, workspace.BreweryFormErrors{Error: updErr.Error()}))
 	}
 
 	return render(ctx, workspace.BreweryForm(formParams, workspace.BreweryFormErrors{}))

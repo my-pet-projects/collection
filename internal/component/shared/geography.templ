@@ -77,7 +77,7 @@ templ CountriesSelector(countriesData CountriesData) {
 			name="country"
 			hx-get="/geo/countries/{countryIso}/cities"
 			hx-vals="js:{countryIso: event ? event.detail.choice.value.toLowerCase() : document.getElementById('selected-country')?.value}"
-			hx-trigger="country-change-choice from:document, load"
+			hx-trigger="country-change-choice from:document, load[document.getElementById('selected-country')?.value.length > 0]"
 			hx-target="#cityContainer"
 			hx-swap="innerHTML"
 			hx-params="countryIso"

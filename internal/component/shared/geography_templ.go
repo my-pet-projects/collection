@@ -94,7 +94,7 @@ func CountriesSelector(countriesData CountriesData) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div hx-ext=\"path-params\"><app-select name=\"country\" hx-get=\"/geo/countries/{countryIso}/cities\" hx-vals=\"js:{countryIso: event ? event.detail.choice.value.toLowerCase() : document.getElementById(&#39;selected-country&#39;)?.value}\" hx-trigger=\"country-change-choice from:document, load\" hx-target=\"#cityContainer\" hx-swap=\"innerHTML\" hx-params=\"countryIso\" data-items=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div hx-ext=\"path-params\"><app-select name=\"country\" hx-get=\"/geo/countries/{countryIso}/cities\" hx-vals=\"js:{countryIso: event ? event.detail.choice.value.toLowerCase() : document.getElementById(&#39;selected-country&#39;)?.value}\" hx-trigger=\"country-change-choice from:document, load[document.getElementById(&#39;selected-country&#39;)?.value.length &gt; 0]\" hx-target=\"#cityContainer\" hx-swap=\"innerHTML\" hx-params=\"countryIso\" data-items=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

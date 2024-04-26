@@ -33,7 +33,7 @@ CREATE TABLE `breweries` (
   `name` varchar(100) NOT NULL,
   `website` varchar(100) DEFAULT NULL,
   `geo_id` bigint NOT NULL,
-  `old_id` varchar(100) NOT NULL,
+  `old_id` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_name_geo_id` (`name`,`geo_id`),
   KEY `fk_geo_id` (`geo_id`),
