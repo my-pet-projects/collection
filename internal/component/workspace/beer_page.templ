@@ -1,0 +1,119 @@
+package workspace
+
+import "fmt"
+import "github.com/my-pet-projects/collection/internal/component/shared"
+
+templ BeerPageLayout(page BeerPageData) {
+	@adminLayout(page.Page, BeerPage(page.FormParams, page.FormErrors))
+}
+
+templ BeerPage(params BeerFormParams, errors BeerFormErrors) {
+	<div class="flex-1 py-6 px-10">
+		<div>
+			<div class="mb-6">
+				<h1 class="pb-2 text-2xl font-semibold text-slate-800 border-b border-gray-400">Beer</h1>
+			</div>
+		</div>
+		<div class="grid grid-cols-2 gap-y-5 gap-x-8">
+			@BeerForm(params, errors)
+		</div>
+	</div>
+}
+
+templ BeerForm(params BeerFormParams, errs BeerFormErrors) {
+	<div>
+		<form
+			class="col-span-1"
+			hx-post="/workspace/beer"
+			hx-trigger="submit"
+			hx-swap="outerHTML"
+		>
+			<input type="hidden" id="id" name="id" value={ fmt.Sprint(params.Id) }/>
+			<div
+				if errs.Brand != "" {
+					class="form-group has-err"
+				}
+			>
+				<label for="name" class="text-sm font-medium leading-10">
+					<span>Brand</span>
+				</label>
+				<input
+					type="text"
+					id="brand"
+					name="brand"
+					placeholder=""
+					value={ params.Brand }
+					autocapitalize="none"
+					autocomplete="off"
+					autocorrect="off"
+					class="flex rounded w-full border border-input border-gray-300 bg-transparent px-3 py-3 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+				/>
+				<span class="mt-1 text-sm form-group-error text-red-600">{ errs.Brand }</span>
+			</div>
+			<div
+				if errs.Type != "" {
+					class="form-group has-err"
+				}
+			>
+				<label for="name" class="text-sm font-medium leading-10">
+					<span>Type</span>
+				</label>
+				<input
+					type="text"
+					id="type"
+					name="type"
+					placeholder=""
+					value={ params.Type }
+					autocapitalize="none"
+					autocomplete="off"
+					autocorrect="off"
+					class="flex rounded w-full border border-input border-gray-300 bg-transparent px-3 py-3 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+				/>
+				<span class="mt-1 text-sm form-group-error text-red-600">{ errs.Type }</span>
+			</div>
+			<div
+				if errs.Style != "" {
+					class="form-group has-err"
+				}
+			>
+				<label for="name" class="text-sm font-medium leading-10">
+					<span>Style</span>
+				</label>
+				@shared.StylesSelector(shared.StyleData{Styles: params.Styles, SelectedStyleId: params.StyleId})
+				<span class="mt-1 text-sm form-group-error text-red-600">{ errs.Style }</span>
+			</div>
+			<div
+				if errs.Brewery != "" {
+					class="form-group has-err"
+				}
+			>
+				<label for="name" class="text-sm font-medium leading-10">
+					<span>Brewery</span>
+				</label>
+				@shared.BrewerySelector(shared.BreweriesData{Breweries: params.Breweries, SelectedBrewery: params.BreweryId})
+				<span class="mt-1 text-sm form-group-error text-red-600">{ errs.Brewery }</span>
+			</div>
+			<div class="mt-6">
+				<button
+					type="submit"
+					class="whitespace-nowrap bg-blue-700 px-6 py-3 text-sm border-blue-700 text-white"
+				>
+					<span class="btn-content">
+						if params.IsNew() {
+							Create beer
+						} else {
+							Update beer
+						}
+					</span>
+				</button>
+			</div>
+			if errs.Error != "" {
+				<div class="mt-6">
+					<div class="p-4 text-sm text-red-800 rounded-lg bg-red-50" role="alert">
+						{ errs.Error }
+					</div>
+				</div>
+			}
+		</form>
+	</div>
+}

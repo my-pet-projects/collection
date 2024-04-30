@@ -33,11 +33,12 @@ func InitializeRouter() (http.Handler, error) {
 
 	geoStore := db.NewGeographyStore(dbClient, logger)
 	beerStore := db.NewBeerStore(dbClient, logger)
+	styleStore := db.NewBeerStyleStore(dbClient, logger)
 	breweryStore := db.NewBreweryStore(dbClient, logger)
 
 	geoService := service.NewGeographyService(&geoStore, logger)
 	breweryService := service.NewBreweryService(&breweryStore, &geoStore, logger)
-	beerService := service.NewBeerService(&beerStore, &breweryStore, logger)
+	beerService := service.NewBeerService(&beerStore, &styleStore, &breweryStore, logger)
 
 	geoHandler := handler.NewGeographyHandler(geoService, logger)
 	breweryHandler := handler.NewBreweryHandler(breweryService, geoService, logger)
@@ -58,6 +59,9 @@ func InitializeRouter() (http.Handler, error) {
 
 	e.GET("/workspace", workspaceHandler.GetWorkspace)
 	e.GET("/workspace/beer", workspaceHandler.GetBeerWorkspace)
+	e.GET("/workspace/beer/:id", workspaceHandler.GetBeerPage)
+	e.GET("/workspace/beer/create", workspaceHandler.CreateBeerPage)
+	e.POST("/workspace/beer", workspaceHandler.PostBeerPage)
 	e.GET("/workspace/brewery", workspaceHandler.GetBreweryWorkspace)
 	e.GET("/workspace/brewery/create", workspaceHandler.CreateBreweryPage)
 	e.GET("/workspace/brewery/:id", workspaceHandler.GetBreweryPage)
