@@ -180,12 +180,3 @@ templ BreweriesPage(breweries []db.Brewery) {
 		</tbody>
 	</table>
 }
-
-templ BeersPage(beers []db.Beer) {
-	<div>beers</div>
-	for _, beer := range beers {
-		<div>
-			{ beer.Brand }
-		</div>
-	}
-}

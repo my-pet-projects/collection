@@ -42,7 +42,44 @@ func (h WorkspaceHandler) GetBreweryWorkspace(ctx echo.Context) error {
 
 func (h WorkspaceHandler) GetBeerWorkspace(ctx echo.Context) error {
 	page := workspace.NewPage(ctx, "Beer Workspace")
-	return workspace.WorkspaceBeerPage(page).Render(ctx.Request().Context(), ctx.Response().Writer)
+	beerPage := workspace.BeerPageData{
+		Page: page,
+	}
+	return workspace.WorkspaceBeerPage(beerPage).Render(ctx.Request().Context(), ctx.Response().Writer)
+}
+
+func (h WorkspaceHandler) GetBeerPage(ctx echo.Context) error {
+	beerId, parseErr := strconv.Atoi(ctx.Param("id"))
+	if parseErr != nil {
+		return ctx.HTML(http.StatusBadRequest, parseErr.Error())
+	}
+	beer, beerErr := h.beerService.GetBeer(beerId)
+	if beerErr != nil {
+		return ctx.HTML(http.StatusOK, beerErr.Error())
+	}
+	breweries, breweriesErr := h.breweryService.ListBreweries()
+	if breweriesErr != nil {
+		return ctx.HTML(http.StatusOK, breweriesErr.Error())
+	}
+	styles, stylesErr := h.beerService.ListBeerStyles()
+	if stylesErr != nil {
+		return ctx.HTML(http.StatusOK, stylesErr.Error())
+	}
+
+	page := workspace.NewPage(ctx, fmt.Sprintf("Edit Beer - %s", beer.Brand))
+	beerPage := workspace.BeerPageData{
+		Page: page,
+		FormParams: workspace.BeerFormParams{
+			Id:        beer.Id,
+			Brand:     beer.Brand,
+			Type:      *beer.Type,
+			BreweryId: beer.BreweryId,
+			Breweries: breweries,
+			StyleId:   beer.StyleId,
+			Styles:    styles,
+		},
+	}
+	return render(ctx, workspace.BeerPageLayout(beerPage))
 }
 
 func (h WorkspaceHandler) GetBreweryPage(ctx echo.Context) error {
