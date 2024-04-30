@@ -44,21 +44,8 @@ templ WorkspacePage(page Page) {
 	@adminLayout(page, nil)
 }
 
-templ WorkspaceBeerPage(page Page) {
-	@adminLayout(page, beersList())
-}
-
 templ WorkspaceBreweriesListPage(page Page) {
 	@adminLayout(page, breweriesList())
-}
-
-templ beersList() {
-	<div>
-		beersList
-	</div>
-	<div hx-get="/beer" hx-trigger="load">
-		<img alt="Loading..." width="30" src="/img/tail-spin.svg"/>
-	</div>
 }
 
 templ breweriesList() {
