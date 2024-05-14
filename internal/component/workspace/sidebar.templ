@@ -24,6 +24,12 @@ templ sideBar(page Page) {
 								<span class="ml-3" sidebar-toggle-item>Breweries</span>
 							</a>
 						</li>
+						<li>
+							<a href="/workspace/beer-style" class={ "flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group", templ.KV("bg-gray-100", page.URL == "/workspace/beer-styles") }>
+								<svg class="h-6 w-6 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line> <line x1="8" y1="12" x2="21" y2="12"></line> <line x1="8" y1="18" x2="21" y2="18"></line> <line x1="3" y1="6" x2="3.01" y2="6"></line> <line x1="3" y1="12" x2="3.01" y2="12"></line> <line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+								<span class="ml-3" sidebar-toggle-item>Styles</span>
+							</a>
+						</li>
 					</ul>
 					<div class="pt-2 space-y-2">
 						<a href="/" target="_blank" class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group">

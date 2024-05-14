@@ -7,6 +7,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/my-pet-projects/collection/internal/db"
+	"github.com/my-pet-projects/collection/internal/model"
 )
 
 type BeerService struct {
@@ -84,10 +85,51 @@ func (s BeerService) ListBeers() ([]db.Beer, error) {
 	return beers, nil
 }
 
-func (s BeerService) ListBeerStyles() ([]db.BeerStyle, error) {
-	styles, stylesErr := s.styleStore.FetchBeerStyles()
+func (s BeerService) ListBeerStyles() ([]model.BeerStyle, error) {
+	styles, stylesErr := s.styleStore.FetchBeerStyles(model.BeerStyleFilter{})
 	if stylesErr != nil {
 		return nil, errors.Wrap(stylesErr, "fetch beer styles")
 	}
 	return styles, nil
+}
+
+func (s BeerService) FilterBeerStyles(filter model.BeerStyleFilter) ([]model.BeerStyle, error) {
+	styles, stylesErr := s.styleStore.FetchBeerStyles(filter)
+	if stylesErr != nil {
+		return nil, errors.Wrap(stylesErr, "fetch beer styles")
+	}
+	return styles, nil
+}
+
+func (s BeerService) GetBeerStyle(id int) (*model.BeerStyle, error) {
+	style, styleErr := s.styleStore.GetBeerStyle(id)
+	if styleErr != nil {
+		return nil, errors.Wrap(styleErr, "get beer style")
+	}
+	return &style, nil
+}
+
+func (s BeerService) CreateBeerStyle(style model.BeerStyle) (*model.BeerStyle, error) {
+	id, styleErr := s.styleStore.InsertBeerStyle(style)
+	if styleErr != nil {
+		return nil, errors.Wrap(styleErr, "update beer style")
+	}
+	style.Id = id
+	return &style, nil
+}
+
+func (s BeerService) UpdateBeerStyle(style model.BeerStyle) error {
+	updErr := s.styleStore.UpdateBeerStyle(style)
+	if updErr != nil {
+		return errors.Wrap(updErr, "update beer style")
+	}
+	return nil
+}
+
+func (s BeerService) DeleteBeerStyle(id int) error {
+	delErr := s.styleStore.DeleteBeerStyle(id)
+	if delErr != nil {
+		return errors.Wrap(delErr, "delete beer style")
+	}
+	return nil
 }
