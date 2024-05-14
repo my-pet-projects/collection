@@ -1,6 +1,9 @@
 package workspace
 
-import "github.com/my-pet-projects/collection/internal/db"
+import (
+	"github.com/my-pet-projects/collection/internal/db"
+	"github.com/my-pet-projects/collection/internal/model"
+)
 
 type BeerPageData struct {
 	Page
@@ -15,7 +18,7 @@ type BeerFormParams struct {
 	StyleId   *int
 	BreweryId *int
 	Breweries []db.Brewery
-	Styles    []db.BeerStyle
+	Styles    []model.BeerStyle
 }
 
 type BeerFormErrors struct {
