@@ -4,33 +4,68 @@ import (
 	"context"
 	"log/slog"
 	"net/http"
-	"os"
 
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
 	"github.com/pkg/errors"
 	"golang.org/x/sync/errgroup"
 
 	"github.com/my-pet-projects/collection/internal/config"
 	"github.com/my-pet-projects/collection/internal/db"
 	"github.com/my-pet-projects/collection/internal/handler"
+	"github.com/my-pet-projects/collection/internal/log"
 	"github.com/my-pet-projects/collection/internal/server"
 	"github.com/my-pet-projects/collection/internal/service"
 )
 
-// InitializeRouter instantiates HTTP handler with application routes.
-func InitializeRouter() (http.Handler, error) { //nolint:funlen
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+// Start bootstraps and starts the application.
+func Start(ctx context.Context) error {
 	cfg, cfgErr := config.NewConfig()
 	if cfgErr != nil {
-		return nil, errors.Wrap(cfgErr, "config")
+		return errors.Wrap(cfgErr, "config")
 	}
+
+	logger := log.NewLogger(cfg)
 
 	dbClient, dbClientErr := db.NewClient(cfg)
 	if dbClientErr != nil {
-		return nil, errors.Wrap(dbClientErr, "db")
+		return errors.Wrap(dbClientErr, "db")
 	}
 
+	router, routerErr := InitializeRouter(dbClient, logger)
+	if routerErr != nil {
+		return errors.Wrap(routerErr, "router")
+	}
+	server := server.NewServer(ctx, router, logger)
+
+	grp, grpCtx := errgroup.WithContext(ctx)
+	grp.Go(func() error {
+		startErr := server.Start(ctx)
+		if startErr != nil {
+			return errors.Wrap(startErr, "server start")
+		}
+		return nil
+	})
+	grp.Go(func() error {
+		<-grpCtx.Done()
+		logger.Info("Received interruption signal")
+		shutdownErr := server.Shutdown(ctx)
+		if shutdownErr != nil {
+			return errors.Wrap(shutdownErr, "server shutdown")
+		}
+		return nil
+	})
+
+	if appErr := grp.Wait(); appErr != nil {
+		return errors.Wrap(appErr, "application")
+	}
+
+	logger.Info("Application shutdown")
+
+	return nil
+}
+
+// InitializeRouter instantiates HTTP handler with application routes.
+func InitializeRouter(dbClient *db.DbClient, logger *slog.Logger) (http.Handler, error) {
 	geoStore := db.NewGeographyStore(dbClient, logger)
 	beerStore := db.NewBeerStore(dbClient, logger)
 	styleStore := db.NewBeerStyleStore(dbClient, logger)
@@ -46,7 +81,7 @@ func InitializeRouter() (http.Handler, error) { //nolint:funlen
 	workspaceHandler := handler.NewWorkspaceHandler(beerService, breweryService, geoService, logger)
 
 	e := echo.New()
-	e.Use(middleware.Logger())
+	e.Use(log.NewLoggingMiddleware(logger))
 	e.Static("/", "./assets")
 
 	e.GET("/geo", geoHandler.ListCountries)
@@ -79,39 +114,4 @@ func InitializeRouter() (http.Handler, error) { //nolint:funlen
 	e.GET("/workspace/beer-style/:id/edit", workspaceHandler.BeerStyleEditHandler)
 
 	return e, nil
-}
-
-// Start bootstraps and starts the application.
-func Start(ctx context.Context) error {
-	router, routerErr := InitializeRouter()
-	if routerErr != nil {
-		return errors.Wrap(routerErr, "initialize router")
-	}
-	server := server.NewServer(ctx, router)
-
-	grp, grpCtx := errgroup.WithContext(ctx)
-	grp.Go(func() error {
-		startErr := server.Start(ctx)
-		if startErr != nil {
-			return errors.Wrap(startErr, "server start")
-		}
-		return nil
-	})
-	grp.Go(func() error {
-		<-grpCtx.Done()
-		slog.Info("Received interruption signal")
-		shutdownErr := server.Shutdown(ctx)
-		if shutdownErr != nil {
-			return errors.Wrap(shutdownErr, "server shutdown")
-		}
-		return nil
-	})
-
-	if appErr := grp.Wait(); appErr != nil {
-		return errors.Wrap(appErr, "application")
-	}
-
-	slog.Info("Application shutdown")
-
-	return nil
 }
