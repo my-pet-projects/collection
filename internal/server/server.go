@@ -14,6 +14,7 @@ import (
 // Server represents web server.
 type Server struct {
 	instance *http.Server
+	logger   *slog.Logger
 }
 
 const (
@@ -24,7 +25,7 @@ const (
 )
 
 // NewServer instantiates web server.
-func NewServer(ctx context.Context, router http.Handler) Server {
+func NewServer(ctx context.Context, router http.Handler, logger *slog.Logger) Server {
 	server := &http.Server{
 		Addr:    fmt.Sprintf("%s:%d", "127.0.0.1", 9080),
 		Handler: router,
@@ -37,12 +38,13 @@ func NewServer(ctx context.Context, router http.Handler) Server {
 	}
 	return Server{
 		instance: server,
+		logger:   logger,
 	}
 }
 
 // Start starts web server.
 func (s Server) Start(ctx context.Context) error {
-	slog.Info("Starting server")
+	s.logger.Info("Starting server")
 	if err := s.instance.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
 		return errors.Wrap(err, "start server")
 	}
@@ -54,18 +56,18 @@ func (s Server) Shutdown(ctx context.Context) error {
 	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), shutdownTimeout)
 	defer shutdownCancel()
 
-	slog.Info("Shutting down server")
+	s.logger.Info("Shutting down server")
 
 	shutdownErr := s.instance.Shutdown(shutdownCtx) //nolint:contextcheck
 	if errors.Is(shutdownErr, context.DeadlineExceeded) {
-		slog.Warn("Some open connections were interrupted after shutdown timeout")
+		s.logger.Warn("Some open connections were interrupted after shutdown timeout")
 		return nil
 	}
 	if shutdownErr != nil {
 		return errors.Wrap(shutdownErr, "server shutdown")
 	}
 
-	slog.Info("Server has been gracefully shutdown")
+	s.logger.Info("Server has been gracefully shutdown")
 
 	return nil
 }

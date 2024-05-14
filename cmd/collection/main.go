@@ -15,7 +15,7 @@ func main() {
 	appErr := app.Start(ctx)
 	cancel()
 	if appErr != nil {
-		slog.Error("Failed to start application", appErr)
+		slog.Error("Failed to start application", slog.Any("error", appErr))
 		os.Exit(1)
 	}
 	os.Exit(0)
