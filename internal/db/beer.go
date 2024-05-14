@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
+
+	"github.com/my-pet-projects/collection/internal/model"
 )
 
 type BeerStore struct {
@@ -23,7 +25,7 @@ type Beer struct {
 	OldImageIds *string
 	Brewery     *Brewery
 	StyleId     *int
-	Style       *BeerStyle
+	Style       *model.BeerStyle
 }
 
 func NewBeerStore(db *DbClient, logger *slog.Logger) BeerStore {
@@ -35,7 +37,7 @@ func NewBeerStore(db *DbClient, logger *slog.Logger) BeerStore {
 
 func (s BeerStore) GetBeer(id int) (Beer, error) {
 	var beer Beer
-	var style BeerStyle
+	var style model.BeerStyle
 	var brewery Brewery
 	var city City
 	var country Country
@@ -87,7 +89,7 @@ func (s BeerStore) FetchBeers() ([]Beer, error) {
 	beers := []Beer{}
 	for res.Next() {
 		var beer Beer
-		var style BeerStyle
+		var style model.BeerStyle
 		var brewery Brewery
 		var city City
 		var country Country

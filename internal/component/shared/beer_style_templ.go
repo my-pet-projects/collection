@@ -10,12 +10,12 @@ import "context"
 import "io"
 import "bytes"
 
-import "github.com/my-pet-projects/collection/internal/db"
+import "github.com/my-pet-projects/collection/internal/model"
 import "fmt"
 import "encoding/json"
 
 type StyleData struct {
-	Styles          []db.BeerStyle
+	Styles          []model.BeerStyle
 	SelectedStyleId *int
 }
 

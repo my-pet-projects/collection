@@ -19,7 +19,7 @@ import (
 )
 
 // InitializeRouter instantiates HTTP handler with application routes.
-func InitializeRouter() (http.Handler, error) {
+func InitializeRouter() (http.Handler, error) { //nolint:funlen
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	cfg, cfgErr := config.NewConfig()
 	if cfgErr != nil {
@@ -62,10 +62,21 @@ func InitializeRouter() (http.Handler, error) {
 	e.GET("/workspace/beer/:id", workspaceHandler.GetBeerPage)
 	e.GET("/workspace/beer/create", workspaceHandler.CreateBeerPage)
 	e.POST("/workspace/beer", workspaceHandler.PostBeerPage)
+
 	e.GET("/workspace/brewery", workspaceHandler.GetBreweryWorkspace)
 	e.GET("/workspace/brewery/create", workspaceHandler.CreateBreweryPage)
 	e.GET("/workspace/brewery/:id", workspaceHandler.GetBreweryPage)
 	e.POST("/workspace/brewery", workspaceHandler.PostBreweryPage)
+
+	e.GET("/workspace/beer-style", workspaceHandler.BeerStyleLayoutHandler)
+	e.POST("/workspace/beer-style/search", workspaceHandler.ListBeerStyles)
+	e.GET("/workspace/beer-style/create", workspaceHandler.BeerStyleCreateViewHandler)
+	e.GET("/workspace/beer-style/create-cancel", workspaceHandler.BeerStyleCreateCancelViewHandler)
+	e.PUT("/workspace/beer-style", workspaceHandler.BeerStyleCreateHandler)
+	e.GET("/workspace/beer-style/:id", workspaceHandler.BeerStyleViewHandler)
+	e.PUT("/workspace/beer-style/:id", workspaceHandler.BeerStyleSaveHandler)
+	e.DELETE("/workspace/beer-style/:id", workspaceHandler.BeerStyleDeleteHandler)
+	e.GET("/workspace/beer-style/:id/edit", workspaceHandler.BeerStyleEditHandler)
 
 	return e, nil
 }
