@@ -2,9 +2,12 @@ package app
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"net/http"
 
+	awscfg "github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
 	"golang.org/x/sync/errgroup"
@@ -15,6 +18,7 @@ import (
 	"github.com/my-pet-projects/collection/internal/log"
 	"github.com/my-pet-projects/collection/internal/server"
 	"github.com/my-pet-projects/collection/internal/service"
+	"github.com/my-pet-projects/collection/internal/storage"
 )
 
 // Start bootstraps and starts the application.
@@ -65,20 +69,30 @@ func Start(ctx context.Context) error {
 }
 
 // InitializeRouter instantiates HTTP handler with application routes.
-func InitializeRouter(dbClient *db.DbClient, logger *slog.Logger) (http.Handler, error) {
+func InitializeRouter(dbClient *db.DbClient, logger *slog.Logger) (http.Handler, error) { //nolint: funlen
 	geoStore := db.NewGeographyStore(dbClient, logger)
 	beerStore := db.NewBeerStore(dbClient, logger)
 	styleStore := db.NewBeerStyleStore(dbClient, logger)
 	breweryStore := db.NewBreweryStore(dbClient, logger)
 
+	sdkConfig, err := awscfg.LoadDefaultConfig(context.TODO())
+	if err != nil {
+		fmt.Println("Couldn't load default configuration. Have you set up your AWS account?")
+		fmt.Println(err)
+	}
+	s3Client := s3.NewFromConfig(sdkConfig)
+	s3Storage := storage.NewS3Storage(s3Client, logger)
+
 	geoService := service.NewGeographyService(&geoStore, logger)
 	breweryService := service.NewBreweryService(&breweryStore, &geoStore, logger)
 	beerService := service.NewBeerService(&beerStore, &styleStore, &breweryStore, logger)
+	imageService := service.NewImageService(&s3Storage, logger)
 
 	geoHandler := handler.NewGeographyHandler(geoService, logger)
 	breweryHandler := handler.NewBreweryHandler(breweryService, geoService, logger)
 	beerHandler := handler.NewBeerHandler(beerService, breweryService, logger)
 	workspaceHandler := handler.NewWorkspaceHandler(beerService, breweryService, geoService, logger)
+	uploadHandler := handler.NewUploadHandler(imageService, logger)
 
 	e := echo.New()
 	e.Use(log.NewLoggingMiddleware(logger))
@@ -112,6 +126,9 @@ func InitializeRouter(dbClient *db.DbClient, logger *slog.Logger) (http.Handler,
 	e.PUT("/workspace/beer-style/:id", workspaceHandler.BeerStyleSaveHandler)
 	e.DELETE("/workspace/beer-style/:id", workspaceHandler.BeerStyleDeleteHandler)
 	e.GET("/workspace/beer-style/:id/edit", workspaceHandler.BeerStyleEditHandler)
+
+	imageGroup := e.Group("/workspace/images")
+	imageGroup.GET("/upload", uploadHandler.UploadImagePage)
 
 	return e, nil
 }
