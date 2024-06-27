@@ -1,0 +1,20 @@
+package workspace
+
+type UploadPage struct {
+	Page
+}
+
+templ WorkspaceUploadPage(page UploadPage) {
+	@adminLayout(page.Page, UploadComponent())
+}
+
+templ UploadComponent() {
+	<div class="flex-1 py-6 px-10">
+		<div>
+			<div class="mb-6">
+				<h1 class="pb-2 text-2xl font-semibold text-slate-800 border-b border-gray-400">Upload</h1>
+			</div>
+		</div>
+		<div class="grid grid-cols-2 gap-y-5 gap-x-8"></div>
+	</div>
+}
