@@ -9,6 +9,7 @@ https://vercel.com/docs/functions/serverless-functions#adding-utility-files-to-t
 package hack
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/pkg/errors"
@@ -32,5 +33,5 @@ func InitializeRoutesForVercel() (http.Handler, error) {
 		return nil, errors.Wrap(dbClientErr, "db")
 	}
 
-	return app.InitializeRouter(dbClient, logger)
+	return app.InitializeRouter(context.TODO(), cfg, dbClient, logger)
 }

@@ -63,3 +63,38 @@ CREATE TABLE `beers` (
   CONSTRAINT `fk_brewery_id` FOREIGN KEY (`brewery_id`) REFERENCES `breweries` (`id`)
   CONSTRAINT `fk_style_id` FOREIGN KEY (`style_id`) REFERENCES `beer_styles` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2168 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+
+
+CREATE TABLE `beer_medias` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `beer_id` int NOT NULL,
+  `media_id` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_beer_id` (`beer_id`),
+  CONSTRAINT `fk_beer_id` FOREIGN KEY (`beer_id`) REFERENCES `beers` (`id`)
+  CONSTRAINT `fk_media_id` FOREIGN KEY (`media_id`) REFERENCES `media_items` (`id`)
+)
+
+CREATE TABLE `media_items` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `filename` varchar(100) NOT NULL,
+  `type` int NULL,
+  PRIMARY KEY (`id`)
+);
+
+CREATE TABLE `media_types` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`)
+)
+
+INSERT INTO `media_types` VALUES 
+(1,'Bottle'),
+(2,'Label'),
+(3,'Crown Cap'),
+(4,'Twist-off Cap'),
+(5,'Pull-off Cap'),
+(6,'Ceramic Cap');
