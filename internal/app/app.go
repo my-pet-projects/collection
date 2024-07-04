@@ -2,11 +2,11 @@ package app
 
 import (
 	"context"
-	"fmt"
 	"log/slog"
 	"net/http"
 
 	awscfg "github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
@@ -35,7 +35,7 @@ func Start(ctx context.Context) error {
 		return errors.Wrap(dbClientErr, "db")
 	}
 
-	router, routerErr := InitializeRouter(dbClient, logger)
+	router, routerErr := InitializeRouter(ctx, cfg, dbClient, logger)
 	if routerErr != nil {
 		return errors.Wrap(routerErr, "router")
 	}
@@ -69,16 +69,18 @@ func Start(ctx context.Context) error {
 }
 
 // InitializeRouter instantiates HTTP handler with application routes.
-func InitializeRouter(dbClient *db.DbClient, logger *slog.Logger) (http.Handler, error) { //nolint: funlen
+func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbClient, logger *slog.Logger) (http.Handler, error) { //nolint: funlen
 	geoStore := db.NewGeographyStore(dbClient, logger)
 	beerStore := db.NewBeerStore(dbClient, logger)
 	styleStore := db.NewBeerStyleStore(dbClient, logger)
 	breweryStore := db.NewBreweryStore(dbClient, logger)
 
-	sdkConfig, err := awscfg.LoadDefaultConfig(context.TODO())
-	if err != nil {
-		fmt.Println("Couldn't load default configuration. Have you set up your AWS account?")
-		fmt.Println(err)
+	sdkConfig, sdkConfigErr := awscfg.LoadDefaultConfig(ctx,
+		awscfg.WithRegion(cfg.AwsConfig.Region),
+		awscfg.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(cfg.AwsConfig.AccessKey, cfg.AwsConfig.SecretKey, "")),
+	)
+	if sdkConfigErr != nil {
+		return nil, sdkConfigErr
 	}
 	s3Client := s3.NewFromConfig(sdkConfig)
 	s3Storage := storage.NewS3Storage(s3Client, logger)
@@ -129,6 +131,7 @@ func InitializeRouter(dbClient *db.DbClient, logger *slog.Logger) (http.Handler,
 
 	imageGroup := e.Group("/workspace/images")
 	imageGroup.GET("/upload", uploadHandler.UploadImagePage)
+	imageGroup.POST("/uploads", uploadHandler.UploadImage)
 
 	return e, nil
 }
