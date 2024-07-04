@@ -8,14 +8,13 @@ require (
 	github.com/aws/aws-sdk-go-v2/config v1.27.21
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.21
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.56.1
-	github.com/go-sql-driver/mysql v1.8.1
 	github.com/labstack/echo/v4 v4.11.4
 	github.com/pkg/errors v0.9.1
 	golang.org/x/sync v0.7.0
 )
 
 require (
-	filippo.io/edwards25519 v1.1.0 // indirect
+	github.com/antlr4-go/antlr/v4 v4.13.0 // indirect
 	github.com/aws/aws-sdk-go-v2 v1.30.0 // indirect
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.6.2 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.16.8 // indirect
@@ -35,13 +34,17 @@ require (
 	github.com/labstack/gommon v0.4.2 // indirect
 	github.com/lann/builder v0.0.0-20180802200727-47ae307949d0 // indirect
 	github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0 // indirect
+	github.com/libsql/sqlite-antlr4-parser v0.0.0-20240327125255-dbf53b6cbf06 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
+	github.com/tursodatabase/libsql-client-go v0.0.0-20240628122535-1c47b26184e8
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
 	golang.org/x/crypto v0.22.0 // indirect
+	golang.org/x/exp v0.0.0-20240325151524-a685a6edb6d8 // indirect
 	golang.org/x/net v0.24.0 // indirect
 	golang.org/x/sys v0.19.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
+	nhooyr.io/websocket v1.8.10 // indirect
 )

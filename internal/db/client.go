@@ -2,9 +2,10 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/pkg/errors"
+	_ "github.com/tursodatabase/libsql-client-go/libsql"
 
 	"github.com/my-pet-projects/collection/internal/config"
 )
@@ -16,7 +17,8 @@ type DbClient struct {
 
 // NewClient instantiates database client.
 func NewClient(cfg *config.Config) (*DbClient, error) {
-	db, dbErr := sql.Open("mysql", cfg.DbConnection)
+	url := fmt.Sprintf("%s?authToken=%s", cfg.TursoDbConfig.DbUrl, cfg.TursoDbConfig.AuthToken)
+	db, dbErr := sql.Open("libsql", url)
 	if dbErr != nil {
 		return nil, errors.Wrap(dbErr, "db connection")
 	}
