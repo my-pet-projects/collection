@@ -9,15 +9,21 @@ import (
 
 // Config represents application configuration.
 type Config struct {
-	Env          string
-	DbConnection string
-	AwsConfig    AwsConfig
+	Env           string
+	DbConnection  string
+	AwsConfig     AwsConfig
+	TursoDbConfig TursoDbConfig
 }
 
 type AwsConfig struct {
 	Region    string
 	AccessKey string
 	SecretKey string
+}
+
+type TursoDbConfig struct {
+	DbUrl     string
+	AuthToken string
 }
 
 // NewConfig creates application configuration.
@@ -42,6 +48,14 @@ func NewConfig() (*Config, error) {
 	if !ok {
 		return nil, errors.New("AWS_SECRET_KEY environment variable was not found")
 	}
+	tursoDbUrl, ok := os.LookupEnv("TURSO_DATABASE_URL")
+	if !ok {
+		return nil, errors.New("TURSO_DATABASE_URL environment variable was not found")
+	}
+	tursoAuthToken, ok := os.LookupEnv("TURSO_AUTH_TOKEN")
+	if !ok {
+		return nil, errors.New("AWS_SECRET_KEY environment variable was not found")
+	}
 
 	cfg := &Config{
 		Env:          env,
@@ -50,6 +64,10 @@ func NewConfig() (*Config, error) {
 			Region:    awsRegion,
 			AccessKey: awsAccessKey,
 			SecretKey: awsSecretKey,
+		},
+		TursoDbConfig: TursoDbConfig{
+			DbUrl:     tursoDbUrl,
+			AuthToken: tursoAuthToken,
 		},
 	}
 
