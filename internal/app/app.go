@@ -74,6 +74,8 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 	beerStore := db.NewBeerStore(dbClient, logger)
 	styleStore := db.NewBeerStyleStore(dbClient, logger)
 	breweryStore := db.NewBreweryStore(dbClient, logger)
+	mediaStore := db.NewMediaStore(dbClient, logger)
+	beerMediaStore := db.NewBeerMediaStore(dbClient, logger)
 
 	sdkConfig, sdkConfigErr := awscfg.LoadDefaultConfig(ctx,
 		awscfg.WithRegion(cfg.AwsConfig.Region),
@@ -88,7 +90,7 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 	geoService := service.NewGeographyService(&geoStore, logger)
 	breweryService := service.NewBreweryService(&breweryStore, &geoStore, logger)
 	beerService := service.NewBeerService(&beerStore, &styleStore, &breweryStore, logger)
-	imageService := service.NewImageService(&s3Storage, logger)
+	imageService := service.NewImageService(&mediaStore, &beerMediaStore, &s3Storage, logger)
 
 	geoHandler := handler.NewGeographyHandler(geoService, logger)
 	breweryHandler := handler.NewBreweryHandler(breweryService, geoService, logger)
