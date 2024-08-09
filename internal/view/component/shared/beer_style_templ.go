@@ -10,46 +10,45 @@ import "context"
 import "io"
 import "bytes"
 
-import "github.com/my-pet-projects/collection/internal/db"
+import "github.com/my-pet-projects/collection/internal/model"
 import "fmt"
 import "encoding/json"
 
-type BreweriesData struct {
-	Breweries       []db.Brewery
-	SelectedBrewery *int
+type StyleData struct {
+	Styles          []model.BeerStyle
+	SelectedStyleId *int
 }
 
-func breweriesJson(countriesData BreweriesData) string {
+func beerStylesJson(stylesData StyleData) string {
 	choices := make([]choicesData, 0)
 	selected := false
-	if countriesData.SelectedBrewery == nil || *countriesData.SelectedBrewery == 0 {
+	if stylesData.SelectedStyleId == nil || *stylesData.SelectedStyleId == 0 {
 		selected = true
 	}
 	emptyChoice := choicesData{
 		Value:    "",
-		Label:    "Select a brewery",
+		Label:    "Select a beer style",
 		Selected: selected,
 		Disabled: false,
 	}
 	choices = append(choices, emptyChoice)
-	for _, brewery := range countriesData.Breweries {
+	for _, style := range stylesData.Styles {
 		selected := false
-		if countriesData.SelectedBrewery != nil && *countriesData.SelectedBrewery == brewery.Id {
+		if stylesData.SelectedStyleId != nil && *stylesData.SelectedStyleId == style.Id {
 			selected = true
 		}
 		choices = append(choices, choicesData{
-			Value:            fmt.Sprint(brewery.Id),
-			Label:            fmt.Sprintf(`<span class="flex justify-center items-center">%s</span><span class="ml-4">%s</span>`, brewery.Country.NameCommon, brewery.Name),
-			Selected:         selected,
-			Disabled:         false,
-			CustomProperties: customProperty{SearchableValue: brewery.Country.NameCommon},
+			Value:    fmt.Sprint(style.Id),
+			Label:    style.Name,
+			Selected: selected,
+			Disabled: false,
 		})
 	}
 	bytes, _ := json.Marshal(choices)
 	return string(bytes)
 }
 
-func BrewerySelector(data BreweriesData) templ.Component {
+func StylesSelector(data StyleData) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -62,14 +61,14 @@ func BrewerySelector(data BreweriesData) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<app-select name=\"brewery\" data-items=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<app-select name=\"style\" data-items=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(breweriesJson(data))
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(beerStylesJson(data))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/shared/brewery.templ`, Line: 45, Col: 34}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/beer_style.templ`, Line: 44, Col: 35}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
