@@ -2,8 +2,11 @@ package handler
 
 import (
 	"bytes"
+	_ "image/jpeg"
+	_ "image/png"
 	"io"
 	"log/slog"
+	"net/http"
 
 	"github.com/labstack/echo/v4"
 
@@ -33,33 +36,40 @@ func (h UploadHandler) UploadImagePage(ctx echo.Context) error {
 }
 
 func (h UploadHandler) UploadImage(ctx echo.Context) error {
-	h.logger.Info("UploadImage")
-
 	form, formErr := ctx.MultipartForm()
 	if formErr != nil {
-		return formErr
+		h.logger.Error("Failed to get multipart form", slog.Any("error", formErr))
+		return ctx.JSON(http.StatusInternalServerError, "error")
 	}
 
-	images := []model.MediaItem{}
+	images := []model.UploadFormValues{}
 	for _, fileHeader := range form.File["files"] {
 		src, srcErr := fileHeader.Open()
 		if srcErr != nil {
-			return srcErr
+			h.logger.Error("Failed to open multipart file", slog.Any("error", srcErr))
+			return ctx.JSON(http.StatusInternalServerError, "error")
 		}
 		defer src.Close()
 
 		var buf bytes.Buffer
-		if _, copyErr := io.Copy(&buf, src); copyErr != nil {
-			return copyErr
+		_, copyErr := io.Copy(&buf, src)
+		if copyErr != nil {
+			h.logger.Error("Failed to copy multipart form bytes", slog.Any("error", copyErr))
+			return ctx.JSON(http.StatusInternalServerError, "error")
 		}
 
-		images = append(images, model.MediaItem{
-			FileName: fileHeader.Filename,
-			Content:  buf.Bytes(),
+		images = append(images, model.UploadFormValues{
+			Filename:    fileHeader.Filename,
+			Content:     buf.Bytes(),
+			ContentType: fileHeader.Header.Get("Content-Type"),
 		})
 	}
 
-	h.imageSvc.UploadImage(ctx.Request().Context(), images)
+	uploadErr := h.imageSvc.UploadImage(ctx.Request().Context(), images)
+	if uploadErr != nil {
+		h.logger.Error("Failed to upload image", slog.Any("error", uploadErr))
+		return ctx.JSON(http.StatusInternalServerError, "error")
+	}
 
-	return ctx.JSON(200, "asd")
+	return ctx.NoContent(http.StatusOK)
 }
