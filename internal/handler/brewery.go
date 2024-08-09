@@ -6,8 +6,8 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	"github.com/my-pet-projects/collection/internal/component"
 	"github.com/my-pet-projects/collection/internal/service"
+	"github.com/my-pet-projects/collection/internal/view/component"
 )
 
 type BreweryHandler struct {
