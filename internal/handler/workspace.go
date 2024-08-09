@@ -10,8 +10,8 @@ import (
 	"github.com/a-h/templ"
 	"github.com/labstack/echo/v4"
 
-	"github.com/my-pet-projects/collection/internal/component/workspace"
 	"github.com/my-pet-projects/collection/internal/service"
+	"github.com/my-pet-projects/collection/internal/view/component/workspace"
 )
 
 type WorkspaceHandler struct {

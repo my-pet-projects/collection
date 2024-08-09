@@ -7,8 +7,8 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	"github.com/my-pet-projects/collection/internal/component/shared"
 	"github.com/my-pet-projects/collection/internal/service"
+	"github.com/my-pet-projects/collection/internal/view/component/shared"
 )
 
 type GeographyHandler struct {
