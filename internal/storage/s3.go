@@ -25,12 +25,13 @@ func NewS3Storage(client *s3.Client, logger *slog.Logger) S3Storage {
 	}
 }
 
-func (s S3Storage) Upload(ctx context.Context, media model.MediaItem) error {
+func (s S3Storage) Upload(ctx context.Context, item *model.MediaItemContent) error {
 	bucket := "beer-collection-bucket"
 	_, putErr := s.client.PutObject(ctx, &s3.PutObjectInput{
-		Bucket: &bucket,
-		Key:    &media.FileName,
-		Body:   bytes.NewReader(media.Content),
+		Bucket:      &bucket,
+		Key:         &item.ExternalFilename,
+		Body:        bytes.NewReader(item.Bytes),
+		ContentType: &item.ContentType,
 	})
 	if putErr != nil {
 		return putErr
