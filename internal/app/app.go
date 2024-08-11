@@ -8,6 +8,7 @@ import (
 	awscfg "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/go-chi/chi/v5"
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
 	"golang.org/x/sync/errgroup"
@@ -19,6 +20,8 @@ import (
 	"github.com/my-pet-projects/collection/internal/server"
 	"github.com/my-pet-projects/collection/internal/service"
 	"github.com/my-pet-projects/collection/internal/storage"
+	"github.com/my-pet-projects/collection/internal/web"
+	"github.com/my-pet-projects/collection/internal/web/middleware"
 )
 
 // Start bootstraps and starts the application.
@@ -130,6 +133,14 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 	e.PUT("/workspace/beer-style/:id", workspaceHandler.BeerStyleSaveHandler)
 	e.DELETE("/workspace/beer-style/:id", workspaceHandler.BeerStyleDeleteHandler)
 	e.GET("/workspace/beer-style/:id/edit", workspaceHandler.BeerStyleEditHandler)
+
+	// temporary use of two routers
+	router := chi.NewRouter()
+	router.Use(middleware.WithRequest)
+	router.Group(func(app chi.Router) {
+		app.Get("/workspace/beer/{id}/attach-images", web.Handler(workspaceHandler.HandleBeerImagesIndex))
+	})
+	e.GET("/workspace/beer/:id", echo.WrapHandler(router))
 
 	imageGroup := e.Group("/workspace/images")
 	imageGroup.GET("/upload", uploadHandler.UploadImagePage)

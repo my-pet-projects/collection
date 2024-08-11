@@ -14,6 +14,7 @@ import (
 	"github.com/my-pet-projects/collection/internal/view/component/workspace"
 )
 
+// TODO: rename to WorkspaceServer or smth like that.
 type WorkspaceHandler struct {
 	beerService    service.BeerService
 	breweryService service.BreweryService
