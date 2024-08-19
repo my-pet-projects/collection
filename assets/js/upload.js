@@ -32,6 +32,7 @@ customElements.define(
         fieldName: "files",
         formData: true,
         limit: 10,
+        timeout: 0,
       });
     }
   }

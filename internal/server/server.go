@@ -27,7 +27,7 @@ const (
 // NewServer instantiates web server.
 func NewServer(ctx context.Context, router http.Handler, logger *slog.Logger) Server {
 	server := &http.Server{
-		Addr:    fmt.Sprintf("%s:%d", "127.0.0.1", 9080),
+		Addr:    fmt.Sprintf("%s:%d", "127.0.0.1", 9080), //nolint:mnd
 		Handler: router,
 		BaseContext: func(_ net.Listener) context.Context {
 			return ctx

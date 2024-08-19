@@ -8,14 +8,14 @@ import (
 
 type HandlerFunc func(reqResp *ReqRespPair) error
 
-func Handler(h HandlerFunc) http.HandlerFunc {
+func Handler(handlerFun HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		kit := &ReqRespPair{
+		reqResp := &ReqRespPair{
 			Response: w,
 			Request:  r,
 		}
-		if err := h(kit); err != nil {
-			kit.Text(http.StatusInternalServerError, err.Error())
+		if err := handlerFun(reqResp); err != nil {
+			reqResp.Text(http.StatusInternalServerError, err.Error()) //nolint:errcheck,gosec
 			return
 		}
 	}
@@ -30,7 +30,7 @@ func (rrp *ReqRespPair) Text(status int, msg string) error {
 	rrp.Response.WriteHeader(status)
 	rrp.Response.Header().Set("Content-Type", "text/plain")
 	_, err := rrp.Response.Write([]byte(msg))
-	return err
+	return err //nolint:wrapcheck
 }
 
 func (rrp *ReqRespPair) Render(c templ.Component) error {

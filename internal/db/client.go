@@ -3,9 +3,12 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"time"
 
 	"github.com/pkg/errors"
 	_ "github.com/tursodatabase/libsql-client-go/libsql"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 
 	"github.com/my-pet-projects/collection/internal/config"
 )
@@ -13,6 +16,7 @@ import (
 // DbClient represents database client.
 type DbClient struct {
 	*sql.DB
+	gorm *gorm.DB
 }
 
 // NewClient instantiates database client.
@@ -27,10 +31,21 @@ func NewClient(cfg *config.Config) (*DbClient, error) {
 		return nil, errors.Wrap(pingErr, "ping database")
 	}
 
-	return &DbClient{db}, nil
+	gormDB, gormErr := gorm.Open(sqlite.New(sqlite.Config{
+		Conn: db,
+	}), &gorm.Config{
+		NowFunc: func() time.Time {
+			return time.Now().UTC()
+		},
+	})
+	if gormErr != nil {
+		return nil, errors.Wrap(gormErr, "gorm connection")
+	}
+
+	return &DbClient{db, gormDB}, nil
 }
 
 // Close closes database connection.
 func (c DbClient) Close() {
-	c.Close()
+	c.DB.Close() //nolint:errcheck,gosec
 }

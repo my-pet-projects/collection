@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"log/slog"
-	"time"
 
 	"github.com/pkg/errors"
 
@@ -28,70 +27,46 @@ func NewImageService(mediaStore *db.MediaStore, beerMediaStore *db.BeerMediaStor
 	}
 }
 
-func (s ImageService) UploadImage(ctx context.Context, items []model.UploadFormValues) error { //nolint:funlen
-	for _, item := range items {
-		mediaItem := model.NewMediaItem(item)
-
-		existingItem, findErr := s.mediaStore.GetMediaItemByHash(ctx, mediaItem.Hash)
-		if findErr != nil {
-			return errors.Wrap(findErr, "find existing media item")
+func (s ImageService) UploadImage(ctx context.Context, formValues []model.UploadFormValues) error {
+	for _, formValue := range formValues {
+		s.logger.Info("Creating original and preview image", slog.String("originalFilename", formValue.Filename))
+		img, imgErr := model.NewMediaImage(formValue)
+		if imgErr != nil {
+			return errors.Wrap(imgErr, "create original and preview image")
 		}
 
-		if existingItem == nil {
-			s.logger.Info("Inserting a new media item")
-			newID, insErr := s.mediaStore.InsertMediaItem(ctx, mediaItem)
-			if insErr != nil {
-				return errors.Wrap(insErr, "insert media item")
-			}
-			mediaItem.ID = newID
-		} else {
-			s.logger.Info("Media item with the same hash already exists, updating existing")
-			timeNow := time.Now().UTC()
-			mediaItem.UpdatedAt = &timeNow
-			mediaItem.ID = existingItem.ID
-			mediaItem.ExternalFilename = existingItem.ExternalFilename
-			updErr := s.mediaStore.UpdateMediaItem(ctx, mediaItem)
-			if updErr != nil {
-				return errors.Wrap(updErr, "update media item")
-			}
+		s.logger.Info("Upserting media item", slog.String("originalFilename", formValue.Filename))
+		mediaItem, upsErr := s.mediaStore.UpsertMediaItem(ctx, formValue)
+		if upsErr != nil {
+			return errors.Wrap(upsErr, "upsert media item")
 		}
 
-		imgContent, _ := mediaItem.Prepare()
-		beerImg := model.NewBeerMedia(mediaItem, imgContent)
-
-		s.logger.Info("Uploading full-size image")
-		uploadErr := s.s3Storage.Upload(ctx, imgContent)
+		s.logger.Info("Uploading full-size image", slog.String("name", img.Original.Name), slog.Int("size", img.Original.Size))
+		uploadErr := s.s3Storage.Upload(ctx, img.Original)
 		if uploadErr != nil {
 			return errors.Wrap(uploadErr, "s3 image upload")
 		}
 
-		s.logger.Info("Resizing to preview image")
-		resizedImg, resizeErr := imgContent.Resize()
-		if resizeErr != nil {
-			return errors.Wrap(resizeErr, "resize image")
-		}
-
-		s.logger.Info("Uploading preview image")
-		uploadErr = s.s3Storage.Upload(ctx, resizedImg)
+		s.logger.Info("Uploading preview image", slog.String("name", img.Preview.Name), slog.Int("size", img.Preview.Size))
+		uploadErr = s.s3Storage.Upload(ctx, img.Preview)
 		if uploadErr != nil {
 			return errors.Wrap(uploadErr, "s3 preview image upload")
 		}
 
-		existingBeerMedia, findErr := s.beerMediaStore.GetMediaItem(ctx, beerImg.MediaID)
-		if findErr != nil {
-			return errors.Wrap(findErr, "find existing beer media item")
-		}
-
-		if existingBeerMedia != nil {
-			s.logger.Info("Beer media item already exists")
-			continue
-		}
-
-		_, insErr := s.beerMediaStore.InsertBeerMediaItem(ctx, beerImg)
+		s.logger.Info("Upserting beer media item", slog.String("originalFilename", formValue.Filename), slog.Any("imageType", img.ImageType))
+		_, insErr := s.beerMediaStore.UpsertBeerMediaItem(ctx, mediaItem, img)
 		if insErr != nil {
-			return errors.Wrap(insErr, "insert beer media")
+			return errors.Wrap(insErr, "upsert beer media")
 		}
 	}
 
 	return nil
+}
+
+func (s ImageService) GetBeerMediaItems(ctx context.Context) ([]model.BeerMedia, error) {
+	items, itemsErr := s.beerMediaStore.FetchMediaItems(ctx)
+	if itemsErr != nil {
+		return nil, errors.Wrap(itemsErr, "fetch beer media items")
+	}
+	return items, nil
 }
