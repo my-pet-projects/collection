@@ -72,7 +72,7 @@ func Start(ctx context.Context) error {
 }
 
 // InitializeRouter instantiates HTTP handler with application routes.
-func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbClient, logger *slog.Logger) (http.Handler, error) { //nolint: funlen
+func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbClient, logger *slog.Logger) (http.Handler, error) { //nolint:funlen
 	geoStore := db.NewGeographyStore(dbClient, logger)
 	beerStore := db.NewBeerStore(dbClient, logger)
 	styleStore := db.NewBeerStyleStore(dbClient, logger)
@@ -85,7 +85,7 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 		awscfg.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(cfg.AwsConfig.AccessKey, cfg.AwsConfig.SecretKey, "")),
 	)
 	if sdkConfigErr != nil {
-		return nil, sdkConfigErr
+		return nil, errors.Wrap(sdkConfigErr, "aws config")
 	}
 	s3Client := s3.NewFromConfig(sdkConfig)
 	s3Storage := storage.NewS3Storage(s3Client, logger)
@@ -98,11 +98,11 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 	geoHandler := handler.NewGeographyHandler(geoService, logger)
 	breweryHandler := handler.NewBreweryHandler(breweryService, geoService, logger)
 	beerHandler := handler.NewBeerHandler(beerService, breweryService, logger)
-	workspaceHandler := handler.NewWorkspaceHandler(beerService, breweryService, geoService, logger)
+	workspaceHandler := handler.NewWorkspaceServer(beerService, breweryService, geoService, imageService, logger)
 	uploadHandler := handler.NewUploadHandler(imageService, logger)
 
 	e := echo.New()
-	e.Use(log.NewLoggingMiddleware(logger))
+	e.Use(log.NewLoggingMiddleware(logger)) //nolint:contextcheck
 	e.Static("/", "./assets")
 
 	e.GET("/geo", geoHandler.ListCountries)

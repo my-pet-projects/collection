@@ -14,34 +14,41 @@ import (
 	"github.com/my-pet-projects/collection/internal/view/component/workspace"
 )
 
-// TODO: rename to WorkspaceServer or smth like that.
-type WorkspaceHandler struct {
+type WorkspaceServer struct {
 	beerService    service.BeerService
 	breweryService service.BreweryService
 	geoService     service.GeographyService
+	mediaService   service.ImageService
 	logger         *slog.Logger
 }
 
-func NewWorkspaceHandler(beerService service.BeerService, breweryService service.BreweryService, geoService service.GeographyService, logger *slog.Logger) WorkspaceHandler {
-	return WorkspaceHandler{
+func NewWorkspaceServer(
+	beerService service.BeerService,
+	breweryService service.BreweryService,
+	geoService service.GeographyService,
+	mediaService service.ImageService,
+	logger *slog.Logger,
+) WorkspaceServer {
+	return WorkspaceServer{
 		beerService:    beerService,
 		breweryService: breweryService,
 		geoService:     geoService,
+		mediaService:   mediaService,
 		logger:         logger,
 	}
 }
 
-func (h WorkspaceHandler) GetWorkspace(ctx echo.Context) error {
+func (h WorkspaceServer) GetWorkspace(ctx echo.Context) error {
 	page := workspace.NewPage(ctx, "Workspace")
 	return workspace.WorkspacePage(page).Render(ctx.Request().Context(), ctx.Response().Writer)
 }
 
-func (h WorkspaceHandler) GetBreweryWorkspace(ctx echo.Context) error {
+func (h WorkspaceServer) GetBreweryWorkspace(ctx echo.Context) error {
 	page := workspace.NewPage(ctx, "Brewery Workspace")
 	return workspace.WorkspaceBreweriesListPage(page).Render(ctx.Request().Context(), ctx.Response().Writer)
 }
 
-func (h WorkspaceHandler) GetBeerWorkspace(ctx echo.Context) error {
+func (h WorkspaceServer) GetBeerWorkspace(ctx echo.Context) error {
 	page := workspace.NewPage(ctx, "Beer Workspace")
 	beerPage := workspace.BeerPageData{
 		Page: page,
@@ -49,7 +56,7 @@ func (h WorkspaceHandler) GetBeerWorkspace(ctx echo.Context) error {
 	return workspace.WorkspaceBeerPage(beerPage).Render(ctx.Request().Context(), ctx.Response().Writer)
 }
 
-func (h WorkspaceHandler) GetBeerPage(ctx echo.Context) error {
+func (h WorkspaceServer) GetBeerPage(ctx echo.Context) error {
 	beerId, parseErr := strconv.Atoi(ctx.Param("id"))
 	if parseErr != nil {
 		return ctx.HTML(http.StatusBadRequest, parseErr.Error())
@@ -83,7 +90,7 @@ func (h WorkspaceHandler) GetBeerPage(ctx echo.Context) error {
 	return render(ctx, workspace.BeerPageLayout(beerPage))
 }
 
-func (h WorkspaceHandler) GetBreweryPage(ctx echo.Context) error {
+func (h WorkspaceServer) GetBreweryPage(ctx echo.Context) error {
 	breweryId, parseErr := strconv.Atoi(ctx.Param("id"))
 	if parseErr != nil {
 		return ctx.HTML(http.StatusBadRequest, parseErr.Error())
@@ -105,7 +112,7 @@ func (h WorkspaceHandler) GetBreweryPage(ctx echo.Context) error {
 	return workspace.WorkspaceBreweryPage(breweryPage).Render(ctx.Request().Context(), ctx.Response().Writer)
 }
 
-func (h WorkspaceHandler) CreateBreweryPage(ctx echo.Context) error {
+func (h WorkspaceServer) CreateBreweryPage(ctx echo.Context) error {
 	page := workspace.NewPage(ctx, "Create Brewery")
 	breweryPage := workspace.BreweryPage{
 		Page: page,
@@ -113,7 +120,7 @@ func (h WorkspaceHandler) CreateBreweryPage(ctx echo.Context) error {
 	return render(ctx, workspace.WorkspaceBreweryPage(breweryPage))
 }
 
-func (h WorkspaceHandler) PostBreweryPage(ctx echo.Context) error {
+func (h WorkspaceServer) PostBreweryPage(ctx echo.Context) error {
 	idStr := ctx.FormValue("id")
 	id, _ := strconv.Atoi(idStr)
 	geoIdStr := ctx.FormValue("city")
@@ -132,7 +139,7 @@ func (h WorkspaceHandler) PostBreweryPage(ctx echo.Context) error {
 	if formParams.Id == 0 {
 		newBrewery, createErr := h.breweryService.CreateBrewery(formParams.Name, formParams.CityId)
 		if createErr != nil {
-			h.logger.Error("create brewery", createErr)
+			h.logger.Error("create brewery", slog.Any("error", createErr))
 			return render(ctx, workspace.BreweryForm(formParams, workspace.BreweryFormErrors{Error: createErr.Error()}))
 		}
 		ctx.Response().Header().Set("HX-Redirect", fmt.Sprintf("/workspace/brewery/%d", newBrewery.Id))
@@ -141,7 +148,7 @@ func (h WorkspaceHandler) PostBreweryPage(ctx echo.Context) error {
 
 	updErr := h.breweryService.UpdateBrewery(formParams.Id, formParams.Name, formParams.CityId)
 	if updErr != nil {
-		h.logger.Error("update brewery", updErr)
+		h.logger.Error("update brewery", slog.Any("error", updErr))
 		return render(ctx, workspace.BreweryForm(formParams, workspace.BreweryFormErrors{Error: updErr.Error()}))
 	}
 

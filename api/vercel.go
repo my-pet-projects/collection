@@ -8,11 +8,11 @@ import (
 )
 
 var (
-	router    http.Handler
-	routerErr error
+	router    http.Handler //nolint:gochecknoglobals
+	routerErr error        //nolint:gochecknoglobals,errname
 )
 
-func init() { //nolint:init
+func init() { //nolint:gochecknoinits
 	slog.Info("init")
 	router, routerErr = hack.InitializeRoutesForVercel()
 	if routerErr != nil {

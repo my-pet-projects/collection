@@ -2,13 +2,14 @@ package model
 
 import (
 	"bytes"
-	"crypto/md5"
+	"crypto/md5" //nolint:gosec
 	"fmt"
 	"image"
+	"image/png"
+	"io"
 	"time"
 
-	"github.com/daddye/vips"
-	"github.com/google/uuid"
+	"github.com/anthonynsimon/bild/transform"
 	"github.com/pkg/errors"
 )
 
@@ -18,87 +19,93 @@ type UploadFormValues struct {
 	ContentType string
 }
 
-type MediaItemMetadata struct {
+func (f UploadFormValues) ExternalFilename() string {
+	return fmt.Sprintf("%s.png", f.Hash())
+}
+
+func (f UploadFormValues) Hash() string {
+	return fmt.Sprintf("%x", md5.Sum(f.Content)) //nolint:gosec
+}
+
+type MediaMetadata struct {
 	Width  int
 	Height int
 }
 
-type MediaItemContent struct {
-	ExternalFilename string
-	Bytes            []byte
-	Size             int
-	Metadata         *MediaItemMetadata
-	ContentType      string
+type MediaContent struct {
+	Name        string
+	Bytes       []byte
+	Size        int
+	Metadata    MediaMetadata
+	ContentType string
 }
 
 type MediaItem struct {
-	ID               int
+	ID               int `gorm:"primarykey"`
 	ExternalFilename string
 	OriginalFilename string
 	ContentType      string
-	Bytes            []byte
 	Hash             string
 	CreatedAt        time.Time
 	UpdatedAt        *time.Time
 }
 
-func NewMediaItem(formValues UploadFormValues) *MediaItem {
-	item := &MediaItem{
-		ExternalFilename: fmt.Sprintf("%s.png", uuid.New().String()),
-		OriginalFilename: formValues.Filename,
-		Bytes:            formValues.Content,
-		ContentType:      formValues.ContentType,
-		Hash:             fmt.Sprintf("%x", md5.Sum(formValues.Content)),
-		CreatedAt:        time.Now().UTC(),
-	}
-
-	return item
+type MediaImage struct {
+	Original  MediaContent
+	Preview   MediaContent
+	ImageType BeerMediaType
 }
 
-func (m MediaItem) Prepare() (*MediaItemContent, error) {
-	image, _, decodeErr := image.Decode(bytes.NewReader(m.Bytes))
+func NewMediaImage(formValues UploadFormValues) (*MediaImage, error) {
+	image, _, decodeErr := image.Decode(bytes.NewReader(formValues.Content))
 	if decodeErr != nil {
 		return nil, errors.Wrap(decodeErr, "decode image")
 	}
 
-	content := &MediaItemContent{
-		ExternalFilename: m.ExternalFilename,
-		Bytes:            m.Bytes,
-		Size:             len(m.Bytes),
-		Metadata: &MediaItemMetadata{
+	original := MediaContent{
+		Name:  formValues.ExternalFilename(),
+		Bytes: formValues.Content,
+		Size:  len(formValues.Content),
+		Metadata: MediaMetadata{
 			Width:  image.Bounds().Dx(),
 			Height: image.Bounds().Dy(),
 		},
-		ContentType: m.ContentType,
+		ContentType: formValues.ContentType,
 	}
 
-	return content, nil
-}
-
-func (m MediaItemContent) Resize() (*MediaItemContent, error) {
-	width := m.Metadata.Width / 10
-	height := m.Metadata.Height / 10
-	options := vips.Options{
-		Width:   width,
-		Height:  height,
-		Quality: 10,
-		Format:  vips.PNG,
-	}
-	resizedBytes, resizeErr := vips.Resize(m.Bytes, options)
-	if resizeErr != nil {
-		return nil, errors.Wrap(resizeErr, "resize image")
+	beerMediaType, typeErr := NewBeerMediaType(original.Metadata)
+	if typeErr != nil {
+		return nil, errors.Wrap(typeErr, "unknown beer media type")
 	}
 
-	content := &MediaItemContent{
-		ExternalFilename: fmt.Sprintf("preview/%s", m.ExternalFilename),
-		Bytes:            resizedBytes,
-		Size:             len(resizedBytes),
-		Metadata: &MediaItemMetadata{
+	resizeRatio := 10
+	width := original.Metadata.Width / resizeRatio
+	height := original.Metadata.Height / resizeRatio
+	resized := transform.Resize(image, width, height, transform.Lanczos)
+
+	var previewBytes bytes.Buffer
+	writer := io.Writer(&previewBytes)
+	encodeErr := png.Encode(writer, resized)
+	if encodeErr != nil {
+		return nil, errors.Wrap(encodeErr, "encode preview image")
+	}
+
+	preview := MediaContent{
+		Name:  fmt.Sprintf("preview/%s", formValues.ExternalFilename()),
+		Bytes: previewBytes.Bytes(),
+		Size:  len(previewBytes.Bytes()),
+		Metadata: MediaMetadata{
 			Width:  width,
 			Height: height,
 		},
-		ContentType: m.ContentType,
+		ContentType: formValues.ContentType,
 	}
 
-	return content, nil
+	mediaImage := &MediaImage{
+		Original:  original,
+		Preview:   preview,
+		ImageType: beerMediaType,
+	}
+
+	return mediaImage, nil
 }

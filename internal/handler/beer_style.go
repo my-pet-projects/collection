@@ -11,7 +11,7 @@ import (
 	"github.com/my-pet-projects/collection/internal/view/component/workspace"
 )
 
-func (h WorkspaceHandler) BeerStyleLayoutHandler(ctx echo.Context) error {
+func (h WorkspaceServer) BeerStyleLayoutHandler(ctx echo.Context) error {
 	page := workspace.NewPage(ctx, "Beer Style Workspace")
 	beerStyleListPage := workspace.BeerStyleListPageData{
 		Page: page,
@@ -19,7 +19,7 @@ func (h WorkspaceHandler) BeerStyleLayoutHandler(ctx echo.Context) error {
 	return workspace.BeerStyleLayout(beerStyleListPage).Render(ctx.Request().Context(), ctx.Response().Writer)
 }
 
-func (h WorkspaceHandler) ListBeerStyles(ctx echo.Context) error {
+func (h WorkspaceServer) ListBeerStyles(ctx echo.Context) error {
 	filter := model.BeerStyleFilter{
 		Name: ctx.FormValue("name"),
 	}
@@ -31,15 +31,15 @@ func (h WorkspaceHandler) ListBeerStyles(ctx echo.Context) error {
 	return workspace.BeerStylesTable(styles).Render(ctx.Request().Context(), ctx.Response().Writer)
 }
 
-func (h WorkspaceHandler) BeerStyleCreateViewHandler(ctx echo.Context) error {
+func (h WorkspaceServer) BeerStyleCreateViewHandler(ctx echo.Context) error {
 	return workspace.CreateBeerStyle(model.BeerStyle{}, model.BeerStyleErrors{}).Render(ctx.Request().Context(), ctx.Response().Writer)
 }
 
-func (h WorkspaceHandler) BeerStyleCreateCancelViewHandler(ctx echo.Context) error {
+func (h WorkspaceServer) BeerStyleCreateCancelViewHandler(ctx echo.Context) error {
 	return ctx.NoContent(http.StatusOK)
 }
 
-func (h WorkspaceHandler) BeerStyleCreateHandler(ctx echo.Context) error {
+func (h WorkspaceServer) BeerStyleCreateHandler(ctx echo.Context) error {
 	style := model.BeerStyle{
 		Name: ctx.FormValue("name"),
 	}
@@ -54,7 +54,7 @@ func (h WorkspaceHandler) BeerStyleCreateHandler(ctx echo.Context) error {
 	return workspace.DisplayBeerStyle(*newStyle).Render(ctx.Request().Context(), ctx.Response().Writer)
 }
 
-func (h WorkspaceHandler) BeerStyleSaveHandler(ctx echo.Context) error {
+func (h WorkspaceServer) BeerStyleSaveHandler(ctx echo.Context) error {
 	styleId, parseErr := strconv.Atoi(ctx.Param("id"))
 	if parseErr != nil {
 		return ctx.HTML(http.StatusBadRequest, parseErr.Error())
@@ -74,7 +74,7 @@ func (h WorkspaceHandler) BeerStyleSaveHandler(ctx echo.Context) error {
 	return workspace.DisplayBeerStyle(style).Render(ctx.Request().Context(), ctx.Response().Writer)
 }
 
-func (h WorkspaceHandler) BeerStyleViewHandler(ctx echo.Context) error {
+func (h WorkspaceServer) BeerStyleViewHandler(ctx echo.Context) error {
 	styleId, parseErr := strconv.Atoi(ctx.Param("id"))
 	if parseErr != nil {
 		return ctx.HTML(http.StatusBadRequest, parseErr.Error())
@@ -87,7 +87,7 @@ func (h WorkspaceHandler) BeerStyleViewHandler(ctx echo.Context) error {
 	return workspace.DisplayBeerStyle(*style).Render(ctx.Request().Context(), ctx.Response().Writer)
 }
 
-func (h WorkspaceHandler) BeerStyleEditHandler(ctx echo.Context) error {
+func (h WorkspaceServer) BeerStyleEditHandler(ctx echo.Context) error {
 	styleId, parseErr := strconv.Atoi(ctx.Param("id"))
 	if parseErr != nil {
 		return ctx.HTML(http.StatusBadRequest, parseErr.Error())
@@ -100,7 +100,7 @@ func (h WorkspaceHandler) BeerStyleEditHandler(ctx echo.Context) error {
 	return workspace.EditBeerStyle(*style, model.BeerStyleErrors{}).Render(ctx.Request().Context(), ctx.Response().Writer)
 }
 
-func (h WorkspaceHandler) BeerStyleDeleteHandler(ctx echo.Context) error {
+func (h WorkspaceServer) BeerStyleDeleteHandler(ctx echo.Context) error {
 	styleId, parseErr := strconv.Atoi(ctx.Param("id"))
 	if parseErr != nil {
 		return ctx.HTML(http.StatusBadRequest, parseErr.Error())

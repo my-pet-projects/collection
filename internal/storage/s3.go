@@ -6,6 +6,7 @@ import (
 	"log/slog"
 
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/pkg/errors"
 
 	"github.com/my-pet-projects/collection/internal/model"
 )
@@ -25,16 +26,16 @@ func NewS3Storage(client *s3.Client, logger *slog.Logger) S3Storage {
 	}
 }
 
-func (s S3Storage) Upload(ctx context.Context, item *model.MediaItemContent) error {
+func (s S3Storage) Upload(ctx context.Context, item model.MediaContent) error {
 	bucket := "beer-collection-bucket"
 	_, putErr := s.client.PutObject(ctx, &s3.PutObjectInput{
 		Bucket:      &bucket,
-		Key:         &item.ExternalFilename,
+		Key:         &item.Name,
 		Body:        bytes.NewReader(item.Bytes),
 		ContentType: &item.ContentType,
 	})
 	if putErr != nil {
-		return putErr
+		return errors.Wrap(putErr, "put object")
 	}
 
 	return nil
