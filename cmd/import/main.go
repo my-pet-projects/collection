@@ -78,7 +78,7 @@ func main() { //nolint:funlen
 		if decodeErr != nil {
 			panic(decodeErr)
 		}
-		imageMetadata := model.MediaItemMetadata{
+		imageMetadata := model.MediaMetadata{
 			Width:  image.Bounds().Dx(),
 			Height: image.Bounds().Dy(),
 		}

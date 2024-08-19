@@ -49,7 +49,7 @@ func (h UploadHandler) UploadImage(ctx echo.Context) error {
 			h.logger.Error("Failed to open multipart file", slog.Any("error", srcErr))
 			return ctx.JSON(http.StatusInternalServerError, "error")
 		}
-		defer src.Close()
+		defer src.Close() //nolint:errcheck
 
 		var buf bytes.Buffer
 		_, copyErr := io.Copy(&buf, src)

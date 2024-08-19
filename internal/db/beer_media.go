@@ -2,10 +2,9 @@ package db
 
 import (
 	"context"
-	"database/sql"
 	"log/slog"
 
-	"github.com/pkg/errors"
+	"gorm.io/gorm/clause"
 
 	"github.com/my-pet-projects/collection/internal/model"
 )
@@ -22,34 +21,40 @@ func NewBeerMediaStore(db *DbClient, logger *slog.Logger) BeerMediaStore {
 	}
 }
 
-func (s BeerMediaStore) GetMediaItem(ctx context.Context, mediaID int) (*model.BeerMedia, error) {
-	item := new(model.BeerMedia)
-	query := `SELECT id, media_id, beer_id, type
-			    FROM beer_medias 
-		  	   WHERE media_id = ?`
-	resErr := s.db.QueryRow(query, mediaID).Scan(
-		&item.ID, &item.MediaID, &item.BeerID, &item.Type,
-	)
-	if resErr == sql.ErrNoRows {
-		return nil, nil
-	}
-	if resErr != nil {
-		return nil, errors.Wrap(resErr, "find existing beer media item")
-	}
+// func (s BeerMediaStore) GetMediaItem(ctx context.Context, mediaID int) (*model.BeerMedia, error) {
+// 	item := new(model.BeerMedia)
+// 	query := `SELECT id, media_id, beer_id, type
+// 			    FROM beer_medias
+// 		  	   WHERE media_id = ?`
+// 	resErr := s.db.QueryRow(query, mediaID).Scan(
+// 		&item.ID, &item.MediaID, &item.BeerID, &item.Type,
+// 	)
+// 	if resErr == sql.ErrNoRows {
+// 		return nil, nil
+// 	}
+// 	if resErr != nil {
+// 		return nil, errors.Wrap(resErr, "find existing beer media item")
+// 	}
 
-	return item, nil
+// 	return item, nil
+// }
+
+func (s BeerMediaStore) UpsertBeerMediaItem(ctx context.Context, mediaItem model.MediaItem, mediaImg *model.MediaImage) (model.BeerMedia, error) {
+	itemToUpsert := model.BeerMedia{
+		MediaID: mediaItem.ID,
+		Type:    mediaImg.ImageType,
+	}
+	res := s.db.gorm.Clauses(
+		clause.OnConflict{
+			DoNothing: true,
+		},
+	).Table("beer_medias").Create(&itemToUpsert)
+
+	return itemToUpsert, res.Error
 }
 
-func (s BeerMediaStore) InsertBeerMediaItem(ctx context.Context, item *model.BeerMedia) (int, error) {
-	query := `INSERT INTO beer_medias (beer_id, media_id, type) 
-			  VALUES (?, ?, ?)`
-	res, resErr := s.db.Exec(query, item.BeerID, item.MediaID, item.Type)
-	if resErr != nil {
-		return 0, errors.Wrap(resErr, "insert beer media")
-	}
-	id, err := res.LastInsertId()
-	if err != nil {
-		return 0, errors.Wrap(resErr, "last inserted beer media")
-	}
-	return int(id), nil
+func (s BeerMediaStore) FetchMediaItems(ctx context.Context) ([]model.BeerMedia, error) {
+	var items []model.BeerMedia
+	result := s.db.gorm.Model(&model.BeerMedia{}).Joins("Media").Table("beer_medias").Find(&items)
+	return items, result.Error
 }

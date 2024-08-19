@@ -57,9 +57,9 @@ type prettyHandler struct {
 	m *sync.Mutex
 }
 
-func (h *prettyHandler) Handle(ctx context.Context, r slog.Record) error {
-	level := r.Level.String()
-	switch r.Level {
+func (h *prettyHandler) Handle(ctx context.Context, rec slog.Record) error {
+	level := rec.Level.String()
+	switch rec.Level {
 	case slog.LevelDebug:
 		level = colorize(darkGray, level)
 	case slog.LevelInfo:
@@ -70,16 +70,16 @@ func (h *prettyHandler) Handle(ctx context.Context, r slog.Record) error {
 		level = colorize(lightRed, level)
 	}
 
-	attrs, err := h.computeAttrs(ctx, r)
+	attrs, err := h.computeAttrs(ctx, rec)
 	if err != nil {
 		return err
 	}
 
 	if len(attrs) == 0 {
-		fmt.Println(
-			colorize(lightGray, r.Time.Format("15:05:05.000")),
+		fmt.Println( //nolint:forbidigo
+			colorize(lightGray, rec.Time.Format("15:05:05.000")),
 			level,
-			colorize(white, r.Message),
+			colorize(white, rec.Message),
 		)
 		return nil
 	}
@@ -89,10 +89,10 @@ func (h *prettyHandler) Handle(ctx context.Context, r slog.Record) error {
 		return fmt.Errorf("error when marshaling attrs: %w", err)
 	}
 
-	fmt.Println(
-		colorize(lightGray, r.Time.Format("15:05:05.000")),
+	fmt.Println( //nolint:forbidigo
+		colorize(lightGray, rec.Time.Format("15:05:05.000")),
 		level,
-		colorize(white, r.Message),
+		colorize(white, rec.Message),
 		colorize(darkGray, string(bytes)),
 	)
 
@@ -111,16 +111,13 @@ func (h *prettyHandler) WithGroup(name string) slog.Handler {
 	return &prettyHandler{h: h.h.WithGroup(name), b: h.b, m: h.m}
 }
 
-func (h *prettyHandler) computeAttrs(
-	ctx context.Context,
-	r slog.Record,
-) (map[string]any, error) {
+func (h *prettyHandler) computeAttrs(ctx context.Context, rec slog.Record) (map[string]any, error) {
 	h.m.Lock()
 	defer func() {
 		h.b.Reset()
 		h.m.Unlock()
 	}()
-	if err := h.h.Handle(ctx, r); err != nil {
+	if err := h.h.Handle(ctx, rec); err != nil {
 		return nil, fmt.Errorf("error when calling inner handler's Handle: %w", err)
 	}
 
@@ -132,18 +129,16 @@ func (h *prettyHandler) computeAttrs(
 	return attrs, nil
 }
 
-func suppressDefaults(
-	next func([]string, slog.Attr) slog.Attr,
-) func([]string, slog.Attr) slog.Attr {
-	return func(groups []string, a slog.Attr) slog.Attr {
-		if a.Key == slog.TimeKey ||
-			a.Key == slog.LevelKey ||
-			a.Key == slog.MessageKey {
+func suppressDefaults(next func([]string, slog.Attr) slog.Attr) func([]string, slog.Attr) slog.Attr {
+	return func(groups []string, attr slog.Attr) slog.Attr {
+		if attr.Key == slog.TimeKey ||
+			attr.Key == slog.LevelKey ||
+			attr.Key == slog.MessageKey {
 			return slog.Attr{}
 		}
 		if next == nil {
-			return a
+			return attr
 		}
-		return next(groups, a)
+		return next(groups, attr)
 	}
 }

@@ -27,7 +27,7 @@ func NewBeerHandler(beerService service.BeerService, breweryService service.Brew
 	}
 }
 
-func (h WorkspaceHandler) CreateBeerPage(ctx echo.Context) error {
+func (h WorkspaceServer) CreateBeerPage(ctx echo.Context) error {
 	breweries, breweriesErr := h.breweryService.ListBreweries()
 	if breweriesErr != nil {
 		return ctx.HTML(http.StatusOK, breweriesErr.Error())
@@ -48,7 +48,7 @@ func (h WorkspaceHandler) CreateBeerPage(ctx echo.Context) error {
 	return render(ctx, workspace.BeerPageLayout(beerPage))
 }
 
-func (h WorkspaceHandler) PostBeerPage(ctx echo.Context) error {
+func (h WorkspaceServer) PostBeerPage(ctx echo.Context) error {
 	idStr := ctx.FormValue("id")
 	id, _ := strconv.Atoi(idStr)
 	breweryIdStr := ctx.FormValue("brewery")
@@ -80,7 +80,7 @@ func (h WorkspaceHandler) PostBeerPage(ctx echo.Context) error {
 	if formParams.Id == 0 {
 		newBeer, createErr := h.beerService.CreateBeer(formParams.Brand, formParams.Type, &styleId, &breweryId, false)
 		if createErr != nil {
-			h.logger.Error("create beer", createErr)
+			h.logger.Error("create beer", slog.Any("error", createErr))
 			return render(ctx, workspace.BeerForm(formParams, workspace.BeerFormErrors{Error: createErr.Error()}))
 		}
 		ctx.Response().Header().Set("HX-Redirect", fmt.Sprintf("/workspace/beer/%d", newBeer.Id))
@@ -89,7 +89,7 @@ func (h WorkspaceHandler) PostBeerPage(ctx echo.Context) error {
 
 	updErr := h.beerService.UpdateBeer(formParams.Id, formParams.Brand, formParams.Type, &styleId, &breweryId, false)
 	if updErr != nil {
-		h.logger.Error("update beer", updErr)
+		h.logger.Error("update beer", slog.Any("error", updErr))
 		return render(ctx, workspace.BeerForm(formParams, workspace.BeerFormErrors{Error: updErr.Error()}))
 	}
 

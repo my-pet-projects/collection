@@ -41,29 +41,23 @@ linters:
     - stylecheck # don't want to have package comments
     - testpackage # don't want to use separate _test packages
     - ireturn # want to return interfaces
+    - err113 # sometimes don't want to use static errors
     - nilnil # want to return nil,nil
-    - goerr113 # sometimes don't want to use static errors
     - exhaustruct # don't want to initialize all struct fields
-    - nosnakecase # allow underscores
     - errchkjson # don't want to check encoding error return value in tests
     - depguard # don't need dependencies restrictions
     - tagalign # don't want to force tag alignment
+    - perfsprint # want to have consistent usage of fmt.Sprintf
 
     # deprecated
-    - golint
-    - interfacer
-    - maligned
-    - scopelint
-    - ifshort
-    - exhaustivestruct
-    - varcheck
-    - deadcode
-    - structcheck
+    - exportloopref
+    - execinquery
+    - gomnd
   enable-all: true
 
 linters-settings:
   govet:
-    check-shadowing: true
+    shadow: true
   wrapcheck:
     ignoreSigs:
       - errors.Wrap(
@@ -72,6 +66,9 @@ linters-settings:
       - fmt.Errorf(
       - (github.com/a-h/templ.Component).Render(
       - (github.com/labstack/echo/v4.Context).HTML(
+      - (github.com/labstack/echo/v4.Context).JSON(
+      - (github.com/labstack/echo/v4.Context).NoContent(
+      - (*github.com/my-pet-projects/collection/internal/web.ReqRespPair).Render(
   lll:
     line-length: 180
   errcheck:

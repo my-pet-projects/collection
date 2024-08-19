@@ -10,9 +10,9 @@ import (
 func NewLoggingMiddleware(logger *slog.Logger) echo.MiddlewareFunc {
 	logger = logger.WithGroup("http")
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) error {
-			req := c.Request()
-			res := c.Response()
+		return func(echoCtx echo.Context) error {
+			req := echoCtx.Request()
+			res := echoCtx.Response()
 			start := time.Now()
 
 			reqAttr := []slog.Attr{
@@ -25,9 +25,9 @@ func NewLoggingMiddleware(logger *slog.Logger) echo.MiddlewareFunc {
 				slog.String("referer", req.Referer()),
 			}
 
-			err := next(c)
+			err := next(echoCtx)
 			if err != nil {
-				c.Error(err)
+				echoCtx.Error(err)
 			}
 
 			end := time.Now()
@@ -49,7 +49,7 @@ func NewLoggingMiddleware(logger *slog.Logger) echo.MiddlewareFunc {
 				},
 			}
 
-			logger.LogAttrs(c.Request().Context(), slog.LevelInfo, "Incoming request", attributes...)
+			logger.LogAttrs(echoCtx.Request().Context(), slog.LevelInfo, "Incoming request", attributes...)
 
 			return nil
 		}
