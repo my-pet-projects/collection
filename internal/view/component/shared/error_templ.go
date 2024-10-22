@@ -8,46 +8,7 @@ package shared
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/my-pet-projects/collection/internal/db"
-import "fmt"
-import "encoding/json"
-
-type BreweriesData struct {
-	Breweries       []db.Brewery
-	SelectedBrewery *int
-}
-
-func breweriesJson(countriesData BreweriesData) string {
-	choices := make([]choicesData, 0)
-	selected := false
-	if countriesData.SelectedBrewery == nil || *countriesData.SelectedBrewery == 0 {
-		selected = true
-	}
-	emptyChoice := choicesData{
-		Value:    "",
-		Label:    "Select a brewery",
-		Selected: selected,
-		Disabled: false,
-	}
-	choices = append(choices, emptyChoice)
-	for _, brewery := range countriesData.Breweries {
-		selected := false
-		if countriesData.SelectedBrewery != nil && *countriesData.SelectedBrewery == brewery.Id {
-			selected = true
-		}
-		choices = append(choices, choicesData{
-			Value:            fmt.Sprint(brewery.Id),
-			Label:            fmt.Sprintf(`<span class="flex justify-center items-center">%s</span><span class="ml-4">%s</span>`, brewery.Country.NameCommon, brewery.Name),
-			Selected:         selected,
-			Disabled:         false,
-			CustomProperties: customProperty{SearchableValue: brewery.Country.NameCommon},
-		})
-	}
-	bytes, _ := json.Marshal(choices)
-	return string(bytes)
-}
-
-func BrewerySelector(data BreweriesData) templ.Component {
+func Error(msg string, err error) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -73,15 +34,38 @@ func BrewerySelector(data BreweriesData) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(breweriesJson(data))
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(msg)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/brewery.templ`, Line: 45, Col: 34}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/error.templ`, Line: 10, Col: 34}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 2)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if err != nil {
+			templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 3)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var3 string
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(err.Error())
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/error.templ`, Line: 14, Col: 17}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 4)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 5)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

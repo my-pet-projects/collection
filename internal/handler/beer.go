@@ -7,10 +7,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/labstack/echo/v4"
-
+	"github.com/my-pet-projects/collection/internal/db"
 	"github.com/my-pet-projects/collection/internal/service"
 	"github.com/my-pet-projects/collection/internal/view/component/workspace"
+	"github.com/my-pet-projects/collection/internal/web"
 )
 
 type BeerHandler struct {
@@ -27,17 +27,17 @@ func NewBeerHandler(beerService service.BeerService, breweryService service.Brew
 	}
 }
 
-func (h WorkspaceServer) CreateBeerPage(ctx echo.Context) error {
+func (h WorkspaceServer) HandleCreateBeerPage(reqResp *web.ReqRespPair) error {
 	breweries, breweriesErr := h.breweryService.ListBreweries()
 	if breweriesErr != nil {
-		return ctx.HTML(http.StatusOK, breweriesErr.Error())
+		return reqResp.RenderError(http.StatusInternalServerError, breweriesErr)
 	}
 	styles, stylesErr := h.beerService.ListBeerStyles()
 	if stylesErr != nil {
-		return ctx.HTML(http.StatusOK, stylesErr.Error())
+		return reqResp.RenderError(http.StatusInternalServerError, stylesErr)
 	}
 
-	page := workspace.NewPage(ctx, "Create Beer")
+	page := workspace.Page{Title: fmt.Sprintf("Create beer")}
 	beerPage := workspace.BeerPageData{
 		Page: page,
 		FormParams: workspace.BeerFormParams{
@@ -45,62 +45,67 @@ func (h WorkspaceServer) CreateBeerPage(ctx echo.Context) error {
 			Styles:    styles,
 		},
 	}
-	return render(ctx, workspace.BeerPageLayout(beerPage))
+	return reqResp.Render(workspace.BeerPageLayout(beerPage))
 }
 
-func (h WorkspaceServer) PostBeerPage(ctx echo.Context) error {
-	idStr := ctx.FormValue("id")
+func (h WorkspaceServer) SubmitBeerPage(reqResp *web.ReqRespPair) error {
+	idStr := reqResp.Request.FormValue("id")
 	id, _ := strconv.Atoi(idStr)
-	breweryIdStr := ctx.FormValue("brewery")
+	breweryIdStr := reqResp.Request.FormValue("brewery")
 	breweryId, _ := strconv.Atoi(breweryIdStr)
-	styleIdStr := ctx.FormValue("style")
+	styleIdStr := reqResp.Request.FormValue("style")
 	styleId, _ := strconv.Atoi(styleIdStr)
 	formParams := workspace.BeerFormParams{
 		Id:        id,
-		Brand:     strings.TrimSpace(ctx.FormValue("brand")),
-		Type:      strings.TrimSpace(ctx.FormValue("type")),
+		Brand:     strings.TrimSpace(reqResp.Request.FormValue("brand")),
+		Type:      strings.TrimSpace(reqResp.Request.FormValue("type")),
 		BreweryId: &breweryId,
 		StyleId:   &styleId,
 	}
 
+	breweries, breweriesErr := h.breweryService.ListBreweries()
+	if breweriesErr != nil {
+		return reqResp.RenderError(http.StatusInternalServerError, breweriesErr)
+	}
+	styles, stylesErr := h.beerService.ListBeerStyles()
+	if stylesErr != nil {
+		return reqResp.RenderError(http.StatusInternalServerError, stylesErr)
+	}
+	formParams.Breweries = breweries
+	formParams.Styles = styles
+
 	if formErrs, hasErrs := formParams.Validate(); hasErrs {
-		breweries, breweriesErr := h.breweryService.ListBreweries()
-		if breweriesErr != nil {
-			return ctx.HTML(http.StatusOK, breweriesErr.Error())
-		}
-		styles, stylesErr := h.beerService.ListBeerStyles()
-		if stylesErr != nil {
-			return ctx.HTML(http.StatusOK, stylesErr.Error())
-		}
-		formParams.Breweries = breweries
-		formParams.Styles = styles
-		return render(ctx, workspace.BeerForm(formParams, formErrs))
+		return reqResp.Render(workspace.BeerForm(formParams, formErrs))
 	}
 
 	if formParams.Id == 0 {
 		newBeer, createErr := h.beerService.CreateBeer(formParams.Brand, formParams.Type, &styleId, &breweryId, false)
 		if createErr != nil {
 			h.logger.Error("create beer", slog.Any("error", createErr))
-			return render(ctx, workspace.BeerForm(formParams, workspace.BeerFormErrors{Error: createErr.Error()}))
+			return reqResp.Render(workspace.BeerForm(formParams, workspace.BeerFormErrors{Error: createErr.Error()}))
 		}
-		ctx.Response().Header().Set("HX-Redirect", fmt.Sprintf("/workspace/beer/%d", newBeer.Id))
-		return nil
+		return reqResp.Redirect(fmt.Sprintf("/workspace/beer/%d", newBeer.Id))
 	}
 
 	updErr := h.beerService.UpdateBeer(formParams.Id, formParams.Brand, formParams.Type, &styleId, &breweryId, false)
 	if updErr != nil {
 		h.logger.Error("update beer", slog.Any("error", updErr))
-		return render(ctx, workspace.BeerForm(formParams, workspace.BeerFormErrors{Error: updErr.Error()}))
+		return reqResp.Render(workspace.BeerForm(formParams, workspace.BeerFormErrors{Error: updErr.Error()}))
 	}
 
-	return render(ctx, workspace.BeerForm(formParams, workspace.BeerFormErrors{}))
+	return reqResp.Render(workspace.BeerForm(formParams, workspace.BeerFormErrors{}))
 }
 
-func (h BeerHandler) ListBeers(ctx echo.Context) error {
+func (h WorkspaceServer) ListBeers(reqResp *web.ReqRespPair) error {
 	beers, beersErr := h.beerService.ListBeers()
 	if beersErr != nil {
-		return ctx.HTML(http.StatusOK, beersErr.Error())
+		return reqResp.RenderError(http.StatusInternalServerError, beersErr)
 	}
 
-	return workspace.BeerListPage(beers).Render(ctx.Request().Context(), ctx.Response().Writer)
+	limitedBeers := make([]db.Beer, 0)
+	for i := 0; i <= 10; i++ {
+		limitedBeers = append(limitedBeers, beers[i])
+	}
+
+	return reqResp.Render(workspace.BeerList(limitedBeers))
 }

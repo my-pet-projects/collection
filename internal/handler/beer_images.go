@@ -1,22 +1,20 @@
 package handler
 
 import (
-	"fmt"
 	"log/slog"
 
 	"github.com/my-pet-projects/collection/internal/view/page"
 	"github.com/my-pet-projects/collection/internal/web"
 )
 
-func (h WorkspaceServer) HandleBeerImagesIndex(reqResp *web.ReqRespPair) error {
+func (h WorkspaceServer) HandleBeerImagesPage(reqResp *web.ReqRespPair) error {
 	items, itemsErr := h.mediaService.GetBeerMediaItems(reqResp.Request.Context())
 	if itemsErr != nil {
 		h.logger.Error("Failed to fetch beer media items", slog.Any("error", itemsErr))
-		return reqResp.Render(page.BeerImagesPage())
+		return reqResp.Render(page.BeerImagesPage(page.BeerImagesPageParams{}))
 	}
-	fmt.Println("items", items)
-	// p := page.BeerImagesPage{
-	// 	Title: "Beer Images",
-	// }
-	return reqResp.Render(page.BeerImagesPage())
+	pageParams := page.BeerImagesPageParams{
+		BeerMedias: items,
+	}
+	return reqResp.Render(page.BeerImagesPage(pageParams))
 }

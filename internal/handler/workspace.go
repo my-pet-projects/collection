@@ -12,6 +12,7 @@ import (
 
 	"github.com/my-pet-projects/collection/internal/service"
 	"github.com/my-pet-projects/collection/internal/view/component/workspace"
+	"github.com/my-pet-projects/collection/internal/web"
 )
 
 type WorkspaceServer struct {
@@ -43,38 +44,38 @@ func (h WorkspaceServer) GetWorkspace(ctx echo.Context) error {
 	return workspace.WorkspacePage(page).Render(ctx.Request().Context(), ctx.Response().Writer)
 }
 
-func (h WorkspaceServer) GetBreweryWorkspace(ctx echo.Context) error {
-	page := workspace.NewPage(ctx, "Brewery Workspace")
-	return workspace.WorkspaceBreweriesListPage(page).Render(ctx.Request().Context(), ctx.Response().Writer)
+func (h WorkspaceServer) HandleBreweryListPage(reqResp *web.ReqRespPair) error {
+	page := workspace.Page{Title: fmt.Sprintf("Brewery Workspace")}
+	return reqResp.Render(workspace.BreweryListPage(page))
 }
 
-func (h WorkspaceServer) GetBeerWorkspace(ctx echo.Context) error {
-	page := workspace.NewPage(ctx, "Beer Workspace")
+func (h WorkspaceServer) HandleBeerListPage(reqResp *web.ReqRespPair) error {
+	page := workspace.Page{Title: fmt.Sprintf("Beer Workspace")}
 	beerPage := workspace.BeerPageData{
 		Page: page,
 	}
-	return workspace.WorkspaceBeerPage(beerPage).Render(ctx.Request().Context(), ctx.Response().Writer)
+	return reqResp.Render(workspace.BeerListPage(beerPage))
 }
 
-func (h WorkspaceServer) GetBeerPage(ctx echo.Context) error {
-	beerId, parseErr := strconv.Atoi(ctx.Param("id"))
+func (h WorkspaceServer) HandleBeerPage(reqResp *web.ReqRespPair) error {
+	beerId, parseErr := strconv.Atoi(reqResp.Request.PathValue("id"))
 	if parseErr != nil {
-		return ctx.HTML(http.StatusBadRequest, parseErr.Error())
+		return reqResp.RenderError(http.StatusInternalServerError, parseErr)
 	}
 	beer, beerErr := h.beerService.GetBeer(beerId)
 	if beerErr != nil {
-		return ctx.HTML(http.StatusOK, beerErr.Error())
+		return reqResp.RenderError(http.StatusInternalServerError, beerErr)
 	}
 	breweries, breweriesErr := h.breweryService.ListBreweries()
 	if breweriesErr != nil {
-		return ctx.HTML(http.StatusOK, breweriesErr.Error())
+		return reqResp.RenderError(http.StatusInternalServerError, breweriesErr)
 	}
 	styles, stylesErr := h.beerService.ListBeerStyles()
 	if stylesErr != nil {
-		return ctx.HTML(http.StatusOK, stylesErr.Error())
+		return reqResp.RenderError(http.StatusInternalServerError, stylesErr)
 	}
 
-	page := workspace.NewPage(ctx, fmt.Sprintf("Edit Beer - %s", beer.Brand))
+	page := workspace.Page{Title: fmt.Sprintf("Edit Beer - %s", beer.Brand)}
 	beerPage := workspace.BeerPageData{
 		Page: page,
 		FormParams: workspace.BeerFormParams{
@@ -87,19 +88,21 @@ func (h WorkspaceServer) GetBeerPage(ctx echo.Context) error {
 			Styles:    styles,
 		},
 	}
-	return render(ctx, workspace.BeerPageLayout(beerPage))
+
+	return reqResp.Render(workspace.BeerPageLayout(beerPage))
 }
 
-func (h WorkspaceServer) GetBreweryPage(ctx echo.Context) error {
-	breweryId, parseErr := strconv.Atoi(ctx.Param("id"))
+func (h WorkspaceServer) HandleBreweryPage(reqResp *web.ReqRespPair) error {
+	breweryId, parseErr := strconv.Atoi(reqResp.Request.PathValue("id"))
 	if parseErr != nil {
-		return ctx.HTML(http.StatusBadRequest, parseErr.Error())
+		return reqResp.RenderError(http.StatusBadRequest, parseErr)
 	}
 	brewery, breweryErr := h.breweryService.GetBrewery(breweryId)
 	if breweryErr != nil {
-		return ctx.HTML(http.StatusOK, breweryErr.Error())
+		return reqResp.RenderError(http.StatusInternalServerError, breweryErr)
 	}
-	page := workspace.NewPage(ctx, fmt.Sprintf("Edit Brewery - %s", brewery.Name))
+
+	page := workspace.Page{Title: fmt.Sprintf("Edit Brewery - %s", brewery.Name)}
 	breweryPage := workspace.BreweryPage{
 		Page: page,
 		FormParams: workspace.BreweryFormParams{
@@ -109,50 +112,51 @@ func (h WorkspaceServer) GetBreweryPage(ctx echo.Context) error {
 			CityId:      brewery.GeoId,
 		},
 	}
-	return workspace.WorkspaceBreweryPage(breweryPage).Render(ctx.Request().Context(), ctx.Response().Writer)
+
+	return reqResp.Render(workspace.BreweryPageLayout(breweryPage))
 }
 
-func (h WorkspaceServer) CreateBreweryPage(ctx echo.Context) error {
-	page := workspace.NewPage(ctx, "Create Brewery")
+func (h WorkspaceServer) HandleCreateBreweryPage(reqResp *web.ReqRespPair) error {
+	page := workspace.Page{Title: fmt.Sprintf("Create Brewery")}
 	breweryPage := workspace.BreweryPage{
 		Page: page,
 	}
-	return render(ctx, workspace.WorkspaceBreweryPage(breweryPage))
+	return reqResp.Render(workspace.BreweryPageLayout(breweryPage))
 }
 
-func (h WorkspaceServer) PostBreweryPage(ctx echo.Context) error {
-	idStr := ctx.FormValue("id")
+func (h WorkspaceServer) SubmitBreweryPage(reqResp *web.ReqRespPair) error {
+	idStr := reqResp.Request.FormValue("id")
 	id, _ := strconv.Atoi(idStr)
-	geoIdStr := ctx.FormValue("city")
+	geoIdStr := reqResp.Request.FormValue("city")
 	geoId, _ := strconv.Atoi(geoIdStr)
 	formParams := workspace.BreweryFormParams{
 		Id:          id,
-		Name:        strings.TrimSpace(ctx.FormValue("name")),
-		CountryCode: ctx.FormValue("country"),
+		Name:        strings.TrimSpace(reqResp.Request.FormValue("name")),
+		CountryCode: reqResp.Request.FormValue("country"),
 		CityId:      geoId,
 	}
 
 	if formErrs, hasErrs := formParams.Validate(); hasErrs {
-		return render(ctx, workspace.BreweryForm(formParams, formErrs))
+		return reqResp.Render(workspace.BreweryForm(formParams, formErrs))
 	}
 
 	if formParams.Id == 0 {
 		newBrewery, createErr := h.breweryService.CreateBrewery(formParams.Name, formParams.CityId)
 		if createErr != nil {
 			h.logger.Error("create brewery", slog.Any("error", createErr))
-			return render(ctx, workspace.BreweryForm(formParams, workspace.BreweryFormErrors{Error: createErr.Error()}))
+			return reqResp.RenderError(http.StatusInternalServerError, createErr)
 		}
-		ctx.Response().Header().Set("HX-Redirect", fmt.Sprintf("/workspace/brewery/%d", newBrewery.Id))
+		reqResp.Redirect(fmt.Sprintf("/workspace/brewery/%d", newBrewery.Id))
 		return nil
 	}
 
 	updErr := h.breweryService.UpdateBrewery(formParams.Id, formParams.Name, formParams.CityId)
 	if updErr != nil {
 		h.logger.Error("update brewery", slog.Any("error", updErr))
-		return render(ctx, workspace.BreweryForm(formParams, workspace.BreweryFormErrors{Error: updErr.Error()}))
+		return reqResp.RenderError(http.StatusInternalServerError, updErr)
 	}
 
-	return render(ctx, workspace.BreweryForm(formParams, workspace.BreweryFormErrors{}))
+	return reqResp.Render(workspace.BreweryForm(formParams, workspace.BreweryFormErrors{}))
 }
 
 func render(ctx echo.Context, comp templ.Component) error {

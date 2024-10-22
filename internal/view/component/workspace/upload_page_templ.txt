@@ -1,0 +1,1 @@
+<div class=\"flex-1 py-6 px-10\"><div><div class=\"mb-6\"><h1 class=\"pb-2 text-2xl font-semibold text-slate-800 border-b border-gray-400\">Upload</h1></div></div><app-upload></app-upload></div>
