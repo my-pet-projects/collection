@@ -75,3 +75,17 @@ select.has-err,
 .choices__item {
   display: flex;
 }
+
+/* spinner */
+.htmx-indicator{ 
+  display:none; 
+} 
+.htmx-request .htmx-indicator{ 
+  display:inline;
+} 
+.htmx-request.htmx-indicator{ 
+  display:inline; 
+}
+.htmx-request.htmx-indicator ~ .btn-content {
+  display: none;
+}

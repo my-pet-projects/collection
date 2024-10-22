@@ -1,9 +1,11 @@
 package workspace
 
-import "github.com/my-pet-projects/collection/internal/db"
-import "fmt"
+import (
+	"fmt"
+	"github.com/my-pet-projects/collection/internal/db"
+)
 
-templ WorkspaceBeerPage(page BeerPageData) {
+templ BeerListPage(page BeerPageData) {
 	@adminLayout(page.Page, beersList())
 }
 
@@ -20,16 +22,23 @@ templ beersList() {
 				Add beer
 			</a>
 		</div>
-		<div class="grid grid-cols-2 gap-y-5 gap-x-8">
-			<div hx-get="/beer" hx-trigger="load">
-				<img alt="Loading..." width="30" src="/img/tail-spin.svg"/>
+		<div class="grid grid-cols-2 gap-y-5 gap-x-8asasdasd" hx-ext="response-targets">
+			<div
+				hx-get="/beers"
+				hx-target="#beer-list"
+				hx-target-error="#beer-list-errors"
+				hx-trigger="load"
+				hx-indicator="#indicator"
+			>
+				<div id="beer-list"></div>
+				<div id="beer-list-errors"></div>
+				<img id="indicator" class="htmx-indicator" alt="Loading..." width="30" src="/static/img/tail-spin.svg"/>
 			</div>
 		</div>
 	</div>
 }
 
-templ BeerListPage(beers []db.Beer) {
-	<div>beers</div>
+templ BeerList(beers []db.Beer) {
 	for _, beer := range beers {
 		<div>
 			{ beer.Brand } - { beer.Style.Name }

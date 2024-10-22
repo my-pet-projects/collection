@@ -33,5 +33,4 @@ type BreweryFormErrors struct {
 	Name    string
 	Country string
 	City    string
-	Error   string
 }
