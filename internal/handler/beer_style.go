@@ -9,26 +9,26 @@ import (
 
 	"github.com/my-pet-projects/collection/internal/model"
 	"github.com/my-pet-projects/collection/internal/view/component/workspace"
+	"github.com/my-pet-projects/collection/internal/web"
 )
 
-func (h WorkspaceServer) BeerStyleLayoutHandler(ctx echo.Context) error {
-	page := workspace.NewPage(ctx, "Beer Style Workspace")
+func (h WorkspaceServer) HandleBeerStyleListPage(reqResp *web.ReqRespPair) error {
+	page := workspace.Page{Title: "Beer Style"}
 	beerStyleListPage := workspace.BeerStyleListPageData{
 		Page: page,
 	}
-	return workspace.BeerStyleLayout(beerStyleListPage).Render(ctx.Request().Context(), ctx.Response().Writer)
+	return reqResp.Render(workspace.BeerStyleListPage(beerStyleListPage))
 }
 
-func (h WorkspaceServer) ListBeerStyles(ctx echo.Context) error {
+func (h WorkspaceServer) ListBeerStyles(reqResp *web.ReqRespPair) error {
 	filter := model.BeerStyleFilter{
-		Name: ctx.FormValue("name"),
+		Name: reqResp.Request.FormValue("name"),
 	}
 	styles, stylesErr := h.beerService.FilterBeerStyles(filter)
 	if stylesErr != nil {
-		return ctx.HTML(http.StatusOK, stylesErr.Error())
+		return reqResp.RenderError(http.StatusInternalServerError, stylesErr)
 	}
-
-	return workspace.BeerStylesTable(styles).Render(ctx.Request().Context(), ctx.Response().Writer)
+	return reqResp.Render(workspace.BeerStylesTable(styles))
 }
 
 func (h WorkspaceServer) BeerStyleCreateViewHandler(ctx echo.Context) error {

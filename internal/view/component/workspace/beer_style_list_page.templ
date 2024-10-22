@@ -1,13 +1,15 @@
 package workspace
 
-import "github.com/my-pet-projects/collection/internal/model"
-import "fmt"
+import (
+	"fmt"
+	"github.com/my-pet-projects/collection/internal/model"
+)
 
 type BeerStyleListPageData struct {
 	Page
 }
 
-templ BeerStyleLayout(page BeerStyleListPageData) {
+templ BeerStyleListPage(page BeerStyleListPageData) {
 	@adminLayout(page.Page, beerStylesList())
 }
 
@@ -51,9 +53,17 @@ templ beerStylesList() {
 						</button>
 					</div>
 				</div>
-				<div class="overflow-x-auto">
-					<div hx-post="/workspace/beer-style/search" hx-trigger="load">
-						<img alt="Loading..." width="30" src="/img/tail-spin.svg"/>
+				<div class="overflow-x-auto" hx-ext="response-targets">
+					<div
+						hx-post="/workspace/beer-style/search"
+						hx-target="#style-list"
+						hx-trigger="load"
+						hx-target-error="#style-list-errors"
+						hx-indicator="#indicator"
+					>
+						<div id="style-list"></div>
+						<div id="style-list-errors"></div>
+						<img id="indicator" class="htmx-indicator" alt="Loading..." width="30" src="/static/img/tail-spin.svg"/>
 					</div>
 				</div>
 			</div>

@@ -5,10 +5,9 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/labstack/echo/v4"
-
 	"github.com/my-pet-projects/collection/internal/service"
 	"github.com/my-pet-projects/collection/internal/view/component/shared"
+	"github.com/my-pet-projects/collection/internal/web"
 )
 
 type GeographyHandler struct {
@@ -23,17 +22,17 @@ func NewGeographyHandler(geoService service.GeographyService, logger *slog.Logge
 	}
 }
 
-func (h GeographyHandler) ListCountries(ctx echo.Context) error {
+func (h GeographyHandler) ListCountries(reqResp *web.ReqRespPair) error {
 	countries, countriesErr := h.geoService.GetCountries()
 	if countriesErr != nil {
-		return ctx.HTML(http.StatusOK, countriesErr.Error())
+		return reqResp.RenderError(http.StatusInternalServerError, countriesErr)
 	}
 	hasBreweries := false
-	hasBreweriesParam := ctx.QueryParam("hasBreweries")
+	hasBreweriesParam := reqResp.Request.URL.Query().Get("hasBreweries")
 	if hasBreweriesParam != "" {
 		parsedVal, parseErr := strconv.ParseBool(hasBreweriesParam)
 		if parseErr != nil {
-			return ctx.HTML(http.StatusBadRequest, parseErr.Error())
+			return reqResp.RenderError(http.StatusBadRequest, parseErr)
 		}
 		hasBreweries = parsedVal
 	}
@@ -41,13 +40,13 @@ func (h GeographyHandler) ListCountries(ctx echo.Context) error {
 		Countries:    countries,
 		HasBreweries: hasBreweries,
 	}
-	return shared.CountriesSelector(data).Render(ctx.Request().Context(), ctx.Response().Writer)
+	return reqResp.Render(shared.CountriesSelector(data))
 }
 
-func (h GeographyHandler) ListCities(ctx echo.Context) error {
-	cities, citiesErr := h.geoService.GetCities(ctx.Param("countryIso"))
+func (h GeographyHandler) ListCities(reqResp *web.ReqRespPair) error {
+	cities, citiesErr := h.geoService.GetCities(reqResp.Request.PathValue("countryIso"))
 	if citiesErr != nil {
-		return ctx.HTML(http.StatusOK, citiesErr.Error())
+		return reqResp.RenderError(http.StatusInternalServerError, citiesErr)
 	}
 	// currentUrl, urlErr := url.Parse(ctx.Request().Header.Get("HX-Current-URL"))
 	// if urlErr != nil {
@@ -57,13 +56,5 @@ func (h GeographyHandler) ListCities(ctx echo.Context) error {
 	// queryValues.Set("country", ctx.Param("countryIso"))
 	// currentUrl.RawQuery = queryValues.Encode()
 	// ctx.Response().Header().Set("HX-Replace-Url", currentUrl.String())
-	return shared.CitiesSelector(cities).Render(ctx.Request().Context(), ctx.Response().Writer)
-}
-
-func (h GeographyHandler) GetCities(ctx echo.Context) error {
-	cities, citiesErr := h.geoService.GetCities("ru")
-	if citiesErr != nil {
-		return ctx.HTML(http.StatusOK, citiesErr.Error())
-	}
-	return shared.CitiesSelector(cities).Render(ctx.Request().Context(), ctx.Response().Writer)
+	return reqResp.Render(shared.CitiesSelector(cities))
 }

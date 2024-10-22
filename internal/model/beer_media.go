@@ -9,7 +9,7 @@ type BeerMedia struct {
 	BeerID  *int
 	Beer    *Beer `gorm:"foreignKey:ID"`
 	MediaID int
-	Media   MediaItem `gorm:"foreignKey:ID"`
+	Media   MediaItem `gorm:"foreignKey:MediaID"`
 	Type    BeerMediaType
 }
 

@@ -1,15 +1,36 @@
 package page
 
+import (
+	"fmt"
+	"github.com/my-pet-projects/collection/internal/model"
+	"github.com/my-pet-projects/collection/internal/view/layout"
+)
 
-// import "github.com/my-pet-projects/collection/internal/view/component/shared"
-import "github.com/my-pet-projects/collection/internal/view/layout"
+type BeerImagesPageParams struct {
+	Beer       model.Beer
+	BeerMedias []model.BeerMedia
+}
 
-
-templ BeerImagesPage() {
+templ BeerImagesPage(params BeerImagesPageParams) {
 	@layout.WorkspaceLayout() {
 		<div class="p-4">
 			<h1 class="text-2xl font-semibold">Beer Images</h1>
-			<div class="mt-4"> </div>
-		</div>	
+			<div class="mt-4">
+				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+					for _, media := range params.BeerMedias {
+						@BeerMedia(media)
+					}
+				</div>
+			</div>
+		</div>
 	}
+}
+
+templ BeerMedia(beerMedia model.BeerMedia) {
+	<div class="">
+		<img
+			class="aspect-square w-40 object-contain"
+			src={ fmt.Sprintf("https://beer-collection-bucket.s3.eu-central-1.amazonaws.com/preview/%s", beerMedia.Media.ExternalFilename) }
+		/>
+	</div>
 }

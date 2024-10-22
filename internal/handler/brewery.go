@@ -4,10 +4,9 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/labstack/echo/v4"
-
 	"github.com/my-pet-projects/collection/internal/service"
-	"github.com/my-pet-projects/collection/internal/view/component"
+	"github.com/my-pet-projects/collection/internal/view/component/workspace"
+	"github.com/my-pet-projects/collection/internal/web"
 )
 
 type BreweryHandler struct {
@@ -24,11 +23,11 @@ func NewBreweryHandler(breweryService service.BreweryService, geoService service
 	}
 }
 
-func (h BreweryHandler) ListBreweries(ctx echo.Context) error {
+func (h BreweryHandler) ListBreweries(reqResp *web.ReqRespPair) error {
 	breweries, breweriesErr := h.breweryService.ListBreweries()
 	if breweriesErr != nil {
-		return ctx.HTML(http.StatusOK, breweriesErr.Error())
+		return reqResp.RenderError(http.StatusInternalServerError, breweriesErr)
 	}
 
-	return component.BreweriesPage(breweries).Render(ctx.Request().Context(), ctx.Response().Writer)
+	return reqResp.Render(workspace.BreweryList(breweries))
 }

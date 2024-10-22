@@ -1,9 +1,13 @@
 package web
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/a-h/templ"
+
+	"github.com/my-pet-projects/collection/internal/model"
+	"github.com/my-pet-projects/collection/internal/view/component/shared"
 )
 
 type HandlerFunc func(reqResp *ReqRespPair) error
@@ -15,7 +19,7 @@ func Handler(handlerFun HandlerFunc) http.HandlerFunc {
 			Request:  r,
 		}
 		if err := handlerFun(reqResp); err != nil {
-			reqResp.Text(http.StatusInternalServerError, err.Error()) //nolint:errcheck,gosec
+			reqResp.RenderError(http.StatusInternalServerError, err) //nolint:errcheck,gosec
 			return
 		}
 	}
@@ -35,4 +39,35 @@ func (rrp *ReqRespPair) Text(status int, msg string) error {
 
 func (rrp *ReqRespPair) Render(c templ.Component) error {
 	return c.Render(rrp.Request.Context(), rrp.Response)
+}
+
+func (rrp *ReqRespPair) RenderError(code int, err error) error {
+	switch code {
+	case http.StatusMethodNotAllowed:
+		return rrp.renderError(code, "Method not allowed.", nil)
+	case http.StatusNotFound:
+		return rrp.renderError(code, "Resource not found.", nil)
+	case http.StatusInternalServerError:
+		var appErr *model.AppError
+		if errors.As(err, &appErr) {
+			return rrp.renderError(code, appErr.Msg, appErr.Err)
+		}
+		fallthrough
+	default:
+		return rrp.renderError(code, "Unknown error.", err)
+	}
+}
+
+func (rrp *ReqRespPair) IsHtmxRequest() bool {
+	return rrp.Request.Header.Get("Hx-Request") != ""
+}
+
+func (rrp *ReqRespPair) renderError(code int, msg string, err error) error {
+	rrp.Response.WriteHeader(code)
+	return shared.Error(msg, err).Render(rrp.Request.Context(), rrp.Response)
+}
+
+func (rrp *ReqRespPair) Redirect(url string) error {
+	rrp.Response.Header().Set("HX-Redirect", url)
+	return nil
 }
