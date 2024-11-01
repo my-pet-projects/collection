@@ -1,6 +1,9 @@
 package workspace
 
-import "github.com/my-pet-projects/collection/internal/view/component/navigation"
+import (
+	"github.com/my-pet-projects/collection/internal/view/component/navigation"
+	"github.com/my-pet-projects/collection/internal/view/component/shared"
+)
 
 templ adminLayout(page Page, contents templ.Component) {
 	@headerComponent(page.Title)
@@ -12,6 +15,9 @@ templ adminLayout(page Page, contents templ.Component) {
 				if (contents != nil) {
 					@contents
 				}
+				<div>
+					@shared.Notification()
+				</div>
 			</main>
 		</div>
 	</div>
@@ -39,7 +45,6 @@ templ adminLayout(page Page, contents templ.Component) {
 			});
 		}
     </script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
 }
 
 templ WorkspacePage(page Page) {
@@ -61,13 +66,12 @@ templ headerComponent(title string) {
 		<script src="https://unpkg.com/htmx.org@2.0.3" crossorigin="anonymous"></script>
 		<script src="https://unpkg.com/htmx.org@1.9.11/dist/ext/path-params.js"></script>
 		<script src="https://unpkg.com/htmx-ext-response-targets@2.0.1/response-targets.js"></script>
-		// <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.css" rel="stylesheet"/>
-		// <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 		<script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
 		<script src="/static/js/select.js"></script>
 		<script src="/static/js/upload.js" type="module"></script>
 		// <script src="https://cdn.tailwindcss.com"></script>
 		<link href="https://releases.transloadit.com/uppy/v3.27.0/uppy.min.css" rel="stylesheet"/>
+		<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 	</head>
 }

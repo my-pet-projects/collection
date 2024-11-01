@@ -3,8 +3,8 @@ package model
 import "fmt"
 
 type AppError struct {
-	Msg string
-	Err error
+	Msg string `json:"message"`
+	Err error  `json:"-"`
 }
 
 func NewAppError(msg string, err error) error {
