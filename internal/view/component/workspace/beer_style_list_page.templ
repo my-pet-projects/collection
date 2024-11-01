@@ -21,7 +21,7 @@ templ beerStylesList() {
 			</div>
 		</div>
 		<div class="px-4 mx-auto max-w-screen-2xl">
-			<div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
+			<div class="bg-white relative shadow-md sm:rounded-lg overflow-hidden">
 				<div class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
 					<div class="w-full md:w-1/2">
 						<form class="flex items-center">
@@ -47,7 +47,15 @@ templ beerStylesList() {
 						</form>
 					</div>
 					<div class="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
-						<button hx-get="/workspace/beer-style/create" hx-target="next tbody" hx-swap="afterbegin" type="button" class="w-full md:w-auto flex items-center justify-center py-2 px-4 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200">
+						<button
+							hx-get="/workspace/beer-style/create"
+							hx-target="next tbody"
+							hx-swap="afterbegin"
+							x-data
+							x-on:htmx:response-error="$dispatch('notify', { variant: 'danger', title: 'Failed to switch to create view!' })"
+							type="button"
+							class="w-full md:w-auto flex items-center justify-center py-2 px-4 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200"
+						>
 							<svg class="h-4 w-4 text-slate-600" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"></path> <line x1="12" y1="5" x2="12" y2="19"></line> <line x1="5" y1="12" x2="19" y2="12"></line></svg>
 							Add style
 						</button>
