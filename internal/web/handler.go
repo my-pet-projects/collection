@@ -1,6 +1,7 @@
 package web
 
 import (
+	"encoding/json"
 	"errors"
 	"net/http"
 
@@ -56,6 +57,27 @@ func (rrp *ReqRespPair) RenderError(code int, err error) error {
 	default:
 		return rrp.renderError(code, "Unknown error.", err)
 	}
+}
+
+func (rrp *ReqRespPair) JsonError(code int, err error) error {
+	respErr := model.NewAppError(err.Error(), err)
+	switch code {
+	case http.StatusMethodNotAllowed:
+		respErr = model.NewAppError("Method not allowed.", nil)
+	case http.StatusNotFound:
+		respErr = model.NewAppError("Resource not found.", nil)
+	case http.StatusInternalServerError:
+		var appErr *model.AppError
+		if errors.As(err, &appErr) {
+			respErr = *appErr
+		}
+	}
+
+	payload, _ := json.Marshal(respErr)
+	rrp.Response.WriteHeader(code)
+	rrp.Response.Header().Set("Content-Type", "application/json")
+	_, writeErr := rrp.Response.Write(payload)
+	return writeErr //nolint:wrapcheck
 }
 
 func (rrp *ReqRespPair) IsHtmxRequest() bool {

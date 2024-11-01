@@ -126,7 +126,7 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 
 	// e.GET("/workspace/beer-style", workspaceSrv.BeerStyleLayoutHandler)
 	// e.POST("/workspace/beer-style/search", workspaceSrv.ListBeerStyles)
-	e.GET("/workspace/beer-style/create", workspaceSrv.BeerStyleCreateViewHandler)
+	// e.GET("/workspace/beer-style/create", workspaceSrv.BeerStyleCreateViewHandler)
 	e.GET("/workspace/beer-style/create-cancel", workspaceSrv.BeerStyleCreateCancelViewHandler)
 	e.PUT("/workspace/beer-style", workspaceSrv.BeerStyleCreateHandler)
 	e.GET("/workspace/beer-style/:id", workspaceSrv.BeerStyleViewHandler)
@@ -168,6 +168,7 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 	router.Group(func(r chi.Router) {
 		r.Post("/workspace/beer-style/search", web.Handler(workspaceSrv.ListBeerStyles))
 		r.Get("/workspace/beer-style", web.Handler(workspaceSrv.HandleBeerStyleListPage))
+		r.Get("/workspace/beer-style/create", web.Handler(workspaceSrv.HandleBeerStyleCreateView))
 
 	})
 

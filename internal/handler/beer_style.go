@@ -31,8 +31,8 @@ func (h WorkspaceServer) ListBeerStyles(reqResp *web.ReqRespPair) error {
 	return reqResp.Render(workspace.BeerStylesTable(styles))
 }
 
-func (h WorkspaceServer) BeerStyleCreateViewHandler(ctx echo.Context) error {
-	return workspace.CreateBeerStyle(model.BeerStyle{}, model.BeerStyleErrors{}).Render(ctx.Request().Context(), ctx.Response().Writer)
+func (h WorkspaceServer) HandleBeerStyleCreateView(reqResp *web.ReqRespPair) error {
+	return reqResp.Render(workspace.CreateBeerStyle(model.BeerStyle{}, model.BeerStyleErrors{}))
 }
 
 func (h WorkspaceServer) BeerStyleCreateCancelViewHandler(ctx echo.Context) error {
