@@ -7,9 +7,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/a-h/templ"
-	"github.com/labstack/echo/v4"
-
 	"github.com/my-pet-projects/collection/internal/service"
 	"github.com/my-pet-projects/collection/internal/view/component/workspace"
 	"github.com/my-pet-projects/collection/internal/web"
@@ -39,10 +36,10 @@ func NewWorkspaceServer(
 	}
 }
 
-func (h WorkspaceServer) GetWorkspace(ctx echo.Context) error {
-	page := workspace.NewPage(ctx, "Workspace")
-	return workspace.WorkspacePage(page).Render(ctx.Request().Context(), ctx.Response().Writer)
-}
+// func (h WorkspaceServer) GetWorkspace(ctx echo.Context) error {
+// 	page := workspace.NewPage(ctx, "Workspace")
+// 	return workspace.WorkspacePage(page).Render(ctx.Request().Context(), ctx.Response().Writer)
+// }
 
 func (h WorkspaceServer) HandleBreweryListPage(reqResp *web.ReqRespPair) error {
 	page := workspace.Page{Title: fmt.Sprintf("Brewery Workspace")}
@@ -157,8 +154,4 @@ func (h WorkspaceServer) SubmitBreweryPage(reqResp *web.ReqRespPair) error {
 	}
 
 	return reqResp.Render(workspace.BreweryForm(formParams, workspace.BreweryFormErrors{}))
-}
-
-func render(ctx echo.Context, comp templ.Component) error {
-	return comp.Render(ctx.Request().Context(), ctx.Response().Writer)
 }

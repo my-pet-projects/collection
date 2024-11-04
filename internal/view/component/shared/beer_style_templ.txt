@@ -1,2 +1,0 @@
-<app-select name=\"style\" data-items=\"
-\"></app-select>

@@ -65,9 +65,6 @@ linters-settings:
       - errors.New(
       - fmt.Errorf(
       - (github.com/a-h/templ.Component).Render(
-      - (github.com/labstack/echo/v4.Context).HTML(
-      - (github.com/labstack/echo/v4.Context).JSON(
-      - (github.com/labstack/echo/v4.Context).NoContent(
       - (*github.com/my-pet-projects/collection/internal/web.ReqRespPair).Render(
   lll:
     line-length: 180
