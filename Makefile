@@ -52,7 +52,7 @@ live:
 
 .PHONY: dev
 dev:
-	@echo -n "Starting application in hot-reload mode ..." ;\
+	@echo -n "Starting application in hot-reload mode on port 7331 ..." ;\
 	make live
 
 	

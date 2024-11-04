@@ -1,12 +1,9 @@
 package handler
 
 import (
-	"log/slog"
-	"net/http"
 	"strconv"
 
-	"github.com/labstack/echo/v4"
-
+	"github.com/my-pet-projects/collection/internal/apperr"
 	"github.com/my-pet-projects/collection/internal/model"
 	"github.com/my-pet-projects/collection/internal/view/component/workspace"
 	"github.com/my-pet-projects/collection/internal/web"
@@ -26,89 +23,87 @@ func (h WorkspaceServer) ListBeerStyles(reqResp *web.ReqRespPair) error {
 	}
 	styles, stylesErr := h.beerService.FilterBeerStyles(filter)
 	if stylesErr != nil {
-		return reqResp.RenderError(http.StatusInternalServerError, stylesErr)
+		return apperr.NewInternalServerError("Failed to fetch beer styles", stylesErr)
 	}
 	return reqResp.Render(workspace.BeerStylesTable(styles))
 }
 
 func (h WorkspaceServer) HandleBeerStyleCreateView(reqResp *web.ReqRespPair) error {
-	return reqResp.Render(workspace.CreateBeerStyle(model.BeerStyle{}, model.BeerStyleErrors{}))
+	return reqResp.Render(workspace.CreateBeerStyleRowView(model.BeerStyle{}, model.BeerStyleErrors{}))
 }
 
-func (h WorkspaceServer) BeerStyleCreateCancelViewHandler(ctx echo.Context) error {
-	return ctx.NoContent(http.StatusOK)
+func (h WorkspaceServer) HandleBeerStyleCreateCancelView(reqResp *web.ReqRespPair) error {
+	return reqResp.NoContent()
 }
 
-func (h WorkspaceServer) BeerStyleCreateHandler(ctx echo.Context) error {
+func (h WorkspaceServer) CreateBeerStyle(reqResp *web.ReqRespPair) error {
 	style := model.BeerStyle{
-		Name: ctx.FormValue("name"),
+		Name: reqResp.Request.FormValue("name"),
 	}
 	if formErrs, hasErrs := style.Validate(); hasErrs {
-		return render(ctx, workspace.CreateBeerStyle(style, formErrs))
+		return reqResp.Render(workspace.CreateBeerStyleRowView(style, formErrs))
 	}
 	newStyle, styleErr := h.beerService.CreateBeerStyle(style)
 	if styleErr != nil {
-		h.logger.Error("Failed to create beer style", slog.Any("error", styleErr))
-		return ctx.HTML(http.StatusInternalServerError, styleErr.Error())
+		return apperr.NewInternalServerError("Failed to create beer style", styleErr)
 	}
-	return workspace.DisplayBeerStyle(*newStyle).Render(ctx.Request().Context(), ctx.Response().Writer)
+	reqResp.TriggerHtmxNotifyEvent(web.NotifySuccessVariant, "Beer style created")
+	return reqResp.Render(workspace.DisplayBeerStyleRowView(*newStyle))
 }
 
-func (h WorkspaceServer) BeerStyleSaveHandler(ctx echo.Context) error {
-	styleId, parseErr := strconv.Atoi(ctx.Param("id"))
+func (h WorkspaceServer) SaveBeerStyle(reqResp *web.ReqRespPair) error {
+	styleId, parseErr := strconv.Atoi(reqResp.Request.PathValue("id"))
 	if parseErr != nil {
-		return ctx.HTML(http.StatusBadRequest, parseErr.Error())
+		return apperr.NewBadRequestError("Invalid identifier", parseErr)
 	}
 	style := model.BeerStyle{
 		Id:   styleId,
-		Name: ctx.FormValue("name"),
+		Name: reqResp.Request.FormValue("name"),
 	}
 	if formErrs, hasErrs := style.Validate(); hasErrs {
-		return render(ctx, workspace.EditBeerStyle(style, formErrs))
+		return reqResp.Render(workspace.CreateBeerStyleRowView(style, formErrs))
 	}
 	styleErr := h.beerService.UpdateBeerStyle(style)
 	if styleErr != nil {
-		h.logger.Error("Failed to update beer style", slog.Any("error", styleErr))
-		return ctx.HTML(http.StatusInternalServerError, styleErr.Error())
+		return apperr.NewInternalServerError("Failed to update beer style", styleErr)
 	}
-	return workspace.DisplayBeerStyle(style).Render(ctx.Request().Context(), ctx.Response().Writer)
+	reqResp.TriggerHtmxNotifyEvent(web.NotifySuccessVariant, "Beer style updated")
+	return reqResp.Render(workspace.DisplayBeerStyleRowView(style))
 }
 
-func (h WorkspaceServer) BeerStyleViewHandler(ctx echo.Context) error {
-	styleId, parseErr := strconv.Atoi(ctx.Param("id"))
+func (h WorkspaceServer) HandleBeerStyleDisplayRowView(reqResp *web.ReqRespPair) error {
+	styleId, parseErr := strconv.Atoi(reqResp.Request.PathValue("id"))
 	if parseErr != nil {
-		return ctx.HTML(http.StatusBadRequest, parseErr.Error())
+		return apperr.NewBadRequestError("Invalid identifier", parseErr)
 	}
 	style, styleErr := h.beerService.GetBeerStyle(styleId)
 	if styleErr != nil {
-		h.logger.Error("Failed to get beer style", "error", styleErr)
-		return ctx.HTML(http.StatusInternalServerError, styleErr.Error())
+		return apperr.NewInternalServerError("Failed to get beer style", styleErr)
 	}
-	return workspace.DisplayBeerStyle(*style).Render(ctx.Request().Context(), ctx.Response().Writer)
+	return reqResp.Render(workspace.DisplayBeerStyleRowView(*style))
 }
 
-func (h WorkspaceServer) BeerStyleEditHandler(ctx echo.Context) error {
-	styleId, parseErr := strconv.Atoi(ctx.Param("id"))
+func (h WorkspaceServer) HandleBeerStyleEditRowView(reqResp *web.ReqRespPair) error {
+	styleId, parseErr := strconv.Atoi(reqResp.Request.PathValue("id"))
 	if parseErr != nil {
-		return ctx.HTML(http.StatusBadRequest, parseErr.Error())
+		return apperr.NewBadRequestError("Invalid identifier", parseErr)
 	}
 	style, styleErr := h.beerService.GetBeerStyle(styleId)
 	if styleErr != nil {
-		h.logger.Error("Failed to get beer style", slog.Any("error", styleErr))
-		return ctx.HTML(http.StatusInternalServerError, styleErr.Error())
+		return apperr.NewInternalServerError("Failed to get beer style", styleErr)
 	}
-	return workspace.EditBeerStyle(*style, model.BeerStyleErrors{}).Render(ctx.Request().Context(), ctx.Response().Writer)
+	return reqResp.Render(workspace.EditBeerStyleRowView(*style, model.BeerStyleErrors{}))
 }
 
-func (h WorkspaceServer) BeerStyleDeleteHandler(ctx echo.Context) error {
-	styleId, parseErr := strconv.Atoi(ctx.Param("id"))
+func (h WorkspaceServer) DeleteBeerStyle(reqResp *web.ReqRespPair) error {
+	styleId, parseErr := strconv.Atoi(reqResp.Request.PathValue("id"))
 	if parseErr != nil {
-		return ctx.HTML(http.StatusBadRequest, parseErr.Error())
+		return apperr.NewBadRequestError("Invalid identifier", parseErr)
 	}
 	delErr := h.beerService.DeleteBeerStyle(styleId)
 	if delErr != nil {
-		h.logger.Error("Failed to delete beer style", slog.Any("error", delErr))
-		return ctx.HTML(http.StatusInternalServerError, delErr.Error())
+		return apperr.NewInternalServerError("Failed to delete beer style", delErr)
 	}
-	return ctx.NoContent(http.StatusOK)
+	reqResp.TriggerHtmxNotifyEvent(web.NotifySuccessVariant, "Beer style deleted")
+	return reqResp.NoContent()
 }

@@ -34,6 +34,10 @@ func adminLayout(page Page, contents templ.Component) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<html class=\"light\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = headerComponent(page.Title).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -42,7 +46,7 @@ func adminLayout(page Page, contents templ.Component) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 1)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex pt-16 overflow-hidden h-screen\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -50,7 +54,7 @@ func adminLayout(page Page, contents templ.Component) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 2)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"main-content\" class=\"relative w-full h-full overflow-y-auto lg:ml-64\"><main>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -60,7 +64,7 @@ func adminLayout(page Page, contents templ.Component) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 3)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -68,7 +72,7 @@ func adminLayout(page Page, contents templ.Component) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 4)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></main></div></div><script>\n\t\tconst sidebar = document.getElementById('sidebar');\n\t\tif (sidebar) {\n\t\t\tconst toggleSidebarMobile = (sidebar, sidebarBackdrop, toggleSidebarMobileHamburger, toggleSidebarMobileClose) => {\n\t\t\t\tsidebar.classList.toggle('hidden');\n\t\t\t\tsidebarBackdrop.classList.toggle('hidden');\n\t\t\t\ttoggleSidebarMobileHamburger.classList.toggle('hidden');\n\t\t\t\ttoggleSidebarMobileClose.classList.toggle('hidden');\n\t\t\t}\n\t\t\t\n\t\t\tconst toggleSidebarMobileEl = document.getElementById('toggleSidebarMobile');\n\t\t\tconst sidebarBackdrop = document.getElementById('sidebarBackdrop');\n\t\t\tconst toggleSidebarMobileHamburger = document.getElementById('toggleSidebarMobileHamburger');\n\t\t\tconst toggleSidebarMobileClose = document.getElementById('toggleSidebarMobileClose');\n\t\t\t\n\t\t\ttoggleSidebarMobileEl.addEventListener('click', () => {\n\t\t\t\ttoggleSidebarMobile(sidebar, sidebarBackdrop, toggleSidebarMobileHamburger, toggleSidebarMobileClose);\n\t\t\t});\n\t\t\t\n\t\t\tsidebarBackdrop.addEventListener('click', () => {\n\t\t\t\ttoggleSidebarMobile(sidebar, sidebarBackdrop, toggleSidebarMobileHamburger, toggleSidebarMobileClose);\n\t\t\t});\n\t\t}\n    </script></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -126,20 +130,20 @@ func headerComponent(title string) templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 5)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/workspace.templ`, Line: 58, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/workspace.templ`, Line: 60, Col: 16}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 6)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</title><link rel=\"icon\" type=\"image/svg\" sizes=\"32x32\" href=\"/static/img/pint-of-beer-svgrepo-com.svg\"><link href=\"/static/css/tailwind-output.gen.css\" rel=\"stylesheet\"><link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css\"><link href=\"/static/css/app.css\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@2.0.3\" crossorigin=\"anonymous\"></script><script src=\"https://unpkg.com/htmx.org@1.9.11/dist/ext/path-params.js\"></script><script src=\"https://unpkg.com/htmx-ext-response-targets@2.0.1/response-targets.js\"></script><script src=\"https://unpkg.com/htmx-ext-debug@2.0.0/debug.js\"></script><script src=\"https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js\"></script><script src=\"/static/js/select.js\"></script><script src=\"/static/js/upload.js\" type=\"module\"></script><link href=\"https://releases.transloadit.com/uppy/v3.27.0/uppy.min.css\" rel=\"stylesheet\"><script defer src=\"https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js\"></script></head>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

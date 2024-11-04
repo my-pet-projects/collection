@@ -9,10 +9,10 @@ import (
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/go-chi/chi/v5"
-	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
 	"golang.org/x/sync/errgroup"
 
+	"github.com/my-pet-projects/collection/internal/apperr"
 	"github.com/my-pet-projects/collection/internal/config"
 	"github.com/my-pet-projects/collection/internal/db"
 	"github.com/my-pet-projects/collection/internal/handler"
@@ -101,87 +101,61 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 	workspaceSrv := handler.NewWorkspaceServer(beerService, breweryService, geoService, imageService, logger)
 	uploadHandler := handler.NewUploadHandler(imageService, logger)
 
-	e := echo.New()
-	e.Use(log.NewLoggingMiddleware(logger)) //nolint:contextcheck
-	// e.Static("/", "./assets")
-
-	// e.GET("/geo", geoHandler.ListCountries)
-	// e.GET("/geo/countries", geoHandler.ListCountries)
-	// e.GET("/geo/countries/:countryIso/cities", geoHandler.ListCities)
-	// e.GET("/geo/country", geoHandler.GetCities)
-
-	// e.GET("/brewery", breweryHandler.ListBreweries)
-	// e.GET("/beer", beerHandler.ListBeers)
-
-	e.GET("/workspace", workspaceSrv.GetWorkspace)
-	// e.GET("/workspace/beer/:id", echo.WrapHandler(router))
-	// e.GET("/workspace/beer", workspaceSrv.GetBeerWorkspace)
-	// e.GET("/workspace/beer/create", workspaceSrv.CreateBeerPage)
-	// e.POST("/workspace/beer", workspaceSrv.PostBeerPage)
-
-	// e.GET("/workspace/brewery", workspaceSrv.GetBreweryWorkspace)
-	// e.GET("/workspace/brewery/create", workspaceSrv.CreateBreweryPage)
-	// e.GET("/workspace/brewery/:id", workspaceSrv.GetBreweryPage)
-	// e.POST("/workspace/brewery", workspaceSrv.PostBreweryPage)
-
-	// e.GET("/workspace/beer-style", workspaceSrv.BeerStyleLayoutHandler)
-	// e.POST("/workspace/beer-style/search", workspaceSrv.ListBeerStyles)
-	// e.GET("/workspace/beer-style/create", workspaceSrv.BeerStyleCreateViewHandler)
-	e.GET("/workspace/beer-style/create-cancel", workspaceSrv.BeerStyleCreateCancelViewHandler)
-	e.PUT("/workspace/beer-style", workspaceSrv.BeerStyleCreateHandler)
-	e.GET("/workspace/beer-style/:id", workspaceSrv.BeerStyleViewHandler)
-	e.PUT("/workspace/beer-style/:id", workspaceSrv.BeerStyleSaveHandler)
-	e.DELETE("/workspace/beer-style/:id", workspaceSrv.BeerStyleDeleteHandler)
-	e.GET("/workspace/beer-style/:id/edit", workspaceSrv.BeerStyleEditHandler)
-
-	// temporary use of two routers
+	appHandler := web.NewAppHandler(logger)
 	router := chi.NewRouter()
-
-	router.MethodNotAllowed(web.Handler(func(reqResp *web.ReqRespPair) error {
-		return reqResp.RenderError(http.StatusMethodNotAllowed, errors.New("method not allowed"))
-	}))
 	router.Use(middleware.WithRequest)
+
+	router.MethodNotAllowed(appHandler.Handle(func(reqResp *web.ReqRespPair) error {
+		return apperr.NewAppError("Method not allowed", http.StatusMethodNotAllowed, nil)
+	}))
 	router.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("./assets"))))
 
 	router.Group(func(r chi.Router) {
-		r.Get("/geo/countries", web.Handler(geoHandler.ListCountries))
-		r.Get("/geo/countries/{countryIso}/cities", web.Handler(geoHandler.ListCities))
+		r.Get("/geo/countries", appHandler.Handle(geoHandler.ListCountries))
+		r.Get("/geo/countries/{countryIso}/cities", appHandler.Handle(geoHandler.ListCities))
 	})
 
 	router.Group(func(r chi.Router) {
-		r.Get("/beers", web.Handler(workspaceSrv.ListBeers))
-		r.Get("/workspace/beer", web.Handler(workspaceSrv.HandleBeerListPage))
-		r.Get("/workspace/beer/create", web.Handler(workspaceSrv.HandleCreateBeerPage))
-		r.Post("/workspace/beer", web.Handler(workspaceSrv.SubmitBeerPage))
-		r.Get("/workspace/beer/{id}", web.Handler(workspaceSrv.HandleBeerPage))
-		r.Get("/workspace/beer/{id}/attach-images", web.Handler(workspaceSrv.HandleBeerImagesPage))
+		r.Get("/beers", appHandler.Handle(workspaceSrv.ListBeers))
+		r.Get("/workspace/beer", appHandler.Handle(workspaceSrv.HandleBeerListPage))
+		r.Get("/workspace/beer/create", appHandler.Handle(workspaceSrv.HandleCreateBeerPage))
+		r.Post("/workspace/beer", appHandler.Handle(workspaceSrv.SubmitBeerPage))
+		r.Get("/workspace/beer/{id}", appHandler.Handle(workspaceSrv.HandleBeerPage))
+		r.Get("/workspace/beer/{id}/attach-images", appHandler.Handle(workspaceSrv.HandleBeerImagesPage))
 	})
 
 	router.Group(func(r chi.Router) {
-		r.Get("/breweries", web.Handler(breweryHandler.ListBreweries))
-		r.Get("/workspace/brewery", web.Handler(workspaceSrv.HandleBreweryListPage))
-		r.Get("/workspace/brewery/create", web.Handler(workspaceSrv.HandleCreateBreweryPage))
-		r.Post("/workspace/brewery", web.Handler(workspaceSrv.SubmitBreweryPage))
-		r.Get("/workspace/brewery/{id}", web.Handler(workspaceSrv.HandleBreweryPage))
+		r.Get("/breweries", appHandler.Handle(breweryHandler.ListBreweries))
+		r.Get("/workspace/brewery", appHandler.Handle(workspaceSrv.HandleBreweryListPage))
+		r.Get("/workspace/brewery/create", appHandler.Handle(workspaceSrv.HandleCreateBreweryPage))
+		r.Post("/workspace/brewery", appHandler.Handle(workspaceSrv.SubmitBreweryPage))
+		r.Get("/workspace/brewery/{id}", appHandler.Handle(workspaceSrv.HandleBreweryPage))
 	})
 
 	router.Group(func(r chi.Router) {
-		r.Post("/workspace/beer-style/search", web.Handler(workspaceSrv.ListBeerStyles))
-		r.Get("/workspace/beer-style", web.Handler(workspaceSrv.HandleBeerStyleListPage))
-		r.Get("/workspace/beer-style/create", web.Handler(workspaceSrv.HandleBeerStyleCreateView))
+		r.Post("/workspace/beer-style/search", appHandler.Handle(workspaceSrv.ListBeerStyles))
+		r.Get("/workspace/beer-style", appHandler.Handle(workspaceSrv.HandleBeerStyleListPage))
+		r.Get("/workspace/beer-style/create", appHandler.Handle(workspaceSrv.HandleBeerStyleCreateView))
+		r.Get("/workspace/beer-style/create-cancel", appHandler.Handle(workspaceSrv.HandleBeerStyleCreateCancelView))
+		r.Get("/workspace/beer-style/{id}", appHandler.Handle(workspaceSrv.HandleBeerStyleDisplayRowView))
+		r.Get("/workspace/beer-style/{id}/edit", appHandler.Handle(workspaceSrv.HandleBeerStyleEditRowView))
 
+		r.Post("/workspace/beer-style", appHandler.Handle(workspaceSrv.CreateBeerStyle))
+		r.Delete("/workspace/beer-style/{id}", appHandler.Handle(workspaceSrv.DeleteBeerStyle))
+		r.Put("/workspace/beer-style/{id}", appHandler.Handle(workspaceSrv.SaveBeerStyle))
 	})
 
-	router.Get("/*", web.Handler(func(reqResp *web.ReqRespPair) error {
+	router.Group(func(r chi.Router) {
+		r.Get("/workspace/images/upload", appHandler.Handle(uploadHandler.UploadImagePage))
+		r.Post("/workspace/images/uploads", appHandler.Handle(uploadHandler.UploadImage))
+	})
+
+	router.Get("/*", appHandler.Handle(func(reqResp *web.ReqRespPair) error {
 		if reqResp.IsHtmxRequest() {
 			return reqResp.RenderError(http.StatusNotFound, errors.New("handler not found"))
 		}
 		return reqResp.Text(http.StatusNotFound, "Error page should be rendered here")
 	}))
-
-	imageGroup := e.Group("/workspace/images")
-	imageGroup.GET("/upload", uploadHandler.UploadImagePage)
-	imageGroup.POST("/uploads", uploadHandler.UploadImage)
 
 	return router, nil
 }

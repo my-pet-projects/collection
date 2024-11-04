@@ -1,4 +1,0 @@
-<div hx-ext=\"path-params\"><app-select name=\"country\" hx-get=\"/geo/countries/{countryIso}/cities\" hx-vals=\"js:{countryIso: event ? event.detail.choice.value.toLowerCase() : document.getElementById(&#39;selected-country&#39;)?.value}\" hx-trigger=\"country-change-choice from:document, load[document.getElementById(&#39;selected-country&#39;)?.value.length &gt; 0]\" hx-target=\"#cityContainer\" hx-swap=\"innerHTML\" hx-params=\"countryIso\" data-items=\"
-\"></app-select></div>
-<app-select name=\"city\" data-items=\"
-\"></app-select>

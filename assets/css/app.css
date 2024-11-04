@@ -81,10 +81,10 @@ select.has-err,
   display:none; 
 } 
 .htmx-request .htmx-indicator{ 
-  display:inline;
+  display:block;
 } 
 .htmx-request.htmx-indicator{ 
-  display:inline; 
+  display:block; 
 }
 .htmx-request.htmx-indicator ~ .btn-content {
   display: none;

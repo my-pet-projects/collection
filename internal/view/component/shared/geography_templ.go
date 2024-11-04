@@ -100,7 +100,7 @@ func CountriesSelector(countriesData CountriesData) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 1)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div hx-ext=\"path-params\"><app-select name=\"country\" hx-get=\"/geo/countries/{countryIso}/cities\" hx-vals=\"js:{countryIso: event ? event.detail.choice.value.toLowerCase() : document.getElementById(&#39;selected-country&#39;)?.value}\" hx-trigger=\"country-change-choice from:document, load[document.getElementById(&#39;selected-country&#39;)?.value.length &gt; 0]\" hx-target=\"#cityContainer\" hx-swap=\"innerHTML\" hx-params=\"countryIso\" data-items=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -113,7 +113,7 @@ func CountriesSelector(countriesData CountriesData) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 2)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"></app-select></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -142,7 +142,7 @@ func CitiesSelector(cities []db.City) templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 3)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<app-select name=\"city\" data-items=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -155,7 +155,7 @@ func CitiesSelector(cities []db.City) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 4)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"></app-select>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

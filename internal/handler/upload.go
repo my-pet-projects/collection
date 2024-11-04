@@ -6,13 +6,11 @@ import (
 	_ "image/png"
 	"io"
 	"log/slog"
-	"net/http"
-
-	"github.com/labstack/echo/v4"
 
 	"github.com/my-pet-projects/collection/internal/model"
 	"github.com/my-pet-projects/collection/internal/service"
 	"github.com/my-pet-projects/collection/internal/view/component/workspace"
+	"github.com/my-pet-projects/collection/internal/web"
 )
 
 type UploadHandler struct {
@@ -27,27 +25,26 @@ func NewUploadHandler(imageSvc service.ImageService, logger *slog.Logger) Upload
 	}
 }
 
-func (h UploadHandler) UploadImagePage(ctx echo.Context) error {
-	page := workspace.NewPage(ctx, "Upload Image")
+func (h UploadHandler) UploadImagePage(reqResp *web.ReqRespPair) error {
 	beerPage := workspace.UploadPage{
-		Page: page,
+		Page: workspace.Page{Title: "Upload Image"},
 	}
-	return render(ctx, workspace.WorkspaceUploadPage(beerPage))
+	return reqResp.Render(workspace.WorkspaceUploadPage(beerPage))
 }
 
-func (h UploadHandler) UploadImage(ctx echo.Context) error {
-	form, formErr := ctx.MultipartForm()
+func (h UploadHandler) UploadImage(reqResp *web.ReqRespPair) error {
+	formErr := reqResp.Request.ParseMultipartForm(32 << 20) // 32 MB
 	if formErr != nil {
 		h.logger.Error("Failed to get multipart form", slog.Any("error", formErr))
-		return ctx.JSON(http.StatusInternalServerError, "error")
+		return reqResp.RenderAppError(formErr)
 	}
 
 	images := []model.UploadFormValues{}
-	for _, fileHeader := range form.File["files"] {
+	for _, fileHeader := range reqResp.Request.MultipartForm.File["files"] {
 		src, srcErr := fileHeader.Open()
 		if srcErr != nil {
 			h.logger.Error("Failed to open multipart file", slog.Any("error", srcErr))
-			return ctx.JSON(http.StatusInternalServerError, "error")
+			return reqResp.RenderAppError(srcErr)
 		}
 		defer src.Close() //nolint:errcheck
 
@@ -55,7 +52,7 @@ func (h UploadHandler) UploadImage(ctx echo.Context) error {
 		_, copyErr := io.Copy(&buf, src)
 		if copyErr != nil {
 			h.logger.Error("Failed to copy multipart form bytes", slog.Any("error", copyErr))
-			return ctx.JSON(http.StatusInternalServerError, "error")
+			return reqResp.RenderAppError(copyErr)
 		}
 
 		images = append(images, model.UploadFormValues{
@@ -65,11 +62,12 @@ func (h UploadHandler) UploadImage(ctx echo.Context) error {
 		})
 	}
 
-	uploadErr := h.imageSvc.UploadImage(ctx.Request().Context(), images)
+	uploadErr := h.imageSvc.UploadImage(reqResp.Request.Context(), images)
 	if uploadErr != nil {
 		h.logger.Error("Failed to upload image", slog.Any("error", uploadErr))
-		return ctx.JSON(http.StatusInternalServerError, "error")
+		return reqResp.RenderAppError(uploadErr)
+
 	}
 
-	return ctx.NoContent(http.StatusOK)
+	return reqResp.NoContent()
 }
