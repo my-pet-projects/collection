@@ -6,22 +6,23 @@ import (
 )
 
 templ adminLayout(page Page, contents templ.Component) {
-	@headerComponent(page.Title)
-	@navigation.NavBar()
-	<div class="flex pt-16 overflow-hidden h-screen">
-		@navigation.SideBar(navigation.SidebarData{URL: page.URL})
-		<div id="main-content" class="relative w-full h-full overflow-y-auto lg:ml-64">
-			<main>
-				if (contents != nil) {
-					@contents
-				}
-				<div>
-					@shared.Notification()
-				</div>
-			</main>
+	<html class="light">
+		@headerComponent(page.Title)
+		@navigation.NavBar()
+		<div class="flex pt-16 overflow-hidden h-screen">
+			@navigation.SideBar(navigation.SidebarData{URL: page.URL})
+			<div id="main-content" class="relative w-full h-full overflow-y-auto lg:ml-64">
+				<main>
+					if (contents != nil) {
+						@contents
+					}
+					<div>
+						@shared.Notification()
+					</div>
+				</main>
+			</div>
 		</div>
-	</div>
-	<script>
+		<script>
 		const sidebar = document.getElementById('sidebar');
 		if (sidebar) {
 			const toggleSidebarMobile = (sidebar, sidebarBackdrop, toggleSidebarMobileHamburger, toggleSidebarMobileClose) => {
@@ -45,6 +46,7 @@ templ adminLayout(page Page, contents templ.Component) {
 			});
 		}
     </script>
+	</html>
 }
 
 templ WorkspacePage(page Page) {
@@ -66,8 +68,8 @@ templ headerComponent(title string) {
 		<script src="https://unpkg.com/htmx.org@2.0.3" crossorigin="anonymous"></script>
 		<script src="https://unpkg.com/htmx.org@1.9.11/dist/ext/path-params.js"></script>
 		<script src="https://unpkg.com/htmx-ext-response-targets@2.0.1/response-targets.js"></script>
+		<script src="https://unpkg.com/htmx-ext-debug@2.0.0/debug.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
-		<script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
 		<script src="/static/js/select.js"></script>
 		<script src="/static/js/upload.js" type="module"></script>
 		// <script src="https://cdn.tailwindcss.com"></script>

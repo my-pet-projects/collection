@@ -1,2 +1,0 @@
-<app-select name=\"brewery\" data-items=\"
-\"></app-select>
