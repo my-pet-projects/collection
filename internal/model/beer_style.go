@@ -1,7 +1,7 @@
 package model
 
 type BeerStyle struct {
-	Id   int
+	Id   int `gorm:"primarykey"`
 	Name string
 }
 
@@ -22,4 +22,5 @@ func (bs BeerStyle) Validate() (BeerStyleErrors, bool) {
 
 type BeerStyleFilter struct {
 	Name string
+	Page int
 }
