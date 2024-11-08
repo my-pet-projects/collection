@@ -10,22 +10,40 @@ import (
 )
 
 func (h WorkspaceServer) HandleBeerStyleListPage(reqResp *web.ReqRespPair) error {
-	page := workspace.Page{Title: "Beer Style"}
 	beerStyleListPage := workspace.BeerStyleListPageData{
-		Page: page,
+		PageData: workspace.Page{Title: "Beer Style"},
 	}
 	return reqResp.Render(workspace.BeerStyleListPage(beerStyleListPage))
 }
 
 func (h WorkspaceServer) ListBeerStyles(reqResp *web.ReqRespPair) error {
+	page := 1
+	pageParam := reqResp.Request.URL.Query().Get("page")
+	if pageParam != "" {
+		parsedVal, parseErr := strconv.Atoi(pageParam)
+		if parseErr != nil {
+			return apperr.NewBadRequestError("Invalid page number", parseErr)
+		}
+		page = parsedVal
+	}
+
 	filter := model.BeerStyleFilter{
 		Name: reqResp.Request.FormValue("name"),
+		Page: page,
 	}
-	styles, stylesErr := h.beerService.FilterBeerStyles(filter)
-	if stylesErr != nil {
-		return apperr.NewInternalServerError("Failed to fetch beer styles", stylesErr)
+	pagination, paginationErr := h.beerService.PaginateBeerStyles(filter)
+	if paginationErr != nil {
+		return apperr.NewInternalServerError("Failed to paginate beer styles", paginationErr)
 	}
-	return reqResp.Render(workspace.BeerStylesTable(styles))
+
+	pageData := workspace.BeerStyleTableData{
+		Styles:       pagination.Results,
+		Page:         pagination.Page,
+		TotalPages:   pagination.TotalPages,
+		TotalResults: pagination.TotalResults,
+	}
+
+	return reqResp.Render(workspace.BeerStylesTable(pageData))
 }
 
 func (h WorkspaceServer) HandleBeerStyleCreateView(reqResp *web.ReqRespPair) error {

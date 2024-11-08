@@ -133,7 +133,7 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 	})
 
 	router.Group(func(r chi.Router) {
-		r.Post("/workspace/beer-style/search", appHandler.Handle(workspaceSrv.ListBeerStyles))
+		r.Get("/workspace/beer-style/search", appHandler.Handle(workspaceSrv.ListBeerStyles))
 		r.Get("/workspace/beer-style", appHandler.Handle(workspaceSrv.HandleBeerStyleListPage))
 		r.Get("/workspace/beer-style/create", appHandler.Handle(workspaceSrv.HandleBeerStyleCreateView))
 		r.Get("/workspace/beer-style/create-cancel", appHandler.Handle(workspaceSrv.HandleBeerStyleCreateCancelView))
