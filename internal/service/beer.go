@@ -86,19 +86,19 @@ func (s BeerService) ListBeers() ([]db.Beer, error) {
 }
 
 func (s BeerService) ListBeerStyles() ([]model.BeerStyle, error) {
-	styles, stylesErr := s.styleStore.FetchBeerStyles(model.BeerStyleFilter{})
-	if stylesErr != nil {
-		return nil, errors.Wrap(stylesErr, "fetch beer styles")
+	pagination, paginationErr := s.styleStore.PaginateBeerStyles(model.BeerStyleFilter{})
+	if paginationErr != nil {
+		return nil, errors.Wrap(paginationErr, "fetch beer styles")
 	}
-	return styles, nil
+	return pagination.Results, nil
 }
 
-func (s BeerService) FilterBeerStyles(filter model.BeerStyleFilter) ([]model.BeerStyle, error) {
-	styles, stylesErr := s.styleStore.FetchBeerStyles(filter)
-	if stylesErr != nil {
-		return nil, errors.Wrap(stylesErr, "fetch beer styles")
+func (s BeerService) PaginateBeerStyles(filter model.BeerStyleFilter) (*model.Pagination[model.BeerStyle], error) {
+	pagination, paginationErr := s.styleStore.PaginateBeerStyles(filter)
+	if paginationErr != nil {
+		return nil, errors.Wrap(paginationErr, "paginate beer styles")
 	}
-	return styles, nil
+	return &pagination, nil
 }
 
 func (s BeerService) GetBeerStyle(id int) (*model.BeerStyle, error) {
