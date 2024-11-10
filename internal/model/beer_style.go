@@ -1,7 +1,7 @@
 package model
 
 type BeerStyle struct {
-	Id   int `gorm:"primarykey"`
+	ID   int `gorm:"primarykey"`
 	Name string
 }
 

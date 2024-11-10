@@ -7,7 +7,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/my-pet-projects/collection/internal/db"
+	"github.com/my-pet-projects/collection/internal/apperr"
+	"github.com/my-pet-projects/collection/internal/model"
 	"github.com/my-pet-projects/collection/internal/service"
 	"github.com/my-pet-projects/collection/internal/view/component/workspace"
 	"github.com/my-pet-projects/collection/internal/web"
@@ -97,15 +98,25 @@ func (h WorkspaceServer) SubmitBeerPage(reqResp *web.ReqRespPair) error {
 }
 
 func (h WorkspaceServer) ListBeers(reqResp *web.ReqRespPair) error {
-	beers, beersErr := h.beerService.ListBeers()
-	if beersErr != nil {
-		return reqResp.RenderError(http.StatusInternalServerError, beersErr)
+	page, pageErr := reqResp.GetIntQueryParam("page")
+	if pageErr != nil {
+		return apperr.NewBadRequestError("Invalid page number", pageErr)
 	}
 
-	limitedBeers := make([]db.Beer, 0)
-	for i := 0; i <= 10; i++ {
-		limitedBeers = append(limitedBeers, beers[i])
+	filter := model.BeerFilter{
+		Page: page,
+	}
+	pagination, paginationErr := h.beerService.PaginateBeers(filter)
+	if paginationErr != nil {
+		return apperr.NewInternalServerError("Failed to paginate beers", paginationErr)
 	}
 
-	return reqResp.Render(workspace.BeerList(limitedBeers))
+	pageData := workspace.BeerListData{
+		Beers:        pagination.Results,
+		CurrentPage:  pagination.Page,
+		TotalPages:   pagination.TotalPages,
+		TotalResults: pagination.TotalResults,
+	}
+
+	return reqResp.Render(workspace.BeerList(pageData))
 }

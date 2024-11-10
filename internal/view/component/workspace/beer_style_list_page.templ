@@ -114,7 +114,7 @@ templ DisplayBeerStyleRowView(style model.BeerStyle) {
 		<div class="px-4 font-medium text-gray-900 whitespace-nowrap">{ style.Name }</div>
 		<div class="flex justify-end px-4 gap-4 items-center">
 			<button
-				hx-get={ fmt.Sprintf("/workspace/beer-style/%d/edit", style.Id) }
+				hx-get={ fmt.Sprintf("/workspace/beer-style/%d/edit", style.ID) }
 				hx-target=".beer-style-item"
 				hx-swap="outerHTML"
 				x-data
@@ -125,7 +125,7 @@ templ DisplayBeerStyleRowView(style model.BeerStyle) {
 				</svg>
 			</button>
 			<button
-				hx-delete={ fmt.Sprintf("/workspace/beer-style/%d", style.Id) }
+				hx-delete={ fmt.Sprintf("/workspace/beer-style/%d", style.ID) }
 				hx-confirm="Are you sure?"
 				hx-target=".beer-style-item"
 				hx-swap="outerHTML swap:1s"
@@ -151,7 +151,7 @@ templ EditBeerStyleRowView(style model.BeerStyle, errs model.BeerStyleErrors) {
 		</div>
 		<div class="flex justify-end px-4 gap-4 items-center">
 			<button
-				hx-put={ fmt.Sprintf("/workspace/beer-style/%d", style.Id) }
+				hx-put={ fmt.Sprintf("/workspace/beer-style/%d", style.ID) }
 				hx-target=".beer-style-item"
 				hx-include=".beer-style-item"
 				hx-swap="outerHTML"
@@ -161,7 +161,7 @@ templ EditBeerStyleRowView(style model.BeerStyle, errs model.BeerStyleErrors) {
 				<svg class="h-4 w-4 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path> <polyline points="17 21 17 13 7 13 7 21"></polyline> <polyline points="7 3 7 8 15 8"></polyline></svg>
 			</button>
 			<button
-				hx-get={ fmt.Sprintf("/workspace/beer-style/%d", style.Id) }
+				hx-get={ fmt.Sprintf("/workspace/beer-style/%d", style.ID) }
 				hx-target=".beer-style-item"
 				hx-swap="outerHTML"
 				x-data

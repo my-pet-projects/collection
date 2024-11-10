@@ -171,7 +171,7 @@ func DisplayBeerStyleRowView(style model.BeerStyle) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var7 string
-		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/workspace/beer-style/%d/edit", style.Id))
+		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/workspace/beer-style/%d/edit", style.ID))
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_style_list_page.templ`, Line: 117, Col: 67}
 		}
@@ -184,7 +184,7 @@ func DisplayBeerStyleRowView(style model.BeerStyle) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var8 string
-		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/workspace/beer-style/%d", style.Id))
+		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/workspace/beer-style/%d", style.ID))
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_style_list_page.templ`, Line: 128, Col: 65}
 		}
@@ -249,7 +249,7 @@ func EditBeerStyleRowView(style model.BeerStyle, errs model.BeerStyleErrors) tem
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var11 string
-		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/workspace/beer-style/%d", style.Id))
+		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/workspace/beer-style/%d", style.ID))
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_style_list_page.templ`, Line: 154, Col: 62}
 		}
@@ -262,7 +262,7 @@ func EditBeerStyleRowView(style model.BeerStyle, errs model.BeerStyleErrors) tem
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var12 string
-		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/workspace/beer-style/%d", style.Id))
+		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/workspace/beer-style/%d", style.ID))
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_style_list_page.templ`, Line: 164, Col: 62}
 		}

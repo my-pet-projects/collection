@@ -54,7 +54,7 @@ func (s BeerStore) GetBeer(id int) (Beer, error) {
 		  	   WHERE beers.id = ?`
 	resErr := s.db.QueryRow(query, id).Scan(
 		&beer.Id, &beer.Brand, &beer.Type, &beer.StyleId, &beer.BreweryId, &beer.Active, &beer.CreatedAt, &beer.UpdatedAt, &beer.OldImageIds,
-		&style.Id, &style.Name,
+		&style.ID, &style.Name,
 		&brewery.Id, &brewery.Name, &brewery.Website, &brewery.GeoId, &brewery.CountryCode,
 		&city.Id, &city.Name, &city.CountryCode, &city.Admin1Code, &city.Admin2Code, &city.Admin3Code, &city.Admin4Code,
 		&country.Cca2, &country.Cca3, &country.Ccn3, &country.NameCommon, &country.NameOfficial, &country.Region, &country.Subregion,
@@ -69,47 +69,24 @@ func (s BeerStore) GetBeer(id int) (Beer, error) {
 	return beer, nil
 }
 
-func (s BeerStore) FetchBeers() ([]Beer, error) {
-	query := `SELECT beers.id, beers.brand, beers.type, beers.style_id, beers.brewery_id, beers.is_active, beers.created_at, beers.updated_at, beers.old_image_ids,
-					 beer_styles.id, beer_styles.name,
-					 breweries.id, breweries.name, breweries.website, breweries.geo_id, countries.cca2,
-					 cities.id, cities.name, cities.country_code, cities.admin1_code, cities.admin2_code, cities.admin3_code, cities.admin4_code,
-					 countries.cca2, countries.cca3, countries.ccn3, countries.name_common, countries.name_official, countries.region, countries.subregion
-			    FROM beers
-		  INNER JOIN beer_styles ON beers.style_id = beer_styles.id
-		   LEFT JOIN breweries on beers.brewery_id = breweries.id 
-		  INNER JOIN cities ON breweries.geo_id = cities.id 
-		  INNER JOIN countries ON cities.country_code = countries.cca2`
-	res, resErr := s.db.Query(query)
-	if resErr != nil || res.Err() != nil {
-		return nil, errors.Wrap(resErr, "query beers")
+func (s BeerStore) PaginateBeers(filter model.BeerFilter) (*model.Pagination[model.Beer], error) {
+	pagination := model.Pagination[model.Beer]{
+		Page: filter.Page,
+		Sort: "Brand",
 	}
-	defer res.Close() //nolint:errcheck
 
-	beers := []Beer{}
-	for res.Next() {
-		var beer Beer
-		var style model.BeerStyle
-		var brewery Brewery
-		var city City
-		var country Country
-		scanErr := res.Scan(
-			&beer.Id, &beer.Brand, &beer.Type, &beer.StyleId, &beer.BreweryId, &beer.Active, &beer.CreatedAt, &beer.UpdatedAt, &beer.OldImageIds,
-			&style.Id, &style.Name,
-			&brewery.Id, &brewery.Name, &brewery.Website, &brewery.GeoId, &brewery.CountryCode,
-			&city.Id, &city.Name, &city.CountryCode, &city.Admin1Code, &city.Admin2Code, &city.Admin3Code, &city.Admin4Code,
-			&country.Cca2, &country.Cca3, &country.Ccn3, &country.NameCommon, &country.NameOfficial, &country.Region, &country.Subregion,
-		)
-		if scanErr != nil {
-			return nil, errors.Wrap(scanErr, "scan query results")
-		}
-		brewery.Country = &country
-		brewery.City = &city
-		beer.Brewery = &brewery
-		beer.Style = &style
-		beers = append(beers, beer)
-	}
-	return beers, nil
+	var items []model.Beer
+	result := s.db.gorm.
+		Where(pagination.WhereQuery, pagination.WhereArgs).
+		Scopes(paginate(items, &pagination, s.db.gorm)).
+		InnerJoins("BeerStyle").
+		InnerJoins("Brewery").
+		InnerJoins("Brewery.City").
+		InnerJoins("Brewery.City.Country").
+		Find(&items)
+	pagination.Results = items
+
+	return &pagination, result.Error
 }
 
 func (s BeerStore) InsertBeer(beer Beer) (int, error) {

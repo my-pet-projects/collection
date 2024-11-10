@@ -7,24 +7,23 @@ type Beer struct {
 	Brand       string
 	Type        *string
 	BreweryId   *int
-	Active      bool
+	IsActive    bool
 	CreatedAt   time.Time
 	UpdatedAt   *time.Time
 	OldImageIds *string
-	Brewery     *Brewery `gorm:"foreignKey:ID"`
-	StyleId     *int
-	Style       *BeerStyle `gorm:"foreignKey:ID"`
+	Brewery     *Brewery `gorm:"foreignKey:BreweryId"`
+	StyleID     *int
+	BeerStyle   *BeerStyle `gorm:"foreignKey:StyleID;references:ID"`
 }
 
 type Brewery struct {
-	ID          int
-	Name        string
-	Website     *string
-	GeoId       int
-	CountryCode string
-	OldId       *string
-	Country     *Country `gorm:"foreignKey:Cca2"`
-	City        *City    `gorm:"foreignKey:ID"`
+	ID      int
+	Name    string
+	Website *string
+	GeoID   int
+	OldId   *string
+	// Country *Country `gorm:"foreignKey:Cca2"`
+	City *City `gorm:"foreignKey:GeoID;references:ID"`
 }
 
 type Country struct {
@@ -35,7 +34,7 @@ type Country struct {
 	NameOfficial string
 	Region       string
 	Subregion    *string
-	FlagPng      string
+	FlagUrl      string
 }
 
 type City struct {
@@ -43,6 +42,7 @@ type City struct {
 	Name             string
 	AlternateNames   *string
 	CountryCode      string
+	Country          *Country `gorm:"foreignKey:CountryCode;references:Cca2"`
 	Admin1Code       *string
 	Admin2Code       *string
 	Admin3Code       *string
@@ -51,4 +51,9 @@ type City struct {
 	Population       *int
 	Latitude         float64
 	Longitude        float64
+}
+
+type BeerFilter struct {
+	Name string
+	Page int
 }

@@ -1,11 +1,12 @@
 package web
 
 import (
-	"errors"
 	"log/slog"
 	"net/http"
+	"strconv"
 
 	"github.com/a-h/templ"
+	"github.com/pkg/errors"
 
 	"github.com/my-pet-projects/collection/internal/apperr"
 	"github.com/my-pet-projects/collection/internal/view/component/shared"
@@ -79,6 +80,19 @@ func (rrp *ReqRespPair) RenderError(code int, err error) error {
 	default:
 		return rrp.renderError(code, "Unknown error.", err)
 	}
+}
+
+func (rrp *ReqRespPair) GetIntQueryParam(name string) (int, error) {
+	page := 1
+	pageParam := rrp.Request.URL.Query().Get(name)
+	if pageParam != "" {
+		parsedVal, parseErr := strconv.Atoi(pageParam)
+		if parseErr != nil {
+			return 0, errors.Wrap(parseErr, "parse int query param")
+		}
+		page = parsedVal
+	}
+	return page, nil
 }
 
 // func (rrp *ReqRespPair) JsonError(code int, err error) error {
