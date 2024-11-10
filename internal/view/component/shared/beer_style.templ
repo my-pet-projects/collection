@@ -1,8 +1,10 @@
 package shared
 
-import "github.com/my-pet-projects/collection/internal/model"
-import "fmt"
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+	"github.com/my-pet-projects/collection/internal/model"
+)
 
 type StyleData struct {
 	Styles          []model.BeerStyle
@@ -24,11 +26,11 @@ func beerStylesJson(stylesData StyleData) string {
 	choices = append(choices, emptyChoice)
 	for _, style := range stylesData.Styles {
 		selected := false
-		if stylesData.SelectedStyleId != nil && *stylesData.SelectedStyleId == style.Id {
+		if stylesData.SelectedStyleId != nil && *stylesData.SelectedStyleId == style.ID {
 			selected = true
 		}
 		choices = append(choices, choicesData{
-			Value:    fmt.Sprint(style.Id),
+			Value:    fmt.Sprint(style.ID),
 			Label:    style.Name,
 			Selected: selected,
 			Disabled: false,
