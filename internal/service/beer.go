@@ -77,10 +77,10 @@ func (s BeerService) UpdateBeer(
 	return nil
 }
 
-func (s BeerService) ListBeers() ([]db.Beer, error) {
-	beers, beersErr := s.beerStore.FetchBeers()
+func (s BeerService) PaginateBeers(filter model.BeerFilter) (*model.Pagination[model.Beer], error) {
+	beers, beersErr := s.beerStore.PaginateBeers(filter)
 	if beersErr != nil {
-		return nil, errors.Wrap(beersErr, "fetch breweries")
+		return nil, errors.Wrap(beersErr, "paginate beers")
 	}
 	return beers, nil
 }
@@ -114,7 +114,7 @@ func (s BeerService) CreateBeerStyle(style model.BeerStyle) (*model.BeerStyle, e
 	if styleErr != nil {
 		return nil, errors.Wrap(styleErr, "update beer style")
 	}
-	style.Id = id
+	style.ID = id
 	return &style, nil
 }
 

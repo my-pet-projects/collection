@@ -26,7 +26,7 @@ func (s BeerStyleStore) GetBeerStyle(id int) (model.BeerStyle, error) {
 			    FROM beer_styles
 			   WHERE id = ?`
 	resErr := s.db.QueryRow(query, id).Scan(
-		&style.Id, &style.Name,
+		&style.ID, &style.Name,
 	)
 	if resErr != nil {
 		return style, errors.Wrap(resErr, "get beer style")
@@ -66,7 +66,7 @@ func (s BeerStyleStore) UpdateBeerStyle(style model.BeerStyle) error {
 	query := `UPDATE beer_styles
 			     SET name = ?
 		       WHERE id = ?`
-	res, resErr := s.db.Exec(query, style.Name, style.Id)
+	res, resErr := s.db.Exec(query, style.Name, style.ID)
 	if resErr != nil {
 		return errors.Wrap(resErr, "update beer style")
 	}

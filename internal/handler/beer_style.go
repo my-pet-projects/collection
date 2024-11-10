@@ -17,14 +17,9 @@ func (h WorkspaceServer) HandleBeerStyleListPage(reqResp *web.ReqRespPair) error
 }
 
 func (h WorkspaceServer) ListBeerStyles(reqResp *web.ReqRespPair) error {
-	page := 1
-	pageParam := reqResp.Request.URL.Query().Get("page")
-	if pageParam != "" {
-		parsedVal, parseErr := strconv.Atoi(pageParam)
-		if parseErr != nil {
-			return apperr.NewBadRequestError("Invalid page number", parseErr)
-		}
-		page = parsedVal
+	page, pageErr := reqResp.GetIntQueryParam("page")
+	if pageErr != nil {
+		return apperr.NewBadRequestError("Invalid page number", pageErr)
 	}
 
 	filter := model.BeerStyleFilter{
@@ -75,7 +70,7 @@ func (h WorkspaceServer) SaveBeerStyle(reqResp *web.ReqRespPair) error {
 		return apperr.NewBadRequestError("Invalid identifier", parseErr)
 	}
 	style := model.BeerStyle{
-		Id:   styleId,
+		ID:   styleId,
 		Name: reqResp.Request.FormValue("name"),
 	}
 	if formErrs, hasErrs := style.Validate(); hasErrs {

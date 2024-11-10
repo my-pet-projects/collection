@@ -8,9 +8,11 @@ package shared
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/my-pet-projects/collection/internal/model"
-import "fmt"
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+	"github.com/my-pet-projects/collection/internal/model"
+)
 
 type StyleData struct {
 	Styles          []model.BeerStyle
@@ -32,11 +34,11 @@ func beerStylesJson(stylesData StyleData) string {
 	choices = append(choices, emptyChoice)
 	for _, style := range stylesData.Styles {
 		selected := false
-		if stylesData.SelectedStyleId != nil && *stylesData.SelectedStyleId == style.Id {
+		if stylesData.SelectedStyleId != nil && *stylesData.SelectedStyleId == style.ID {
 			selected = true
 		}
 		choices = append(choices, choicesData{
-			Value:    fmt.Sprint(style.Id),
+			Value:    fmt.Sprint(style.ID),
 			Label:    style.Name,
 			Selected: selected,
 			Disabled: false,
@@ -74,7 +76,7 @@ func StylesSelector(data StyleData) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(beerStylesJson(data))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/beer_style.templ`, Line: 44, Col: 35}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/beer_style.templ`, Line: 46, Col: 35}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
