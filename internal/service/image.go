@@ -54,7 +54,7 @@ func (s ImageService) UploadImage(ctx context.Context, formValues []model.Upload
 		}
 
 		s.logger.Info("Upserting beer media item", slog.String("originalFilename", formValue.Filename), slog.Any("imageType", img.ImageType))
-		_, insErr := s.beerMediaStore.UpsertBeerMediaItem(ctx, mediaItem, img)
+		_, insErr := s.beerMediaStore.UpsertBeerMediaItem(ctx, mediaItem, img, formValue.BeerID)
 		if insErr != nil {
 			return errors.Wrap(insErr, "upsert beer media")
 		}
