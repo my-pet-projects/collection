@@ -17,6 +17,8 @@ type UploadFormValues struct {
 	Filename    string
 	Content     []byte
 	ContentType string
+	// temp
+	BeerID *int
 }
 
 func (f UploadFormValues) ExternalFilename() string {
@@ -63,7 +65,7 @@ func NewMediaImage(formValues UploadFormValues) (*MediaImage, error) {
 	}
 
 	original := MediaContent{
-		Name:  formValues.ExternalFilename(),
+		Name:  fmt.Sprintf("original/%s", formValues.ExternalFilename()),
 		Bytes: formValues.Content,
 		Size:  len(formValues.Content),
 		Metadata: MediaMetadata{
@@ -78,7 +80,13 @@ func NewMediaImage(formValues UploadFormValues) (*MediaImage, error) {
 		return nil, errors.Wrap(typeErr, "unknown beer media type")
 	}
 
-	resizeRatio := 10
+	resizeRatio := 17
+	if beerMediaType == BeerMediaBottle {
+		resizeRatio = 3
+	} else if beerMediaType == BeerMediaCrownCap {
+		resizeRatio = 9
+	}
+
 	width := original.Metadata.Width / resizeRatio
 	height := original.Metadata.Height / resizeRatio
 	resized := transform.Resize(image, width, height, transform.Lanczos)

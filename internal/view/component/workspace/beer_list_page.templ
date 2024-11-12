@@ -50,7 +50,7 @@ templ BeerList(data BeerListData) {
 	for idx, beer := range data.Beers {
 		<div class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
 			<div class="flex items-center">
-				<h6 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{ beer.Brand }</h6>
+				<h6 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{ beer.Brand } | { fmt.Sprintf("%d", beer.ID) }</h6>
 				<a href={ templ.URL(fmt.Sprintf("/workspace/beer/%d", beer.ID)) } class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10">
 					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" data-darkreader-inline-stroke="" style="--darkreader-inline-stroke: currentColor;">
 						<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
@@ -64,6 +64,14 @@ templ BeerList(data BeerListData) {
 				<p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{ beer.Brewery.Name }</p>
 				<p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{ beer.Brewery.City.Name }, { beer.Brewery.City.Country.NameCommon }</p>
 			}
+			<div class="flex">
+				for _, media := range beer.BeerMedias {
+					<img
+						class={ "aspect-square w-28 object-contain", templ.KV("order-first", media.Type == 1), templ.KV("order-last", media.Type == 2) }
+						src={ fmt.Sprintf("https://beer-collection-bucket.s3.eu-central-1.amazonaws.com/preview/%s", media.Media.ExternalFilename) }
+					/>
+				}
+			</div>
 			if idx == len(data.Beers)-1 &&  data.CurrentPage < data.TotalPages {
 				<span
 					hx-get={ fmt.Sprintf("/beers?page=%d", data.CurrentPage+1) }
