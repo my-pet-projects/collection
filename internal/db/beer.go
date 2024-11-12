@@ -77,12 +77,15 @@ func (s BeerStore) PaginateBeers(filter model.BeerFilter) (*model.Pagination[mod
 
 	var items []model.Beer
 	result := s.db.gorm.
+		Debug().
 		Where(pagination.WhereQuery, pagination.WhereArgs).
 		Scopes(paginate(items, &pagination, s.db.gorm)).
-		InnerJoins("BeerStyle").
-		InnerJoins("Brewery").
-		InnerJoins("Brewery.City").
-		InnerJoins("Brewery.City.Country").
+		Joins("BeerStyle").
+		Joins("Brewery").
+		Joins("Brewery.City").
+		Joins("Brewery.City.Country").
+		Preload("BeerMedias.Media").
+		// Preload("BeerMedias.MediaItem").
 		Find(&items)
 	pagination.Results = items
 

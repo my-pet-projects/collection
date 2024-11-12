@@ -39,10 +39,11 @@ func NewBeerMediaStore(db *DbClient, logger *slog.Logger) BeerMediaStore {
 // 	return item, nil
 // }
 
-func (s BeerMediaStore) UpsertBeerMediaItem(ctx context.Context, mediaItem model.MediaItem, mediaImg *model.MediaImage) (model.BeerMedia, error) {
+func (s BeerMediaStore) UpsertBeerMediaItem(ctx context.Context, mediaItem model.MediaItem, mediaImg *model.MediaImage, beerID *int) (model.BeerMedia, error) {
 	itemToUpsert := model.BeerMedia{
 		MediaID: mediaItem.ID,
 		Type:    mediaImg.ImageType,
+		BeerID:  beerID,
 	}
 	res := s.db.gorm.Clauses(
 		clause.OnConflict{

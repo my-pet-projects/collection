@@ -5,12 +5,16 @@ import (
 )
 
 type BeerMedia struct {
-	ID      int `gorm:"primarykey"`
-	BeerID  *int
-	Beer    *Beer `gorm:"foreignKey:ID"`
+	ID     int `gorm:"primarykey"`
+	BeerID *int
+	// Beer    *Beer `gorm:"foreignKey:ID"`
 	MediaID int
-	Media   MediaItem `gorm:"foreignKey:MediaID"`
+	Media   MediaItem `gorm:"foreignKey:MediaID;references:ID"`
 	Type    BeerMediaType
+}
+
+func (bm BeerMedia) TableName() string {
+	return "beer_medias"
 }
 
 type BeerMediaType int
