@@ -66,10 +66,17 @@ templ BeerList(data BeerListData) {
 			}
 			<div class="flex">
 				for _, media := range beer.BeerMedias {
-					<img
-						class={ "aspect-square w-28 object-contain", templ.KV("order-first", media.Type == 1), templ.KV("order-last", media.Type == 2) }
-						src={ fmt.Sprintf("https://beer-collection-bucket.s3.eu-central-1.amazonaws.com/preview/%s", media.Media.ExternalFilename) }
-					/>
+					<div
+						x-data={ fmt.Sprintf("{ isLoaded: false, imageSrc: 'https://beer-collection-bucket.s3.eu-central-1.amazonaws.com/preview/%s' }", media.Media.ExternalFilename) }
+						class={ templ.KV("order-first", media.Type == 1), templ.KV("order-last", media.Type == 2) }
+					>
+						<img
+							:src="isLoaded ? `${imageSrc}` : `/static/img/tail-spin.svg`"
+							x-intersect.threshold.25="isLoaded = true"
+							class="aspect-square w-28 object-contain"
+							alt=""
+						/>
+					</div>
 				}
 			</div>
 			if idx == len(data.Beers)-1 &&  data.CurrentPage < data.TotalPages {
