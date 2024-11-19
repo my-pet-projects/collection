@@ -6,12 +6,12 @@ type Beer struct {
 	ID          int `gorm:"primaryKey"`
 	Brand       string
 	Type        *string
-	BreweryId   *int
+	BreweryID   *int
 	IsActive    bool
-	CreatedAt   time.Time
-	UpdatedAt   *time.Time
-	OldImageIds *string
-	Brewery     *Brewery `gorm:"foreignKey:BreweryId"`
+	CreatedAt   time.Time `gorm:"autoCreateTime;<-:create"`
+	UpdatedAt   time.Time `gorm:"autoUpdateTime;<-:update"`
+	OldImageIds *string   `gorm:"-"`
+	Brewery     *Brewery  `gorm:"foreignKey:BreweryID"`
 	StyleID     *int
 	BeerStyle   *BeerStyle  `gorm:"foreignKey:StyleID;references:ID"`
 	BeerMedias  []BeerMedia `gorm:"foreignKey:BeerID;references:ID"`
@@ -54,7 +54,16 @@ type City struct {
 	Longitude        float64
 }
 
+// func (c City) TableName() string {
+// 	return "geography.cities"
+// }
+
+// func (c City) JoinTableName(table string) string {
+// 	return "geography.cities"
+// }
+
 type BeerFilter struct {
-	Name string
-	Page int
+	Name  string
+	Page  int
+	Limit int
 }

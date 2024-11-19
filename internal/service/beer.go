@@ -2,7 +2,6 @@ package service
 
 import (
 	"log/slog"
-	"time"
 
 	"github.com/pkg/errors"
 
@@ -26,50 +25,48 @@ func NewBeerService(beerStore *db.BeerStore, styleStore *db.BeerStyleStore, brew
 	}
 }
 
-func (s BeerService) GetBeer(id int) (*db.Beer, error) {
+func (s BeerService) GetBeer(id int) (*model.Beer, error) {
 	beer, beerErr := s.beerStore.GetBeer(id)
 	if beerErr != nil {
 		return nil, errors.Wrap(beerErr, "get beer")
 	}
-	return &beer, nil
+	return beer, nil
 }
 
 func (s BeerService) CreateBeer(
-	brand string, beerType string, styleId *int, breweryId *int, active bool,
-) (*db.Beer, error) {
-	beer := db.Beer{
+	brand string, beerType *string, styleId *int, breweryId *int, active bool,
+) (*model.Beer, error) {
+	beer := model.Beer{
 		Brand:     brand,
-		StyleId:   styleId,
-		BreweryId: breweryId,
-		Active:    active,
-		CreatedAt: time.Now().UTC(),
+		Type:      beerType,
+		StyleID:   styleId,
+		BreweryID: breweryId,
+		IsActive:  active,
+		// CreatedAt: time.Now().UTC(),
 	}
-	if beerType != "" {
-		beer.Type = &beerType
-	}
+
 	insertedId, insertErr := s.beerStore.InsertBeer(beer)
 	if insertErr != nil {
 		return nil, errors.Wrap(insertErr, "insert beer")
 	}
-	beer.Id = insertedId
+	beer.ID = insertedId
 	return &beer, nil
 }
 
 func (s BeerService) UpdateBeer(
-	id int, brand string, beerType string, styleId *int, breweryId *int, active bool,
+	id int, brand string, beerType *string, styleId *int, breweryId *int, active bool,
 ) error {
-	timeNow := time.Now().UTC()
-	beer := db.Beer{
-		Id:        id,
+	// timeNow := time.Now().UTC()
+	beer := model.Beer{
+		ID:        id,
 		Brand:     brand,
-		StyleId:   styleId,
-		BreweryId: breweryId,
-		Active:    active,
-		UpdatedAt: &timeNow,
+		Type:      beerType,
+		StyleID:   styleId,
+		BreweryID: breweryId,
+		IsActive:  active,
+		// UpdatedAt: &timeNow,
 	}
-	if beerType != "" {
-		beer.Type = &beerType
-	}
+
 	updErr := s.beerStore.UpdateBeer(beer)
 	if updErr != nil {
 		return errors.Wrap(updErr, "update brewery")

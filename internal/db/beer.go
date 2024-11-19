@@ -4,8 +4,6 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/pkg/errors"
-
 	"github.com/my-pet-projects/collection/internal/model"
 )
 
@@ -35,44 +33,25 @@ func NewBeerStore(db *DbClient, logger *slog.Logger) BeerStore {
 	}
 }
 
-func (s BeerStore) GetBeer(id int) (Beer, error) {
-	var beer Beer
-	var style model.BeerStyle
-	var brewery Brewery
-	var city City
-	var country Country
-	query := `SELECT beers.id, beers.brand, beers.type, beers.style_id, beers.brewery_id, beers.is_active, beers.created_at, beers.updated_at, beers.old_image_ids, 
-				 	 beer_styles.id, beer_styles.name,
-					 breweries.id, breweries.name, breweries.website, breweries.geo_id, countries.cca2,
-					 cities.id, cities.name, cities.country_code, cities.admin1_code, cities.admin2_code, cities.admin3_code, cities.admin4_code,
-					 countries.cca2, countries.cca3, countries.ccn3, countries.name_common, countries.name_official, countries.region, countries.subregion
-			    FROM beers
-		  INNER JOIN beer_styles ON beers.style_id = beer_styles.id
-		   LEFT JOIN breweries on beers.brewery_id = breweries.id 
-		  INNER JOIN cities ON breweries.geo_id = cities.id 
-		  INNER JOIN countries ON cities.country_code = countries.cca2
-		  	   WHERE beers.id = ?`
-	resErr := s.db.QueryRow(query, id).Scan(
-		&beer.Id, &beer.Brand, &beer.Type, &beer.StyleId, &beer.BreweryId, &beer.Active, &beer.CreatedAt, &beer.UpdatedAt, &beer.OldImageIds,
-		&style.ID, &style.Name,
-		&brewery.Id, &brewery.Name, &brewery.Website, &brewery.GeoId, &brewery.CountryCode,
-		&city.Id, &city.Name, &city.CountryCode, &city.Admin1Code, &city.Admin2Code, &city.Admin3Code, &city.Admin4Code,
-		&country.Cca2, &country.Cca3, &country.Ccn3, &country.NameCommon, &country.NameOfficial, &country.Region, &country.Subregion,
-	)
-	if resErr != nil {
-		return beer, errors.Wrap(resErr, "get beer")
-	}
-	brewery.Country = &country
-	brewery.City = &city
-	beer.Brewery = &brewery
-	beer.Style = &style
-	return beer, nil
+func (s BeerStore) GetBeer(id int) (*model.Beer, error) {
+	var beer model.Beer
+	result := s.db.gorm.
+		Debug().
+		Joins("BeerStyle").
+		Joins("Brewery").
+		Joins("Brewery.City").
+		Joins("Brewery.City.Country").
+		Preload("BeerMedias.Media").
+		First(&beer, id)
+
+	return &beer, result.Error
 }
 
 func (s BeerStore) PaginateBeers(filter model.BeerFilter) (*model.Pagination[model.Beer], error) {
 	pagination := model.Pagination[model.Beer]{
-		Page: filter.Page,
-		Sort: "Brand",
+		Page:  filter.Page,
+		Limit: filter.Limit,
+		Sort:  "Brand",
 	}
 
 	var items []model.Beer
@@ -92,31 +71,42 @@ func (s BeerStore) PaginateBeers(filter model.BeerFilter) (*model.Pagination[mod
 	return &pagination, result.Error
 }
 
-func (s BeerStore) InsertBeer(beer Beer) (int, error) {
-	query := `INSERT INTO beers (brand, type, style_id, brewery_id, is_active, created_at) 
-			  VALUES (?, ?, ?, ?, ?, ?)`
-	res, resErr := s.db.Exec(query, beer.Brand, beer.Type, beer.StyleId, beer.BreweryId, beer.Active, beer.CreatedAt)
-	if resErr != nil {
-		return 0, errors.Wrap(resErr, "insert beer")
-	}
-	id, err := res.LastInsertId()
-	if err != nil {
-		return 0, errors.Wrap(resErr, "last inserted beer")
-	}
-	return int(id), nil
+func (s BeerStore) InsertBeer(beer model.Beer) (int, error) {
+	res := s.db.gorm.
+		Debug().
+		Save(&beer)
+
+	return beer.ID, res.Error
+	// query := `INSERT INTO beers (brand, type, style_id, brewery_id, is_active, created_at)
+	// 		  VALUES (?, ?, ?, ?, ?, ?)`
+	// res, resErr := s.db.Exec(query, beer.Brand, beer.Type, beer.StyleId, beer.BreweryId, beer.Active, beer.CreatedAt)
+	// if resErr != nil {
+	// 	return 0, errors.Wrap(resErr, "insert beer")
+	// }
+	// id, err := res.LastInsertId()
+	// if err != nil {
+	// 	return 0, errors.Wrap(resErr, "last inserted beer")
+	// }
+	// return int(id), nil
 }
 
-func (s BeerStore) UpdateBeer(beer Beer) error {
-	query := `UPDATE beers
-			 	 SET brand = ?, type = ?, style_id = ?, brewery_id = ?, is_active = ?, updated_at = ?
-			WHERE id = ?`
-	res, resErr := s.db.Exec(query, beer.Brand, beer.Type, beer.StyleId, beer.BreweryId, beer.Active, beer.UpdatedAt, beer.Id)
-	if resErr != nil {
-		return errors.Wrap(resErr, "update beer")
-	}
-	_, err := res.RowsAffected()
-	if err != nil {
-		return errors.Wrap(resErr, "rows updated")
-	}
-	return nil
+func (s BeerStore) UpdateBeer(beer model.Beer) error {
+	res := s.db.gorm.
+		Debug().
+		Save(&beer)
+
+	return res.Error
+
+	// query := `UPDATE beers
+	// 		 	 SET brand = ?, type = ?, style_id = ?, brewery_id = ?, is_active = ?, updated_at = ?
+	// 		WHERE id = ?`
+	// res, resErr := s.db.Exec(query, beer.Brand, beer.Type, beer.ID, beer.BreweryId, beer.IsActive, beer.UpdatedAt, beer.ID)
+	// if resErr != nil {
+	// 	return errors.Wrap(resErr, "update beer")
+	// }
+	// _, err := res.RowsAffected()
+	// if err != nil {
+	// 	return errors.Wrap(resErr, "rows updated")
+	// }
+	// return nil
 }
