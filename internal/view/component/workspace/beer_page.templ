@@ -32,7 +32,8 @@ templ BeerForm(params BeerFormParams, errs BeerFormErrors) {
 			hx-indicator="#indicator"
 			hx-disabled-elt="input,button"
 		>
-			<input type="hidden" id="id" name="id" value={ fmt.Sprint(params.Id) }/>
+			<input type="hidden" id="id" name="id" value={ fmt.Sprint(params.ID) }/>
+			<input type="hidden" id="isActive" name="isActive" value={ fmt.Sprint(params.IsActive) }/>
 			<div
 				if errs.Brand != "" {
 					class="form-group has-err"
@@ -67,7 +68,9 @@ templ BeerForm(params BeerFormParams, errs BeerFormErrors) {
 					id="type"
 					name="type"
 					placeholder=""
-					value={ params.Type }
+					if params.Type != nil {
+						value={ *params.Type }
+					}
 					autocapitalize="none"
 					autocomplete="off"
 					autocorrect="off"
@@ -83,7 +86,7 @@ templ BeerForm(params BeerFormParams, errs BeerFormErrors) {
 				<label for="name" class="text-sm font-medium leading-10">
 					<span>Style</span>
 				</label>
-				@shared.StylesSelector(shared.StyleData{Styles: params.Styles, SelectedStyleId: params.StyleId})
+				@shared.StylesSelector(shared.StyleData{Styles: params.Styles, SelectedStyleId: params.StyleID})
 				<span class="mt-1 text-sm form-group-error text-red-600">{ errs.Style }</span>
 			</div>
 			<div
@@ -94,7 +97,7 @@ templ BeerForm(params BeerFormParams, errs BeerFormErrors) {
 				<label for="name" class="text-sm font-medium leading-10">
 					<span>Brewery</span>
 				</label>
-				@shared.BrewerySelector(shared.BreweriesData{Breweries: params.Breweries, SelectedBrewery: params.BreweryId})
+				@shared.BrewerySelector(shared.BreweriesData{Breweries: params.Breweries, SelectedBrewery: params.BreweryID})
 				<span class="mt-1 text-sm form-group-error text-red-600">{ errs.Brewery }</span>
 			</div>
 			<div class="mt-6">

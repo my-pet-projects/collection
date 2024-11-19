@@ -38,6 +38,7 @@ func (s BeerStyleStore) PaginateBeerStyles(filter model.BeerStyleFilter) (model.
 	var items []model.BeerStyle
 	pagination := model.Pagination[model.BeerStyle]{
 		Page:       filter.Page,
+		Limit:      filter.Limit,
 		Sort:       "Name",
 		WhereQuery: "Name LIKE ?",
 		WhereArgs:  "%" + filter.Name + "%",

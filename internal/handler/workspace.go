@@ -46,49 +46,6 @@ func (h WorkspaceServer) HandleBreweryListPage(reqResp *web.ReqRespPair) error {
 	return reqResp.Render(workspace.BreweryListPage(page))
 }
 
-func (h WorkspaceServer) HandleBeerListPage(reqResp *web.ReqRespPair) error {
-	page := workspace.Page{Title: fmt.Sprintf("Beer Workspace")}
-	beerPage := workspace.BeerPageData{
-		Page: page,
-	}
-	return reqResp.Render(workspace.BeerListPage(beerPage))
-}
-
-func (h WorkspaceServer) HandleBeerPage(reqResp *web.ReqRespPair) error {
-	beerId, parseErr := strconv.Atoi(reqResp.Request.PathValue("id"))
-	if parseErr != nil {
-		return reqResp.RenderError(http.StatusInternalServerError, parseErr)
-	}
-	beer, beerErr := h.beerService.GetBeer(beerId)
-	if beerErr != nil {
-		return reqResp.RenderError(http.StatusInternalServerError, beerErr)
-	}
-	breweries, breweriesErr := h.breweryService.ListBreweries()
-	if breweriesErr != nil {
-		return reqResp.RenderError(http.StatusInternalServerError, breweriesErr)
-	}
-	styles, stylesErr := h.beerService.ListBeerStyles()
-	if stylesErr != nil {
-		return reqResp.RenderError(http.StatusInternalServerError, stylesErr)
-	}
-
-	page := workspace.Page{Title: fmt.Sprintf("Edit Beer - %s", beer.Brand)}
-	beerPage := workspace.BeerPageData{
-		Page: page,
-		FormParams: workspace.BeerFormParams{
-			Id:        beer.Id,
-			Brand:     beer.Brand,
-			Type:      *beer.Type,
-			BreweryId: beer.BreweryId,
-			Breweries: breweries,
-			StyleId:   beer.StyleId,
-			Styles:    styles,
-		},
-	}
-
-	return reqResp.Render(workspace.BeerPageLayout(beerPage))
-}
-
 func (h WorkspaceServer) HandleBreweryPage(reqResp *web.ReqRespPair) error {
 	breweryId, parseErr := strconv.Atoi(reqResp.Request.PathValue("id"))
 	if parseErr != nil {

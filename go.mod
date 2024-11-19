@@ -12,7 +12,8 @@ require (
 	github.com/pkg/errors v0.9.1
 	golang.org/x/sync v0.8.0
 	gorm.io/driver/sqlite v1.5.6
-	gorm.io/gorm v1.25.11
+	gorm.io/gorm v1.25.12
+	gorm.io/plugin/dbresolver v1.5.3
 )
 
 require (

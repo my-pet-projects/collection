@@ -184,7 +184,7 @@ golang.org/x/text/unicode/norm
 # gorm.io/driver/sqlite v1.5.6
 ## explicit; go 1.20
 gorm.io/driver/sqlite
-# gorm.io/gorm v1.25.11
+# gorm.io/gorm v1.25.12
 ## explicit; go 1.18
 gorm.io/gorm
 gorm.io/gorm/callbacks
@@ -193,6 +193,9 @@ gorm.io/gorm/logger
 gorm.io/gorm/migrator
 gorm.io/gorm/schema
 gorm.io/gorm/utils
+# gorm.io/plugin/dbresolver v1.5.3
+## explicit; go 1.14
+gorm.io/plugin/dbresolver
 # nhooyr.io/websocket v1.8.10
 ## explicit; go 1.19
 nhooyr.io/websocket

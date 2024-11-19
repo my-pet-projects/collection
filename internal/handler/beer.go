@@ -28,6 +28,50 @@ func NewBeerHandler(beerService service.BeerService, breweryService service.Brew
 	}
 }
 
+func (h WorkspaceServer) HandleBeerListPage(reqResp *web.ReqRespPair) error {
+	page := workspace.Page{Title: fmt.Sprintf("Beer Workspace")}
+	beerPage := workspace.BeerPageData{
+		Page: page,
+	}
+	return reqResp.Render(workspace.BeerListPage(beerPage))
+}
+
+func (h WorkspaceServer) HandleBeerPage(reqResp *web.ReqRespPair) error {
+	beerId, parseErr := strconv.Atoi(reqResp.Request.PathValue("id"))
+	if parseErr != nil {
+		return reqResp.RenderError(http.StatusInternalServerError, parseErr)
+	}
+	beer, beerErr := h.beerService.GetBeer(beerId)
+	if beerErr != nil {
+		return reqResp.RenderError(http.StatusInternalServerError, beerErr)
+	}
+	breweries, breweriesErr := h.breweryService.ListBreweries()
+	if breweriesErr != nil {
+		return reqResp.RenderError(http.StatusInternalServerError, breweriesErr)
+	}
+	styles, stylesErr := h.beerService.ListBeerStyles()
+	if stylesErr != nil {
+		return reqResp.RenderError(http.StatusInternalServerError, stylesErr)
+	}
+
+	page := workspace.Page{Title: fmt.Sprintf("Edit Beer - %s", beer.Brand)}
+	beerPage := workspace.BeerPageData{
+		Page: page,
+		FormParams: workspace.BeerFormParams{
+			ID:        beer.ID,
+			Brand:     beer.Brand,
+			Type:      beer.Type,
+			BreweryID: beer.BreweryID,
+			Breweries: breweries,
+			StyleID:   beer.StyleID,
+			Styles:    styles,
+			IsActive:  beer.IsActive,
+		},
+	}
+
+	return reqResp.Render(workspace.BeerPageLayout(beerPage))
+}
+
 func (h WorkspaceServer) HandleCreateBeerPage(reqResp *web.ReqRespPair) error {
 	breweries, breweriesErr := h.breweryService.ListBreweries()
 	if breweriesErr != nil {
@@ -56,12 +100,18 @@ func (h WorkspaceServer) SubmitBeerPage(reqResp *web.ReqRespPair) error {
 	breweryId, _ := strconv.Atoi(breweryIdStr)
 	styleIdStr := reqResp.Request.FormValue("style")
 	styleId, _ := strconv.Atoi(styleIdStr)
+	beerTypeStr := strings.TrimSpace(reqResp.Request.FormValue("type"))
+	var beerType *string
+	if beerTypeStr != "" {
+		beerType = &beerTypeStr
+	}
+	isActive := reqResp.Request.FormValue("isActive") == "true"
 	formParams := workspace.BeerFormParams{
-		Id:        id,
+		ID:        id,
 		Brand:     strings.TrimSpace(reqResp.Request.FormValue("brand")),
-		Type:      strings.TrimSpace(reqResp.Request.FormValue("type")),
-		BreweryId: &breweryId,
-		StyleId:   &styleId,
+		Type:      beerType,
+		BreweryID: &breweryId,
+		StyleID:   &styleId,
 	}
 
 	breweries, breweriesErr := h.breweryService.ListBreweries()
@@ -79,16 +129,16 @@ func (h WorkspaceServer) SubmitBeerPage(reqResp *web.ReqRespPair) error {
 		return reqResp.Render(workspace.BeerForm(formParams, formErrs))
 	}
 
-	if formParams.Id == 0 {
-		newBeer, createErr := h.beerService.CreateBeer(formParams.Brand, formParams.Type, &styleId, &breweryId, false)
+	if formParams.ID == 0 {
+		newBeer, createErr := h.beerService.CreateBeer(formParams.Brand, formParams.Type, &styleId, &breweryId, isActive)
 		if createErr != nil {
 			h.logger.Error("create beer", slog.Any("error", createErr))
 			return reqResp.Render(workspace.BeerForm(formParams, workspace.BeerFormErrors{Error: createErr.Error()}))
 		}
-		return reqResp.Redirect(fmt.Sprintf("/workspace/beer/%d", newBeer.Id))
+		return reqResp.Redirect(fmt.Sprintf("/workspace/beer/%d", newBeer.ID))
 	}
 
-	updErr := h.beerService.UpdateBeer(formParams.Id, formParams.Brand, formParams.Type, &styleId, &breweryId, false)
+	updErr := h.beerService.UpdateBeer(formParams.ID, formParams.Brand, formParams.Type, &styleId, &breweryId, isActive)
 	if updErr != nil {
 		h.logger.Error("update beer", slog.Any("error", updErr))
 		return reqResp.Render(workspace.BeerForm(formParams, workspace.BeerFormErrors{Error: updErr.Error()}))
@@ -104,7 +154,8 @@ func (h WorkspaceServer) ListBeers(reqResp *web.ReqRespPair) error {
 	}
 
 	filter := model.BeerFilter{
-		Page: page,
+		Page:  page,
+		Limit: 20,
 	}
 	pagination, paginationErr := h.beerService.PaginateBeers(filter)
 	if paginationErr != nil {
