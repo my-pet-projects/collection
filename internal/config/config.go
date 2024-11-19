@@ -9,10 +9,12 @@ import (
 
 // Config represents application configuration.
 type Config struct {
-	Env           string
-	DbConnection  string
-	AwsConfig     AwsConfig
-	TursoDbConfig TursoDbConfig
+	Env                string
+	DbConnection       string
+	AwsConfig          AwsConfig
+	TursoDbConfig      TursoDbConfig
+	GeoDbConfig        TursoDbConfig
+	CollectionDbConfig TursoDbConfig
 }
 
 type AwsConfig struct {
@@ -27,7 +29,7 @@ type TursoDbConfig struct {
 }
 
 // NewConfig creates application configuration.
-func NewConfig() (*Config, error) {
+func NewConfig() (*Config, error) { //nolint:funlen
 	dbCon, ok := os.LookupEnv("DB_CONNECTION")
 	if !ok {
 		return nil, errors.New("DB_CONNECTION environment variable was not found")
@@ -56,6 +58,22 @@ func NewConfig() (*Config, error) {
 	if !ok {
 		return nil, errors.New("AWS_SECRET_KEY environment variable was not found")
 	}
+	geoDbUrl, ok := os.LookupEnv("GEO_DATABASE_URL")
+	if !ok {
+		return nil, errors.New("GEO_DATABASE_URL environment variable was not found")
+	}
+	geoAuthToken, ok := os.LookupEnv("GEO_DATABASE_TOKEN")
+	if !ok {
+		return nil, errors.New("GEO_DATABASE_TOKEN environment variable was not found")
+	}
+	collectionDbUrl, ok := os.LookupEnv("COLLECTION_DATABASE_URL")
+	if !ok {
+		return nil, errors.New("COLLECTION_DATABASE_URL environment variable was not found")
+	}
+	collectionAuthToken, ok := os.LookupEnv("COLLECTION_DATABASE_TOKEN")
+	if !ok {
+		return nil, errors.New("COLLECTION_DATABASE_TOKEN environment variable was not found")
+	}
 
 	cfg := &Config{
 		Env:          env,
@@ -68,6 +86,14 @@ func NewConfig() (*Config, error) {
 		TursoDbConfig: TursoDbConfig{
 			DbUrl:     tursoDbUrl,
 			AuthToken: tursoAuthToken,
+		},
+		GeoDbConfig: TursoDbConfig{
+			DbUrl:     geoDbUrl,
+			AuthToken: geoAuthToken,
+		},
+		CollectionDbConfig: TursoDbConfig{
+			DbUrl:     collectionDbUrl,
+			AuthToken: collectionAuthToken,
 		},
 	}
 

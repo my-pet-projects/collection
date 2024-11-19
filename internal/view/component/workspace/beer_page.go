@@ -12,13 +12,14 @@ type BeerPageData struct {
 }
 
 type BeerFormParams struct {
-	Id        int
+	ID        int
 	Brand     string
-	Type      string
-	StyleId   *int
-	BreweryId *int
+	Type      *string
+	StyleID   *int
+	BreweryID *int
 	Breweries []db.Brewery
 	Styles    []model.BeerStyle
+	IsActive  bool
 }
 
 type BeerFormErrors struct {
@@ -36,7 +37,7 @@ func (p BeerFormParams) Validate() (BeerFormErrors, bool) {
 		errs.Brand = "Brand is required"
 		hasErrs = true
 	}
-	if *p.BreweryId == 0 {
+	if *p.BreweryID == 0 {
 		errs.Brewery = "Brewery is required"
 		hasErrs = true
 	}
@@ -44,5 +45,5 @@ func (p BeerFormParams) Validate() (BeerFormErrors, bool) {
 }
 
 func (p BeerFormParams) IsNew() bool {
-	return p.Id == 0
+	return p.ID == 0
 }

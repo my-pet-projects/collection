@@ -17,6 +17,9 @@ func paginate[T any](value interface{}, pagination *model.Pagination[T], db *gor
 	pagination.TotalResults = int(totalRows)
 
 	return func(db *gorm.DB) *gorm.DB {
+		if pagination.GetLimit() == 0 {
+			return db.Order(pagination.GetSort())
+		}
 		return db.Offset(pagination.GetOffset()).Limit(pagination.GetLimit()).Order(pagination.GetSort())
 	}
 }
