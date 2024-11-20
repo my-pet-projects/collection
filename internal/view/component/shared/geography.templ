@@ -37,7 +37,7 @@ func countriesJson(countriesData CountriesData) string {
 	for _, country := range countriesData.Countries {
 		choices = append(choices, choicesData{
 			Value:            strings.ToLower(country.Cca2),
-			Label:            fmt.Sprintf(`<span class="flex justify-center items-center"><img src="https://flagcdn.com/w20/%s.png" width="20" /></span><span class="ml-4">%s</span>`, strings.ToLower(country.Cca2), country.NameCommon),
+			Label:            fmt.Sprintf(`<span class="flex items-center justify-center"><img src="https://flagcdn.com/w20/%s.png" width="20" /></span><span class="ml-4">%s</span>`, strings.ToLower(country.Cca2), country.NameCommon),
 			Selected:         false,
 			Disabled:         false,
 			CustomProperties: customProperty{SearchableValue: country.NameCommon},
