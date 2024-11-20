@@ -6,6 +6,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/my-pet-projects/collection/internal/db"
+	"github.com/my-pet-projects/collection/internal/model"
 )
 
 type BreweryService struct {
@@ -22,24 +23,24 @@ func NewBreweryService(breweryStore *db.BreweryStore, geoStore *db.GeographyStor
 	}
 }
 
-func (s BreweryService) CreateBrewery(name string, geoId int) (*db.Brewery, error) {
-	brewery := db.Brewery{
+func (s BreweryService) CreateBrewery(name string, geoId int) (*model.Brewery, error) {
+	brewery := model.Brewery{
 		Name:  name,
-		GeoId: geoId,
+		GeoID: geoId,
 	}
 	insertedId, insertErr := s.breweryStore.InsertBrewery(brewery)
 	if insertErr != nil {
 		return nil, errors.Wrap(insertErr, "insert brewery")
 	}
-	brewery.Id = insertedId
+	brewery.ID = insertedId
 	return &brewery, nil
 }
 
 func (s BreweryService) UpdateBrewery(id int, name string, geoId int) error {
-	brewery := db.Brewery{
-		Id:    id,
+	brewery := model.Brewery{
+		ID:    id,
 		Name:  name,
-		GeoId: geoId,
+		GeoID: geoId,
 	}
 	updErr := s.breweryStore.UpdateBrewery(brewery)
 	if updErr != nil {
@@ -48,15 +49,15 @@ func (s BreweryService) UpdateBrewery(id int, name string, geoId int) error {
 	return nil
 }
 
-func (s BreweryService) GetBrewery(id int) (db.Brewery, error) {
+func (s BreweryService) GetBrewery(id int) (model.Brewery, error) {
 	brewery, breweryErr := s.breweryStore.GetBrewery(id)
 	if breweryErr != nil {
-		return db.Brewery{}, errors.Wrap(breweryErr, "get brewery")
+		return model.Brewery{}, errors.Wrap(breweryErr, "get brewery")
 	}
 	return brewery, nil
 }
 
-func (s BreweryService) ListBreweries() ([]db.Brewery, error) {
+func (s BreweryService) ListBreweries() ([]model.Brewery, error) {
 	breweries, breweriesErr := s.breweryStore.FetchBreweries()
 	if breweriesErr != nil {
 		return nil, errors.Wrap(breweriesErr, "fetch breweries")

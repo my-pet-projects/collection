@@ -2,7 +2,7 @@ package workspace
 
 import (
 	"fmt"
-	"github.com/my-pet-projects/collection/internal/db"
+	"github.com/my-pet-projects/collection/internal/model"
 )
 
 templ BreweryListPage(page Page) {
@@ -123,7 +123,7 @@ templ breweriesList() {
 	</div>
 }
 
-templ BreweryList(breweries []db.Brewery) {
+templ BreweryList(breweries []model.Brewery) {
 	<table class="min-w-full divide-y divide-gray-200 table-fixed dark:divide-gray-600">
 		<thead class="bg-gray-100 dark:bg-gray-700">
 			<tr>
@@ -144,7 +144,7 @@ templ BreweryList(breweries []db.Brewery) {
 					<td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">{ brewery.Name }</td>
 					<td class="flex items-center p-4 mr-12 space-x-6 whitespace-nowrap">
 						<div class="text-sm font-normal text-gray-500 dark:text-gray-400">
-							<div class="text-base font-semibold text-gray-900 dark:text-white">{ brewery.Country.NameCommon }</div>
+							<div class="text-base font-semibold text-gray-900 dark:text-white">{ brewery.City.Country.NameCommon }</div>
 							<div class="text-sm font-normal text-gray-500 dark:text-gray-400">{ brewery.City.Name }</div>
 						</div>
 					</td>
@@ -170,7 +170,7 @@ templ BreweryList(breweries []db.Brewery) {
 								</svg>
 								<span class="sr-only">View</span>
 							</button>
-							<a href={ templ.URL(fmt.Sprintf("/workspace/brewery/%d", brewery.Id)) } class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10">
+							<a href={ templ.URL(fmt.Sprintf("/workspace/brewery/%d", brewery.ID)) } class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10">
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
 									width="24"

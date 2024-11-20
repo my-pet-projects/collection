@@ -26,7 +26,7 @@ customElements.define(
         "choice",
         function (event) {
           const changeEvent = new CustomEvent(eventName, {
-            detail: { choice: event.detail.choice },
+            detail: { choice: event.detail.value },
           });
           document.dispatchEvent(changeEvent);
         },
