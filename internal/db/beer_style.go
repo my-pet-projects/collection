@@ -25,17 +25,6 @@ func (s BeerStyleStore) GetBeerStyle(id int) (model.BeerStyle, error) {
 		First(&item, id)
 
 	return item, result.Error
-	// var style model.BeerStyle
-	// query := `SELECT id, name
-	// 		    FROM beer_styles
-	// 		   WHERE id = ?`
-	// resErr := s.db.QueryRow(query, id).Scan(
-	// 	&style.ID, &style.Name,
-	// )
-	// if resErr != nil {
-	// 	return style, errors.Wrap(resErr, "get beer style")
-	// }
-	// return style, nil
 }
 
 func (s BeerStyleStore) PaginateBeerStyles(filter model.BeerStyleFilter) (model.Pagination[model.BeerStyle], error) {
