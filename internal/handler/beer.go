@@ -66,6 +66,7 @@ func (h WorkspaceServer) HandleBeerPage(reqResp *web.ReqRespPair) error {
 			StyleID:   beer.StyleID,
 			Styles:    styles,
 			IsActive:  beer.IsActive,
+			Brewery:   beer.Brewery,
 		},
 	}
 

@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"github.com/my-pet-projects/collection/internal/model"
+	"gorm.io/gorm"
+	"gorm.io/plugin/dbresolver"
 )
 
 type BeerStore struct {
@@ -39,8 +41,15 @@ func (s BeerStore) GetBeer(id int) (*model.Beer, error) {
 		Debug().
 		Joins("BeerStyle").
 		Joins("Brewery").
-		Joins("Brewery.City").
-		Joins("Brewery.City.Country").
+		Preload("Brewery.City", func(tx *gorm.DB) *gorm.DB {
+			return tx.Clauses(dbresolver.Use(GeographyDBResolverName))
+		}).
+		// Joins("Brewery.City", func(tx *gorm.DB) *gorm.DB {
+		// 	return tx.Clauses(dbresolver.Use("geography"))
+		// }).
+		Preload("Brewery.City.Country", func(tx *gorm.DB) *gorm.DB {
+			return tx.Clauses(dbresolver.Use(GeographyDBResolverName))
+		}).
 		Preload("BeerMedias.Media").
 		First(&beer, id)
 
@@ -61,8 +70,12 @@ func (s BeerStore) PaginateBeers(filter model.BeerFilter) (*model.Pagination[mod
 		Scopes(paginate(items, &pagination, s.db.gorm)).
 		Joins("BeerStyle").
 		Joins("Brewery").
-		Joins("Brewery.City").
-		Joins("Brewery.City.Country").
+		Preload("Brewery.City", func(tx *gorm.DB) *gorm.DB {
+			return tx.Clauses(dbresolver.Use(GeographyDBResolverName))
+		}).
+		Preload("Brewery.City.Country", func(tx *gorm.DB) *gorm.DB {
+			return tx.Clauses(dbresolver.Use(GeographyDBResolverName))
+		}).
 		Preload("BeerMedias.Media").
 		// Preload("BeerMedias.MediaItem").
 		Find(&items)

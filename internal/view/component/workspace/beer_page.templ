@@ -24,6 +24,10 @@ templ BeerPage(params BeerFormParams, errors BeerFormErrors) {
 
 templ BeerForm(params BeerFormParams, errs BeerFormErrors) {
 	<div hx-ext="response-targets">
+		if params.Brewery != nil && params.Brewery.City != nil && params.Brewery.City.Country != nil {
+			<div>{ params.Brewery.City.Name }, { params.Brewery.City.Country.NameCommon }</div>
+			<img class="w-20" src={ params.Brewery.City.Country.FlagUrl } alt={ params.Brewery.City.Country.NameCommon }/>
+		}
 		<form
 			class="col-span-1"
 			hx-post="/workspace/beer"
