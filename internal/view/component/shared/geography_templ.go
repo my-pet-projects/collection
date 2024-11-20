@@ -8,13 +8,15 @@ package shared
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/my-pet-projects/collection/internal/db"
-import "fmt"
-import "strings"
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+	"github.com/my-pet-projects/collection/internal/model"
+	"strings"
+)
 
 type CountriesData struct {
-	Countries             []db.Country
+	Countries             []model.Country
 	HasBreweries          bool
 	StoreSelectionInQuery bool
 }
@@ -49,11 +51,14 @@ func countriesJson(countriesData CountriesData) string {
 			CustomProperties: customProperty{SearchableValue: country.NameCommon},
 		})
 	}
-	bytes, _ := json.Marshal(choices)
+	bytes, err := json.Marshal(choices)
+	if err != nil {
+		panic(err)
+	}
 	return string(bytes)
 }
 
-func citiesJson(cities []db.City) string {
+func citiesJson(cities []model.City) string {
 	choices := make([]choicesData, 0)
 	emptyChoice := choicesData{
 		Value:    "",
@@ -64,13 +69,16 @@ func citiesJson(cities []db.City) string {
 	choices = append(choices, emptyChoice)
 	for _, city := range cities {
 		choices = append(choices, choicesData{
-			Value:    fmt.Sprint(city.Id),
+			Value:    fmt.Sprint(city.ID),
 			Label:    city.Name,
 			Selected: false,
 			Disabled: false,
 		})
 	}
-	bytes, _ := json.Marshal(choices)
+	bytes, err := json.Marshal(choices)
+	if err != nil {
+		panic(err)
+	}
 	return string(bytes)
 }
 
@@ -100,14 +108,14 @@ func CountriesSelector(countriesData CountriesData) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div hx-ext=\"path-params\"><app-select name=\"country\" hx-get=\"/geo/countries/{countryIso}/cities\" hx-vals=\"js:{countryIso: event ? event.detail.choice.value.toLowerCase() : document.getElementById(&#39;selected-country&#39;)?.value}\" hx-trigger=\"country-change-choice from:document, load[document.getElementById(&#39;selected-country&#39;)?.value.length &gt; 0]\" hx-target=\"#cityContainer\" hx-swap=\"innerHTML\" hx-params=\"countryIso\" data-items=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div hx-ext=\"path-params\"><app-select name=\"country\" hx-get=\"/geo/countries/{countryIso}/cities\" hx-vals=\"js:{countryIso: event ? event.detail.choice.toLowerCase() : document.getElementById(&#39;selected-country&#39;)?.value}\" hx-trigger=\"country-change-choice from:document, load[document.getElementById(&#39;selected-country&#39;)?.value.length &gt; 0]\" hx-target=\"#cityContainer\" hx-swap=\"innerHTML\" hx-params=\"countryIso\" data-items=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(countriesJson(countriesData))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/geography.templ`, Line: 84, Col: 44}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/geography.templ`, Line: 92, Col: 44}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -121,7 +129,7 @@ func CountriesSelector(countriesData CountriesData) templ.Component {
 	})
 }
 
-func CitiesSelector(cities []db.City) templ.Component {
+func CitiesSelector(cities []model.City) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -149,7 +157,7 @@ func CitiesSelector(cities []db.City) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(citiesJson(cities))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/geography.templ`, Line: 92, Col: 33}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/geography.templ`, Line: 100, Col: 33}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {

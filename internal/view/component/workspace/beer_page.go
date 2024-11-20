@@ -1,7 +1,6 @@
 package workspace
 
 import (
-	"github.com/my-pet-projects/collection/internal/db"
 	"github.com/my-pet-projects/collection/internal/model"
 )
 
@@ -17,7 +16,7 @@ type BeerFormParams struct {
 	Type      *string
 	StyleID   *int
 	BreweryID *int
-	Breweries []db.Brewery
+	Breweries []model.Brewery
 	Styles    []model.BeerStyle
 	IsActive  bool
 	Brewery   *model.Brewery

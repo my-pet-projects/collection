@@ -28,7 +28,7 @@ type Brewery struct {
 }
 
 type Country struct {
-	Cca2         string
+	Cca2         string `gorm:"primaryKey"`
 	Cca3         string
 	Ccn3         *string
 	NameCommon   string
@@ -39,7 +39,7 @@ type Country struct {
 }
 
 type City struct {
-	ID               int
+	ID               int `gorm:"primaryKey"`
 	Name             string
 	AlternateNames   *string
 	CountryCode      string

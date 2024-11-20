@@ -1,12 +1,14 @@
 package shared
 
-import "github.com/my-pet-projects/collection/internal/db"
-import "fmt"
-import "strings"
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+	"github.com/my-pet-projects/collection/internal/model"
+	"strings"
+)
 
 type CountriesData struct {
-	Countries             []db.Country
+	Countries             []model.Country
 	HasBreweries          bool
 	StoreSelectionInQuery bool
 }
@@ -41,11 +43,14 @@ func countriesJson(countriesData CountriesData) string {
 			CustomProperties: customProperty{SearchableValue: country.NameCommon},
 		})
 	}
-	bytes, _ := json.Marshal(choices)
+	bytes, err := json.Marshal(choices)
+	if err != nil {
+		panic(err)
+	}
 	return string(bytes)
 }
 
-func citiesJson(cities []db.City) string {
+func citiesJson(cities []model.City) string {
 	choices := make([]choicesData, 0)
 	emptyChoice := choicesData{
 		Value:    "",
@@ -56,13 +61,16 @@ func citiesJson(cities []db.City) string {
 	choices = append(choices, emptyChoice)
 	for _, city := range cities {
 		choices = append(choices, choicesData{
-			Value:    fmt.Sprint(city.Id),
+			Value:    fmt.Sprint(city.ID),
 			Label:    city.Name,
 			Selected: false,
 			Disabled: false,
 		})
 	}
-	bytes, _ := json.Marshal(choices)
+	bytes, err := json.Marshal(choices)
+	if err != nil {
+		panic(err)
+	}
 	return string(bytes)
 }
 
@@ -76,7 +84,7 @@ templ CountriesSelector(countriesData CountriesData) {
 		<app-select
 			name="country"
 			hx-get="/geo/countries/{countryIso}/cities"
-			hx-vals="js:{countryIso: event ? event.detail.choice.value.toLowerCase() : document.getElementById('selected-country')?.value}"
+			hx-vals="js:{countryIso: event ? event.detail.choice.toLowerCase() : document.getElementById('selected-country')?.value}"
 			hx-trigger="country-change-choice from:document, load[document.getElementById('selected-country')?.value.length > 0]"
 			hx-target="#cityContainer"
 			hx-swap="innerHTML"
@@ -86,7 +94,7 @@ templ CountriesSelector(countriesData CountriesData) {
 	</div>
 }
 
-templ CitiesSelector(cities []db.City) {
+templ CitiesSelector(cities []model.City) {
 	<app-select
 		name="city"
 		data-items={ citiesJson(cities) }

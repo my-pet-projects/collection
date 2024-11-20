@@ -8,12 +8,14 @@ package shared
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/my-pet-projects/collection/internal/db"
-import "fmt"
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+	"github.com/my-pet-projects/collection/internal/model"
+)
 
 type BreweriesData struct {
-	Breweries       []db.Brewery
+	Breweries       []model.Brewery
 	SelectedBrewery *int
 }
 
@@ -32,15 +34,15 @@ func breweriesJson(countriesData BreweriesData) string {
 	choices = append(choices, emptyChoice)
 	for _, brewery := range countriesData.Breweries {
 		selected := false
-		if countriesData.SelectedBrewery != nil && *countriesData.SelectedBrewery == brewery.Id {
+		if countriesData.SelectedBrewery != nil && *countriesData.SelectedBrewery == brewery.ID {
 			selected = true
 		}
 		choices = append(choices, choicesData{
-			Value:            fmt.Sprint(brewery.Id),
-			Label:            fmt.Sprintf(`<span class="flex justify-center items-center">%s</span><span class="ml-4">%s</span>`, brewery.Country.NameCommon, brewery.Name),
+			Value:            fmt.Sprint(brewery.ID),
+			Label:            fmt.Sprintf(`<span class="flex justify-center items-center">%s</span><span class="ml-4">%s</span>`, brewery.City.Country.NameCommon, brewery.Name),
 			Selected:         selected,
 			Disabled:         false,
-			CustomProperties: customProperty{SearchableValue: brewery.Country.NameCommon},
+			CustomProperties: customProperty{SearchableValue: brewery.City.Country.NameCommon},
 		})
 	}
 	bytes, _ := json.Marshal(choices)
@@ -75,7 +77,7 @@ func BrewerySelector(data BreweriesData) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(breweriesJson(data))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/brewery.templ`, Line: 45, Col: 34}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/brewery.templ`, Line: 47, Col: 34}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {

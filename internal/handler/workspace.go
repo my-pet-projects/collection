@@ -60,10 +60,10 @@ func (h WorkspaceServer) HandleBreweryPage(reqResp *web.ReqRespPair) error {
 	breweryPage := workspace.BreweryPage{
 		Page: page,
 		FormParams: workspace.BreweryFormParams{
-			Id:          brewery.Id,
+			Id:          brewery.ID,
 			Name:        brewery.Name,
-			CountryCode: brewery.CountryCode,
-			CityId:      brewery.GeoId,
+			CountryCode: brewery.City.CountryCode,
+			CityId:      brewery.GeoID,
 		},
 	}
 
@@ -100,7 +100,7 @@ func (h WorkspaceServer) SubmitBreweryPage(reqResp *web.ReqRespPair) error {
 			h.logger.Error("create brewery", slog.Any("error", createErr))
 			return reqResp.RenderError(http.StatusInternalServerError, createErr)
 		}
-		reqResp.Redirect(fmt.Sprintf("/workspace/brewery/%d", newBrewery.Id))
+		reqResp.Redirect(fmt.Sprintf("/workspace/brewery/%d", newBrewery.ID))
 		return nil
 	}
 

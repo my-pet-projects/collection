@@ -6,6 +6,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/my-pet-projects/collection/internal/db"
+	"github.com/my-pet-projects/collection/internal/model"
 )
 
 type GeographyService struct {
@@ -20,7 +21,7 @@ func NewGeographyService(store *db.GeographyStore, logger *slog.Logger) Geograph
 	}
 }
 
-func (s GeographyService) GetCountries() ([]db.Country, error) {
+func (s GeographyService) GetCountries() ([]model.Country, error) {
 	countries, countriesErr := s.geoStore.FetchCountries()
 	if countriesErr != nil {
 		return nil, errors.Wrap(countriesErr, "fetch countries")
@@ -28,18 +29,10 @@ func (s GeographyService) GetCountries() ([]db.Country, error) {
 	return countries, nil
 }
 
-func (s GeographyService) GetCities(countryIso string) ([]db.City, error) {
+func (s GeographyService) GetCities(countryIso string) ([]model.City, error) {
 	cities, citiesErr := s.geoStore.FetchCitiesByCountry(countryIso)
 	if citiesErr != nil {
 		return nil, errors.Wrap(citiesErr, "fetch cities")
 	}
 	return cities, nil
-}
-
-func (s GeographyService) GetCity(geoId int) (*db.City, error) {
-	city, cityErr := s.geoStore.GetCity(geoId)
-	if cityErr != nil {
-		return nil, errors.Wrap(cityErr, "get city")
-	}
-	return city, nil
 }
