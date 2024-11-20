@@ -20,6 +20,7 @@ type BeerFormParams struct {
 	Breweries []db.Brewery
 	Styles    []model.BeerStyle
 	IsActive  bool
+	Brewery   *model.Brewery
 }
 
 type BeerFormErrors struct {
