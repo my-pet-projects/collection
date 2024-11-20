@@ -74,7 +74,7 @@ func beerStylesList() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex-1 py-6 px-10\"><div><div class=\"mb-6\"><h1 class=\"pb-2 text-2xl font-semibold text-slate-800 border-b border-gray-400\">Beer style list</h1></div></div><div class=\"mx-auto max-w-screen-2xl\"><div class=\"bg-white relative shadow-md sm:rounded-lg overflow-hidden\"><div class=\"flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4 pb-0\"><div class=\"w-full md:w-1/2\"><form class=\"flex items-center\"><label for=\"simple-search\" class=\"sr-only\">Search</label><div class=\"relative w-full\"><div class=\"absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none\"><svg aria-hidden=\"true\" class=\"w-5 h-5 text-gray-500\" fill=\"currentColor\" viewBox=\"0 0 20 20\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z\" clip-rule=\"evenodd\"></path></svg></div><input type=\"search\" name=\"name\" class=\"bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2\" placeholder=\"Search\" hx-get=\"/workspace/beer-style/search\" hx-include=\"[name=&#39;name&#39;]\" hx-trigger=\"input changed delay:500ms, search\" hx-target=\"#search-results\" hx-indicator=\".htmx-indicator\" hx-ext=\"response-targets\" hx-target-error=\"#style-list-errors\"></div></form></div><div class=\"w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0\"><button type=\"button\" class=\"w-full md:w-auto flex items-center justify-center py-2 px-4 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200\" hx-get=\"/workspace/beer-style/create\" hx-target=\"#search-results\" hx-swap=\"afterbegin\" x-data x-on:htmx:response-error=\"$dispatch(&#39;notify&#39;, { variant: &#39;danger&#39;, title: &#39;Failed to switch to create view!&#39; })\"><svg class=\"h-4 w-4 text-slate-600\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path stroke=\"none\" d=\"M0 0h24v24H0z\"></path> <line x1=\"12\" y1=\"5\" x2=\"12\" y2=\"19\"></line> <line x1=\"5\" y1=\"12\" x2=\"19\" y2=\"12\"></line></svg> Add style</button></div></div><div><div id=\"style-list-errors\" class=\"p-4\"></div><div hx-get=\"/workspace/beer-style/search\" hx-swap=\"innerHTML\" hx-target=\"#search-results\" hx-trigger=\"load\" hx-indicator=\".htmx-indicator\" hx-ext=\"response-targets\" hx-target-error=\"#style-list-errors\" class=\"w-full text-sm text-left text-gray-500\"><div id=\"search-results\"></div><img class=\"htmx-indicator mx-auto m-4\" alt=\"Loading...\" width=\"30\" src=\"/static/img/tail-spin.svg\"></div><div id=\"load-more-errors\" class=\"p-4\"></div></div></div></div></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex-1 px-10 py-6\"><div><div class=\"mb-6\"><h1 class=\"border-b border-gray-400 pb-2 text-2xl font-semibold text-slate-800\">Beer style list</h1></div></div><div class=\"mx-auto max-w-screen-2xl\"><div class=\"relative overflow-hidden bg-white shadow-md sm:rounded-lg\"><div class=\"flex flex-col items-center justify-between space-y-3 p-4 pb-0 md:flex-row md:space-x-4 md:space-y-0\"><div class=\"w-full md:w-1/2\"><form class=\"flex items-center\"><label for=\"simple-search\" class=\"sr-only\">Search</label><div class=\"relative w-full\"><div class=\"pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3\"><svg aria-hidden=\"true\" class=\"h-5 w-5 text-gray-500\" fill=\"currentColor\" viewBox=\"0 0 20 20\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z\" clip-rule=\"evenodd\"></path></svg></div><input type=\"search\" name=\"name\" class=\"focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2 pl-10 text-sm text-gray-900\" placeholder=\"Search\" hx-get=\"/workspace/beer-style/search\" hx-include=\"[name=&#39;name&#39;]\" hx-trigger=\"input changed delay:500ms, search\" hx-target=\"#search-results\" hx-indicator=\".htmx-indicator\" hx-ext=\"response-targets\" hx-target-error=\"#style-list-errors\"></div></form></div><div class=\"flex w-full flex-shrink-0 flex-col items-stretch justify-end space-y-2 md:w-auto md:flex-row md:items-center md:space-x-3 md:space-y-0\"><button type=\"button\" class=\"hover:text-primary-700 flex w-full items-center justify-center rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-200 md:w-auto\" hx-get=\"/workspace/beer-style/create\" hx-target=\"#search-results\" hx-swap=\"afterbegin\" x-data x-on:htmx:response-error=\"$dispatch(&#39;notify&#39;, { variant: &#39;danger&#39;, title: &#39;Failed to switch to create view!&#39; })\"><svg class=\"h-4 w-4 text-slate-600\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path stroke=\"none\" d=\"M0 0h24v24H0z\"></path> <line x1=\"12\" y1=\"5\" x2=\"12\" y2=\"19\"></line> <line x1=\"5\" y1=\"12\" x2=\"19\" y2=\"12\"></line></svg> Add style</button></div></div><div><div id=\"style-list-errors\" class=\"p-4\"></div><div hx-get=\"/workspace/beer-style/search\" hx-swap=\"innerHTML\" hx-target=\"#search-results\" hx-trigger=\"load\" hx-indicator=\".htmx-indicator\" hx-ext=\"response-targets\" hx-target-error=\"#style-list-errors\" class=\"w-full text-left text-sm text-gray-500\"><div id=\"search-results\"></div><img class=\"htmx-indicator m-4 mx-auto\" alt=\"Loading...\" width=\"30\" src=\"/static/img/tail-spin.svg\"></div><div id=\"load-more-errors\" class=\"p-4\"></div></div></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -153,7 +153,7 @@ func DisplayBeerStyleRowView(style model.BeerStyle) templ.Component {
 			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"beer-style-item items-center border-b hover:bg-gray-100 h-14 grid grid-cols-2\"><div class=\"px-4 font-medium text-gray-900 whitespace-nowrap\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"beer-style-item grid h-14 grid-cols-2 items-center border-b hover:bg-gray-100\"><div class=\"whitespace-nowrap px-4 font-medium text-gray-900\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -166,7 +166,7 @@ func DisplayBeerStyleRowView(style model.BeerStyle) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"flex justify-end px-4 gap-4 items-center\"><button hx-get=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"flex items-center justify-end gap-4 px-4\"><button hx-get=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -221,7 +221,7 @@ func EditBeerStyleRowView(style model.BeerStyle, errs model.BeerStyleErrors) tem
 			templ_7745c5c3_Var9 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"beer-style-item items-center border-b hover:bg-gray-100 h-14 grid grid-cols-2\"><div class=\"px-4 font-medium text-gray-900 whitespace-nowrap\"><div")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"beer-style-item grid h-14 grid-cols-2 items-center border-b hover:bg-gray-100\"><div class=\"whitespace-nowrap px-4 font-medium text-gray-900\"><div")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -231,7 +231,7 @@ func EditBeerStyleRowView(style model.BeerStyle, errs model.BeerStyleErrors) tem
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("><input type=\"text\" name=\"name\" class=\"block w-1/2 border border-gray-300 rounded-lg text-xs focus:ring-blue-500 focus:border-blue-500\" value=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("><input type=\"text\" name=\"name\" class=\"block w-1/2 rounded-lg border border-gray-300 text-xs focus:border-blue-500 focus:ring-blue-500\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -244,7 +244,7 @@ func EditBeerStyleRowView(style model.BeerStyle, errs model.BeerStyleErrors) tem
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"></div></div><div class=\"flex justify-end px-4 gap-4 items-center\"><button hx-put=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"></div></div><div class=\"flex items-center justify-end gap-4 px-4\"><button hx-put=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -299,7 +299,7 @@ func CreateBeerStyleRowView(style model.BeerStyle, errs model.BeerStyleErrors) t
 			templ_7745c5c3_Var13 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"beer-style-item items-center border-b hover:bg-gray-100 h-14 grid grid-cols-2\"><div class=\"px-4 font-medium text-gray-900 whitespace-nowrap\"><div")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"beer-style-item grid h-14 grid-cols-2 items-center border-b hover:bg-gray-100\"><div class=\"whitespace-nowrap px-4 font-medium text-gray-900\"><div")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -309,7 +309,7 @@ func CreateBeerStyleRowView(style model.BeerStyle, errs model.BeerStyleErrors) t
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("><input type=\"text\" name=\"name\" class=\"block w-1/2 border border-gray-300 rounded-lg text-xs focus:ring-blue-500 focus:border-blue-500\" value=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("><input type=\"text\" name=\"name\" class=\"block w-1/2 rounded-lg border border-gray-300 text-xs focus:border-blue-500 focus:ring-blue-500\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -322,7 +322,7 @@ func CreateBeerStyleRowView(style model.BeerStyle, errs model.BeerStyleErrors) t
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"></div></div><div class=\"flex justify-end px-4 gap-4 items-center\"><button hx-post=\"/workspace/beer-style\" hx-include=\".beer-style-item\" hx-target=\".beer-style-item\" hx-swap=\"outerHTML\" x-data x-on:htmx:response-error=\"$dispatch(&#39;notify&#39;, { variant: &#39;danger&#39;, xhrResponse: $event.detail.xhr.response })\"><svg class=\"h-4 w-4 text-slate-600\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path stroke=\"none\" d=\"M0 0h24v24H0z\"></path> <line x1=\"12\" y1=\"5\" x2=\"12\" y2=\"19\"></line> <line x1=\"5\" y1=\"12\" x2=\"19\" y2=\"12\"></line></svg></button> <button hx-get=\"/workspace/beer-style/create-cancel\" hx-target=\".beer-style-item\" hx-swap=\"outerHTML\" x-data x-on:htmx:response-error=\"$dispatch(&#39;notify&#39;, { variant: &#39;danger&#39;, title: &#39;Failed to switch to display mode!&#39; })\"><svg class=\"h-4 w-4 text-slate-600\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"10\"></circle> <line x1=\"15\" y1=\"9\" x2=\"9\" y2=\"15\"></line> <line x1=\"9\" y1=\"9\" x2=\"15\" y2=\"15\"></line></svg></button></div></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"></div></div><div class=\"flex items-center justify-end gap-4 px-4\"><button hx-post=\"/workspace/beer-style\" hx-include=\".beer-style-item\" hx-target=\".beer-style-item\" hx-swap=\"outerHTML\" x-data x-on:htmx:response-error=\"$dispatch(&#39;notify&#39;, { variant: &#39;danger&#39;, xhrResponse: $event.detail.xhr.response })\"><svg class=\"h-4 w-4 text-slate-600\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path stroke=\"none\" d=\"M0 0h24v24H0z\"></path> <line x1=\"12\" y1=\"5\" x2=\"12\" y2=\"19\"></line> <line x1=\"5\" y1=\"12\" x2=\"19\" y2=\"12\"></line></svg></button> <button hx-get=\"/workspace/beer-style/create-cancel\" hx-target=\".beer-style-item\" hx-swap=\"outerHTML\" x-data x-on:htmx:response-error=\"$dispatch(&#39;notify&#39;, { variant: &#39;danger&#39;, title: &#39;Failed to switch to display mode!&#39; })\"><svg class=\"h-4 w-4 text-slate-600\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"10\"></circle> <line x1=\"15\" y1=\"9\" x2=\"9\" y2=\"15\"></line> <line x1=\"9\" y1=\"9\" x2=\"15\" y2=\"15\"></line></svg></button></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

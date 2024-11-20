@@ -9,9 +9,9 @@ templ adminLayout(page Page, contents templ.Component) {
 	<html class="light">
 		@headerComponent(page.Title)
 		@navigation.NavBar()
-		<div class="flex pt-16 overflow-hidden h-screen">
+		<div class="flex h-screen overflow-hidden pt-16">
 			@navigation.SideBar(navigation.SidebarData{URL: page.URL})
-			<div id="main-content" class="relative w-full h-full overflow-y-auto lg:ml-64">
+			<div id="main-content" class="relative h-full w-full overflow-y-auto lg:ml-64">
 				<main>
 					if (contents != nil) {
 						@contents
