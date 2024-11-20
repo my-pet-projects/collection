@@ -10,9 +10,7 @@ import (
 // Config represents application configuration.
 type Config struct {
 	Env                string
-	DbConnection       string
 	AwsConfig          AwsConfig
-	TursoDbConfig      TursoDbConfig
 	GeoDbConfig        TursoDbConfig
 	CollectionDbConfig TursoDbConfig
 }
@@ -29,11 +27,7 @@ type TursoDbConfig struct {
 }
 
 // NewConfig creates application configuration.
-func NewConfig() (*Config, error) { //nolint:funlen
-	dbCon, ok := os.LookupEnv("DB_CONNECTION")
-	if !ok {
-		return nil, errors.New("DB_CONNECTION environment variable was not found")
-	}
+func NewConfig() (*Config, error) {
 	env, ok := os.LookupEnv("APP_ENV")
 	if !ok {
 		return nil, errors.New("APP_ENV environment variable was not found")
@@ -47,14 +41,6 @@ func NewConfig() (*Config, error) { //nolint:funlen
 		return nil, errors.New("AWS_ACCESS_KEY environment variable was not found")
 	}
 	awsSecretKey, ok := os.LookupEnv("AWS_SECRET_KEY")
-	if !ok {
-		return nil, errors.New("AWS_SECRET_KEY environment variable was not found")
-	}
-	tursoDbUrl, ok := os.LookupEnv("TURSO_DATABASE_URL")
-	if !ok {
-		return nil, errors.New("TURSO_DATABASE_URL environment variable was not found")
-	}
-	tursoAuthToken, ok := os.LookupEnv("TURSO_AUTH_TOKEN")
 	if !ok {
 		return nil, errors.New("AWS_SECRET_KEY environment variable was not found")
 	}
@@ -76,16 +62,11 @@ func NewConfig() (*Config, error) { //nolint:funlen
 	}
 
 	cfg := &Config{
-		Env:          env,
-		DbConnection: dbCon,
+		Env: env,
 		AwsConfig: AwsConfig{
 			Region:    awsRegion,
 			AccessKey: awsAccessKey,
 			SecretKey: awsSecretKey,
-		},
-		TursoDbConfig: TursoDbConfig{
-			DbUrl:     tursoDbUrl,
-			AuthToken: tursoAuthToken,
 		},
 		GeoDbConfig: TursoDbConfig{
 			DbUrl:     geoDbUrl,

@@ -2,11 +2,11 @@ package db
 
 import (
 	"log/slog"
-	"time"
 
-	"github.com/my-pet-projects/collection/internal/model"
 	"gorm.io/gorm"
 	"gorm.io/plugin/dbresolver"
+
+	"github.com/my-pet-projects/collection/internal/model"
 )
 
 type BeerStore struct {
@@ -14,19 +14,19 @@ type BeerStore struct {
 	logger *slog.Logger
 }
 
-type Beer struct {
-	Id          int
-	Brand       string
-	Type        *string
-	BreweryId   *int
-	Active      bool
-	CreatedAt   time.Time
-	UpdatedAt   *time.Time
-	OldImageIds *string
-	Brewery     *Brewery
-	StyleId     *int
-	Style       *model.BeerStyle
-}
+// type Beer struct {
+// 	Id          int
+// 	Brand       string
+// 	Type        *string
+// 	BreweryId   *int
+// 	Active      bool
+// 	CreatedAt   time.Time
+// 	UpdatedAt   *time.Time
+// 	OldImageIds *string
+// 	Brewery     *Brewery
+// 	StyleId     *int
+// 	Style       *model.BeerStyle
+// }
 
 func NewBeerStore(db *DbClient, logger *slog.Logger) BeerStore {
 	return BeerStore{

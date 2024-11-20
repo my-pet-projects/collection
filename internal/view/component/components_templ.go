@@ -9,7 +9,7 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"github.com/my-pet-projects/collection/internal/db"
+	"github.com/my-pet-projects/collection/internal/model"
 	"github.com/my-pet-projects/collection/internal/view/component/shared"
 )
 
@@ -142,7 +142,7 @@ func headerComponent(title string) templ.Component {
 	})
 }
 
-func Page(countries []db.Country) templ.Component {
+func Page(countries []model.Country) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
