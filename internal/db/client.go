@@ -38,13 +38,13 @@ func NewClient(cfg *config.Config) (*DbClient, error) {
 			return time.Now().UTC()
 		},
 		Logger: logger.New(
-			log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
+			log.New(os.Stdout, "\r\n", log.LstdFlags),
 			logger.Config{
-				SlowThreshold:             time.Second,   // Slow SQL threshold
-				LogLevel:                  logger.Silent, // Log level
-				IgnoreRecordNotFoundError: false,         // Ignore ErrRecordNotFound error for logger
-				ParameterizedQueries:      false,         // Don't include params in the SQL log
-				Colorful:                  true,          // Disable color
+				SlowThreshold:             time.Second,
+				LogLevel:                  logger.Silent,
+				IgnoreRecordNotFoundError: false,
+				ParameterizedQueries:      false,
+				Colorful:                  true,
 			},
 		),
 	})
