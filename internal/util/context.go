@@ -18,6 +18,10 @@ func URL(ctx context.Context) *url.URL {
 	return getContextValue(ctx, RequestKey{}, &http.Request{}).URL
 }
 
+func IsSameURL(ctx context.Context, path string) bool {
+	return URL(ctx).Path == path
+}
+
 // Request is a view helper that returns the current http request.
 // The request can be accessed with:
 //

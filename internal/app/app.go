@@ -120,8 +120,8 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 		r.Get("/workspace/beer", appHandler.Handle(workspaceSrv.HandleBeerListPage))
 		r.Get("/workspace/beer/create", appHandler.Handle(workspaceSrv.HandleCreateBeerPage))
 		r.Post("/workspace/beer", appHandler.Handle(workspaceSrv.SubmitBeerPage))
-		r.Get("/workspace/beer/{id}", appHandler.Handle(workspaceSrv.HandleBeerPage))
-		r.Get("/workspace/beer/{id}/attach-images", appHandler.Handle(workspaceSrv.HandleBeerImagesPage))
+		r.Get("/workspace/beer/{id}/overview", appHandler.Handle(workspaceSrv.HandleBeerPage))
+		r.Get("/workspace/beer/{id}/images", appHandler.Handle(workspaceSrv.HandleBeerImagesPage))
 	})
 
 	router.Group(func(r chi.Router) {

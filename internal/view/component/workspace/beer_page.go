@@ -1,13 +1,29 @@
 package workspace
 
 import (
+	"fmt"
+
 	"github.com/my-pet-projects/collection/internal/model"
 )
 
 type BeerPageData struct {
 	Page
+	Beer       model.Beer
 	FormParams BeerFormParams
 	FormErrors BeerFormErrors
+	BeerMedias []model.BeerMedia
+}
+
+func (p BeerPageData) IsOverviewPage() bool {
+	return p.FormParams.ID != 0
+}
+
+func (p BeerPageData) GetOverviewPageUrl() string {
+	return fmt.Sprintf("/workspace/beer/%d/overview", p.Beer.ID)
+}
+
+func (p BeerPageData) GetImagesPageUrl() string {
+	return fmt.Sprintf("/workspace/beer/%d/images", p.Beer.ID)
 }
 
 type BeerFormParams struct {
