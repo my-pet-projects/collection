@@ -16,6 +16,7 @@ templ adminLayout(page Page, contents templ.Component) {
 					if (contents != nil) {
 						@contents
 					}
+					{ children... }
 					<div>
 						@shared.Notification()
 					</div>

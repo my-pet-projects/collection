@@ -2,11 +2,54 @@ package workspace
 
 import (
 	"fmt"
+	"github.com/my-pet-projects/collection/internal/util"
 	"github.com/my-pet-projects/collection/internal/view/component/shared"
 )
 
-templ BeerPageLayout(page BeerPageData) {
+templ BeerPageAttachImageLayout(page BeerPageData) {
 	@adminLayout(page.Page, BeerPage(page.FormParams, page.FormErrors))
+}
+
+templ BeerPageLayout(page BeerPageData) {
+	@adminLayout(page.Page, nil) {
+		@beerLayout(page) {
+			<div>
+				if page.IsOverviewPage() {
+					@BeerPage(page.FormParams, page.FormErrors)
+				} else {
+					@BeerImagesPage(page)
+				}
+			</div>
+		}
+	}
+}
+
+templ beerLayout(page BeerPageData) {
+	{{ isOverviewPage := util.IsSameURL(ctx, page.GetOverviewPageUrl()) }}
+	{{ isImagesPage := util.IsSameURL(ctx, page.GetImagesPageUrl()) }}
+	<div class="border-b border-gray-200 dark:border-gray-700">
+		<ul class="-mb-px flex flex-wrap text-center text-sm font-medium text-gray-500 dark:text-gray-400">
+			<li class="me-2">
+				<a href={ templ.URL(page.GetOverviewPageUrl()) } class={ "group inline-flex items-center justify-center rounded-t-lg border-b-2 p-4", templ.KV("active border-blue-600  text-blue-600 dark:border-blue-500 dark:text-blue-500", isOverviewPage), templ.KV("border-transparent hover:border-gray-300 hover:text-gray-600 dark:hover:text-gray-300", !isOverviewPage) }>
+					<svg class={ "me-2 h-4 w-4", templ.KV("text-blue-600 dark:text-blue-500", isOverviewPage), templ.KV("text-gray-400 group-hover:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-300",!isOverviewPage) } aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+						<path d="M4 1a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V7.414A2 2 0 0017.414 6L13 1.586A2 2 0 0011.586 1H4zm0 2h7.586L16 7.414V17H4V3zm2 2a1 1 0 000 2h5a1 1 0 100-2H6zm-1 5a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h8a1 1 0 100-2H6z"></path>
+					</svg>
+					Overview
+				</a>
+			</li>
+			<li class="me-2">
+				<a href={ templ.URL(page.GetImagesPageUrl()) } class={ "group inline-flex items-center justify-center rounded-t-lg border-b-2 p-4", templ.KV("active border-blue-600  text-blue-600 dark:border-blue-500 dark:text-blue-500", isImagesPage), templ.KV("border-transparent hover:border-gray-300 hover:text-gray-600 dark:hover:text-gray-300", !isImagesPage) }>
+					<svg class={ "me-2 h-4 w-4", templ.KV("text-blue-600 dark:text-blue-500", isImagesPage), templ.KV("text-gray-400 group-hover:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-300", !isImagesPage) } aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+						<path d="M6.143 0H1.857A1.857 1.857 0 0 0 0 1.857v4.286C0 7.169.831 8 1.857 8h4.286A1.857 1.857 0 0 0 8 6.143V1.857A1.857 1.857 0 0 0 6.143 0Zm10 0h-4.286A1.857 1.857 0 0 0 10 1.857v4.286C10 7.169 10.831 8 11.857 8h4.286A1.857 1.857 0 0 0 18 6.143V1.857A1.857 1.857 0 0 0 16.143 0Zm-10 10H1.857A1.857 1.857 0 0 0 0 11.857v4.286C0 17.169.831 18 1.857 18h4.286A1.857 1.857 0 0 0 8 16.143v-4.286A1.857 1.857 0 0 0 6.143 10Zm10 0h-4.286A1.857 1.857 0 0 0 10 11.857v4.286c0 1.026.831 1.857 1.857 1.857h4.286A1.857 1.857 0 0 0 18 16.143v-4.286A1.857 1.857 0 0 0 16.143 10Z"></path>
+					</svg>
+					Images
+				</a>
+			</li>
+		</ul>
+	</div>
+	<div>
+		{ children... }
+	</div>
 }
 
 templ BeerPage(params BeerFormParams, errors BeerFormErrors) {
