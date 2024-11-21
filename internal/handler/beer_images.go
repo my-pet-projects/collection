@@ -1,20 +1,31 @@
 package handler
 
 import (
-	"log/slog"
+	"net/http"
+	"strconv"
 
-	"github.com/my-pet-projects/collection/internal/view/page"
+	"github.com/my-pet-projects/collection/internal/view/component/workspace"
 	"github.com/my-pet-projects/collection/internal/web"
 )
 
 func (h WorkspaceServer) HandleBeerImagesPage(reqResp *web.ReqRespPair) error {
+	beerId, parseErr := strconv.Atoi(reqResp.Request.PathValue("id"))
+	if parseErr != nil {
+		return reqResp.RenderError(http.StatusInternalServerError, parseErr)
+	}
+	beer, beerErr := h.beerService.GetBeer(beerId)
+	if beerErr != nil {
+		return reqResp.RenderError(http.StatusInternalServerError, beerErr)
+	}
+
 	items, itemsErr := h.mediaService.GetBeerMediaItems(reqResp.Request.Context())
 	if itemsErr != nil {
-		h.logger.Error("Failed to fetch beer media items", slog.Any("error", itemsErr))
-		return reqResp.Render(page.BeerImagesPage(page.BeerImagesPageParams{}))
+		return reqResp.RenderError(http.StatusInternalServerError, itemsErr)
 	}
-	pageParams := page.BeerImagesPageParams{
+
+	beerPage := workspace.BeerPageData{
+		Beer:       *beer,
 		BeerMedias: items,
 	}
-	return reqResp.Render(page.BeerImagesPage(pageParams))
+	return reqResp.Render(workspace.BeerPageLayout(beerPage))
 }

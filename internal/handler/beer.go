@@ -57,6 +57,7 @@ func (h WorkspaceServer) HandleBeerPage(reqResp *web.ReqRespPair) error {
 	page := workspace.Page{Title: fmt.Sprintf("Edit Beer - %s", beer.Brand)}
 	beerPage := workspace.BeerPageData{
 		Page: page,
+		Beer: *beer,
 		FormParams: workspace.BeerFormParams{
 			ID:        beer.ID,
 			Brand:     beer.Brand,
@@ -136,7 +137,7 @@ func (h WorkspaceServer) SubmitBeerPage(reqResp *web.ReqRespPair) error {
 			h.logger.Error("create beer", slog.Any("error", createErr))
 			return reqResp.Render(workspace.BeerForm(formParams, workspace.BeerFormErrors{Error: createErr.Error()}))
 		}
-		return reqResp.Redirect(fmt.Sprintf("/workspace/beer/%d", newBeer.ID))
+		return reqResp.Redirect(fmt.Sprintf("/workspace/beer/%d/overview", newBeer.ID))
 	}
 
 	updErr := h.beerService.UpdateBeer(formParams.ID, formParams.Brand, formParams.Type, &styleId, &breweryId, isActive)
