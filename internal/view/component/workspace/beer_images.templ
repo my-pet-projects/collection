@@ -6,7 +6,8 @@ import (
 )
 
 templ BeerImagesPage(params BeerPageData) {
-	<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+	<h2 class="mb-4 text-2xl font-bold text-gray-800">Images</h2>
+	<div class="grid grid-cols-1 gap-4 sm:grid-cols-3 md:grid-cols-6">
 		for _, media := range params.BeerMedias {
 			<div class="relative h-64">
 				@BeerMedia(media)

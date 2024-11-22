@@ -5,7 +5,7 @@ import (
 	"github.com/my-pet-projects/collection/internal/view/component/shared"
 )
 
-templ adminLayout(page Page, contents templ.Component) {
+templ adminLayout_todel(page Page, contents templ.Component) {
 	<html class="light">
 		@headerComponent(page.Title)
 		@navigation.NavBar()
@@ -48,10 +48,6 @@ templ adminLayout(page Page, contents templ.Component) {
 		}
     </script>
 	</html>
-}
-
-templ WorkspacePage(page Page) {
-	@adminLayout(page, nil)
 }
 
 templ headerComponent(title string) {

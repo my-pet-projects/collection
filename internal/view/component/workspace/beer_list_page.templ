@@ -3,6 +3,7 @@ package workspace
 import (
 	"fmt"
 	"github.com/my-pet-projects/collection/internal/model"
+	"github.com/my-pet-projects/collection/internal/view/layout"
 )
 
 type BeerListData struct {
@@ -13,11 +14,13 @@ type BeerListData struct {
 }
 
 templ BeerListPage(page BeerPageData) {
-	@adminLayout(page.Page, beersList())
+	@layout.BaseLayout() {
+		@beersList()
+	}
 }
 
 templ beersList() {
-	<div class="flex-1 px-10 py-6">
+	<div class="flex-1 px-10">
 		<div>
 			<div class="mb-6">
 				<h1 class="border-b border-gray-400 pb-2 text-2xl font-semibold text-slate-800">Beer list</h1>
