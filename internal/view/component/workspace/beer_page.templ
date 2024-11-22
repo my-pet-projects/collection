@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"github.com/my-pet-projects/collection/internal/util"
 	"github.com/my-pet-projects/collection/internal/view/component/shared"
+	"github.com/my-pet-projects/collection/internal/view/layout"
 )
 
 templ BeerPageLayout(page BeerPageData) {
-	@adminLayout(page.Page, nil) {
+	@layout.BaseLayout() {
 		@beerLayout(page) {
 			<div>
 				if page.IsOverviewPage() {
@@ -23,147 +24,157 @@ templ BeerPageLayout(page BeerPageData) {
 templ beerLayout(page BeerPageData) {
 	{{ isOverviewPage := util.IsSameURL(ctx, page.GetOverviewPageUrl()) }}
 	{{ isImagesPage := util.IsSameURL(ctx, page.GetImagesPageUrl()) }}
-	<div class="flex-1 px-10 py-6">
-		<div class="mb-6">
-			<h1 class="border-b border-gray-400 pb-2 text-3xl font-semibold text-slate-800">Beer details</h1>
-		</div>
-		<div class="border-b border-gray-200 dark:border-gray-700">
-			<ul class="-mb-px flex flex-wrap text-center text-sm font-medium text-gray-500 dark:text-gray-400">
-				<li class="me-2">
-					<a href={ templ.URL(page.GetOverviewPageUrl()) } class={ "group inline-flex items-center justify-center rounded-t-lg border-b-2 p-4", templ.KV("active border-blue-600  text-blue-600 dark:border-blue-500 dark:text-blue-500", isOverviewPage), templ.KV("border-transparent hover:border-gray-300 hover:text-gray-600 dark:hover:text-gray-300", !isOverviewPage) }>
-						<svg class={ "me-2 h-4 w-4", templ.KV("text-blue-600 dark:text-blue-500", isOverviewPage), templ.KV("text-gray-400 group-hover:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-300",!isOverviewPage) } aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-							<path d="M4 1a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V7.414A2 2 0 0017.414 6L13 1.586A2 2 0 0011.586 1H4zm0 2h7.586L16 7.414V17H4V3zm2 2a1 1 0 000 2h5a1 1 0 100-2H6zm-1 5a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h8a1 1 0 100-2H6z"></path>
-						</svg>
-						Overview
+	<div class="flex-1 px-10">
+		<h1 class="mb-6 border-b border-gray-400 pb-2 text-3xl font-semibold text-slate-800">Beer details</h1>
+		<div class="mx-auto w-full">
+			<div class="overflow-hidden rounded-lg bg-white shadow-lg">
+				<div class="flex border-b border-gray-200">
+					<a
+						href={ templ.URL(page.GetOverviewPageUrl()) }
+						class={ "flex-1 text-sm font-medium leading-5 transition-colors duration-200 rounded-t-lg border-b-2 py-4 px-6", templ.KV("active border-blue-600  text-blue-600 dark:border-blue-500 dark:text-blue-500", isOverviewPage), templ.KV("border-transparent hover:border-gray-300 hover:text-gray-600 dark:hover:text-gray-300 text-gray-500", !isOverviewPage) }
+					>
+						<span class="flex items-center justify-center">
+							<svg class="mr-2 h-5 w-5" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+								<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M10 9H8"></path><path d="M16 13H8"></path><path d="M16 17H8"></path>
+							</svg>
+							Overview
+						</span>
 					</a>
-				</li>
-				<li class="me-2">
-					<a href={ templ.URL(page.GetImagesPageUrl()) } class={ "group inline-flex items-center justify-center rounded-t-lg border-b-2 p-4", templ.KV("active border-blue-600  text-blue-600 dark:border-blue-500 dark:text-blue-500", isImagesPage), templ.KV("border-transparent hover:border-gray-300 hover:text-gray-600 dark:hover:text-gray-300", !isImagesPage) }>
-						<svg class={ "me-2 h-4 w-4", templ.KV("text-blue-600 dark:text-blue-500", isImagesPage), templ.KV("text-gray-400 group-hover:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-300", !isImagesPage) } aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-							<path d="M6.143 0H1.857A1.857 1.857 0 0 0 0 1.857v4.286C0 7.169.831 8 1.857 8h4.286A1.857 1.857 0 0 0 8 6.143V1.857A1.857 1.857 0 0 0 6.143 0Zm10 0h-4.286A1.857 1.857 0 0 0 10 1.857v4.286C10 7.169 10.831 8 11.857 8h4.286A1.857 1.857 0 0 0 18 6.143V1.857A1.857 1.857 0 0 0 16.143 0Zm-10 10H1.857A1.857 1.857 0 0 0 0 11.857v4.286C0 17.169.831 18 1.857 18h4.286A1.857 1.857 0 0 0 8 16.143v-4.286A1.857 1.857 0 0 0 6.143 10Zm10 0h-4.286A1.857 1.857 0 0 0 10 11.857v4.286c0 1.026.831 1.857 1.857 1.857h4.286A1.857 1.857 0 0 0 18 16.143v-4.286A1.857 1.857 0 0 0 16.143 10Z"></path>
-						</svg>
-						Images
+					<a
+						href={ templ.URL(page.GetImagesPageUrl()) }
+						class={ "flex-1 text-sm font-medium leading-5 transition-colors duration-200 rounded-t-lg border-b-2 py-4 px-6", templ.KV("active border-blue-600  text-blue-600 dark:border-blue-500 dark:text-blue-500", isImagesPage), templ.KV("border-transparent hover:border-gray-300 hover:text-gray-600 dark:hover:text-gray-300 text-gray-500", !isImagesPage) }
+					>
+						<span class="flex items-center justify-center">
+							<svg class="mr-2 h-5 w-5" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+								<path d="M18 22H4a2 2 0 0 1-2-2V6"></path><path d="m22 13-1.296-1.296a2.41 2.41 0 0 0-3.408 0L11 18"></path><circle cx="12" cy="8" r="2"></circle><rect width="16" height="16" x="6" y="2" rx="2"></rect>
+							</svg>
+							Images
+						</span>
 					</a>
-				</li>
-			</ul>
-		</div>
-		<div class="mt-4">
-			{ children... }
+				</div>
+				<div class="p-6">
+					{ children... }
+				</div>
+			</div>
 		</div>
 	</div>
 }
 
 templ BeerForm(params BeerFormParams, errs BeerFormErrors) {
-	<div hx-ext="response-targets">
-		if params.Brewery != nil && params.Brewery.City != nil && params.Brewery.City.Country != nil {
-			<div>{ params.Brewery.City.Name }, { params.Brewery.City.Country.NameCommon }</div>
-			<img class="w-20" src={ params.Brewery.City.Country.FlagUrl } alt={ params.Brewery.City.Country.NameCommon }/>
-		}
-		<form
-			class="col-span-1"
-			hx-post="/workspace/beer"
-			hx-target-error="#beer-errors"
-			hx-trigger="submit"
-			hx-indicator="#indicator"
-			hx-disabled-elt="input,button"
-		>
-			<input type="hidden" id="id" name="id" value={ fmt.Sprint(params.ID) }/>
-			<input type="hidden" id="isActive" name="isActive" value={ fmt.Sprint(params.IsActive) }/>
-			<div
-				if errs.Brand != "" {
-					class="form-group has-err"
-				}
-			>
-				<label for="name" class="text-sm font-medium leading-10">
-					<span>Brand</span>
-				</label>
-				<input
-					type="text"
-					id="brand"
-					name="brand"
-					placeholder=""
-					value={ params.Brand }
-					autocapitalize="none"
-					autocomplete="off"
-					autocorrect="off"
-					class="border-input ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex w-full rounded border border-gray-300 bg-transparent px-3 py-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-				/>
-				<span class="form-group-error mt-1 text-sm text-red-600">{ errs.Brand }</span>
-			</div>
-			<div
-				if errs.Type != "" {
-					class="form-group has-err"
-				}
-			>
-				<label for="name" class="text-sm font-medium leading-10">
-					<span>Type</span>
-				</label>
-				<input
-					type="text"
-					id="type"
-					name="type"
-					placeholder=""
-					if params.Type != nil {
-						value={ *params.Type }
-					}
-					autocapitalize="none"
-					autocomplete="off"
-					autocorrect="off"
-					class="border-input ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex w-full rounded border border-gray-300 bg-transparent px-3 py-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-				/>
-				<span class="form-group-error mt-1 text-sm text-red-600">{ errs.Type }</span>
-			</div>
-			<div
-				if errs.Style != "" {
-					class="form-group has-err"
-				}
-			>
-				<label for="name" class="text-sm font-medium leading-10">
-					<span>Style</span>
-				</label>
-				@shared.StylesSelector(shared.StyleData{Styles: params.Styles, SelectedStyleId: params.StyleID})
-				<span class="form-group-error mt-1 text-sm text-red-600">{ errs.Style }</span>
-			</div>
-			<div
-				if errs.Brewery != "" {
-					class="form-group has-err"
-				}
-			>
-				<label for="name" class="text-sm font-medium leading-10">
-					<span>Brewery</span>
-				</label>
-				@shared.BrewerySelector(shared.BreweriesData{Breweries: params.Breweries, SelectedBrewery: params.BreweryID})
-				<span class="form-group-error mt-1 text-sm text-red-600">{ errs.Brewery }</span>
-			</div>
-			<div class="mt-6">
-				<button
-					type="submit"
-					class="me-2 inline-flex items-center rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 disabled:cursor-not-allowed disabled:opacity-50"
-				>
-					<span id="indicator" class="htmx-indicator">
-						<svg aria-hidden="true" role="status" class="me-3 inline h-4 w-4 animate-spin text-white" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-							<path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="#E5E7EB"></path>
-							<path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentColor"></path>
-						</svg>
-						Processing ...
-					</span>
-					<span class="btn-content">
-						if params.IsNew() {
-							Create beer
-						} else {
-							Update beer
-						}
-					</span>
-				</button>
-			</div>
-			if errs.Error != "" {
-				<div class="mt-6">
-					<div class="rounded-lg bg-red-50 p-4 text-sm text-red-800" role="alert">
-						{ errs.Error }
-					</div>
-				</div>
+	<div id="beer-form">
+		<h2 class="mb-4 text-2xl font-bold text-gray-800">Overview</h2>
+		<div hx-ext="response-targets">
+			if params.Brewery != nil && params.Brewery.City != nil && params.Brewery.City.Country != nil {
+				<div>{ params.Brewery.City.Name }, { params.Brewery.City.Country.NameCommon }</div>
+				<img class="w-20" src={ params.Brewery.City.Country.FlagUrl } alt={ params.Brewery.City.Country.NameCommon }/>
 			}
-		</form>
-		<div id="beer-errors"></div>
+			<form
+				class="col-span-1"
+				hx-post="/workspace/beer"
+				hx-target="#beer-form"
+				hx-target-error="#beer-errors"
+				hx-trigger="submit"
+				hx-indicator="#indicator"
+				hx-disabled-elt="input,button"
+			>
+				<input type="hidden" id="id" name="id" value={ fmt.Sprint(params.ID) }/>
+				<input type="hidden" id="isActive" name="isActive" value={ fmt.Sprint(params.IsActive) }/>
+				<div
+					if errs.Brand != "" {
+						class="form-group has-err"
+					}
+				>
+					<label for="name" class="text-sm font-medium leading-10">
+						<span>Brand</span>
+					</label>
+					<input
+						type="text"
+						id="brand"
+						name="brand"
+						placeholder=""
+						value={ params.Brand }
+						autocapitalize="none"
+						autocomplete="off"
+						autocorrect="off"
+						class="border-input ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex w-full rounded border border-gray-300 bg-transparent px-3 py-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+					/>
+					<span class="form-group-error mt-1 text-sm text-red-600">{ errs.Brand }</span>
+				</div>
+				<div
+					if errs.Type != "" {
+						class="form-group has-err"
+					}
+				>
+					<label for="name" class="text-sm font-medium leading-10">
+						<span>Type</span>
+					</label>
+					<input
+						type="text"
+						id="type"
+						name="type"
+						placeholder=""
+						if params.Type != nil {
+							value={ *params.Type }
+						}
+						autocapitalize="none"
+						autocomplete="off"
+						autocorrect="off"
+						class="border-input ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex w-full rounded border border-gray-300 bg-transparent px-3 py-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+					/>
+					<span class="form-group-error mt-1 text-sm text-red-600">{ errs.Type }</span>
+				</div>
+				<div
+					if errs.Style != "" {
+						class="form-group has-err"
+					}
+				>
+					<label for="name" class="text-sm font-medium leading-10">
+						<span>Style</span>
+					</label>
+					@shared.StylesSelector(shared.StyleData{Styles: params.Styles, SelectedStyleId: params.StyleID})
+					<span class="form-group-error mt-1 text-sm text-red-600">{ errs.Style }</span>
+				</div>
+				<div
+					if errs.Brewery != "" {
+						class="form-group has-err"
+					}
+				>
+					<label for="name" class="text-sm font-medium leading-10">
+						<span>Brewery</span>
+					</label>
+					@shared.BrewerySelector(shared.BreweriesData{Breweries: params.Breweries, SelectedBrewery: params.BreweryID})
+					<span class="form-group-error mt-1 text-sm text-red-600">{ errs.Brewery }</span>
+				</div>
+				<div class="mt-6">
+					<button
+						type="submit"
+						class="me-2 inline-flex items-center rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 disabled:cursor-not-allowed disabled:opacity-50"
+					>
+						<span id="indicator" class="htmx-indicator">
+							<svg aria-hidden="true" role="status" class="me-3 inline h-4 w-4 animate-spin text-white" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="#E5E7EB"></path>
+								<path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentColor"></path>
+							</svg>
+							Processing ...
+						</span>
+						<span class="btn-content">
+							if params.IsNew() {
+								Create beer
+							} else {
+								Update beer
+							}
+						</span>
+					</button>
+				</div>
+				if errs.Error != "" {
+					<div class="mt-6">
+						<div class="rounded-lg bg-red-50 p-4 text-sm text-red-800" role="alert">
+							{ errs.Error }
+						</div>
+					</div>
+				}
+			</form>
+			<div id="beer-errors"></div>
+		</div>
 	</div>
 }
