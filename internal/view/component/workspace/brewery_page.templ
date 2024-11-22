@@ -1,6 +1,9 @@
 package workspace
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/my-pet-projects/collection/internal/view/layout"
+)
 
 type BreweryPage struct {
 	Page
@@ -9,11 +12,13 @@ type BreweryPage struct {
 }
 
 templ BreweryPageLayout(page BreweryPage) {
-	@adminLayout(page.Page, BreweryC(page.FormParams, page.FormErrors))
+	@layout.BaseLayout() {
+		@BreweryC(page.FormParams, page.FormErrors)
+	}
 }
 
 templ BreweryC(params BreweryFormParams, errors BreweryFormErrors) {
-	<div class="flex-1 px-10 py-6">
+	<div class="flex-1 px-10">
 		<div>
 			<div class="mb-6">
 				<h1 class="border-b border-gray-400 pb-2 text-2xl font-semibold text-slate-800">Brewery</h1>

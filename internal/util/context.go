@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"strings"
 )
 
 type (
@@ -20,6 +21,11 @@ func URL(ctx context.Context) *url.URL {
 
 func IsSameURL(ctx context.Context, path string) bool {
 	return URL(ctx).Path == path
+}
+
+func UrlStartsWith(ctx context.Context, path string) bool {
+	urlPath := URL(ctx).Path
+	return strings.HasPrefix(urlPath, path)
 }
 
 // Request is a view helper that returns the current http request.
