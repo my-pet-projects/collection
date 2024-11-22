@@ -34,19 +34,18 @@ func (s BeerMediaStore) UpsertBeerMediaItem(ctx context.Context, mediaItem model
 				DoNothing: true,
 			},
 		).
-		Table("beer_medias").
+		// Table("beer_medias").
 		Create(&itemToUpsert)
 
 	return itemToUpsert, res.Error
 }
 
-func (s BeerMediaStore) FetchMediaItems(ctx context.Context) ([]model.BeerMedia, error) {
+func (s BeerMediaStore) FetchMediaItems(ctx context.Context, filter model.MediaItemsFilter) ([]model.BeerMedia, error) {
 	var items []model.BeerMedia
 	result := s.db.gorm.
 		Debug().
-		Model(&model.BeerMedia{}).
+		Where(&model.BeerMedia{BeerID: &filter.BeerID}).
 		Joins("Media").
-		Table("beer_medias").
 		Find(&items)
 
 	return items, result.Error
