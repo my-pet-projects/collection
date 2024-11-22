@@ -6,23 +6,18 @@ import (
 )
 
 templ BeerImagesPage(params BeerPageData) {
-	<div class="p-4">
-		<h1 class="text-2xl font-semibold">Beer Images</h1>
-		<div class="mt-4">
-			<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-				// for _, media := range params.BeerMedias {
-				// 	@BeerMedia(media)
-				// }
+	<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+		for _, media := range params.BeerMedias {
+			<div class="relative h-64">
+				@BeerMedia(media)
 			</div>
-		</div>
+		}
 	</div>
 }
 
 templ BeerMedia(beerMedia model.BeerMedia) {
-	<div class="">
-		<img
-			class="aspect-square w-40 object-contain"
-			src={ fmt.Sprintf("https://beer-collection-bucket.s3.eu-central-1.amazonaws.com/preview/%s", beerMedia.Media.ExternalFilename) }
-		/>
-	</div>
+	<img
+		class="rounded-lg object-cover"
+		src={ fmt.Sprintf("https://beer-collection-bucket.s3.eu-central-1.amazonaws.com/preview/%s", beerMedia.Media.ExternalFilename) }
+	/>
 }

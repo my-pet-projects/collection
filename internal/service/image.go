@@ -63,8 +63,8 @@ func (s ImageService) UploadImage(ctx context.Context, formValues []model.Upload
 	return nil
 }
 
-func (s ImageService) GetBeerMediaItems(ctx context.Context) ([]model.BeerMedia, error) {
-	items, itemsErr := s.beerMediaStore.FetchMediaItems(ctx)
+func (s ImageService) FetchBeerMediaItems(ctx context.Context, filter model.MediaItemsFilter) ([]model.BeerMedia, error) {
+	items, itemsErr := s.beerMediaStore.FetchMediaItems(ctx, filter)
 	if itemsErr != nil {
 		return nil, errors.Wrap(itemsErr, "fetch beer media items")
 	}
