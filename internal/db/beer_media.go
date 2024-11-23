@@ -44,7 +44,8 @@ func (s BeerMediaStore) FetchMediaItems(ctx context.Context, filter model.MediaI
 	var items []model.BeerMedia
 	result := s.db.gorm.
 		Debug().
-		Where(&model.BeerMedia{BeerID: &filter.BeerID}).
+		Where(model.BeerMedia{BeerID: &filter.BeerID}).
+		Or("beer_id IS NULL").
 		Joins("Media").
 		Find(&items)
 
