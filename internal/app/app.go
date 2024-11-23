@@ -120,6 +120,7 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 		r.Get("/workspace/beer", appHandler.Handle(workspaceSrv.HandleBeerListPage))
 		r.Get("/workspace/beer/create", appHandler.Handle(workspaceSrv.HandleCreateBeerPage))
 		r.Post("/workspace/beer", appHandler.Handle(workspaceSrv.SubmitBeerPage))
+		r.Post("/workspace/{id}/beer-images", appHandler.Handle(workspaceSrv.SubmitBeerImages))
 		r.Get("/workspace/beer/{id}/overview", appHandler.Handle(workspaceSrv.HandleBeerPage))
 		r.Get("/workspace/beer/{id}/images", appHandler.Handle(workspaceSrv.HandleBeerImagesPage))
 	})
