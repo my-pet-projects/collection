@@ -166,6 +166,9 @@ func (h WorkspaceServer) SubmitBeerImages(reqResp *web.ReqRespPair) error {
 	types := reqResp.Request.PostForm["media.type"]
 	mediaItems := make([]model.BeerMedia, len(ids))
 
+	fmt.Println(ids)
+	fmt.Println(selecteds)
+
 	for i := range mediaItems {
 		id, _ := strconv.Atoi(ids[i])
 		mediaID, _ := strconv.Atoi(mediaIDs[i])
@@ -181,7 +184,7 @@ func (h WorkspaceServer) SubmitBeerImages(reqResp *web.ReqRespPair) error {
 		mediaItems[i].Type = model.BeerMediaType(beerType)
 	}
 
-	fmt.Println(mediaItems)
+	// fmt.Println(mediaItems)
 	return nil
 }
 
