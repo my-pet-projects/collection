@@ -328,7 +328,7 @@ func BeerForm(params BeerFormParams, errs BeerFormErrors) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" autocapitalize=\"none\" autocomplete=\"off\" autocorrect=\"off\" class=\"border-input ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex w-full rounded border border-gray-300 bg-transparent px-3 py-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50\"> <span class=\"form-group-error mt-1 text-sm text-red-600\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" autocapitalize=\"none\" autocomplete=\"off\" autocorrect=\"off\" class=\"border-input ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex w-full rounded-sm border border-gray-300 bg-transparent px-3 py-3 text-sm focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50\"> <span class=\"form-group-error mt-1 text-sm text-red-600\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -374,7 +374,7 @@ func BeerForm(params BeerFormParams, errs BeerFormErrors) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" autocapitalize=\"none\" autocomplete=\"off\" autocorrect=\"off\" class=\"border-input ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex w-full rounded border border-gray-300 bg-transparent px-3 py-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50\"> <span class=\"form-group-error mt-1 text-sm text-red-600\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" autocapitalize=\"none\" autocomplete=\"off\" autocorrect=\"off\" class=\"border-input ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex w-full rounded-sm border border-gray-300 bg-transparent px-3 py-3 text-sm focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50\"> <span class=\"form-group-error mt-1 text-sm text-red-600\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
