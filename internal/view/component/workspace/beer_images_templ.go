@@ -52,7 +52,7 @@ func BeerImagesPage(params BeerPageData) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		for _, media := range params.BeerMedias {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex h-40 cursor-pointer items-center justify-center rounded-lg border\" :class=\"{ &#39;outline outline-2 outline-offset-2&#39; : selected }\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex h-40 cursor-pointer items-center justify-center rounded-lg border border-gray-300\" :class=\"{ &#39;outline outline-offset-2&#39; : selected }\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
