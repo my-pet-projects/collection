@@ -20,8 +20,8 @@ templ BeerImagesPage(params BeerPageData) {
 			<div class="grid grid-cols-1 gap-4 sm:grid-cols-3 md:grid-cols-6">
 				for _, media := range params.BeerMedias {
 					<div
-						class="flex h-40 cursor-pointer items-center justify-center rounded-lg border"
-						:class="{ 'outline outline-2 outline-offset-2' : selected }"
+						class="flex h-40 cursor-pointer items-center justify-center rounded-lg border border-gray-300"
+						:class="{ 'outline outline-offset-2' : selected }"
 						if media.BeerID == nil {
 							x-data="{ selected: false }"
 						} else {

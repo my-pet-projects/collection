@@ -23,7 +23,7 @@ live/templ:
 	templ generate --watch --proxy="http://localhost:9080" --open-browser=false -v
 
 live/tailwind:
-	npx tailwindcss -i ./assets/css/tailwind-input.css -o ./assets/css/tailwind-output.gen.css --minify --watch
+	npx @tailwindcss/cli -i ./assets/css/tailwind-input.css -o ./assets/css/tailwind-output.gen.css --minify --watch
 
 live/esbuild:
 	npx esbuild js/index.ts --bundle --outdir=assets/ --watch
