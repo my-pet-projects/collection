@@ -21,6 +21,21 @@ templ BeerPageLayout(page BeerPageData) {
 	}
 }
 
+templ BeerCreatePageLayout(page BeerPageData) {
+	@layout.BaseLayout() {
+		<div class="flex-1 px-10">
+			<h1 class="mb-6 border-b border-gray-400 pb-2 text-3xl font-semibold text-slate-800">Create beer</h1>
+			<div class="mx-auto w-full">
+				<div class="overflow-hidden rounded-lg bg-white shadow-lg">
+					<div class="p-6">
+						@BeerForm(page.FormParams, page.FormErrors)
+					</div>
+				</div>
+			</div>
+		</div>
+	}
+}
+
 templ beerLayout(page BeerPageData) {
 	{{ isOverviewPage := util.IsSameURL(ctx, page.GetOverviewPageUrl()) }}
 	{{ isImagesPage := util.IsSameURL(ctx, page.GetImagesPageUrl()) }}
@@ -31,7 +46,11 @@ templ beerLayout(page BeerPageData) {
 				<div class="flex border-b border-gray-200">
 					<a
 						href={ templ.URL(page.GetOverviewPageUrl()) }
-						class={ "flex-1 text-sm font-medium leading-5 transition-colors duration-200 rounded-t-lg border-b-2 py-4 px-6", templ.KV("active border-blue-600  text-blue-600 dark:border-blue-500 dark:text-blue-500", isOverviewPage), templ.KV("border-transparent hover:border-gray-300 hover:text-gray-600 dark:hover:text-gray-300 text-gray-500", !isOverviewPage) }
+						class={
+							"flex-1 text-sm font-medium leading-5 transition-colors duration-200 rounded-t-lg border-b-2 py-4 px-6",
+							templ.KV("active border-blue-600  text-blue-600 dark:border-blue-500 dark:text-blue-500", isOverviewPage),
+							templ.KV("border-transparent hover:border-gray-300 hover:text-gray-600 dark:hover:text-gray-300 text-gray-500", !isOverviewPage),
+						}
 					>
 						<span class="flex items-center justify-center">
 							<svg class="mr-2 h-5 w-5" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
@@ -42,7 +61,11 @@ templ beerLayout(page BeerPageData) {
 					</a>
 					<a
 						href={ templ.URL(page.GetImagesPageUrl()) }
-						class={ "flex-1 text-sm font-medium leading-5 transition-colors duration-200 rounded-t-lg border-b-2 py-4 px-6", templ.KV("active border-blue-600  text-blue-600 dark:border-blue-500 dark:text-blue-500", isImagesPage), templ.KV("border-transparent hover:border-gray-300 hover:text-gray-600 dark:hover:text-gray-300 text-gray-500", !isImagesPage) }
+						class={
+							"flex-1 text-sm font-medium leading-5 transition-colors duration-200 rounded-t-lg border-b-2 py-4 px-6",
+							templ.KV("active border-blue-600  text-blue-600 dark:border-blue-500 dark:text-blue-500", isImagesPage),
+							templ.KV("border-transparent hover:border-gray-300 hover:text-gray-600 dark:hover:text-gray-300 text-gray-500", !isImagesPage),
+						}
 					>
 						<span class="flex items-center justify-center">
 							<svg class="mr-2 h-5 w-5" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
@@ -62,7 +85,7 @@ templ beerLayout(page BeerPageData) {
 
 templ BeerForm(params BeerFormParams, errs BeerFormErrors) {
 	<div id="beer-form">
-		<h2 class="mb-4 text-2xl font-bold text-gray-800">Overview</h2>
+		<h2 class="mb-4 text-2xl font-bold text-gray-800">Details</h2>
 		<div hx-ext="response-targets">
 			if params.Brewery != nil && params.Brewery.City != nil && params.Brewery.City.Country != nil {
 				<div>{ params.Brewery.City.Name }, { params.Brewery.City.Country.NameCommon }</div>
@@ -96,7 +119,7 @@ templ BeerForm(params BeerFormParams, errs BeerFormErrors) {
 						autocapitalize="none"
 						autocomplete="off"
 						autocorrect="off"
-						class="border-input ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex w-full rounded-sm border border-gray-300 bg-transparent px-3 py-3 text-sm focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+						class="border-input ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring focus-visible:outline-hidden flex w-full rounded-sm border border-gray-300 bg-transparent px-3 py-3 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
 					/>
 					<span class="form-group-error mt-1 text-sm text-red-600">{ errs.Brand }</span>
 				</div>
@@ -119,7 +142,7 @@ templ BeerForm(params BeerFormParams, errs BeerFormErrors) {
 						autocapitalize="none"
 						autocomplete="off"
 						autocorrect="off"
-						class="border-input ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex w-full rounded-sm border border-gray-300 bg-transparent px-3 py-3 text-sm focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+						class="border-input ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring focus-visible:outline-hidden flex w-full rounded-sm border border-gray-300 bg-transparent px-3 py-3 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
 					/>
 					<span class="form-group-error mt-1 text-sm text-red-600">{ errs.Type }</span>
 				</div>

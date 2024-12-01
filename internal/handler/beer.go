@@ -92,7 +92,7 @@ func (h WorkspaceServer) HandleCreateBeerPage(reqResp *web.ReqRespPair) error {
 			Styles:    styles,
 		},
 	}
-	return reqResp.Render(workspace.BeerPageLayout(beerPage))
+	return reqResp.Render(workspace.BeerCreatePageLayout(beerPage))
 }
 
 func (h WorkspaceServer) SubmitBeerPage(reqResp *web.ReqRespPair) error {
