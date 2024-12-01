@@ -70,3 +70,11 @@ func (s ImageService) FetchBeerMediaItems(ctx context.Context, filter model.Medi
 	}
 	return items, nil
 }
+
+func (s ImageService) UpdateBeerMediaItems(ctx context.Context, images []model.BeerMedia) error {
+	updErr := s.beerMediaStore.UpdateMediaItems(ctx, images)
+	if updErr != nil {
+		return errors.Wrap(updErr, "update beer media items")
+	}
+	return nil
+}
