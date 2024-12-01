@@ -95,6 +95,56 @@ func (rrp *ReqRespPair) GetIntQueryParam(name string) (int, error) {
 	return page, nil
 }
 
+func (rrp *ReqRespPair) GetIntFormValues(formKey string) ([]int, error) {
+	formErr := rrp.Request.ParseForm()
+	if formErr != nil {
+		return []int{}, apperr.NewBadRequestError("Failed to parse form", formErr)
+	}
+
+	result := make([]int, 0)
+	for _, val := range rrp.Request.PostForm[formKey] {
+		parsedVal, parseErr := strconv.Atoi(val)
+		if parseErr != nil {
+			return []int{}, errors.Wrap(parseErr, "parse int from form")
+		}
+		result = append(result, parsedVal)
+	}
+
+	return result, nil
+}
+
+func (rrp *ReqRespPair) GetBoolFormValues(formKey string) ([]bool, error) {
+	formErr := rrp.Request.ParseForm()
+	if formErr != nil {
+		return []bool{}, apperr.NewBadRequestError("Failed to parse form", formErr)
+	}
+
+	result := make([]bool, 0)
+	for _, val := range rrp.Request.PostForm[formKey] {
+		parsedVal, parseErr := strconv.ParseBool(val)
+		if parseErr != nil {
+			return []bool{}, errors.Wrap(parseErr, "parse bool from form")
+		}
+		result = append(result, parsedVal)
+	}
+
+	return result, nil
+}
+
+func (rrp *ReqRespPair) GetStringFormValues(formKey string) ([]string, error) {
+	formErr := rrp.Request.ParseForm()
+	if formErr != nil {
+		return []string{}, apperr.NewBadRequestError("Failed to parse form", formErr)
+	}
+
+	result := make([]string, 0)
+	for _, val := range rrp.Request.PostForm[formKey] {
+		result = append(result, val)
+	}
+
+	return result, nil
+}
+
 // func (rrp *ReqRespPair) JsonError(code int, err error) error {
 // 	respErr := apperr.NewAppError(err.Error(), err)
 // 	switch code {

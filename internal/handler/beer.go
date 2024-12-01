@@ -149,45 +149,6 @@ func (h WorkspaceServer) SubmitBeerPage(reqResp *web.ReqRespPair) error {
 	return reqResp.Render(workspace.BeerForm(formParams, workspace.BeerFormErrors{}))
 }
 
-func (h WorkspaceServer) SubmitBeerImages(reqResp *web.ReqRespPair) error {
-	beerID, parseErr := strconv.Atoi(reqResp.Request.PathValue("id"))
-	if parseErr != nil {
-		return reqResp.RenderError(http.StatusInternalServerError, parseErr)
-	}
-
-	formErr := reqResp.Request.ParseForm()
-	if formErr != nil {
-		return reqResp.RenderError(http.StatusBadRequest, formErr)
-	}
-
-	ids := reqResp.Request.PostForm["media.id"]
-	mediaIDs := reqResp.Request.PostForm["media.mediaId"]
-	selecteds := reqResp.Request.PostForm["media.selected"]
-	types := reqResp.Request.PostForm["media.type"]
-	mediaItems := make([]model.BeerMedia, len(ids))
-
-	fmt.Println(ids)
-	fmt.Println(selecteds)
-
-	for i := range mediaItems {
-		id, _ := strconv.Atoi(ids[i])
-		mediaID, _ := strconv.Atoi(mediaIDs[i])
-		isSelected, _ := strconv.ParseBool(selecteds[i])
-		var mediaBeerID *int
-		if isSelected {
-			mediaBeerID = &beerID
-		}
-		beerType, _ := strconv.Atoi(types[i])
-		mediaItems[i].ID = id
-		mediaItems[i].MediaID = mediaID
-		mediaItems[i].BeerID = mediaBeerID
-		mediaItems[i].Type = model.BeerMediaType(beerType)
-	}
-
-	// fmt.Println(mediaItems)
-	return nil
-}
-
 func (h WorkspaceServer) ListBeers(reqResp *web.ReqRespPair) error {
 	page, pageErr := reqResp.GetIntQueryParam("page")
 	if pageErr != nil {

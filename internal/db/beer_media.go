@@ -51,3 +51,11 @@ func (s BeerMediaStore) FetchMediaItems(ctx context.Context, filter model.MediaI
 
 	return items, result.Error
 }
+
+func (s BeerMediaStore) UpdateMediaItems(ctx context.Context, items []model.BeerMedia) error {
+	res := s.db.gorm.
+		Debug().
+		Save(&items)
+
+	return res.Error
+}
