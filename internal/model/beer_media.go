@@ -39,3 +39,15 @@ func NewBeerMediaType(metadata MediaMetadata) (BeerMediaType, error) {
 	}
 	return BeerMediaUnknown, errors.New("unknown media type")
 }
+
+func (t BeerMediaType) IsBottle() bool {
+	return t == BeerMediaBottle
+}
+
+func (t BeerMediaType) IsLabel() bool {
+	return t == BeerMediaLabel
+}
+
+func (t BeerMediaType) IsCap() bool {
+	return t == BeerMediaCrownCap || t == BeerMediaTwistOffCap || t == BeerMediaPullOffCap || t == BeerMediaCeramicCap
+}
