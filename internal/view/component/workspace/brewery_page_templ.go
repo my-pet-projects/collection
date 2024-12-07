@@ -209,7 +209,7 @@ func BreweryForm(params BreweryFormParams, errs BreweryFormErrors) templ.Compone
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-target-error=\"#countries-errors\" hx-trigger=\"load\"><div id=\"countries-errors\"></div><img alt=\"Loading ...\" width=\"20\" src=\"/static/img/tail-spin.svg\"></div><span class=\"form-group-error mt-1 text-sm text-red-600\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-target-error=\"#countries-errors\" hx-trigger=\"load\"><div id=\"countries-errors\"></div><img alt=\"Loading ...\" width=\"20\" src=\"/assets/img/tail-spin.svg\"></div><span class=\"form-group-error mt-1 text-sm text-red-600\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

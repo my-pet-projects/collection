@@ -30,7 +30,7 @@ tmp/
 node_modules/
 
 # tailwind generated styles
-assets/css/tailwind-output.gen.css
+# assets/css/tailwind-output.gen.css
 
 # templ live server
 internal/view/**/*.txt

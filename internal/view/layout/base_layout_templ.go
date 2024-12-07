@@ -108,7 +108,7 @@ func head(title string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</title><link rel=\"icon\" type=\"image/svg\" sizes=\"32x32\" href=\"/static/img/pint-of-beer-svgrepo-com.svg\"><link href=\"/static/css/tailwind-output.gen.css\" rel=\"stylesheet\"><link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css\"><link href=\"/static/css/app.css\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@2.0.3\" crossorigin=\"anonymous\"></script><script src=\"https://unpkg.com/htmx-ext-response-targets@2.0.1/response-targets.js\"></script><script src=\"https://unpkg.com/htmx-ext-debug@2.0.0/debug.js\"></script><script src=\"https://unpkg.com/htmx.org@1.9.11/dist/ext/path-params.js\"></script><script src=\"https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js\"></script><script src=\"/static/js/select.js\"></script><script src=\"/static/js/upload.js\" type=\"module\"></script><link href=\"https://releases.transloadit.com/uppy/v3.27.0/uppy.min.css\" rel=\"stylesheet\"><script defer src=\"https://cdn.jsdelivr.net/npm/@alpinejs/intersect@3.x.x/dist/cdn.min.js\"></script><script defer src=\"https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js\"></script></head>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</title><link rel=\"icon\" type=\"image/svg\" sizes=\"32x32\" href=\"/assets/img/pint-of-beer-svgrepo-com.svg\"><link href=\"/assets/css/tailwind-output.gen.css\" rel=\"stylesheet\"><link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css\"><link href=\"/assets/css/app.css\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@2.0.3\" crossorigin=\"anonymous\"></script><script src=\"https://unpkg.com/htmx-ext-response-targets@2.0.1/response-targets.js\"></script><script src=\"https://unpkg.com/htmx-ext-debug@2.0.0/debug.js\"></script><script src=\"https://unpkg.com/htmx.org@1.9.11/dist/ext/path-params.js\"></script><script src=\"https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js\"></script><script src=\"/assets/js/select.js\"></script><script src=\"/assets/js/upload.js\" type=\"module\"></script><link href=\"https://releases.transloadit.com/uppy/v3.27.0/uppy.min.css\" rel=\"stylesheet\"><script defer src=\"https://cdn.jsdelivr.net/npm/@alpinejs/intersect@3.x.x/dist/cdn.min.js\"></script><script defer src=\"https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js\"></script></head>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -207,12 +207,14 @@ func navigation() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var11 = []any{"inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium", templ.KV("border-indigo-500 text-gray-900", util.UrlStartsWith(ctx, "/workspace/images/upload")), templ.KV("border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700", !util.UrlStartsWith(ctx, "/workspace/images/upload"))}
+		var templ_7745c5c3_Var11 = []any{"inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium",
+			templ.KV("border-indigo-500 text-gray-900", util.UrlStartsWith(ctx, "/workspace/images")),
+			templ.KV("border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700", !util.UrlStartsWith(ctx, "/workspace/images"))}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var11...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<a href=\"/workspace/images/upload\" class=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<a href=\"/workspace/images\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -222,6 +224,28 @@ func navigation() templ.Component {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/layout/base_layout.templ`, Line: 1, Col: 0}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><svg class=\"mr-2 h-5 w-5\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M18 22H4a2 2 0 0 1-2-2V6\"></path><path d=\"m22 13-1.296-1.296a2.41 2.41 0 0 0-3.408 0L11 18\"></path><circle cx=\"12\" cy=\"8\" r=\"2\"></circle><rect width=\"16\" height=\"16\" x=\"6\" y=\"2\" rx=\"2\"></rect></svg> Images</a> ")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var13 = []any{"inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium", templ.KV("border-indigo-500 text-gray-900", util.UrlStartsWith(ctx, "/workspace/images/upload")), templ.KV("border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700", !util.UrlStartsWith(ctx, "/workspace/images/upload"))}
+		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var13...)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<a href=\"/workspace/images/upload\" class=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var14 string
+		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var13).String())
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/layout/base_layout.templ`, Line: 1, Col: 0}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
