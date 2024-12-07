@@ -84,9 +84,12 @@ templ beerLayout(page BeerPageData) {
 }
 
 templ BeerForm(params BeerFormParams, errs BeerFormErrors) {
-	<div id="beer-form">
+	<div
+		id="beer-form"
+		hx-ext="response-targets"
+	>
 		<h2 class="mb-4 text-2xl font-bold text-gray-800">Details</h2>
-		<div hx-ext="response-targets">
+		<div>
 			if params.Brewery != nil && params.Brewery.City != nil && params.Brewery.City.Country != nil {
 				<div>{ params.Brewery.City.Name }, { params.Brewery.City.Country.NameCommon }</div>
 				<img class="w-20" src={ params.Brewery.City.Country.FlagUrl } alt={ params.Brewery.City.Country.NameCommon }/>
@@ -188,6 +191,15 @@ templ BeerForm(params BeerFormParams, errs BeerFormErrors) {
 							}
 						</span>
 					</button>
+					<button
+						hx-delete={ fmt.Sprintf("/workspace/beer/%d", params.ID) }
+						hx-confirm="Are you sure?"
+						hx-target-error="#beer-errors"
+						hx-indicator="#indicator"
+						class="me-2 inline-flex items-center rounded-lg bg-red-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-red-800 focus:ring-4 focus:ring-red-300 disabled:cursor-not-allowed disabled:opacity-50"
+					>
+						Delete beer
+					</button>
 				</div>
 				if errs.Error != "" {
 					<div class="mt-6">
@@ -197,7 +209,7 @@ templ BeerForm(params BeerFormParams, errs BeerFormErrors) {
 					</div>
 				}
 			</form>
-			<div id="beer-errors"></div>
+			<div id="beer-errors" class="mt-6"></div>
 		</div>
 	</div>
 }

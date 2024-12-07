@@ -40,9 +40,9 @@ templ head(title string) {
 		/>
 		<link href="/static/css/app.css" rel="stylesheet"/>
 		<script src="https://unpkg.com/htmx.org@2.0.3" crossorigin="anonymous"></script>
-		<script src="https://unpkg.com/htmx.org@1.9.11/dist/ext/path-params.js"></script>
 		<script src="https://unpkg.com/htmx-ext-response-targets@2.0.1/response-targets.js"></script>
 		<script src="https://unpkg.com/htmx-ext-debug@2.0.0/debug.js"></script>
+		<script src="https://unpkg.com/htmx.org@1.9.11/dist/ext/path-params.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 		<script src="/static/js/select.js"></script>
 		<script src="/static/js/upload.js" type="module"></script>
@@ -55,7 +55,7 @@ templ head(title string) {
 
 templ navigation() {
 	// Top Navigation
-	<nav class="bg-white shadow-xs">
+	<nav class="shadow-xs bg-white">
 		<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 			<div class="flex h-16 justify-between">
 				<div class="flex">
@@ -109,7 +109,7 @@ templ navigation() {
 				<div class="hidden sm:ml-6 sm:flex sm:items-center">
 					<div class="relative ml-3">
 						<div>
-							<button class="flex rounded-full bg-white text-sm focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+							<button class="focus:outline-hidden flex rounded-full bg-white text-sm focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
 								<span class="sr-only">Open user menu</span>
 								<img class="h-8 w-8 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt=""/>
 							</button>
@@ -119,7 +119,7 @@ templ navigation() {
 				// <div class="-mr-2 flex items-center sm:hidden">
 				//   <button
 				//     onClick={() => setIsMenuOpen(!isMenuOpen)}
-				//     class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-hidden focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+				//     class="focus:outline-hidden inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-500"
 				//   >
 				//     <span class="sr-only">Open main menu</span>
 				//     <Menu class="block h-6 w-6" />
@@ -149,7 +149,7 @@ templ navigation() {
 		//         <div class="text-base font-medium text-gray-800">Tom Cook</div>
 		//         <div class="text-sm font-medium text-gray-500">tom@example.com</div>
 		//       </div>
-		//       <button class="ml-auto shrink-0 rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+		//       <button class="focus:outline-hidden ml-auto shrink-0 rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
 		//         <span class="sr-only">View notifications</span>
 		//         <Bell class="h-6 w-6" />
 		//       </button>

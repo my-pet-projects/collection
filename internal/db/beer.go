@@ -77,3 +77,11 @@ func (s BeerStore) UpdateBeer(beer model.Beer) error {
 
 	return res.Error
 }
+
+func (s BeerStore) DeleteBeer(id int) error {
+	res := s.db.gorm.
+		Debug().
+		Delete(&model.Beer{}, id)
+
+	return res.Error
+}
