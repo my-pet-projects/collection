@@ -3040,8 +3040,8 @@ CREATE TABLE IF NOT EXISTS `beer_medias` (
  ,  `media_id` integer NOT NULL
  ,  `beer_id` integer NULL
  ,  `type` integer NOT NULL
- ,  CONSTRAINT `fk_beer_id` FOREIGN KEY (`beer_id`) REFERENCES `beers` (`id`)
- ,  CONSTRAINT `fk_media_id` FOREIGN KEY (`media_id`) REFERENCES `media_items` (`id`)
+ ,  CONSTRAINT `fk_beer_id` FOREIGN KEY (`beer_id`) REFERENCES `beers` (`id`) ON DELETE SET NULL
+ ,  CONSTRAINT `fk_media_id` FOREIGN KEY (`media_id`) REFERENCES `media_items` (`id`) ON DELETE CASCADE
  ,  CONSTRAINT `fk_beer_media_type_id` FOREIGN KEY (`type`) REFERENCES `beer_media_types` (`id`)
  );
 INSERT INTO beer_medias VALUES(1,1,1732,2);

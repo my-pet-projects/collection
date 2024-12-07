@@ -110,45 +110,46 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 	}))
 	router.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("./assets"))))
 
-	router.Group(func(r chi.Router) {
-		r.Get("/geo/countries", appHandler.Handle(geoHandler.ListCountries))
-		r.Get("/geo/countries/{countryIso}/cities", appHandler.Handle(geoHandler.ListCities))
+	router.Group(func(router chi.Router) {
+		router.Get("/geo/countries", appHandler.Handle(geoHandler.ListCountries))
+		router.Get("/geo/countries/{countryIso}/cities", appHandler.Handle(geoHandler.ListCities))
 	})
 
-	router.Group(func(r chi.Router) {
-		r.Get("/beers", appHandler.Handle(workspaceSrv.ListBeers))
-		r.Get("/workspace/beer", appHandler.Handle(workspaceSrv.HandleBeerListPage))
-		r.Get("/workspace/beer/create", appHandler.Handle(workspaceSrv.HandleCreateBeerPage))
-		r.Post("/workspace/beer", appHandler.Handle(workspaceSrv.SubmitBeerPage))
-		r.Post("/workspace/{id}/beer-images", appHandler.Handle(workspaceSrv.SubmitBeerImages))
-		r.Get("/workspace/beer/{id}/overview", appHandler.Handle(workspaceSrv.HandleBeerPage))
-		r.Get("/workspace/beer/{id}/images", appHandler.Handle(workspaceSrv.HandleBeerImagesPage))
+	router.Group(func(router chi.Router) {
+		router.Get("/beers", appHandler.Handle(workspaceSrv.ListBeers))
+		router.Get("/workspace/beer", appHandler.Handle(workspaceSrv.HandleBeerListPage))
+		router.Get("/workspace/beer/create", appHandler.Handle(workspaceSrv.HandleCreateBeerPage))
+		router.Get("/workspace/beer/{id}/overview", appHandler.Handle(workspaceSrv.HandleBeerPage))
+		router.Get("/workspace/beer/{id}/images", appHandler.Handle(workspaceSrv.HandleBeerImagesPage))
+		router.Post("/workspace/beer", appHandler.Handle(workspaceSrv.SubmitBeerPage))
+		router.Post("/workspace/{id}/beer-images", appHandler.Handle(workspaceSrv.SubmitBeerImages))
+		router.Delete("/workspace/beer/{id}", appHandler.Handle(workspaceSrv.DeleteBeer))
 	})
 
-	router.Group(func(r chi.Router) {
-		r.Get("/breweries", appHandler.Handle(breweryHandler.ListBreweries))
-		r.Get("/workspace/brewery", appHandler.Handle(workspaceSrv.HandleBreweryListPage))
-		r.Get("/workspace/brewery/create", appHandler.Handle(workspaceSrv.HandleCreateBreweryPage))
-		r.Post("/workspace/brewery", appHandler.Handle(workspaceSrv.SubmitBreweryPage))
-		r.Get("/workspace/brewery/{id}", appHandler.Handle(workspaceSrv.HandleBreweryPage))
+	router.Group(func(router chi.Router) {
+		router.Get("/breweries", appHandler.Handle(breweryHandler.ListBreweries))
+		router.Get("/workspace/brewery", appHandler.Handle(workspaceSrv.HandleBreweryListPage))
+		router.Get("/workspace/brewery/create", appHandler.Handle(workspaceSrv.HandleCreateBreweryPage))
+		router.Post("/workspace/brewery", appHandler.Handle(workspaceSrv.SubmitBreweryPage))
+		router.Get("/workspace/brewery/{id}", appHandler.Handle(workspaceSrv.HandleBreweryPage))
 	})
 
-	router.Group(func(r chi.Router) {
-		r.Get("/workspace/beer-style/search", appHandler.Handle(workspaceSrv.ListBeerStyles))
-		r.Get("/workspace/beer-style", appHandler.Handle(workspaceSrv.HandleBeerStyleListPage))
-		r.Get("/workspace/beer-style/create", appHandler.Handle(workspaceSrv.HandleBeerStyleCreateView))
-		r.Get("/workspace/beer-style/create-cancel", appHandler.Handle(workspaceSrv.HandleBeerStyleCreateCancelView))
-		r.Get("/workspace/beer-style/{id}", appHandler.Handle(workspaceSrv.HandleBeerStyleDisplayRowView))
-		r.Get("/workspace/beer-style/{id}/edit", appHandler.Handle(workspaceSrv.HandleBeerStyleEditRowView))
+	router.Group(func(router chi.Router) {
+		router.Get("/workspace/beer-style/search", appHandler.Handle(workspaceSrv.ListBeerStyles))
+		router.Get("/workspace/beer-style", appHandler.Handle(workspaceSrv.HandleBeerStyleListPage))
+		router.Get("/workspace/beer-style/create", appHandler.Handle(workspaceSrv.HandleBeerStyleCreateView))
+		router.Get("/workspace/beer-style/create-cancel", appHandler.Handle(workspaceSrv.HandleBeerStyleCreateCancelView))
+		router.Get("/workspace/beer-style/{id}", appHandler.Handle(workspaceSrv.HandleBeerStyleDisplayRowView))
+		router.Get("/workspace/beer-style/{id}/edit", appHandler.Handle(workspaceSrv.HandleBeerStyleEditRowView))
 
-		r.Post("/workspace/beer-style", appHandler.Handle(workspaceSrv.CreateBeerStyle))
-		r.Delete("/workspace/beer-style/{id}", appHandler.Handle(workspaceSrv.DeleteBeerStyle))
-		r.Put("/workspace/beer-style/{id}", appHandler.Handle(workspaceSrv.SaveBeerStyle))
+		router.Post("/workspace/beer-style", appHandler.Handle(workspaceSrv.CreateBeerStyle))
+		router.Delete("/workspace/beer-style/{id}", appHandler.Handle(workspaceSrv.DeleteBeerStyle))
+		router.Put("/workspace/beer-style/{id}", appHandler.Handle(workspaceSrv.SaveBeerStyle))
 	})
 
-	router.Group(func(r chi.Router) {
-		r.Get("/workspace/images/upload", appHandler.Handle(uploadHandler.UploadImagePage))
-		r.Post("/workspace/images/uploads", appHandler.Handle(uploadHandler.UploadImage))
+	router.Group(func(router chi.Router) {
+		router.Get("/workspace/images/upload", appHandler.Handle(uploadHandler.UploadImagePage))
+		router.Post("/workspace/images/uploads", appHandler.Handle(uploadHandler.UploadImage))
 	})
 
 	router.Get("/*", appHandler.Handle(func(reqResp *web.ReqRespPair) error {
