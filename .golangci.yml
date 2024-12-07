@@ -51,8 +51,6 @@ linters:
 
     # deprecated
     - exportloopref
-    - execinquery
-    - gomnd
   enable-all: true
 
 linters-settings:
@@ -66,6 +64,11 @@ linters-settings:
       - fmt.Errorf(
       - (github.com/a-h/templ.Component).Render(
       - (*github.com/my-pet-projects/collection/internal/web.ReqRespPair).Render(
+      - (*github.com/my-pet-projects/collection/internal/web.ReqRespPair).RenderError(
+      - (*github.com/my-pet-projects/collection/internal/web.ReqRespPair).RenderAppError(
+      - (*github.com/my-pet-projects/collection/internal/web.ReqRespPair).NoContent(
+      - github.com/my-pet-projects/collection/internal/apperr.NewBadRequestError(
+      - github.com/my-pet-projects/collection/internal/apperr.NewInternalServerError(
   lll:
     line-length: 180
   errcheck:

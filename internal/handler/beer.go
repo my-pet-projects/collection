@@ -173,3 +173,17 @@ func (h WorkspaceServer) ListBeers(reqResp *web.ReqRespPair) error {
 
 	return reqResp.Render(workspace.BeerList(pageData))
 }
+
+func (h WorkspaceServer) DeleteBeer(reqResp *web.ReqRespPair) error {
+	id, parseErr := reqResp.GetIntQueryParam("id")
+	if parseErr != nil {
+		return apperr.NewBadRequestError("Invalid identifier", parseErr)
+	}
+
+	delErr := h.beerService.DeleteBeer(id)
+	if delErr != nil {
+		return apperr.NewInternalServerError("Failed to delete beer", delErr)
+	}
+
+	return reqResp.Redirect(fmt.Sprintf("/workspace/beer"))
+}

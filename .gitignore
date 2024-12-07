@@ -34,3 +34,6 @@ assets/css/tailwind-output.gen.css
 
 # templ live server
 internal/view/**/*.txt
+
+# mac os files
+.DS_Store

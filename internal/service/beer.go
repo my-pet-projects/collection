@@ -82,6 +82,14 @@ func (s BeerService) PaginateBeers(filter model.BeerFilter) (*model.Pagination[m
 	return beers, nil
 }
 
+func (s BeerService) DeleteBeer(id int) error {
+	delErr := s.beerStore.DeleteBeer(id)
+	if delErr != nil {
+		return errors.Wrap(delErr, "delete beer")
+	}
+	return nil
+}
+
 func (s BeerService) ListBeerStyles() ([]model.BeerStyle, error) {
 	pagination, paginationErr := s.styleStore.PaginateBeerStyles(model.BeerStyleFilter{})
 	if paginationErr != nil {
