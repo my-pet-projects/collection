@@ -36,13 +36,13 @@ func NewConfig() (*Config, error) {
 	if !ok {
 		return nil, errors.New("AWS_REGION environment variable was not found")
 	}
-	awsAccessKey, ok := os.LookupEnv("AWS_ACCESS_KEY")
+	awsAccessKey, ok := os.LookupEnv("AWS_ACCESS_KEY_ID")
 	if !ok {
-		return nil, errors.New("AWS_ACCESS_KEY environment variable was not found")
+		return nil, errors.New("AWS_ACCESS_KEY_ID environment variable was not found")
 	}
-	awsSecretKey, ok := os.LookupEnv("AWS_SECRET_KEY")
+	awsSecretKey, ok := os.LookupEnv("AWS_SECRET_ACCESS_KEY")
 	if !ok {
-		return nil, errors.New("AWS_SECRET_KEY environment variable was not found")
+		return nil, errors.New("AWS_SECRET_ACCESS_KEY environment variable was not found")
 	}
 	geoDbUrl, ok := os.LookupEnv("GEO_DATABASE_URL")
 	if !ok {
