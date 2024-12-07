@@ -108,7 +108,7 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 	router.MethodNotAllowed(appHandler.Handle(func(reqResp *web.ReqRespPair) error {
 		return apperr.NewAppError("Method not allowed", http.StatusMethodNotAllowed, nil)
 	}))
-	router.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("./assets"))))
+	router.Handle("/assets/*", http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets"))))
 
 	router.Group(func(router chi.Router) {
 		router.Get("/geo/countries", appHandler.Handle(geoHandler.ListCountries))

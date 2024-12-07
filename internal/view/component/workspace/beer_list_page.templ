@@ -44,7 +44,7 @@ templ beersList() {
 			hx-target-error="#beer-list-errors"
 			class="grid grid-cols-3 gap-x-8 gap-y-5"
 		></div>
-		<img class="htmx-indicator m-4 mx-auto" alt="Loading..." width="30" src="/static/img/tail-spin.svg"/>
+		<img class="htmx-indicator m-4 mx-auto" alt="Loading..." width="30" src="/assets/img/tail-spin.svg"/>
 		<div id="load-more-errors" class="p-4"></div>
 	</div>
 }
@@ -54,7 +54,7 @@ templ BeerList(data BeerListData) {
 		<div class="max-w-sm rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
 			<div class="flex items-center">
 				<h6 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{ beer.Brand } | { fmt.Sprintf("%d", beer.ID) }</h6>
-				<a href={ templ.URL(fmt.Sprintf("/workspace/beer/%d/overview", beer.ID)) } class="ring-offset-background focus-visible:ring-ring hover:bg-accent hover:text-accent-foreground inline-flex h-10 w-10 items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">
+				<a href={ templ.URL(fmt.Sprintf("/workspace/beer/%d/overview", beer.ID)) } class="ring-offset-background focus-visible:ring-ring hover:bg-accent hover:text-accent-foreground focus-visible:outline-hidden inline-flex h-10 w-10 items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">
 					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" data-darkreader-inline-stroke="" style="--darkreader-inline-stroke: currentColor;">
 						<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
 						<path d="m15 5 4 4"></path>
@@ -74,7 +74,7 @@ templ BeerList(data BeerListData) {
 						class={ templ.KV("order-first", media.Type == 1), templ.KV("order-last", media.Type == 2) }
 					>
 						<img
-							:src="isLoaded ? `${imageSrc}` : `/static/img/tail-spin.svg`"
+							:src="isLoaded ? `${imageSrc}` : `/assets/img/tail-spin.svg`"
 							x-intersect.threshold.25="isLoaded = true"
 							class="aspect-square w-28 object-contain"
 							alt=""

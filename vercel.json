@@ -7,5 +7,10 @@
       "source": "/(.*)",
       "destination": "/api/vercel.go"
     }
-  ]
+  ],
+  "build": {
+    "env": {
+      "GO_BUILD_FLAGS": "-ldflags '-s -w' -mod=readonly"
+    }
+  }
 }
