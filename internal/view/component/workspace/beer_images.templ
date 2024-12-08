@@ -103,6 +103,6 @@ templ BeerMedia(beerMedia model.BeerMedia) {
 			templ.KV("h-[80%]", beerMedia.Type == model.BeerMediaBottle),
 			templ.KV("w-[80%]", beerMedia.Type != model.BeerMediaBottle),
 		}
-		src={ fmt.Sprintf("https://beer-collection-bucket.s3.eu-central-1.amazonaws.com/preview/%s", beerMedia.Media.ExternalFilename) }
+		src={ fmt.Sprintf("https://collection-new.filimonov.life/cdn-cgi/image/width=100,quality=25/https://beer-collection-bucket.s3.eu-central-1.amazonaws.com/original/%s", beerMedia.Media.ExternalFilename) }
 	/>
 }
