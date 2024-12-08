@@ -70,7 +70,7 @@ templ BeerList(data BeerListData) {
 			<div class="flex">
 				for _, media := range beer.BeerMedias {
 					<div
-						x-data={ fmt.Sprintf("{ isLoaded: false, imageSrc: 'https://beer-collection-bucket.s3.eu-central-1.amazonaws.com/preview/%s' }", media.Media.ExternalFilename) }
+						x-data={ fmt.Sprintf("{ isLoaded: false, imageSrc: 'https://collection-new.filimonov.life/cdn-cgi/image/width=100,quality=25/https://beer-collection-bucket.s3.eu-central-1.amazonaws.com/original/%s' }", media.Media.ExternalFilename) }
 						class={ templ.KV("order-first", media.Type == 1), templ.KV("order-last", media.Type == 2) }
 					>
 						<img
