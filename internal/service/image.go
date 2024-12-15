@@ -78,3 +78,32 @@ func (s ImageService) UpdateBeerMediaItems(ctx context.Context, images []model.B
 	}
 	return nil
 }
+
+func (s ImageService) ListImages(ctx context.Context) ([]model.BeerMedia, error) {
+	images, imagesErr := s.beerMediaStore.FetchMediaItems(ctx, model.MediaItemsFilter{})
+	if imagesErr != nil {
+		return nil, errors.Wrap(imagesErr, "fetch media items")
+	}
+	return images, nil
+}
+
+func (s ImageService) DeleteBeerMedia(ctx context.Context, id int) error {
+	items, itemsErr := s.beerMediaStore.FetchMediaItems(ctx, model.MediaItemsFilter{ID: id})
+	if itemsErr != nil {
+		return errors.Wrap(itemsErr, "fetch beer media items")
+	}
+
+	item := items[0]
+
+	s3DelErr := s.s3Storage.Delete(ctx, item.Media.ExternalFilename)
+	if s3DelErr != nil {
+		return errors.Wrap(s3DelErr, "delete s3 image")
+	}
+
+	delErr := s.beerMediaStore.DeleteBeerMedia(ctx, item)
+	if delErr != nil {
+		return errors.Wrap(delErr, "delete beer media item")
+	}
+
+	return nil
+}

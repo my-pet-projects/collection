@@ -137,7 +137,7 @@ func navigation() templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<nav class=\"shadow-xs bg-white\"><div class=\"mx-auto max-w-7xl px-4 sm:px-6 lg:px-8\"><div class=\"flex h-16 justify-between\"><div class=\"flex\"><div class=\"flex shrink-0 items-center\"><a href=\"/\" class=\"ml-2 flex\"><img src=\"/static/img/pint-of-beer-svgrepo-com.svg\" class=\"mr-3 h-8\" alt=\"Beer Collection\"> <span class=\"self-center whitespace-nowrap text-2xl font-bold\">Beer Collection</span></a></div><div class=\"hidden sm:ml-6 sm:flex sm:space-x-8\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<nav class=\"shadow-xs bg-white\"><div class=\"mx-auto max-w-7xl px-4 sm:px-6 lg:px-8\"><div class=\"flex h-16 justify-between\"><div class=\"flex\"><div class=\"flex shrink-0 items-center\"><a href=\"/\" class=\"ml-2 flex\"><img src=\"/assets/img/pint-of-beer-svgrepo-com.svg\" class=\"mr-3 h-8\" alt=\"Beer Collection\"> <span class=\"self-center whitespace-nowrap text-2xl font-bold\">Beer Collection</span></a></div><div class=\"hidden sm:ml-6 sm:flex sm:space-x-8\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

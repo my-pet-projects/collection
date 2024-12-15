@@ -184,7 +184,6 @@ func BeerMedia(beerMedia model.BeerMedia) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		var templ_7745c5c3_Var8 = []any{
-			"object-cover object-center",
 			templ.KV("h-[80%]", beerMedia.Type == model.BeerMediaBottle),
 			templ.KV("w-[80%]", beerMedia.Type != model.BeerMediaBottle),
 		}
@@ -212,7 +211,7 @@ func BeerMedia(beerMedia model.BeerMedia) templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("https://collection-new.filimonov.life/cdn-cgi/image/width=100,quality=25/https://beer-collection-bucket.s3.eu-central-1.amazonaws.com/original/%s", beerMedia.Media.ExternalFilename))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_images.templ`, Line: 106, Col: 202}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_images.templ`, Line: 105, Col: 202}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
