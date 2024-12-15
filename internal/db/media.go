@@ -21,15 +21,6 @@ func NewMediaStore(db *DbClient, logger *slog.Logger) MediaStore {
 	}
 }
 
-func (s MediaStore) FetchMediaItems(ctx context.Context) ([]model.MediaItem, error) {
-	var items []model.MediaItem
-	result := s.db.gorm.
-		Debug().
-		Find(&items)
-
-	return items, result.Error
-}
-
 func (s MediaStore) UpsertMediaItem(ctx context.Context, formValue model.UploadFormValues) (model.MediaItem, error) {
 	itemToUpsert := model.MediaItem{
 		ExternalFilename: formValue.ExternalFilename(),
