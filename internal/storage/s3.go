@@ -3,6 +3,7 @@ package storage
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"log/slog"
 
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -36,6 +37,22 @@ func (s S3Storage) Upload(ctx context.Context, item model.MediaContent) error {
 	})
 	if putErr != nil {
 		return errors.Wrap(putErr, "put object")
+	}
+
+	return nil
+}
+
+func (s S3Storage) Delete(ctx context.Context, key string) error {
+	key = fmt.Sprintf("original/%s", key)
+	bucket := "beer-collection-bucket"
+
+	_, delErr := s.client.DeleteObject(ctx, &s3.DeleteObjectInput{
+		Bucket: &bucket,
+		Key:    &key,
+	})
+
+	if delErr != nil {
+		return errors.Wrap(delErr, "delete object")
 	}
 
 	return nil

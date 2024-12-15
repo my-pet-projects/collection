@@ -45,6 +45,7 @@ func (s BeerMediaStore) FetchMediaItems(ctx context.Context, filter model.MediaI
 	result := s.db.gorm.
 		Debug().
 		Where(model.BeerMedia{BeerID: &filter.BeerID}).
+		Or(model.BeerMedia{ID: filter.ID}).
 		Or("beer_id IS NULL").
 		Joins("Media").
 		Find(&items)
@@ -56,6 +57,18 @@ func (s BeerMediaStore) UpdateMediaItems(ctx context.Context, items []model.Beer
 	res := s.db.gorm.
 		Debug().
 		Save(&items)
+
+	return res.Error
+}
+
+func (s BeerMediaStore) DeleteBeerMedia(ctx context.Context, item model.BeerMedia) error {
+	res := s.db.gorm.
+		Debug().
+		Delete(&model.BeerMedia{ID: item.ID})
+
+	res = s.db.gorm.
+		Debug().
+		Delete(&model.MediaItem{ID: item.MediaID})
 
 	return res.Error
 }

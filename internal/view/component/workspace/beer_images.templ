@@ -99,7 +99,6 @@ templ BeerImagesPage(params BeerPageData) {
 templ BeerMedia(beerMedia model.BeerMedia) {
 	<img
 		class={
-			"object-cover object-center",
 			templ.KV("h-[80%]", beerMedia.Type == model.BeerMediaBottle),
 			templ.KV("w-[80%]", beerMedia.Type != model.BeerMediaBottle),
 		}

@@ -6,7 +6,9 @@ import (
 	_ "image/png"
 	"io"
 	"log/slog"
+	"strconv"
 
+	"github.com/my-pet-projects/collection/internal/apperr"
 	"github.com/my-pet-projects/collection/internal/model"
 	"github.com/my-pet-projects/collection/internal/service"
 	"github.com/my-pet-projects/collection/internal/view/component/workspace"
@@ -69,5 +71,31 @@ func (h UploadHandler) UploadImage(reqResp *web.ReqRespPair) error {
 
 	}
 
+	return reqResp.NoContent()
+}
+
+func (h UploadHandler) HandleImagesPage(reqResp *web.ReqRespPair) error {
+	images, imagesErr := h.imageSvc.ListImages(reqResp.Request.Context())
+	if imagesErr != nil {
+		return apperr.NewInternalServerError("Failed to fetch images", imagesErr)
+	}
+
+	pageData := workspace.ImagePageData{
+		Images: images,
+	}
+
+	return reqResp.Render(workspace.ImagesPage(pageData))
+}
+
+func (h UploadHandler) DeleteBeerMedia(reqResp *web.ReqRespPair) error {
+	beerMediaId, parseErr := strconv.Atoi(reqResp.Request.PathValue("id"))
+	if parseErr != nil {
+		return apperr.NewBadRequestError("Invalid identifier", parseErr)
+	}
+	delErr := h.imageSvc.DeleteBeerMedia(reqResp.Request.Context(), beerMediaId)
+	if delErr != nil {
+		return apperr.NewInternalServerError("Failed to delete beer media", delErr)
+	}
+	reqResp.TriggerHtmxNotifyEvent(web.NotifySuccessVariant, "Beer image deleted")
 	return reqResp.NoContent()
 }

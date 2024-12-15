@@ -119,5 +119,6 @@ func NewMediaImage(formValues UploadFormValues) (*MediaImage, error) {
 }
 
 type MediaItemsFilter struct {
+	ID     int
 	BeerID int
 }

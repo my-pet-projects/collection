@@ -148,6 +148,8 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 	})
 
 	router.Group(func(router chi.Router) {
+		router.Get("/workspace/images", appHandler.Handle(uploadHandler.HandleImagesPage))
+		router.Delete("/workspace/images/{id}", appHandler.Handle(uploadHandler.DeleteBeerMedia))
 		router.Get("/workspace/images/upload", appHandler.Handle(uploadHandler.UploadImagePage))
 		router.Post("/workspace/images/uploads", appHandler.Handle(uploadHandler.UploadImage))
 	})
