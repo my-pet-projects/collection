@@ -10,6 +10,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.56.1
 	github.com/clerk/clerk-sdk-go/v2 v2.2.0
 	github.com/go-chi/chi/v5 v5.2.0
+	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/pkg/errors v0.9.1
 	github.com/tursodatabase/libsql-client-go v0.0.0-20240628122535-1c47b26184e8
 	golang.org/x/sync v0.8.0
