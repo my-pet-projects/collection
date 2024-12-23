@@ -8,6 +8,8 @@ import (
 	awscfg "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/clerk/clerk-sdk-go/v2"
+	"github.com/clerk/clerk-sdk-go/v2/user"
 	"github.com/go-chi/chi/v5"
 	"github.com/pkg/errors"
 	"golang.org/x/sync/errgroup"
@@ -90,6 +92,13 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 	s3Client := s3.NewFromConfig(sdkConfig)
 	s3Storage := storage.NewS3Storage(s3Client, logger)
 
+	config := &clerk.ClientConfig{
+		BackendConfig: clerk.BackendConfig{
+			Key: &cfg.AuthConfig.ClerkSecretKey,
+		},
+	}
+	userClient := user.NewClient(config)
+
 	geoService := service.NewGeographyService(&geoStore, logger)
 	breweryService := service.NewBreweryService(&breweryStore, &geoStore, logger)
 	beerService := service.NewBeerService(&beerStore, &styleStore, &breweryStore, logger)
@@ -100,10 +109,15 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 	// beerHandler := handler.NewBeerHandler(beerService, breweryService, logger)
 	workspaceSrv := handler.NewWorkspaceServer(beerService, breweryService, geoService, imageService, logger)
 	uploadHandler := handler.NewUploadHandler(imageService, logger)
+	authHandler := handler.NewAuthenticationHandler(cfg.AuthConfig, logger)
+
+	middleware := middleware.NewMiddleware(cfg.AuthConfig, userClient, logger)
 
 	appHandler := web.NewAppHandler(logger)
 	router := chi.NewRouter()
+	router.Use(middleware.WithInboundLog)
 	router.Use(middleware.WithRequest)
+	router.Use(middleware.WithRecoverer)
 
 	router.MethodNotAllowed(appHandler.Handle(func(reqResp *web.ReqRespPair) error {
 		return apperr.NewAppError("Method not allowed", http.StatusMethodNotAllowed, nil)
@@ -111,11 +125,15 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 	router.Handle("/assets/*", http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets"))))
 
 	router.Group(func(router chi.Router) {
+		router.Get("/login", appHandler.Handle(authHandler.HandleLoginPage))
+	})
+
+	router.With(middleware.WithAuthentication).Group(func(router chi.Router) {
 		router.Get("/geo/countries", appHandler.Handle(geoHandler.ListCountries))
 		router.Get("/geo/countries/{countryIso}/cities", appHandler.Handle(geoHandler.ListCities))
 	})
 
-	router.Group(func(router chi.Router) {
+	router.With(middleware.WithAuthentication).Group(func(router chi.Router) {
 		router.Get("/beers", appHandler.Handle(workspaceSrv.ListBeers))
 		router.Get("/workspace/beer", appHandler.Handle(workspaceSrv.HandleBeerListPage))
 		router.Get("/workspace/beer/create", appHandler.Handle(workspaceSrv.HandleCreateBeerPage))
@@ -126,7 +144,7 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 		router.Delete("/workspace/beer/{id}", appHandler.Handle(workspaceSrv.DeleteBeer))
 	})
 
-	router.Group(func(router chi.Router) {
+	router.With(middleware.WithAuthentication).Group(func(router chi.Router) {
 		router.Get("/breweries", appHandler.Handle(breweryHandler.ListBreweries))
 		router.Get("/workspace/brewery", appHandler.Handle(workspaceSrv.HandleBreweryListPage))
 		router.Get("/workspace/brewery/create", appHandler.Handle(workspaceSrv.HandleCreateBreweryPage))
@@ -134,7 +152,7 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 		router.Get("/workspace/brewery/{id}", appHandler.Handle(workspaceSrv.HandleBreweryPage))
 	})
 
-	router.Group(func(router chi.Router) {
+	router.With(middleware.WithAuthentication).Group(func(router chi.Router) {
 		router.Get("/workspace/beer-style/search", appHandler.Handle(workspaceSrv.ListBeerStyles))
 		router.Get("/workspace/beer-style", appHandler.Handle(workspaceSrv.HandleBeerStyleListPage))
 		router.Get("/workspace/beer-style/create", appHandler.Handle(workspaceSrv.HandleBeerStyleCreateView))
@@ -147,7 +165,7 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 		router.Put("/workspace/beer-style/{id}", appHandler.Handle(workspaceSrv.SaveBeerStyle))
 	})
 
-	router.Group(func(router chi.Router) {
+	router.With(middleware.WithAuthentication).Group(func(router chi.Router) {
 		router.Get("/workspace/images", appHandler.Handle(uploadHandler.HandleImagesPage))
 		router.Delete("/workspace/images/{id}", appHandler.Handle(uploadHandler.DeleteBeerMedia))
 		router.Get("/workspace/images/upload", appHandler.Handle(uploadHandler.UploadImagePage))
