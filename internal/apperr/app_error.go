@@ -23,6 +23,10 @@ func NewBadRequestError(msg string, err error) error {
 	return &AppError{Msg: msg, Err: err, Status: http.StatusBadRequest}
 }
 
+func NewAuthError(msg string, err error) error {
+	return &AppError{Msg: msg, Err: err, Status: http.StatusUnauthorized}
+}
+
 func (e AppError) Error() string {
 	return fmt.Sprintf("%v", e.Msg)
 }

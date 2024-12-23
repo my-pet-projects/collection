@@ -77,7 +77,7 @@ func (h *prettyHandler) Handle(ctx context.Context, rec slog.Record) error {
 
 	if len(attrs) == 0 {
 		fmt.Println( //nolint:forbidigo
-			colorize(lightGray, rec.Time.Format("15:05:05.000")),
+			colorize(lightGray, rec.Time.Format("15:04:05.000")),
 			level,
 			colorize(white, rec.Message),
 		)
@@ -90,7 +90,7 @@ func (h *prettyHandler) Handle(ctx context.Context, rec slog.Record) error {
 	}
 
 	fmt.Println( //nolint:forbidigo
-		colorize(lightGray, rec.Time.Format("15:05:05.000")),
+		colorize(lightGray, rec.Time.Format("15:04:05.000")),
 		level,
 		colorize(white, rec.Message),
 		colorize(darkGray, string(bytes)),

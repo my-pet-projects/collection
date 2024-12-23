@@ -10,6 +10,7 @@ import (
 
 	"github.com/my-pet-projects/collection/internal/apperr"
 	"github.com/my-pet-projects/collection/internal/view/component/shared"
+	"github.com/my-pet-projects/collection/internal/view/layout"
 )
 
 type HandlerFunc func(reqResp *ReqRespPair) error
@@ -49,7 +50,13 @@ func (rrp *ReqRespPair) Text(status int, msg string) error {
 }
 
 func (rrp *ReqRespPair) Render(c templ.Component) error {
+	rrp.Response.WriteHeader(http.StatusOK)
 	return c.Render(rrp.Request.Context(), rrp.Response)
+}
+
+func (rrp *ReqRespPair) RenderErrorPage(code int, err error) error {
+	rrp.Response.WriteHeader(code)
+	return layout.ErrorPageLayout(code).Render(rrp.Request.Context(), rrp.Response)
 }
 
 func (rrp *ReqRespPair) NoContent() error {
