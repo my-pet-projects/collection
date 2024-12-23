@@ -1,6 +1,10 @@
 package config
 
 import (
+	"crypto/rsa"
+	"crypto/x509"
+	"encoding/pem"
+	"fmt"
 	"os"
 	"strings"
 
@@ -13,6 +17,13 @@ type Config struct {
 	AwsConfig          AwsConfig
 	GeoDbConfig        TursoDbConfig
 	CollectionDbConfig TursoDbConfig
+	AuthConfig         AuthConfig
+}
+
+type AuthConfig struct {
+	ClerkSecretKey      string
+	ClerkPublishableKey string
+	RsaPublicKey        *rsa.PublicKey
 }
 
 type AwsConfig struct {
@@ -60,6 +71,22 @@ func NewConfig() (*Config, error) {
 	if !ok {
 		return nil, errors.New("COLLECTION_DATABASE_TOKEN environment variable was not found")
 	}
+	clerkSecretKey, ok := os.LookupEnv("CLERK_SECRET_KEY")
+	if !ok {
+		return nil, errors.New("CLERK_SECRET_KEY environment variable was not found")
+	}
+	clerkPublishableKey, ok := os.LookupEnv("CLERK_PUBLISHABLE_KEY")
+	if !ok {
+		return nil, errors.New("CLERK_PUBLISHABLE_KEY environment variable was not found")
+	}
+	clerkPumKey, ok := os.LookupEnv("CLERK_PEM_PUBLIC_KEY")
+	if !ok {
+		return nil, errors.New("CLERK_PEM_PUBLIC_KEY environment variable was not found")
+	}
+	rsaPublicKey, err := parseRSAPublicKey([]byte(strings.Replace(clerkPumKey, `\n`, "\n", -1)))
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to parse Clerk public key")
+	}
 
 	cfg := &Config{
 		Env: env,
@@ -76,6 +103,11 @@ func NewConfig() (*Config, error) {
 			DbUrl:     collectionDbUrl,
 			AuthToken: collectionAuthToken,
 		},
+		AuthConfig: AuthConfig{
+			ClerkSecretKey:      clerkSecretKey,
+			ClerkPublishableKey: clerkPublishableKey,
+			RsaPublicKey:        rsaPublicKey,
+		},
 	}
 
 	return cfg, nil
@@ -83,4 +115,28 @@ func NewConfig() (*Config, error) {
 
 func (c Config) IsProd() bool {
 	return strings.EqualFold(c.Env, "prod")
+}
+
+// Parse the RSA public key from the PEM-encoded data.
+func parseRSAPublicKey(pemKey []byte) (*rsa.PublicKey, error) {
+	block, _ := pem.Decode(pemKey)
+	if block == nil {
+		return nil, fmt.Errorf("invalid PEM-encoded block")
+	}
+
+	if block.Type != "PUBLIC KEY" {
+		return nil, fmt.Errorf("invalid key type, expected a public key")
+	}
+
+	pubKey, err := x509.ParsePKIXPublicKey(block.Bytes)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse public key: %v", err)
+	}
+
+	rsaPubKey, ok := pubKey.(*rsa.PublicKey)
+	if !ok {
+		return nil, fmt.Errorf("key is not of type *rsa.PublicKey")
+	}
+
+	return rsaPubKey, nil
 }

@@ -1,15 +1,32 @@
 package middleware
 
 import (
-	"context"
-	"net/http"
+	"log/slog"
 
-	"github.com/my-pet-projects/collection/internal/util"
+	"github.com/clerk/clerk-sdk-go/v2/user"
+
+	"github.com/my-pet-projects/collection/internal/config"
 )
 
-func WithRequest(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := context.WithValue(r.Context(), util.RequestKey{}, r)
-		next.ServeHTTP(w, r.WithContext(ctx))
-	})
+type Middleware struct {
+	cfg        config.AuthConfig
+	userClient *user.Client
+	logger     *slog.Logger
 }
+
+func NewMiddleware(cfg config.AuthConfig, userClient *user.Client, logger *slog.Logger) *Middleware {
+	return &Middleware{cfg: cfg, userClient: userClient, logger: logger}
+}
+
+// // Middleware chains multiple middleware functions
+// func Middleware(handler http.HandlerFunc, middlewares ...func(http.HandlerFunc) http.HandlerFunc) http.HandlerFunc {
+// 	return func(w http.ResponseWriter, r *http.Request) {
+
+// 		wrappedHandler := handler
+// 		for _, middleware := range middlewares {
+// 			wrappedHandler = middleware(wrappedHandler)
+// 		}
+
+// 		wrappedHandler.ServeHTTP(w, r)
+// 	}
+// }
