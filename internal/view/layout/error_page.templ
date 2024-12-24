@@ -1,0 +1,27 @@
+package layout
+
+import "net/http"
+
+templ ErrorPageLayout(code int) {
+	<!DOCTYPE html>
+	<html lang="en">
+		@head("test")
+		<body>
+			<div class="min-h-screen bg-gray-100">
+				<div class="py-6">
+					<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+						<div class="flex flex-col lg:flex-row">
+							Error page
+							if code == http.StatusUnauthorized {
+								<h1>StatusUnauthorized</h1>
+								<a href="/login">Login</a>
+							} else {
+								<h1>Internal server error</h1>
+							}
+						</div>
+					</div>
+				</div>
+			</div>
+		</body>
+	</html>
+}

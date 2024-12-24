@@ -1,0 +1,121 @@
+package login 
+
+import "fmt"
+
+type LoginData struct {
+	ClerkAuthHost       string
+	ClerkPublishableKey string
+}
+
+templ LoginPage(data LoginData) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<title>Beer Collection</title>
+		<link href="/assets/css/tailwind-output.gen.css" rel="stylesheet"/>
+		<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+		<script async crossorigin="anonymous" data-clerk-publishable-key={ data.ClerkPublishableKey } src={ fmt.Sprintf("%s/npm/@clerk/clerk-js@latest/dist/clerk.browser.js", data.ClerkAuthHost) } type="text/javascript"></script>
+		<script type="text/javascript">
+			window.addEventListener("load", async function () {
+				try {
+					await Clerk.load();
+				} catch (err) {
+					console.error("Failed to load Clerk", err);
+				}
+			});
+		</script>
+		<body class="flex min-h-screen items-center justify-center p-4">
+			<div
+				class="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl"
+			>
+				<div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+					<div class="text-center sm:mx-auto sm:w-full sm:max-w-md">
+						<img
+							src="/assets/img/pint-of-beer-svgrepo-com.svg"
+							class="mx-auto h-12 w-auto"
+							alt="Beer Collection"
+						/>
+						<h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+							Welcome back
+						</h2>
+						<p class="mt-2 text-sm text-gray-600">Sign in to your account</p>
+					</div>
+					<div class="bg-white px-4 py-8 shadow sm:rounded-lg sm:px-10">
+						<form
+							id="sign-in-form"
+							class="space-y-6"
+							x-data="{
+								loading: false,
+								onSignIn: async function(e) {
+									e.preventDefault();
+									this.loading=true; 
+									try {
+										const res = await Clerk.client.signIn.create({
+											strategy: 'password',
+											identifier: document.getElementById('username').value,
+											password: document.getElementById('password').value,
+										});
+										if (res.status === 'complete') {
+											await Clerk.setActive({ session: res.createdSessionId });
+										} else {
+											console.error('Clerk sign in attempt has invalid status', JSON.stringify(res));
+										}
+									} catch (err) {
+										if (err.clerkError) {
+											console.error('Failed to login', JSON.stringify(err));
+										} else {
+											console.error(err);
+										}
+									} finally {
+										this.loading = false;
+									}
+								},
+							}"
+							x-on:submit.prevent="onSignIn($event)"
+						>
+							<div>
+								<label for="username" class="block text-sm font-medium text-gray-700">
+									Username
+								</label>
+								<div class="mt-1">
+									<input
+										id="username"
+										name="username"
+										type="text"
+										autocomplete="username"
+										required
+										class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+									/>
+								</div>
+							</div>
+							<div>
+								<label for="password" class="block text-sm font-medium text-gray-700">
+									Password
+								</label>
+								<div class="mt-1">
+									<input
+										id="password"
+										name="password"
+										type="password"
+										autocomplete="current-password"
+										required
+										class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+									/>
+								</div>
+							</div>
+							<div>
+								<button
+									type="submit"
+									class="flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
+									x-html="loading ? `<i class='uil uil-loding uil-sign-in-alt'></i> Please Wait ...` : 'Login'"
+									x-bind:disabled="loading"
+								>
+									Sign in
+								</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</body>
+	</html>
+}

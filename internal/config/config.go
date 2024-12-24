@@ -21,6 +21,7 @@ type Config struct {
 }
 
 type AuthConfig struct {
+	ClerkAuthHost       string
 	ClerkSecretKey      string
 	ClerkPublishableKey string
 	RsaPublicKey        *rsa.PublicKey
@@ -87,6 +88,10 @@ func NewConfig() (*Config, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to parse Clerk public key")
 	}
+	clerkAuthHost, ok := os.LookupEnv("CLERK_AUTH_HOST")
+	if !ok {
+		return nil, errors.New("CLERK_AUTH_HOST environment variable was not found")
+	}
 
 	cfg := &Config{
 		Env: env,
@@ -107,6 +112,7 @@ func NewConfig() (*Config, error) {
 			ClerkSecretKey:      clerkSecretKey,
 			ClerkPublishableKey: clerkPublishableKey,
 			RsaPublicKey:        rsaPublicKey,
+			ClerkAuthHost:       clerkAuthHost,
 		},
 	}
 
