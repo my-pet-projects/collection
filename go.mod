@@ -3,7 +3,7 @@ module github.com/my-pet-projects/collection
 go 1.23.0
 
 require (
-	github.com/a-h/templ v0.2.793
+	github.com/a-h/templ v0.3.833
 	github.com/anthonynsimon/bild v0.14.0
 	github.com/aws/aws-sdk-go-v2/config v1.27.21
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.21
@@ -13,7 +13,7 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/pkg/errors v0.9.1
 	github.com/tursodatabase/libsql-client-go v0.0.0-20240628122535-1c47b26184e8
-	golang.org/x/sync v0.8.0
+	golang.org/x/sync v0.10.0
 	gorm.io/driver/sqlite v1.5.6
 	gorm.io/gorm v1.25.12
 	gorm.io/plugin/dbresolver v1.5.3

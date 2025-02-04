@@ -1,5 +1,5 @@
-# github.com/a-h/templ v0.2.793
-## explicit; go 1.21
+# github.com/a-h/templ v0.3.833
+## explicit; go 1.23
 github.com/a-h/templ
 github.com/a-h/templ/runtime
 github.com/a-h/templ/safehtml
@@ -184,7 +184,7 @@ golang.org/x/crypto/pbkdf2
 ## explicit; go 1.20
 golang.org/x/exp/constraints
 golang.org/x/exp/slices
-# golang.org/x/sync v0.8.0
+# golang.org/x/sync v0.10.0
 ## explicit; go 1.18
 golang.org/x/sync/errgroup
 # golang.org/x/text v0.17.0
