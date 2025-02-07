@@ -90,16 +90,21 @@ func (rrp *ReqRespPair) RenderError(code int, err error) error {
 }
 
 func (rrp *ReqRespPair) GetIntQueryParam(name string) (int, error) {
-	page := 1
-	pageParam := rrp.Request.URL.Query().Get(name)
-	if pageParam != "" {
-		parsedVal, parseErr := strconv.Atoi(pageParam)
+	param := 1
+	strIntParam := rrp.Request.URL.Query().Get(name)
+	if strIntParam != "" {
+		parsedVal, parseErr := strconv.Atoi(strIntParam)
 		if parseErr != nil {
 			return 0, errors.Wrap(parseErr, "parse int query param")
 		}
-		page = parsedVal
+		param = parsedVal
 	}
-	return page, nil
+	return param, nil
+}
+
+func (rrp *ReqRespPair) GetStringQueryParam(name string) string {
+	param := rrp.Request.URL.Query().Get(name)
+	return param
 }
 
 func (rrp *ReqRespPair) GetIntFormValues(formKey string) ([]int, error) {
