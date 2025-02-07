@@ -103,10 +103,14 @@ func (rrp *ReqRespPair) GetIntQueryParam(name string) (int, error) {
 	return param, nil
 }
 
-func (rrp *ReqRespPair) GetStringQueryParam(name string) string {
+func (rrp *ReqRespPair) GetStringQueryParam(name string) (string, error) {
+	const maxQueryParamLength = 50
 	param := rrp.Request.URL.Query().Get(name)
 	param = strings.TrimSpace(param)
-	return param
+	if len(param) > maxQueryParamLength {
+		return "", errors.New("query param is too long")
+	}
+	return param, nil
 }
 
 func (rrp *ReqRespPair) GetIntFormValues(formKey string) ([]int, error) {

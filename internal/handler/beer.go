@@ -155,7 +155,10 @@ func (h WorkspaceServer) ListBeers(reqResp *web.ReqRespPair) error {
 		return apperr.NewBadRequestError("Invalid page number", pageErr)
 	}
 
-	query := reqResp.GetStringQueryParam("query")
+	query, queryErr := reqResp.GetStringQueryParam("query")
+	if queryErr != nil {
+		return apperr.NewBadRequestError("Invalid query", queryErr)
+	}
 
 	filter := model.BeerFilter{
 		Query: query,
