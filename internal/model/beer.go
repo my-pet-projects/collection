@@ -63,7 +63,7 @@ type City struct {
 // }
 
 type BeerFilter struct {
-	Name  string
+	Query string
 	Page  int
 	Limit int
 }
