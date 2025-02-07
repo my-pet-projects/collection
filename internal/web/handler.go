@@ -4,6 +4,7 @@ import (
 	"log/slog"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/a-h/templ"
 	"github.com/pkg/errors"
@@ -104,6 +105,7 @@ func (rrp *ReqRespPair) GetIntQueryParam(name string) (int, error) {
 
 func (rrp *ReqRespPair) GetStringQueryParam(name string) string {
 	param := rrp.Request.URL.Query().Get(name)
+	param = strings.TrimSpace(param)
 	return param
 }
 
