@@ -8,6 +8,7 @@ import (
 
 type BeerListData struct {
 	Beers        []model.Beer
+	Query        string
 	CurrentPage  int
 	TotalPages   int
 	TotalResults int
@@ -20,18 +21,29 @@ templ BeerListPage(page BeerPageData) {
 }
 
 templ beersList() {
-	<div class="flex-1 px-10">
-		<div>
-			<div class="mb-6">
-				<h1 class="border-b border-gray-400 pb-2 text-2xl font-semibold text-slate-800">Beer list</h1>
-			</div>
-		</div>
-		<div class="ml-auto flex items-center space-x-2 sm:space-x-3">
-			<a href="/workspace/beer/create" type="button" class="bg-primary-700 hover:bg-primary-800 focus:ring-primary-300 bg-primary-600 hover:bg-primary-700 focus:ring-primary-800 inline-flex w-1/2 items-center justify-center rounded-lg px-3 py-2 text-center text-sm font-medium focus:ring-4 sm:w-auto">
-				<svg class="-ml-1 mr-2 h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
-				Add beer
+	<div class="container mx-auto px-4 py-4">
+		<div class="mb-6 flex items-center justify-between">
+			<h1 class="text-3xl font-bold text-slate-800">Beer list</h1>
+			<a href="/workspace/beer/create" type="button" class="ring-offset-background focus-visible:ring-ring [&_svg]:size-4 flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-md bg-black px-4 py-2 text-sm font-semibold text-white shadow-md transition-all duration-300 hover:bg-gray-800 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="radix-:r0:" data-state="closed">
+				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus">
+					<path d="M5 12h14"></path><path d="M12 5v14"></path>
+				</svg>
+				Add Beer
 			</a>
 		</div>
+		<input
+			id="search"
+			name="query"
+			value=""
+			type="text"
+			hx-get="/beers"
+			hx-swap="innerHTML"
+			hx-target="#beer-list"
+			hx-trigger="keyup changed delay:250ms from:#search"
+			hx-indicator=".htmx-indicator"
+			class="ring-offset-background file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring mb-6 flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus:border-black focus:ring-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+			placeholder="Search by beer or brewery name..."
+		/>
 		<div id="beer-list-errors" class="p-4"></div>
 		<div
 			id="beer-list"
@@ -84,7 +96,7 @@ templ BeerList(data BeerListData) {
 			</div>
 			if idx == len(data.Beers)-1 &&  data.CurrentPage < data.TotalPages {
 				<span
-					hx-get={ fmt.Sprintf("/beers?page=%d", data.CurrentPage+1) }
+					hx-get={ fmt.Sprintf("/beers?page=%d&query=%s", data.CurrentPage+1, data.Query) }
 					hx-trigger="intersect once"
 					hx-swap="beforeend"
 					hx-target="#beer-list"
