@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/my-pet-projects/collection/internal/model"
 	"github.com/my-pet-projects/collection/internal/view/layout"
+	"strings"
 )
 
 type BeerListData struct {
@@ -44,7 +45,7 @@ templ beersList() {
 			class="ring-offset-background file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring mb-6 flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus:border-black focus:ring-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
 			placeholder="Search by beer or brewery name..."
 		/>
-		<div id="beer-list-errors" class="p-4"></div>
+		<div id="beer-list-errors"></div>
 		<div
 			id="beer-list"
 			hx-get="/beers"
@@ -63,38 +64,66 @@ templ beersList() {
 
 templ BeerList(data BeerListData) {
 	for idx, beer := range data.Beers {
-		<div class="max-w-sm rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-			<div class="flex items-center">
-				<h6 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{ beer.Brand } | { fmt.Sprintf("%d", beer.ID) }</h6>
-				<a href={ templ.URL(fmt.Sprintf("/workspace/beer/%d/overview", beer.ID)) } class="ring-offset-background focus-visible:ring-ring hover:bg-accent hover:text-accent-foreground focus-visible:outline-hidden inline-flex h-10 w-10 items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">
-					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" data-darkreader-inline-stroke="" style="--darkreader-inline-stroke: currentColor;">
-						<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
-						<path d="m15 5 4 4"></path>
-					</svg>
-					<span class="sr-only">Edit</span>
-				</a>
-			</div>
-			<p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{ beer.BeerStyle.Name }</p>
-			if beer.Brewery != nil {
-				<p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{ beer.Brewery.Name }</p>
-				<p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{ beer.Brewery.City.Name }, { beer.Brewery.City.Country.NameCommon }</p>
-			}
-			<div class="flex">
-				for _, media := range beer.BeerMedias {
-					<div
-						x-data={ fmt.Sprintf("{ isLoaded: false, imageSrc: 'https://collection-new.filimonov.life/cdn-cgi/image/width=100,quality=25/https://beer-collection-bucket.s3.eu-central-1.amazonaws.com/original/%s' }", media.Media.ExternalFilename) }
-						class={ templ.KV("order-first", media.Type == 1), templ.KV("order-last", media.Type == 2) }
+		<div class="group overflow-hidden rounded-lg bg-white shadow-md transition-all duration-300 hover:shadow-lg">
+			<div class="p-6">
+				<div class="mb-4 flex items-start justify-between">
+					<div class="mb-2 flex items-center">
+						if beer.Brewery != nil {
+							<img
+								src={ fmt.Sprintf("https://flagcdn.com/w40/%s.png", strings.ToLower(beer.Brewery.City.CountryCode)) }
+								alt={ fmt.Sprintf("%s flag", beer.Brewery.City.CountryCode) }
+								class="mr-4 h-4 w-6 rounded object-cover"
+							/>
+						}
+						<h2 class="text-2xl font-bold text-gray-900">{ beer.Brand } | { fmt.Sprintf("%d", beer.ID) }</h2>
+					</div>
+					<a
+						href={ templ.URL(fmt.Sprintf("/workspace/beer/%d/overview", beer.ID)) }
+						class="rounded-full p-2 opacity-0 transition-opacity duration-200 hover:bg-gray-100 group-hover:opacity-100"
 					>
-						<img
-							:src="isLoaded ? `${imageSrc}` : `/assets/img/tail-spin.svg`"
-							x-intersect.threshold.25="isLoaded = true"
-							class="aspect-square w-28 object-contain"
-							alt=""
-						/>
+						<svg class="h-4 w-4" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+							<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
+							<path d="m15 5 4 4"></path>
+						</svg>
+						<span class="sr-only">Edit</span>
+					</a>
+				</div>
+				<div class="mb-4 flex flex-wrap gap-1">
+					for _, media := range beer.BeerMedias {
+						<div
+							x-data={ fmt.Sprintf("{ isIntersected: false, imageSrc: 'https://collection-new.filimonov.life/cdn-cgi/image/width=100,quality=25/https://beer-collection-bucket.s3.eu-central-1.amazonaws.com/original/%s' }", media.Media.ExternalFilename) }
+							x-intersect.threshold.25="isIntersected = true"
+							class={ "flex justify-center items-center overflow-hidden", templ.KV("order-first w-12", media.Type == model.BeerMediaBottle), templ.KV("order-last", media.Type == model.BeerMediaLabel), templ.KV("w-32", media.Type != model.BeerMediaBottle) }
+						>
+							<img
+								x-bind:src="isIntersected ? `${imageSrc}` : `/assets/img/tail-spin.svg`"
+								class={ "max-h-32", templ.KV("w-12", media.Type == model.BeerMediaBottle), templ.KV("w-full", media.Type.IsCap()) }
+								alt=""
+							/>
+						</div>
+					}
+				</div>
+				if beer.Brewery != nil {
+					<div class="mb-4 space-y-2">
+						<div class="flex items-center gap-2 text-gray-600">
+							<svg class="h-4 w-4" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+								<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"></path><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"></path><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"></path><path d="M10 6h4"></path><path d="M10 10h4"></path><path d="M10 14h4"></path><path d="M10 18h4"></path>
+							</svg>
+							<span class="text-sm">{ beer.Brewery.Name }</span>
+						</div>
+						<div class="flex items-center gap-2 text-gray-600">
+							<svg class="h-4 w-4" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+								<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle>
+							</svg>
+							<span class="text-sm">{ beer.Brewery.City.Name }, { beer.Brewery.City.Country.NameCommon }</span>
+						</div>
 					</div>
 				}
+				<div class="flex items-center justify-between">
+					<span class="rounded-full bg-gray-200 px-2 py-1 text-sm text-gray-700">{ beer.BeerStyle.Name }</span>
+				</div>
 			</div>
-			if idx == len(data.Beers)-1 &&  data.CurrentPage < data.TotalPages {
+			if idx == len(data.Beers)-1 && data.CurrentPage < data.TotalPages {
 				<span
 					hx-get={ fmt.Sprintf("/beers?page=%d&query=%s", data.CurrentPage+1, data.Query) }
 					hx-trigger="intersect once"
