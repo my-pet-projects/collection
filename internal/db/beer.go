@@ -39,11 +39,14 @@ func (s BeerStore) GetBeer(id int) (*model.Beer, error) {
 
 func (s BeerStore) PaginateBeers(filter model.BeerFilter) (*model.Pagination[model.Beer], error) {
 	pagination := model.Pagination[model.Beer]{
-		WhereQuery: "Brand LIKE @name OR Type LIKE @name OR brewery.name LIKE @name",
-		WhereArgs:  map[string]interface{}{"name": "%" + filter.Query + "%"},
-		Page:       filter.Page,
-		Limit:      filter.Limit,
-		Sort:       "Brand",
+		Page:  filter.Page,
+		Limit: filter.Limit,
+		Sort:  "Brand",
+	}
+
+	if filter.Query != "" {
+		pagination.WhereQuery = "Brand LIKE @name OR Type LIKE @name OR brewery.name LIKE @name"
+		pagination.WhereArgs = map[string]interface{}{"name": "%" + filter.Query + "%"}
 	}
 
 	var items []model.Beer
