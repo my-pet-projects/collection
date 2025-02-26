@@ -29,28 +29,22 @@ func NewImageService(mediaStore *db.MediaStore, beerMediaStore *db.BeerMediaStor
 
 func (s ImageService) UploadImage(ctx context.Context, formValues []model.UploadFormValues) error {
 	for _, formValue := range formValues {
-		s.logger.Info("Creating original and preview image", slog.String("originalFilename", formValue.Filename))
+		s.logger.Info("Preparing original image", slog.String("originalFilename", formValue.Filename))
 		img, imgErr := model.NewMediaImage(formValue)
 		if imgErr != nil {
 			return errors.Wrap(imgErr, "create original and preview image")
 		}
 
 		s.logger.Info("Upserting media item", slog.String("originalFilename", formValue.Filename))
-		mediaItem, upsErr := s.mediaStore.UpsertMediaItem(ctx, formValue)
+		mediaItem, upsErr := s.mediaStore.UpsertMediaItem(ctx, img)
 		if upsErr != nil {
 			return errors.Wrap(upsErr, "upsert media item")
 		}
 
-		s.logger.Info("Uploading full-size image", slog.String("name", img.Original.Name), slog.Int("size", img.Original.Size))
-		uploadErr := s.s3Storage.Upload(ctx, img.Original)
+		s.logger.Info("Uploading full-size image", slog.String("name", img.ExternalName), slog.Int("size", img.Size))
+		uploadErr := s.s3Storage.Upload(ctx, img)
 		if uploadErr != nil {
 			return errors.Wrap(uploadErr, "s3 image upload")
-		}
-
-		s.logger.Info("Uploading preview image", slog.String("name", img.Preview.Name), slog.Int("size", img.Preview.Size))
-		uploadErr = s.s3Storage.Upload(ctx, img.Preview)
-		if uploadErr != nil {
-			return errors.Wrap(uploadErr, "s3 preview image upload")
 		}
 
 		s.logger.Info("Upserting beer media item", slog.String("originalFilename", formValue.Filename), slog.Any("imageType", img.ImageType))

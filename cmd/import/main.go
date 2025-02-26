@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
 	"image"
 	_ "image/jpeg"
@@ -13,7 +12,6 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
-	"strings"
 	"time"
 
 	awscfg "github.com/aws/aws-sdk-go-v2/config"
@@ -76,15 +74,15 @@ func main() { //nolint:funlen
 	beers := pagination.Results
 	fmt.Println(len(beers))
 
-	jsonBytes, err := os.ReadFile("images.json")
-	if err != nil {
-		panic(err)
-	}
-	var jsonImages []Image
-	jsonErr := json.Unmarshal(jsonBytes, &jsonImages)
-	if jsonErr != nil {
-		panic(jsonErr)
-	}
+	// jsonBytes, err := os.ReadFile("images.json")
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// var jsonImages []Image
+	// jsonErr := json.Unmarshal(jsonBytes, &jsonImages)
+	// if jsonErr != nil {
+	// 	panic(jsonErr)
+	// }
 
 	unknowns := 0
 	current := 0
@@ -205,42 +203,42 @@ func main() { //nolint:funlen
 			panic("Unknown")
 		}
 
-		var jsonImageId string
-		for _, jsonImage := range jsonImages {
-			filename := strings.Replace(jsonImage.Filename, ".png", "", 1)
-			filename = strings.Replace(filename, ".jpeg", "", 1)
-			filename = strings.Replace(filename, ".jpg", "", 1)
-			if filename == strings.Replace(path, ".png", "", 1) {
-				jsonImageId = jsonImage.ID.Oid
-				break
-			}
-		}
+		// var jsonImageId string
+		// for _, jsonImage := range jsonImages {
+		// 	filename := strings.Replace(jsonImage.Filename, ".png", "", 1)
+		// 	filename = strings.Replace(filename, ".jpeg", "", 1)
+		// 	filename = strings.Replace(filename, ".jpg", "", 1)
+		// 	if filename == strings.Replace(path, ".png", "", 1) {
+		// 		jsonImageId = jsonImage.ID.Oid
+		// 		break
+		// 	}
+		// }
 
-		if jsonImageId == "" && !slices.Contains(strangeImages, path) {
-			fmt.Printf("Not found: %s, %s\n", path, jsonImageId)
-			// strangeImages = append(strangeImages, path)
-			panic("Not found")
-		}
+		// if jsonImageId == "" && !slices.Contains(strangeImages, path) {
+		// 	fmt.Printf("Not found: %s, %s\n", path, jsonImageId)
+		// 	// strangeImages = append(strangeImages, path)
+		// 	panic("Not found")
+		// }
 
-		var beerID int
-		for _, beer := range beers {
-			if strings.Contains(*beer.OldImageIds, jsonImageId) {
-				beerID = beer.ID
-				break
-			}
-		}
-		if beerID == 0 {
-			fmt.Printf("Beer not found: %s, %s\n", path, jsonImageId)
-			// strangeBeers = append(strangeBeers, path)
-			panic("Not found")
-		}
+		// var beerID int
+		// for _, beer := range beers {
+		// 	if strings.Contains(*beer.OldImageIds, jsonImageId) {
+		// 		beerID = beer.ID
+		// 		break
+		// 	}
+		// }
+		// if beerID == 0 {
+		// 	fmt.Printf("Beer not found: %s, %s\n", path, jsonImageId)
+		// 	// strangeBeers = append(strangeBeers, path)
+		// 	panic("Not found")
+		// }
 
 		items := []model.UploadFormValues{
 			{
 				Filename:    path,
 				Content:     b,
 				ContentType: contentType,
-				BeerID:      &beerID,
+				// BeerID:      &beerID,
 			},
 		}
 
