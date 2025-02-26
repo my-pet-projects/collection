@@ -21,19 +21,22 @@ func NewMediaStore(db *DbClient, logger *slog.Logger) MediaStore {
 	}
 }
 
-func (s MediaStore) UpsertMediaItem(ctx context.Context, formValue model.UploadFormValues) (model.MediaItem, error) {
+func (s MediaStore) UpsertMediaItem(ctx context.Context, img *model.MediaImage) (model.MediaItem, error) {
 	itemToUpsert := model.MediaItem{
-		ExternalFilename: formValue.ExternalFilename(),
-		OriginalFilename: formValue.Filename,
-		ContentType:      formValue.ContentType,
-		Hash:             formValue.Hash(),
+		ExternalFilename: img.ExternalName,
+		OriginalFilename: img.OriginalName,
+		ContentType:      img.ContentType,
+		Hash:             img.Hash,
+		Size:             img.Size,
+		Width:            img.Metadata.Width,
+		Height:           img.Metadata.Height,
 	}
 	res := s.db.gorm.
 		Debug().
 		Clauses(
 			clause.OnConflict{
 				Columns:   []clause.Column{{Name: "hash"}},
-				DoUpdates: clause.AssignmentColumns([]string{"original_filename", "content_type", "updated_at"}),
+				DoUpdates: clause.AssignmentColumns([]string{"original_filename", "content_type", "size", "width", "height", "updated_at"}),
 			},
 			clause.Returning{},
 		).
