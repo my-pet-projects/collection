@@ -50,7 +50,7 @@ linters:
     - perfsprint # want to have consistent usage of fmt.Sprintf
 
     # deprecated
-    - exportloopref
+    - tenv
   enable-all: true
 
 linters-settings:
