@@ -31,10 +31,8 @@ func NewImageService(mediaStore *db.MediaStore, beerStore *db.BeerStore, beerMed
 }
 
 func (s ImageService) UploadImage(ctx context.Context, formValues []model.UploadFormValues) error {
-
 	extractDigitsRe := regexp.MustCompile(`^(\d+).*\.png$`)
-
-	createdBeersMap := make(map[string]int, 0)
+	fileBeerIDToDBIDMap := make(map[string]int, 0)
 
 	for _, formValue := range formValues {
 		currentBeer := ""
@@ -81,7 +79,7 @@ func (s ImageService) UploadImage(ctx context.Context, formValues []model.Upload
 			return errors.Wrap(uploadErr, "s3 image upload")
 		}
 
-		createdBeer, exists := createdBeersMap[currentBeer]
+		createdBeer, exists := fileBeerIDToDBIDMap[currentBeer]
 		if !exists {
 			s.logger.Info("Creating new beer for image", slog.String("beerId", currentBeer))
 			beer := model.NewBeerFromUploadForm(formValue)
@@ -89,7 +87,7 @@ func (s ImageService) UploadImage(ctx context.Context, formValues []model.Upload
 			if beerErr != nil {
 				return errors.Wrap(beerErr, "insert beer")
 			}
-			createdBeersMap[currentBeer] = beerID
+			fileBeerIDToDBIDMap[currentBeer] = beerID
 			createdBeer = beerID
 		}
 
