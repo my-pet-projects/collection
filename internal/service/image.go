@@ -32,6 +32,8 @@ func NewImageService(mediaStore *db.MediaStore, beerStore *db.BeerStore, beerMed
 
 func (s ImageService) UploadImage(ctx context.Context, formValues []model.UploadFormValues) error {
 	extractDigitsRe := regexp.MustCompile(`^(\d+).*\.png$`)
+
+	// Map from extracted beer ID (string) to created beer database ID (int)
 	fileBeerIDToDBIDMap := make(map[string]int, 0)
 
 	for _, formValue := range formValues {
