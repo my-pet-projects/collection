@@ -1,6 +1,11 @@
 package model
 
-import "time"
+import (
+	"fmt"
+	"path/filepath"
+	"strings"
+	"time"
+)
 
 type Beer struct {
 	ID          int `gorm:"primaryKey"`
@@ -18,8 +23,13 @@ type Beer struct {
 }
 
 func NewBeerFromUploadForm(formValue UploadFormValues) Beer {
+	brand := strings.TrimSpace(filepath.Base(formValue.Filename))
+	if ext := filepath.Ext(brand); ext != "" {
+		brand = strings.TrimSuffix(brand, ext)
+	}
+
 	return Beer{
-		Brand:    formValue.Filename,
+		Brand:    fmt.Sprintf("Uncategorized - %s", brand),
 		IsActive: false,
 	}
 }

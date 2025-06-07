@@ -37,10 +37,21 @@ func (s ImageService) UploadImage(ctx context.Context, formValues []model.Upload
 	createdBeersMap := make(map[string]int, 0)
 
 	for _, formValue := range formValues {
+		currentBeer := ""
+		matches := extractDigitsRe.FindStringSubmatch(formValue.Filename)
+		if len(matches) > 0 {
+			currentBeer = matches[1]
+		}
+
+		if currentBeer == "" {
+			s.logger.Info("No beer ID found in filename, skipping beer creation", slog.String("filename", formValue.Filename))
+			continue
+		}
+
 		s.logger.Info("Preparing image", slog.String("originalFilename", formValue.Filename))
 		img, imgErr := model.NewMediaImage(formValue)
 		if imgErr != nil {
-			return errors.Wrap(imgErr, "create original image")
+			return errors.Wrap(imgErr, "create image")
 		}
 
 		beerMedia := model.BeerMedia{
@@ -68,12 +79,6 @@ func (s ImageService) UploadImage(ctx context.Context, formValues []model.Upload
 		uploadErr := s.s3Storage.Upload(ctx, img)
 		if uploadErr != nil {
 			return errors.Wrap(uploadErr, "s3 image upload")
-		}
-
-		currentBeer := ""
-		matches := extractDigitsRe.FindStringSubmatch(formValue.Filename)
-		if len(matches) > 0 {
-			currentBeer = matches[1]
 		}
 
 		createdBeer, exists := createdBeersMap[currentBeer]
