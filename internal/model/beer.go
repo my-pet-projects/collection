@@ -17,6 +17,13 @@ type Beer struct {
 	BeerMedias  []BeerMedia `gorm:"foreignKey:BeerID;references:ID"`
 }
 
+func NewBeerFromUploadForm(formValue UploadFormValues) Beer {
+	return Beer{
+		Brand:    formValue.Filename,
+		IsActive: false,
+	}
+}
+
 type Brewery struct {
 	ID      int
 	Name    string

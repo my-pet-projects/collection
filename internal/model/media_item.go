@@ -75,7 +75,7 @@ func NewMediaImage(formValues UploadFormValues) (*MediaImage, error) {
 	}
 
 	mediaImage := &MediaImage{
-		ExternalName: fmt.Sprintf("original/%s", formValues.ExternalFilename()),
+		ExternalName: formValues.ExternalFilename(),
 		Bytes:        formValues.Content,
 		Size:         len(formValues.Content),
 		Hash:         formValues.Hash(),
