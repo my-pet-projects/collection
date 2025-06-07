@@ -32,23 +32,26 @@ func NewClient(config *clerk.ClientConfig) *Client {
 
 type CreateParams struct {
 	clerk.APIParams
-	EmailAddresses          *[]string        `json:"email_address,omitempty"`
-	PhoneNumbers            *[]string        `json:"phone_number,omitempty"`
-	Web3Wallets             *[]string        `json:"web3_wallet,omitempty"`
-	Username                *string          `json:"username,omitempty"`
-	Password                *string          `json:"password,omitempty"`
-	FirstName               *string          `json:"first_name,omitempty"`
-	LastName                *string          `json:"last_name,omitempty"`
-	ExternalID              *string          `json:"external_id,omitempty"`
-	UnsafeMetadata          *json.RawMessage `json:"unsafe_metadata,omitempty"`
-	PublicMetadata          *json.RawMessage `json:"public_metadata,omitempty"`
-	PrivateMetadata         *json.RawMessage `json:"private_metadata,omitempty"`
-	PasswordDigest          *string          `json:"password_digest,omitempty"`
-	PasswordHasher          *string          `json:"password_hasher,omitempty"`
-	SkipPasswordRequirement *bool            `json:"skip_password_requirement,omitempty"`
-	SkipPasswordChecks      *bool            `json:"skip_password_checks,omitempty"`
-	TOTPSecret              *string          `json:"totp_secret,omitempty"`
-	BackupCodes             *[]string        `json:"backup_codes,omitempty"`
+	EmailAddresses            *[]string        `json:"email_address,omitempty"`
+	PhoneNumbers              *[]string        `json:"phone_number,omitempty"`
+	Web3Wallets               *[]string        `json:"web3_wallet,omitempty"`
+	Username                  *string          `json:"username,omitempty"`
+	Password                  *string          `json:"password,omitempty"`
+	FirstName                 *string          `json:"first_name,omitempty"`
+	LastName                  *string          `json:"last_name,omitempty"`
+	ExternalID                *string          `json:"external_id,omitempty"`
+	UnsafeMetadata            *json.RawMessage `json:"unsafe_metadata,omitempty"`
+	PublicMetadata            *json.RawMessage `json:"public_metadata,omitempty"`
+	PrivateMetadata           *json.RawMessage `json:"private_metadata,omitempty"`
+	PasswordDigest            *string          `json:"password_digest,omitempty"`
+	PasswordHasher            *string          `json:"password_hasher,omitempty"`
+	SkipPasswordRequirement   *bool            `json:"skip_password_requirement,omitempty"`
+	SkipPasswordChecks        *bool            `json:"skip_password_checks,omitempty"`
+	TOTPSecret                *string          `json:"totp_secret,omitempty"`
+	BackupCodes               *[]string        `json:"backup_codes,omitempty"`
+	DeleteSelfEnabled         *bool            `json:"delete_self_enabled,omitempty"`
+	CreateOrganizationEnabled *bool            `json:"create_organization_enabled,omitempty"`
+	CreateOrganizationsLimit  *int             `json:"create_organizations_limit,omitempty"`
 	// Specified in RFC3339 format
 	LegalAcceptedAt *string `json:"legal_accepted_at,omitempty"`
 	SkipLegalChecks *bool   `json:"skip_legal_checks,omitempty"`
@@ -215,6 +218,7 @@ type ListParams struct {
 	PhoneNumberQuery  *string  `json:"phone_number_query,omitempty"`
 	UsernameQuery     *string  `json:"username_query,omitempty"`
 	NameQuery         *string  `json:"name_query,omitempty"`
+	Banned            *bool    `json:"banned,omitempty"`
 	EmailAddresses    []string `json:"email_address,omitempty"`
 	ExternalIDs       []string `json:"external_id,omitempty"`
 	PhoneNumbers      []string `json:"phone_number,omitempty"`
@@ -255,6 +259,10 @@ func (params *ListParams) ToQuery() url.Values {
 	if params.NameQuery != nil {
 		q.Add("name_query", *params.NameQuery)
 	}
+	if params.Banned != nil {
+		q.Add("banned", strconv.FormatBool(*params.Banned))
+	}
+
 	for _, v := range params.EmailAddresses {
 		q.Add("email_address", v)
 	}
@@ -524,16 +532,14 @@ func (c *Client) DeleteWeb3Wallet(ctx context.Context, userID, identificationID 
 	return resource, err
 }
 
-// CreateTOTP creates a TOTP (Time-based One-Time Password) for the user.
+// Deprecated: CreateTOTP creates a TOTP (Time-based One-Time Password) for the user.
+// The endpoint used for this method has been removed, we kept the method for backwards compatibility,
+// and now it's a noop action.
 func (c *Client) CreateTOTP(ctx context.Context, userID string) (*clerk.TOTP, error) {
-	path, err := clerk.JoinPath(path, userID, "/totp")
-	if err != nil {
-		return nil, err
+	resource := &clerk.TOTP{
+		Object: "totp",
 	}
-	req := clerk.NewAPIRequest(http.MethodPost, path)
-	resource := &clerk.TOTP{}
-	err = c.Backend.Call(ctx, req, resource)
-	return resource, err
+	return resource, nil
 }
 
 // DeleteTOTP deletes all the TOTPs from a given user.

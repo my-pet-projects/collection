@@ -1,92 +1,83 @@
+version: "2"
 run:
-  timeout: 10m
   tests: true
-
-output:
-  sort-results: true
-
+linters:
+  default: all
+  disable:
+    - canonicalheader # don't want to have canonical headers
+    - depguard # don't need dependencies restrictions
+    - err113 # don't want to use static errors
+    - errchkjson # don't want to check encoding error return value in tests
+    - exhaustruct # don't want to initialize all struct fields
+    - ireturn # want to return interfaces
+    - nilnil # want to return nil,nil
+    - nlreturn # sometimes don't want to have a blank line before return
+    - perfsprint # want to have consistent usage of fmt.Sprintf
+    - tagalign # don't want to force tag alignment
+    - testpackage # don't want to use separate _test packages
+    - wsl # annoying cuddle rules
+  settings:
+    errcheck:
+      exclude-functions:
+        - (*github.com/gin-gonic/gin.Context).AbortWithError
+    funlen:
+      lines: 100
+      statements: 60
+    lll:
+      line-length: 180
+    revive:
+      confidence: 0.8
+    varnamelen:
+      min-name-length: 2
+      ignore-decls:
+        - sb strings.Builder
+        - wg sync.WaitGroup
+        - wg *sync.WaitGroup
+        - r *http.Request
+        - w http.ResponseWriter
+    wrapcheck:
+      ignore-sigs:
+        - errors.Wrap(
+        - errors.Wrapf(
+        - errors.New(
+        - fmt.Errorf(
+        - apperr.New
+        - shared.Error
+        - (github.com/a-h/templ.Component).Render
+        - (*github.com/my-pet-projects/collection/internal/web.ReqRespPair).Render
+        - (*github.com/my-pet-projects/collection/internal/web.ReqRespPair).NoContent
+        - (*github.com/my-pet-projects/collection/internal/web.ReqRespPair).Redirect
+  exclusions:
+    rules:
+      - path: .*_test.go
+        linters:
+          - bodyclose
+          - cyclop
+          - dupl
+          - err113
+          - errcheck
+          - funlen
+          - gocognit
+          - goconst
+          - gosec
+          - gosmopolitan
+          - lll
+          - noctx
+          - wrapcheck
 issues:
-  exclude-use-default: false
-  include:
-    - EXC0002 # golint (comment on exported (method|function|type|const)|should have( a package)? comment|comment should be of the form)
-    - EXC0003 # golint func name will be used as test\.Test.* by other packages, and that stutters; consider calling this
-    - EXC0004 # govet (possible misuse of unsafe.Pointer|should have signature)
-    - EXC0005 # staticcheck ineffective break statement. Did you mean to break out of the outer loop
-    - EXC0011 # stylecheck (comment on exported (method|function|type|const)|should have( a package)? comment|comment should be of the form)
-
-  exclude-rules:
-    - path: .*_test.go
-      linters:
-        - noctx
-        - dupl
-        - cyclop
-        - errcheck
-        - gosec
-        - lll
-        - funlen
-        - gocognit
-        - goconst
-        - goerr113
-        - wrapcheck
-        - bodyclose
+  max-issues-per-linter: 0
   max-same-issues: 0
   new: false
-  max-issues-per-linter: 0
-
-linters:
-  disable:
-    # obnoxious
-    - wsl # annoying cuddle rules
-    - nlreturn # sometimes don't want to have a blank line before return
-    - stylecheck # don't want to have package comments
-    - testpackage # don't want to use separate _test packages
-    - ireturn # want to return interfaces
-    - err113 # sometimes don't want to use static errors
-    - nilnil # want to return nil,nil
-    - exhaustruct # don't want to initialize all struct fields
-    - errchkjson # don't want to check encoding error return value in tests
-    - depguard # don't need dependencies restrictions
-    - tagalign # don't want to force tag alignment
-    - perfsprint # want to have consistent usage of fmt.Sprintf
-
-    # deprecated
-    - tenv
-  enable-all: true
-
-linters-settings:
-  govet:
-    shadow: true
-  wrapcheck:
-    ignoreSigs:
-      - errors.Wrap(
-      - errors.Wrapf(
-      - errors.New(
-      - fmt.Errorf(
-      - (github.com/a-h/templ.Component).Render(
-      - (*github.com/my-pet-projects/collection/internal/web.ReqRespPair).Render(
-      - (*github.com/my-pet-projects/collection/internal/web.ReqRespPair).RenderError(
-      - (*github.com/my-pet-projects/collection/internal/web.ReqRespPair).RenderAppError(
-      - (*github.com/my-pet-projects/collection/internal/web.ReqRespPair).NoContent(
-      - github.com/my-pet-projects/collection/internal/apperr.NewBadRequestError(
-      - github.com/my-pet-projects/collection/internal/apperr.NewInternalServerError(
-  lll:
-    line-length: 180
-  errcheck:
-    exclude-functions:
-      - (*github.com/gin-gonic/gin.Context).AbortWithError
-  varnamelen:
-    min-name-length: 2
-    ignore-decls:
-      - sb strings.Builder
-      - wg sync.WaitGroup
-      - wg *sync.WaitGroup
-      - r *http.Request
-  gci:
-    custom-order: true
-    skip-generated: true
-    sections:
-      - standard # captures all standard packages
-      - default # contains all imports that could not be matched to another section type
-      - prefix(github.com/my-pet-projects/collection) # groups all application-wide imports
-  revive:
-    confidence: 0.8
+formatters:
+  enable:
+    - gci
+    - gofmt
+    - gofumpt
+    - goimports
+  settings:
+    gci:
+      sections:
+        - standard # captures all standard packages.
+        - default # contains all imports that could not be matched to another section type.
+        - prefix(github.concur.com) # groups all company-wide imports.
+        - prefix(github.com/my-pet-projects/collection) # groups all application-wide imports

@@ -8,8 +8,8 @@ import (
 	"sort"
 
 	"github.com/antlr4-go/antlr/v4"
-	"github.com/libsql/sqlite-antlr4-parser/sqliteparser"
-	"github.com/libsql/sqlite-antlr4-parser/sqliteparserutils"
+	"github.com/tursodatabase/libsql-client-go/sqliteparser"
+	"github.com/tursodatabase/libsql-client-go/sqliteparserutils"
 )
 
 type ParamsInfo struct {
@@ -32,12 +32,15 @@ func ParseStatement(sql string) ([]string, []ParamsInfo, error) {
 }
 
 func ParseStatementAndArgs(sql string, args []driver.NamedValue) ([]string, []Params, error) {
+	stmts, _ := sqliteparserutils.SplitStatement(sql)
+
+	if len(args) == 0 {
+		return stmts, nil, nil
+	}
 	parameters, err := ConvertArgs(args)
 	if err != nil {
 		return nil, nil, err
 	}
-
-	stmts, _ := sqliteparserutils.SplitStatement(sql)
 
 	stmtsParams := make([]Params, len(stmts))
 	totalParametersAlreadyUsed := 0
