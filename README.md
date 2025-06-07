@@ -5,6 +5,7 @@
 ### Create dump
 
 ```bash
+turso auth login
 turso db shell beer-collection-fresh-test .dump > beer-collection-dump.sql
 ```
 

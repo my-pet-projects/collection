@@ -102,7 +102,7 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 	geoService := service.NewGeographyService(&geoStore, logger)
 	breweryService := service.NewBreweryService(&breweryStore, &geoStore, logger)
 	beerService := service.NewBeerService(&beerStore, &styleStore, &breweryStore, logger)
-	imageService := service.NewImageService(&mediaStore, &beerMediaStore, &s3Storage, logger)
+	imageService := service.NewImageService(&mediaStore, &beerStore, &beerMediaStore, &s3Storage, logger)
 
 	geoHandler := handler.NewGeographyHandler(geoService, logger)
 	breweryHandler := handler.NewBreweryHandler(breweryService, geoService, logger)

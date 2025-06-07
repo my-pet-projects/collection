@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"log/slog"
+	"regexp"
 
 	"github.com/pkg/errors"
 
@@ -13,14 +14,16 @@ import (
 
 type ImageService struct {
 	mediaStore     *db.MediaStore
+	beerStore      *db.BeerStore
 	beerMediaStore *db.BeerMediaStore
 	s3Storage      *storage.S3Storage
 	logger         *slog.Logger
 }
 
-func NewImageService(mediaStore *db.MediaStore, beerMediaStore *db.BeerMediaStore, s3Storage *storage.S3Storage, logger *slog.Logger) ImageService {
+func NewImageService(mediaStore *db.MediaStore, beerStore *db.BeerStore, beerMediaStore *db.BeerMediaStore, s3Storage *storage.S3Storage, logger *slog.Logger) ImageService {
 	return ImageService{
 		mediaStore:     mediaStore,
+		beerStore:      beerStore,
 		beerMediaStore: beerMediaStore,
 		s3Storage:      s3Storage,
 		logger:         logger,
@@ -28,11 +31,42 @@ func NewImageService(mediaStore *db.MediaStore, beerMediaStore *db.BeerMediaStor
 }
 
 func (s ImageService) UploadImage(ctx context.Context, formValues []model.UploadFormValues) error {
+	extractDigitsRe := regexp.MustCompile(`^(\d+).*\.png$`)
+
+	// Map from extracted beer ID (string) to created beer database ID (int)
+	fileBeerIDToDBIDMap := make(map[string]int, 0)
+
 	for _, formValue := range formValues {
-		s.logger.Info("Preparing original image", slog.String("originalFilename", formValue.Filename))
+		currentBeer := ""
+		matches := extractDigitsRe.FindStringSubmatch(formValue.Filename)
+		if len(matches) > 0 {
+			currentBeer = matches[1]
+		}
+
+		if currentBeer == "" {
+			s.logger.Info("No beer ID found in filename, skipping beer creation", slog.String("filename", formValue.Filename))
+			continue
+		}
+
+		s.logger.Info("Preparing image", slog.String("originalFilename", formValue.Filename))
 		img, imgErr := model.NewMediaImage(formValue)
 		if imgErr != nil {
-			return errors.Wrap(imgErr, "create original and preview image")
+			return errors.Wrap(imgErr, "create image")
+		}
+
+		beerMedia := model.BeerMedia{
+			Media: model.MediaItem{
+				Hash: img.Hash,
+			},
+		}
+		images, imagesErr := s.beerMediaStore.SimilarMediaItems(ctx, beerMedia)
+		if imagesErr != nil {
+			return errors.Wrap(imagesErr, "fetch similar beer media items")
+		}
+
+		if len(images) != 0 {
+			s.logger.Info("Skipping image upload, similar image already exists", slog.String("hash", img.Hash), slog.String("filename", formValue.Filename))
+			continue
 		}
 
 		s.logger.Info("Upserting media item", slog.String("originalFilename", formValue.Filename))
@@ -41,14 +75,26 @@ func (s ImageService) UploadImage(ctx context.Context, formValues []model.Upload
 			return errors.Wrap(upsErr, "upsert media item")
 		}
 
-		s.logger.Info("Uploading full-size image", slog.String("name", img.ExternalName), slog.Int("size", img.Size))
+		s.logger.Info("Uploading image to S3", slog.String("name", img.ExternalName), slog.Int("size", img.Size))
 		uploadErr := s.s3Storage.Upload(ctx, img)
 		if uploadErr != nil {
 			return errors.Wrap(uploadErr, "s3 image upload")
 		}
 
+		createdBeer, exists := fileBeerIDToDBIDMap[currentBeer]
+		if !exists {
+			s.logger.Info("Creating new beer for image", slog.String("beerId", currentBeer))
+			beer := model.NewBeerFromUploadForm(formValue)
+			beerID, beerErr := s.beerStore.InsertBeer(beer)
+			if beerErr != nil {
+				return errors.Wrap(beerErr, "insert beer")
+			}
+			fileBeerIDToDBIDMap[currentBeer] = beerID
+			createdBeer = beerID
+		}
+
 		s.logger.Info("Upserting beer media item", slog.String("originalFilename", formValue.Filename), slog.Any("imageType", img.ImageType))
-		_, insErr := s.beerMediaStore.UpsertBeerMediaItem(ctx, mediaItem, img, formValue.BeerID)
+		_, insErr := s.beerMediaStore.UpsertBeerMediaItem(ctx, mediaItem, img, &createdBeer)
 		if insErr != nil {
 			return errors.Wrap(insErr, "upsert beer media")
 		}
