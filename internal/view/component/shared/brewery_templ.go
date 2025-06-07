@@ -39,7 +39,7 @@ func breweriesJson(countriesData BreweriesData) string {
 		}
 		choices = append(choices, choicesData{
 			Value:            fmt.Sprint(brewery.ID),
-			Label:            fmt.Sprintf(`<span class="flex items-center justify-center">%s</span><span class="ml-4">%s</span>`, brewery.City.Country.NameCommon, brewery.Name),
+			Label:            brewery.Name,
 			Selected:         selected,
 			Disabled:         false,
 			CustomProperties: customProperty{SearchableValue: brewery.City.Country.NameCommon},
