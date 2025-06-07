@@ -69,6 +69,35 @@ func (s *SessionClaims) HasRole(role string) bool {
 	return s.ActiveOrganizationRole == role
 }
 
+// NeedsReverification checks if a session needs to be reverified based on the
+// provided policy.
+func (s *SessionClaims) NeedsReverification(policy SessionReverificationPolicy) bool {
+	firstFactorAgeMinutes, secondFactorAgeMinutes := s.FactorVerificationAge[0], s.FactorVerificationAge[1]
+
+	firstFactorNeedsReverification := firstFactorAgeMinutes == -1 ||
+		policy.AfterMinutes < firstFactorAgeMinutes
+	isSecondFactorEnabled := secondFactorAgeMinutes != -1
+	secondFactorNeedsReverification := isSecondFactorEnabled &&
+		policy.AfterMinutes < secondFactorAgeMinutes
+
+	switch policy.Level {
+	case SessionReverificationLevelFirstFactor:
+		return firstFactorNeedsReverification
+	case SessionReverificationLevelSecondFactor:
+		if !isSecondFactorEnabled {
+			return firstFactorNeedsReverification
+		}
+		return secondFactorNeedsReverification
+	case SessionReverificationLevelMultiFactor:
+		if !isSecondFactorEnabled {
+			return firstFactorNeedsReverification
+		}
+		return firstFactorNeedsReverification || secondFactorNeedsReverification
+	default:
+		return true
+	}
+}
+
 // RegisteredClaims holds public claim values (as specified in RFC 7519).
 type RegisteredClaims struct {
 	Issuer    string   `json:"iss,omitempty"`
@@ -116,6 +145,7 @@ func (c *RegisteredClaims) ValidateWithLeeway(expected time.Time, leeway time.Du
 // Claims represents private JWT claims that are defined and used
 // by Clerk.
 type Claims struct {
+	Version                       int             `json:"v"`
 	SessionID                     string          `json:"sid"`
 	AuthorizedParty               string          `json:"azp"`
 	ActiveOrganizationID          string          `json:"org_id"`
@@ -123,6 +153,7 @@ type Claims struct {
 	ActiveOrganizationRole        string          `json:"org_role"`
 	ActiveOrganizationPermissions []string        `json:"org_permissions"`
 	Actor                         json.RawMessage `json:"act,omitempty"`
+	FactorVerificationAge         [2]int64        `json:"fva"`
 }
 
 // UnverifiedToken holds the result of a JWT decoding without any

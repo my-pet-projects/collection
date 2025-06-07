@@ -9,8 +9,8 @@ import (
 	"sync"
 	"time"
 
-	"nhooyr.io/websocket"
-	"nhooyr.io/websocket/wsjson"
+	"github.com/coder/websocket"
+	"github.com/coder/websocket/wsjson"
 )
 
 // defaultWSTimeout specifies the timeout used for initial http connection
@@ -201,11 +201,11 @@ func connect(url string, jwt string) (*websocketConn, error) {
 	c, _, err := websocket.Dial(ctx, url, &websocket.DialOptions{
 		Subprotocols: []string{"hrana1"},
 	})
-
-	c.SetReadLimit(1024 * 1024 * 10) // 10MB
 	if err != nil {
 		return nil, err
 	}
+
+	c.SetReadLimit(1024 * 1024 * 16) // 16MB
 
 	err = wsjson.Write(ctx, c, map[string]interface{}{
 		"type": "hello",
