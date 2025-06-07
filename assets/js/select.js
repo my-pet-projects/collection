@@ -40,7 +40,7 @@ customElements.define(
         searchFields,
         searchEnabled: true,
         searchChoices: true,
-        searchResultLimit: 20,
+        searchResultLimit: 100,
         fuseOptions: {
           keys: searchFields,
         },
