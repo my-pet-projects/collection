@@ -53,6 +53,17 @@ func (s BeerMediaStore) FetchMediaItems(ctx context.Context, filter model.MediaI
 	return items, result.Error
 }
 
+func (s BeerMediaStore) SimilarMediaItems(ctx context.Context, item model.BeerMedia) ([]model.BeerMedia, error) {
+	var items []model.BeerMedia
+	result := s.db.gorm.
+		Debug().
+		Where("Hash = @hash", map[string]interface{}{"hash": item.Media.Hash}).
+		Joins("Media").
+		Find(&items)
+
+	return items, result.Error
+}
+
 func (s BeerMediaStore) UpdateMediaItems(ctx context.Context, items []model.BeerMedia) error {
 	res := s.db.gorm.
 		Debug().

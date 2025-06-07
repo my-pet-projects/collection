@@ -66,7 +66,7 @@ func main() { //nolint:funlen
 	}
 	s3Client := s3.NewFromConfig(sdkConfig)
 	s3Storage := storage.NewS3Storage(s3Client, logger)
-	imageService := service.NewImageService(&mediaStore, &beerMediaStore, &s3Storage, logger)
+	imageService := service.NewImageService(&mediaStore, &beerStore, &beerMediaStore, &s3Storage, logger)
 	fmt.Println(imageService)
 
 	beerFilter := model.BeerFilter{}
