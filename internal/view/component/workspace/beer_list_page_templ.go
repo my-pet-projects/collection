@@ -99,6 +99,9 @@ func beersList() templ.Component {
 	})
 }
 
+// BeerList returns a templ component that renders a list of beers with detailed cards.
+//
+// Each card displays beer information including brand, ID, media images, brewery details, cap slots (if present), and beer style. If more pages are available, an infinite scroll trigger is rendered to load additional beers dynamically.
 func BeerList(data BeerListData) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context

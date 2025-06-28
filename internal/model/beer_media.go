@@ -51,6 +51,7 @@ func (p BeerMedia) ParseSlotID(beer Beer) Slot {
 	}
 }
 
+// getGeoPrefix returns a geographic prefix string for the given country, using grouped codes for certain countries and regions, or the country's own code if no grouping applies.
 func getGeoPrefix(country *Country) string {
 	countryGroupings := map[string]string{
 		"GBR": "GBR/IRL",
@@ -77,6 +78,7 @@ func getGeoPrefix(country *Country) string {
 	return country.Cca3
 }
 
+// getSheetID returns the sheet ID for a given country code, using "C2" for Germany and Russia, and "C1" for all other countries.
 func getSheetID(country *Country) string {
 	if country.Cca3 == "DEU" || country.Cca3 == "RUS" {
 		return "C2"

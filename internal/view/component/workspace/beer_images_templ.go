@@ -13,6 +13,9 @@ import (
 	"github.com/my-pet-projects/collection/internal/model"
 )
 
+// BeerImagesPage renders a form for managing and editing images associated with a beer.
+// The component displays a responsive grid of beer media, allowing selection, metadata editing, and slot assignment for cap images.
+// It supports AJAX submission with HTMX, Alpine.js interactivity for selection, and dynamic input fields for cap slot metadata.
 func BeerImagesPage(params BeerPageData) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -216,6 +219,8 @@ func BeerImagesPage(params BeerPageData) templ.Component {
 	})
 }
 
+// BeerMedia renders an image element for a beer media item with appropriate sizing based on its type.
+// The image source is constructed from the media's external filename and served via a CDN with resizing and quality parameters.
 func BeerMedia(beerMedia model.BeerMedia) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context

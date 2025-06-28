@@ -50,6 +50,7 @@ func (b Beer) GetCapSlots() []string {
 	return slots
 }
 
+// NewBeerFromUploadForm creates a new Beer instance from uploaded form values, setting the brand to "Uncategorized" with the base filename and marking it as inactive.
 func NewBeerFromUploadForm(formValue UploadFormValues) Beer {
 	brand := strings.TrimSpace(filepath.Base(formValue.Filename))
 	if ext := filepath.Ext(brand); ext != "" {
