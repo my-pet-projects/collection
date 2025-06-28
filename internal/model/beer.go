@@ -34,7 +34,7 @@ func (b Beer) GetCapSlots() []string {
 		return nil
 	}
 
-	slots := make([]string, 0, len(b.BeerMedias))
+	var slots []string
 	for _, media := range b.BeerMedias {
 		if !media.Type.IsCap() {
 			continue

@@ -24,27 +24,9 @@ func (p BeerMedia) ParseSlotID(beer Beer) Slot {
 	if country == nil {
 		return Slot{}
 	}
-	geoPrefix := beer.GetCountry().Cca3
-	if country.Cca3 == "GBR" || country.Cca3 == "IRL" {
-		geoPrefix = "GBR/IRL"
-	}
-	if country.Cca3 == "ESP" || country.Cca3 == "PRT" {
-		geoPrefix = "ESP/PRT"
-	}
-	if country.Cca3 == "USA" || country.Cca3 == "CAN" || country.Cca3 == "MEX" {
-		geoPrefix = "NA"
-	}
-	if country.Region == "Africa" {
-		geoPrefix = "AF"
-	}
-	if country.Region == "Asia" {
-		geoPrefix = "AS"
-	}
 
-	sheetID := "C1"
-	if country.Cca3 == "DEU" || country.Cca3 == "RUS" {
-		sheetID = "C2"
-	}
+	geoPrefix := getGeoPrefix(country)
+	sheetID := getSheetID(country)
 
 	if p.SlotID == nil || *p.SlotID == "" {
 		return Slot{
@@ -67,6 +49,39 @@ func (p BeerMedia) ParseSlotID(beer Beer) Slot {
 		SheetID:   parsedSheetID,
 		SheetSlot: parsedSheetSlot,
 	}
+}
+
+func getGeoPrefix(country *Country) string {
+	countryGroupings := map[string]string{
+		"GBR": "GBR/IRL",
+		"IRL": "GBR/IRL",
+		"ESP": "ESP/PRT",
+		"PRT": "ESP/PRT",
+		"USA": "NA",
+		"CAN": "NA",
+		"MEX": "NA",
+	}
+
+	regionGroupings := map[string]string{
+		"Africa": "AF",
+		"Asia":   "AS",
+	}
+
+	if group, exists := countryGroupings[country.Cca3]; exists {
+		return group
+	}
+	if group, exists := regionGroupings[country.Region]; exists {
+		return group
+	}
+
+	return country.Cca3
+}
+
+func getSheetID(country *Country) string {
+	if country.Cca3 == "DEU" || country.Cca3 == "RUS" {
+		return "C2"
+	}
+	return "C1"
 }
 
 type Slot struct {

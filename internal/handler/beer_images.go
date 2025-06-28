@@ -59,6 +59,8 @@ func (h WorkspaceServer) SubmitBeerImages(reqResp *web.ReqRespPair) error {
 		return apperr.NewBadRequestError("Invalid form parameter", parseErr)
 	}
 
+	// TODO: Add validation for slot component formats (e.g., geoPrefix pattern, sheetId numeric validation)
+
 	mediaItems := make([]model.BeerMedia, len(ids))
 	for i := range mediaItems {
 		var mediaBeerID *int
@@ -74,6 +76,7 @@ func (h WorkspaceServer) SubmitBeerImages(reqResp *web.ReqRespPair) error {
 			ExternalFilename: sources[i],
 		}
 		if slotGeoPrefixes[i] != "" && slotSheetIDs[i] != "" && slotSheetSlots[i] != "" {
+			// Slot ID format: geoPrefix-sheetId-sheetSlot (e.g., "DEU-C1-A1")
 			slotID := fmt.Sprintf("%s-%s-%s", slotGeoPrefixes[i], slotSheetIDs[i], slotSheetSlots[i])
 			mediaItems[i].SlotID = &slotID
 		}

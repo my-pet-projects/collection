@@ -310,14 +310,14 @@ func BeerList(data BeerListData) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				for _, slot := range beer.GetCapSlots() {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<span class=\"text-sm\">")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<span class=\"mr-2 text-sm\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var18 string
 					templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(slot)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_list_page.templ`, Line: 129, Col: 36}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_list_page.templ`, Line: 129, Col: 41}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 					if templ_7745c5c3_Err != nil {
