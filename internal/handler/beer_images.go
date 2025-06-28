@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -51,6 +52,9 @@ func (h WorkspaceServer) SubmitBeerImages(reqResp *web.ReqRespPair) error {
 	types, parseErr := reqResp.GetIntFormValues("media.type")           //nolint:ineffassign
 	selections, parseErr := reqResp.GetBoolFormValues("media.selected") //nolint:ineffassign
 	sources, parseErr := reqResp.GetStringFormValues("media.src")
+	slotGeoPrefixes, parseErr := reqResp.GetStringFormValues("media.slot.geoPrefix")
+	slotSheetIDs, parseErr := reqResp.GetStringFormValues("media.slot.sheetId")
+	slotSheetSlots, parseErr := reqResp.GetStringFormValues("media.slot.sheetSlot")
 	if parseErr != nil {
 		return apperr.NewBadRequestError("Invalid form parameter", parseErr)
 	}
@@ -68,6 +72,10 @@ func (h WorkspaceServer) SubmitBeerImages(reqResp *web.ReqRespPair) error {
 		mediaItems[i].Media = model.MediaItem{
 			ID:               mediaIDs[i],
 			ExternalFilename: sources[i],
+		}
+		if slotGeoPrefixes[i] != "" && slotSheetIDs[i] != "" && slotSheetSlots[i] != "" {
+			slotID := fmt.Sprintf("%s-%s-%s", slotGeoPrefixes[i], slotSheetIDs[i], slotSheetSlots[i])
+			mediaItems[i].SlotID = &slotID
 		}
 	}
 

@@ -22,6 +22,34 @@ type Beer struct {
 	BeerMedias  []BeerMedia `gorm:"foreignKey:BeerID;references:ID"`
 }
 
+func (b Beer) GetCountry() *Country {
+	if b.Brewery == nil || b.Brewery.City == nil || b.Brewery.City.Country == nil {
+		return nil
+	}
+	return b.Brewery.City.Country
+}
+
+func (b Beer) GetCapSlots() []string {
+	if b.BeerMedias == nil {
+		return nil
+	}
+
+	slots := make([]string, 0, len(b.BeerMedias))
+	for _, media := range b.BeerMedias {
+		if !media.Type.IsCap() {
+			continue
+		}
+
+		if media.SlotID == nil {
+			continue
+		}
+
+		slots = append(slots, *media.SlotID)
+	}
+
+	return slots
+}
+
 func NewBeerFromUploadForm(formValue UploadFormValues) Beer {
 	brand := strings.TrimSpace(filepath.Base(formValue.Filename))
 	if ext := filepath.Ext(brand); ext != "" {
