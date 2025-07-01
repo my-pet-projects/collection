@@ -2,6 +2,7 @@ package model
 
 import (
 	"errors"
+	"strings"
 )
 
 type BeerMedia struct {
@@ -11,10 +12,88 @@ type BeerMedia struct {
 	MediaID int
 	Media   MediaItem `gorm:"foreignKey:MediaID;references:ID"`
 	Type    BeerMediaType
+	SlotID  *string
 }
 
 func (bm BeerMedia) TableName() string {
 	return "beer_medias"
+}
+
+func (p BeerMedia) ParseSlotID(beer Beer) Slot {
+	country := beer.GetCountry()
+	if country == nil {
+		return Slot{}
+	}
+
+	geoPrefix := getGeoPrefix(country)
+	sheetID := getSheetID(country)
+
+	if p.SlotID == nil || *p.SlotID == "" {
+		return Slot{
+			GeoPrefix: geoPrefix,
+			SheetID:   sheetID,
+		}
+	}
+
+	parts := strings.Split(*p.SlotID, "-")
+	if len(parts) != 3 {
+		return Slot{}
+	}
+
+	parsedGeoPrefix := parts[0]
+	parsedSheetSlot := parts[2]
+	parsedSheetID := parts[1]
+
+	return Slot{
+		GeoPrefix: parsedGeoPrefix,
+		SheetID:   parsedSheetID,
+		SheetSlot: parsedSheetSlot,
+	}
+}
+
+func getGeoPrefix(country *Country) string {
+	countryGroupings := map[string]string{
+		"GBR": "GBR/IRL",
+		"IRL": "GBR/IRL",
+		"ESP": "ESP/PRT",
+		"PRT": "ESP/PRT",
+		"BOL": "BOL/PER",
+		"PER": "BOL/PER",
+		"CHL": "CHL/ARG",
+		"ARG": "CHL/ARG",
+		"BLR": "RUS",
+		"CHE": "DEU",
+		"USA": "NA",
+		"CAN": "NA",
+		"MEX": "NA",
+	}
+
+	regionGroupings := map[string]string{
+		"Africa": "AF",
+		"Asia":   "AS",
+	}
+
+	if group, exists := countryGroupings[country.Cca3]; exists {
+		return group
+	}
+	if group, exists := regionGroupings[country.Region]; exists {
+		return group
+	}
+
+	return country.Cca3
+}
+
+func getSheetID(country *Country) string {
+	if country.Cca3 == "DEU" || country.Cca3 == "RUS" {
+		return "C2"
+	}
+	return "C1"
+}
+
+type Slot struct {
+	GeoPrefix string
+	SheetID   string
+	SheetSlot string
 }
 
 type BeerMediaType int
