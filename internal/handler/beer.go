@@ -49,7 +49,7 @@ func (h WorkspaceServer) HandleBeerPage(reqResp *web.ReqRespPair) error {
 	if breweriesErr != nil {
 		return reqResp.RenderError(http.StatusInternalServerError, breweriesErr)
 	}
-	styles, stylesErr := h.beerService.ListBeerStyles()
+	styles, stylesErr := h.beerService.ListBeerStyles(reqResp.Request.Context())
 	if stylesErr != nil {
 		return reqResp.RenderError(http.StatusInternalServerError, stylesErr)
 	}
@@ -79,7 +79,7 @@ func (h WorkspaceServer) HandleCreateBeerPage(reqResp *web.ReqRespPair) error {
 	if breweriesErr != nil {
 		return reqResp.RenderError(http.StatusInternalServerError, breweriesErr)
 	}
-	styles, stylesErr := h.beerService.ListBeerStyles()
+	styles, stylesErr := h.beerService.ListBeerStyles(reqResp.Request.Context())
 	if stylesErr != nil {
 		return reqResp.RenderError(http.StatusInternalServerError, stylesErr)
 	}
@@ -120,7 +120,7 @@ func (h WorkspaceServer) SubmitBeerPage(reqResp *web.ReqRespPair) error {
 	if breweriesErr != nil {
 		return reqResp.RenderError(http.StatusInternalServerError, breweriesErr)
 	}
-	styles, stylesErr := h.beerService.ListBeerStyles()
+	styles, stylesErr := h.beerService.ListBeerStyles(reqResp.Request.Context())
 	if stylesErr != nil {
 		return reqResp.RenderError(http.StatusInternalServerError, stylesErr)
 	}
@@ -165,7 +165,7 @@ func (h WorkspaceServer) ListBeers(reqResp *web.ReqRespPair) error {
 		Page:  page,
 		Limit: 20, //nolint:mnd
 	}
-	pagination, paginationErr := h.beerService.PaginateBeers(filter)
+	pagination, paginationErr := h.beerService.PaginateBeers(reqResp.Request.Context(), filter)
 	if paginationErr != nil {
 		return apperr.NewInternalServerError("Failed to paginate beers", paginationErr)
 	}
