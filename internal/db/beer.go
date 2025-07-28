@@ -1,6 +1,7 @@
 package db
 
 import (
+	"context"
 	"log/slog"
 
 	"gorm.io/gorm"
@@ -37,23 +38,26 @@ func (s BeerStore) GetBeer(id int) (*model.Beer, error) {
 	return &beer, result.Error
 }
 
-func (s BeerStore) PaginateBeers(filter model.BeerFilter) (*model.Pagination[model.Beer], error) {
+func (s BeerStore) PaginateBeers(ctx context.Context, filter model.BeerFilter) (*model.Pagination[model.Beer], error) {
 	pagination := model.Pagination[model.Beer]{
 		Page:  filter.Page,
 		Limit: filter.Limit,
-		Sort:  "Brand",
+		Sort:  "beers.id DESC",
 	}
 
 	if filter.Query != "" {
-		pagination.WhereQuery = "Brand LIKE @name OR Type LIKE @name OR brewery.name LIKE @name"
-		pagination.WhereArgs = map[string]interface{}{"name": "%" + filter.Query + "%"}
+		pagination.WhereQuery = "beers.brand LIKE @name OR beers.type LIKE @name OR brewery.name LIKE @name"
+		pagination.WhereArgs = map[string]interface{}{
+			"name": "%" + filter.Query + "%",
+		}
 	}
 
-	var items []model.Beer
+	var itemsWithCount []model.ResultWithCount[model.Beer]
 	result := s.db.gorm.
+		WithContext(ctx).
 		Debug().
-		Where(pagination.WhereQuery, pagination.WhereArgs).
-		Scopes(paginate(items, &pagination, s.db.gorm)).
+		Model(&model.Beer{}).
+		Scopes(paginate(&pagination)).
 		Joins("BeerStyle").
 		Joins("Brewery").
 		Preload("Brewery.City", func(db *gorm.DB) *gorm.DB {
@@ -61,10 +65,15 @@ func (s BeerStore) PaginateBeers(filter model.BeerFilter) (*model.Pagination[mod
 				Joins("Country")
 		}).
 		Preload("BeerMedias.Media").
-		Find(&items)
-	pagination.Results = items
+		Find(&itemsWithCount)
 
-	return &pagination, result.Error
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	pagination.SetTotalResults(itemsWithCount)
+
+	return &pagination, nil
 }
 
 func (s BeerStore) InsertBeer(beer model.Beer) (int, error) {
