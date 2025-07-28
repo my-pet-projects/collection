@@ -26,7 +26,7 @@ func (h WorkspaceServer) ListBeerStyles(reqResp *web.ReqRespPair) error {
 		Name: reqResp.Request.FormValue("name"),
 		Page: page,
 	}
-	pagination, paginationErr := h.beerService.PaginateBeerStyles(filter)
+	pagination, paginationErr := h.beerService.PaginateBeerStyles(reqResp.Request.Context(), filter)
 	if paginationErr != nil {
 		return apperr.NewInternalServerError("Failed to paginate beer styles", paginationErr)
 	}

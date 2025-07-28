@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"log/slog"
 
 	"github.com/pkg/errors"
@@ -74,8 +75,8 @@ func (s BeerService) UpdateBeer(
 	return nil
 }
 
-func (s BeerService) PaginateBeers(filter model.BeerFilter) (*model.Pagination[model.Beer], error) {
-	beers, beersErr := s.beerStore.PaginateBeers(filter)
+func (s BeerService) PaginateBeers(ctx context.Context, filter model.BeerFilter) (*model.Pagination[model.Beer], error) {
+	beers, beersErr := s.beerStore.PaginateBeers(ctx, filter)
 	if beersErr != nil {
 		return nil, errors.Wrap(beersErr, "paginate beers")
 	}
@@ -90,16 +91,16 @@ func (s BeerService) DeleteBeer(id int) error {
 	return nil
 }
 
-func (s BeerService) ListBeerStyles() ([]model.BeerStyle, error) {
-	pagination, paginationErr := s.styleStore.PaginateBeerStyles(model.BeerStyleFilter{})
+func (s BeerService) ListBeerStyles(ctx context.Context) ([]model.BeerStyle, error) {
+	pagination, paginationErr := s.styleStore.PaginateBeerStyles(ctx, model.BeerStyleFilter{})
 	if paginationErr != nil {
 		return nil, errors.Wrap(paginationErr, "fetch beer styles")
 	}
 	return pagination.Results, nil
 }
 
-func (s BeerService) PaginateBeerStyles(filter model.BeerStyleFilter) (*model.Pagination[model.BeerStyle], error) {
-	pagination, paginationErr := s.styleStore.PaginateBeerStyles(filter)
+func (s BeerService) PaginateBeerStyles(ctx context.Context, filter model.BeerStyleFilter) (*model.Pagination[model.BeerStyle], error) {
+	pagination, paginationErr := s.styleStore.PaginateBeerStyles(ctx, filter)
 	if paginationErr != nil {
 		return nil, errors.Wrap(paginationErr, "paginate beer styles")
 	}

@@ -70,7 +70,7 @@ func main() { //nolint:funlen
 	fmt.Println(imageService)
 
 	beerFilter := model.BeerFilter{}
-	pagination, _ := beerStore.PaginateBeers(beerFilter)
+	pagination, _ := beerStore.PaginateBeers(context.Background(), beerFilter)
 	beers := pagination.Results
 	fmt.Println(len(beers))
 

@@ -1,6 +1,7 @@
 package db
 
 import (
+	"context"
 	"log/slog"
 
 	"github.com/my-pet-projects/collection/internal/model"
@@ -27,7 +28,7 @@ func (s BeerStyleStore) GetBeerStyle(id int) (model.BeerStyle, error) {
 	return item, result.Error
 }
 
-func (s BeerStyleStore) PaginateBeerStyles(filter model.BeerStyleFilter) (model.Pagination[model.BeerStyle], error) {
+func (s BeerStyleStore) PaginateBeerStyles(ctx context.Context, filter model.BeerStyleFilter) (model.Pagination[model.BeerStyle], error) {
 	var items []model.BeerStyle
 	pagination := model.Pagination[model.BeerStyle]{
 		Page:       filter.Page,
@@ -36,7 +37,14 @@ func (s BeerStyleStore) PaginateBeerStyles(filter model.BeerStyleFilter) (model.
 		WhereQuery: "Name LIKE ?",
 		WhereArgs:  "%" + filter.Name + "%",
 	}
-	result := s.db.gorm.Where(pagination.WhereQuery, pagination.WhereArgs).Scopes(paginate(items, &pagination, s.db.gorm)).Find(&items)
+	result := s.db.gorm.
+		WithContext(ctx).
+		Debug().
+		Model(&model.BeerStyle{}).
+		Where(pagination.WhereQuery, pagination.WhereArgs).
+		Scopes(paginate(&pagination)).
+		Find(&items)
+
 	pagination.Results = items
 
 	return pagination, result.Error
