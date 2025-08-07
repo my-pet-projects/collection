@@ -30,6 +30,13 @@ func (b Beer) HasBrewery() bool {
 	return b.Brewery != nil
 }
 
+func (b Beer) HasCountry() bool {
+	if b.Brewery == nil || b.Brewery.City == nil || b.Brewery.City.Country == nil {
+		return false
+	}
+	return true
+}
+
 func (b Beer) GetCountry() *Country {
 	if b.Brewery == nil || b.Brewery.City == nil || b.Brewery.City.Country == nil {
 		return nil
