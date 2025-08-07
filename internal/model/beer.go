@@ -22,11 +22,23 @@ type Beer struct {
 	BeerMedias  []BeerMedia `gorm:"foreignKey:BeerID;references:ID"`
 }
 
+func (b Beer) HasBeerStyle() bool {
+	return b.BeerStyle != nil
+}
+
+func (b Beer) HasBrewery() bool {
+	return b.Brewery != nil
+}
+
 func (b Beer) GetCountry() *Country {
 	if b.Brewery == nil || b.Brewery.City == nil || b.Brewery.City.Country == nil {
 		return nil
 	}
 	return b.Brewery.City.Country
+}
+
+func (b Beer) HasCapSlots() bool {
+	return b.GetCapSlots() != nil && len(b.GetCapSlots()) != 0
 }
 
 func (b Beer) GetCapSlots() []string {
@@ -70,6 +82,20 @@ type Brewery struct {
 	OldId   *string
 	// Country *Country `gorm:"foreignKey:Cca2"`
 	City *City `gorm:"foreignKey:GeoID;references:ID"`
+}
+
+func (b Brewery) GetCountryName() string {
+	if b.City == nil {
+		return "unknown"
+	}
+	return b.City.Country.NameCommon
+}
+
+func (b Brewery) GetCityName() string {
+	if b.City == nil {
+		return "unknown"
+	}
+	return b.City.Name
 }
 
 type Country struct {

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/my-pet-projects/collection/internal/model"
 	"github.com/my-pet-projects/collection/internal/view/layout"
+	"strconv"
 	"strings"
 )
 
@@ -64,30 +65,41 @@ templ beersList() {
 
 templ BeerList(data BeerListData) {
 	for idx, beer := range data.Beers {
-		<div class="group overflow-hidden rounded-lg bg-white shadow-md transition-all duration-300 hover:shadow-lg">
+		<div class="group overflow-hidden rounded-2xl bg-white p-0.5 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
 			<div class="p-6">
-				<div class="mb-4 flex items-start justify-between">
-					<div class="mb-2 flex items-center">
-						if beer.Brewery != nil {
-							<img
-								src={ fmt.Sprintf("https://flagcdn.com/w40/%s.png", strings.ToLower(beer.Brewery.City.CountryCode)) }
-								alt={ fmt.Sprintf("%s flag", beer.Brewery.City.CountryCode) }
-								class="mr-4 h-4 w-6 rounded object-cover"
-							/>
+				<!-- Header -->
+				<div class="mb-6 flex items-start justify-between">
+					<div class="flex items-center space-x-4">
+						if beer.GetCountry() != nil {
+							<div>
+								{{ countryCode := beer.GetCountry().Cca2 }}
+								<img
+									src={ fmt.Sprintf("https://flagcdn.com/w40/%s.png", strings.ToLower(countryCode)) }
+									alt={ fmt.Sprintf("%s flag", countryCode) }
+									class="h-5 w-7 rounded-md border border-white object-cover shadow-md ring-2 ring-gray-200"
+								/>
+							</div>
 						}
-						<h2 class="text-2xl font-bold text-gray-900">{ beer.Brand } | { fmt.Sprintf("%d", beer.ID) }</h2>
+						<div>
+							<h2 class="text-2xl font-bold tracking-tight text-slate-800">{ beer.Brand }</h2>
+							<div class="mt-1 flex items-center gap-2">
+								<span class="rounded-md bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600">
+									#{ strconv.Itoa(beer.ID) }
+								</span>
+							</div>
+						</div>
 					</div>
-					<a
+					<button
 						href={ templ.URL(fmt.Sprintf("/workspace/beer/%d/overview", beer.ID)) }
-						class="rounded-full p-2 opacity-0 transition-opacity duration-200 hover:bg-gray-100 group-hover:opacity-100"
+						class="rounded-lg p-2 opacity-0 transition-opacity duration-200 hover:bg-gray-100 group-hover:opacity-100"
 					>
 						<svg class="h-4 w-4" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
 							<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
 							<path d="m15 5 4 4"></path>
 						</svg>
-						<span class="sr-only">Edit</span>
-					</a>
+					</button>
 				</div>
+				<!-- Images Section -->
 				<div class="mb-3 flex items-end gap-2 rounded-lg bg-gray-50 p-2">
 					for _, media := range beer.BeerMedias {
 						if media.Type.IsBottle() {
@@ -99,37 +111,49 @@ templ BeerList(data BeerListData) {
 						}
 					}
 				</div>
-				if beer.Brewery != nil {
-					<div class="mb-4 space-y-2">
-						<div class="flex items-center gap-2 text-gray-600">
-							<svg class="h-4 w-4" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
-								<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"></path><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"></path><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"></path><path d="M10 6h4"></path><path d="M10 10h4"></path><path d="M10 14h4"></path><path d="M10 18h4"></path>
-							</svg>
-							<span class="text-sm">{ beer.Brewery.Name }</span>
+				<!-- Info Section -->
+				<div class="mb-6 space-y-3">
+					if beer.HasBrewery() {
+						{{ brewery := beer.Brewery }}
+						<div class="group flex items-center gap-3 text-slate-600">
+							<div class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600 transition-colors group-hover:bg-blue-100">
+								<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-7 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+								</svg>
+							</div>
+							<span class="text-sm font-medium">{ brewery.Name }</span>
 						</div>
-						<div class="flex items-center gap-2 text-gray-600">
-							<svg class="h-4 w-4" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
-								<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle>
-							</svg>
-							<span class="text-sm">{ beer.Brewery.City.Name }, { beer.Brewery.City.Country.NameCommon }</span>
+						<div class="group flex items-center gap-3 text-slate-600">
+							<div class="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 transition-colors group-hover:bg-emerald-100">
+								<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+								</svg>
+							</div>
+							<span class="text-sm font-medium">{ brewery.GetCityName() }, { brewery.GetCountryName() }</span>
 						</div>
-					</div>
-				}
-				if beer.GetCapSlots() != nil && len(beer.GetCapSlots()) != 0 {
-					<div class="mb-4 space-y-2">
-						<div class="flex items-center gap-2 text-gray-600">
-							<svg class="h-4 w-4" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2v2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-							</svg>
-							for _, slot := range beer.GetCapSlots() {
+					}
+					if beer.HasCapSlots() {
+						{{ capSlots := beer.GetCapSlots() }}
+						<div class="group flex items-center gap-3 text-slate-600">
+							<div class="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-50 text-purple-600 transition-colors group-hover:bg-purple-100">
+								<svg class="h-4 w-4" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2v2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+								</svg>
+							</div>
+							for _, slot := range capSlots {
 								<span class="mr-2 text-sm">{ slot }</span>
 							}
 						</div>
-					</div>
-				}
-				if beer.BeerStyle != nil {
+					}
+				</div>
+				<!-- Badge section -->
+				if beer.HasBeerStyle() {
 					<div class="flex items-center justify-between">
-						<span class="rounded-full bg-gray-200 px-2 py-1 text-sm text-gray-700">{ beer.BeerStyle.Name }</span>
+						<!-- Beer Style Badge -->
+						<div class="inline-flex items-center rounded-full border border-slate-300/50 bg-gradient-to-r from-slate-100 to-slate-200 px-4 py-2 shadow-sm">
+							<span class="text-sm font-medium text-slate-700">{ beer.BeerStyle.Name }</span>
+						</div>
 					</div>
 				}
 			</div>
@@ -153,7 +177,7 @@ templ bottleImage(media model.BeerMedia) {
 		x-intersect.threshold.25="isIntersected = true"
 		class="order-first flex flex-shrink-0 items-end justify-center"
 	>
-		<div class="min-w-14 flex h-28 w-auto items-center justify-center rounded bg-white p-2 shadow-sm">
+		<div class="min-w-14 flex h-28 w-auto items-center justify-center rounded-xl border border-slate-200/60 bg-white p-2 shadow-sm transition duration-300 ease-in-out hover:scale-105">
 			<img
 				x-bind:src="isIntersected ? `${imageSrc}` : `/assets/img/tail-spin.svg`"
 				x-bind:class="{ 'opacity-50': !isIntersected }"
@@ -172,7 +196,7 @@ templ capImage(media model.BeerMedia) {
 		x-intersect.threshold.25="isIntersected = true"
 		class="flex flex-shrink-0 items-end justify-center"
 	>
-		<div class="flex h-28 w-28 items-center justify-center rounded-full bg-white p-2 shadow-sm">
+		<div class="flex h-28 w-28 items-center justify-center rounded-full border border-slate-200/60 bg-white p-2 shadow-sm transition duration-300 ease-in-out hover:scale-105">
 			<img
 				x-bind:src="isIntersected ? `${imageSrc}` : `/assets/img/tail-spin.svg`"
 				x-bind:class="{ 'opacity-50': !isIntersected }"
@@ -191,7 +215,7 @@ templ labelImage(media model.BeerMedia) {
 		x-intersect.threshold.25="isIntersected = true"
 		class="order-last flex min-w-0 flex-1 items-end justify-center"
 	>
-		<div class="flex h-28 w-full items-center justify-center overflow-hidden rounded bg-white p-2 shadow-sm">
+		<div class="flex h-28 w-full items-center justify-center overflow-hidden rounded-xl border border-slate-200/60 bg-white p-2 shadow-sm transition duration-300 ease-in-out hover:scale-105">
 			<img
 				x-bind:src="isIntersected ? `${imageSrc}` : `/assets/img/tail-spin.svg`"
 				x-bind:class="{ 'opacity-50': !isIntersected }"
