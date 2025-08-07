@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/my-pet-projects/collection/internal/model"
 	"github.com/my-pet-projects/collection/internal/view/layout"
+	"net/url"
 	"strconv"
 	"strings"
 )
@@ -16,14 +17,14 @@ type BeerListData struct {
 	TotalResults int
 }
 
-templ LoadingShimmer() {
-	for i := 0; i < 6; i++ {
-		@BeerCardSkeleton()
-	}
-}
-
-templ SearchLoadingShimmer() {
-	for i := 0; i < 3; i++ {
+templ LoadingShimmer(cardsCount ...int) {
+	{{
+		shimmerCount := 6
+		if len(cardsCount) > 0 {
+			shimmerCount = cardsCount[0]
+		}
+	}}
+	for i := 0; i < shimmerCount; i++ {
 		@BeerCardSkeleton()
 	}
 }
@@ -106,7 +107,7 @@ templ beersList() {
 					hx-get="/beers"
 					hx-swap="innerHTML"
 					hx-target="#beer-list"
-					hx-trigger="keyup changed delay:250ms from:#search"
+					hx-trigger="keyup changed delay:500ms from:#search"
 					@htmx:before-request="searching = true"
 					@htmx:after-request="searching = false"
 					class="mb-0 flex h-12 w-full rounded-lg border border-gray-300 bg-white px-4 py-3 pr-12 text-base placeholder:text-gray-500 focus:border-black focus:ring-2 focus:ring-black focus:ring-opacity-20 focus-visible:outline-none sm:h-10 sm:text-sm"
@@ -140,7 +141,7 @@ templ beersList() {
 				x-show="searching"
 				class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
 			>
-				@SearchLoadingShimmer()
+				@LoadingShimmer(3)
 			</div>
 			<!-- Loading Indicator for load more -->
 			<div class="flex justify-center py-8">
@@ -253,7 +254,7 @@ templ BeerList(data BeerListData) {
 			<!-- Load More Trigger -->
 			if idx == len(data.Beers)-1 && data.CurrentPage < data.TotalPages {
 				<span
-					hx-get={ fmt.Sprintf("/beers?page=%d&query=%s", data.CurrentPage+1, data.Query) }
+					hx-get={ fmt.Sprintf("/beers?page=%d&query=%s", data.CurrentPage+1, url.QueryEscape(data.Query)) }
 					hx-trigger="intersect once"
 					hx-swap="beforeend"
 					hx-target="#beer-list"
@@ -265,13 +266,18 @@ templ BeerList(data BeerListData) {
 	}
 }
 
+const (
+	cdnBaseURL = "https://collection-new.filimonov.life/cdn-cgi/image"
+	s3BaseURL  = "https://beer-collection-bucket.s3.eu-central-1.amazonaws.com/original"
+)
+
 templ bottleImage(media model.BeerMedia) {
 	<div
 		x-data={ fmt.Sprintf(`{
             isIntersected: false,
             imageLoaded: false,
-            imageSrc: 'https://collection-new.filimonov.life/cdn-cgi/image/width=100,quality=25/https://beer-collection-bucket.s3.eu-central-1.amazonaws.com/original/%s'
-        }`, media.Media.ExternalFilename) }
+            imageSrc: '%s/width=100,quality=25/%s/%s'
+        }`, cdnBaseURL, s3BaseURL, media.Media.ExternalFilename) }
 		x-intersect.threshold.25="isIntersected = true"
 		class="order-first flex flex-shrink-0 items-end justify-center"
 	>
@@ -300,8 +306,8 @@ templ capImage(media model.BeerMedia) {
 		x-data={ fmt.Sprintf(`{
             isIntersected: false,
             imageLoaded: false,
-            imageSrc: 'https://collection-new.filimonov.life/cdn-cgi/image/width=100,quality=25/https://beer-collection-bucket.s3.eu-central-1.amazonaws.com/original/%s'
-        }`, media.Media.ExternalFilename) }
+            imageSrc: '%s/width=100,quality=25/%s/%s'
+        }`, cdnBaseURL, s3BaseURL, media.Media.ExternalFilename) }
 		x-intersect.threshold.25="isIntersected = true"
 		class="flex flex-shrink-0 items-end justify-center"
 	>
@@ -330,8 +336,8 @@ templ labelImage(media model.BeerMedia) {
 		x-data={ fmt.Sprintf(`{
             isIntersected: false,
             imageLoaded: false,
-            imageSrc: 'https://collection-new.filimonov.life/cdn-cgi/image/width=100,quality=25/https://beer-collection-bucket.s3.eu-central-1.amazonaws.com/original/%s'
-        }`, media.Media.ExternalFilename) }
+            imageSrc: '%s/width=100,quality=25/%s/%s'
+        }`, cdnBaseURL, s3BaseURL, media.Media.ExternalFilename) }
 		x-intersect.threshold.25="isIntersected = true"
 		class="order-last flex min-w-0 flex-1 items-end justify-center"
 	>

@@ -92,7 +92,7 @@ type Brewery struct {
 }
 
 func (b Brewery) GetCountryName() string {
-	if b.City == nil {
+	if b.City == nil || b.City.Country == nil {
 		return "unknown"
 	}
 	return b.City.Country.NameCommon
