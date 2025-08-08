@@ -306,27 +306,27 @@ func BeerList(data BeerListData) templ.Component {
 			}
 			if beer.HasBrewery() {
 				brewery := beer.Brewery
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<div class=\"flex items-center gap-2 text-slate-600 sm:gap-3\"><div class=\"flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md bg-blue-50 text-blue-600 sm:h-8 sm:w-8 sm:rounded-lg\"><svg class=\"h-3 w-3 sm:h-4 sm:w-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-7 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4\"></path></svg></div><span class=\"min-w-0 flex-1 truncate text-xs font-medium sm:text-sm\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<div class=\"flex items-center gap-2 text-slate-600 sm:gap-3\"><div class=\"flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md bg-blue-50 text-blue-600 sm:h-8 sm:w-8 sm:rounded-lg\"><svg class=\"h-3 w-3 sm:h-4 sm:w-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-7 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4\"></path></svg></div><div><div class=\"muted text-xs\">Brewery</div><div class=\"min-w-0 flex-1 truncate text-xs font-semibold sm:text-sm\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var12 string
 				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(brewery.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_list_page.templ`, Line: 228, Col: 90}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_list_page.templ`, Line: 230, Col: 92}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</span></div><div class=\"flex items-center gap-2 text-slate-600 sm:gap-3\"><div class=\"flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md bg-emerald-50 text-emerald-600 sm:h-8 sm:w-8 sm:rounded-lg\"><svg class=\"h-3 w-3 sm:h-4 sm:w-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z\"></path> <path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M15 11a3 3 0 11-6 0 3 3 0 016 0z\"></path></svg></div><span class=\"min-w-0 flex-1 truncate text-xs font-medium sm:text-sm\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div></div></div><div class=\"flex items-center gap-2 text-slate-600 sm:gap-3\"><div class=\"flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md bg-emerald-50 text-emerald-600 sm:h-8 sm:w-8 sm:rounded-lg\"><svg class=\"h-3 w-3 sm:h-4 sm:w-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z\"></path> <path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M15 11a3 3 0 11-6 0 3 3 0 016 0z\"></path></svg></div><div><div class=\"muted text-xs\">Location</div><div class=\"min-w-0 flex-1 truncate text-xs font-semibold sm:text-sm\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var13 string
 				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(brewery.GetCityName())
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_list_page.templ`, Line: 237, Col: 99}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_list_page.templ`, Line: 242, Col: 101}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 				if templ_7745c5c3_Err != nil {
@@ -339,32 +339,32 @@ func BeerList(data BeerListData) templ.Component {
 				var templ_7745c5c3_Var14 string
 				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(brewery.GetCountryName())
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_list_page.templ`, Line: 237, Col: 129}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_list_page.templ`, Line: 242, Col: 131}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</span></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div></div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
 			if beer.HasCapSlots() {
 				capSlots := beer.GetCapSlots()
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<div class=\"flex items-center gap-2 text-slate-600 sm:gap-3\"><div class=\"flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md bg-purple-50 text-purple-600 sm:h-8 sm:w-8 sm:rounded-lg\"><svg class=\"h-3 w-3 sm:h-4 sm:w-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2v2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10\"></path></svg></div><div class=\"flex min-w-0 flex-1 flex-wrap gap-1\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<div class=\"flex items-center gap-2 text-slate-600 sm:gap-3\"><div class=\"flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md bg-purple-50 text-purple-600 sm:h-8 sm:w-8 sm:rounded-lg\"><svg class=\"h-3 w-3 sm:h-4 sm:w-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2v2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10\"></path></svg></div><div><div class=\"muted text-xs\">Slot</div><div class=\"min-w-0 flex-1 truncate text-xs font-medium sm:text-sm\"><div class=\"flex min-w-0 flex-1 flex-wrap gap-1\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				for _, slot := range capSlots {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<span class=\"text-xs font-medium sm:text-sm\">")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<span class=\"text-xs font-semibold sm:text-sm\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var15 string
 					templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(slot)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_list_page.templ`, Line: 250, Col: 60}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_list_page.templ`, Line: 259, Col: 64}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 					if templ_7745c5c3_Err != nil {
@@ -375,7 +375,7 @@ func BeerList(data BeerListData) templ.Component {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</div></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</div></div></div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -392,7 +392,7 @@ func BeerList(data BeerListData) templ.Component {
 				var templ_7745c5c3_Var16 string
 				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(beer.BeerStyle.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_list_page.templ`, Line: 261, Col: 88}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_list_page.templ`, Line: 272, Col: 88}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 				if templ_7745c5c3_Err != nil {
@@ -415,7 +415,7 @@ func BeerList(data BeerListData) templ.Component {
 				var templ_7745c5c3_Var17 string
 				templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/beers?page=%d&query=%s", data.CurrentPage+1, url.QueryEscape(data.Query)))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_list_page.templ`, Line: 269, Col: 101}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_list_page.templ`, Line: 280, Col: 101}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 				if templ_7745c5c3_Err != nil {
@@ -472,7 +472,7 @@ func bottleImage(media model.BeerMedia) templ.Component {
             imageSrc: '%s/width=100,quality=25/%s/%s'
         }`, cdnBaseURL, s3BaseURL, url.QueryEscape(media.Media.ExternalFilename)))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_list_page.templ`, Line: 293, Col: 81}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_list_page.templ`, Line: 304, Col: 81}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 		if templ_7745c5c3_Err != nil {
@@ -518,7 +518,7 @@ func capImage(media model.BeerMedia) templ.Component {
             imageSrc: '%s/width=100,quality=25/%s/%s'
         }`, cdnBaseURL, s3BaseURL, url.QueryEscape(media.Media.ExternalFilename)))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_list_page.templ`, Line: 323, Col: 81}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_list_page.templ`, Line: 334, Col: 81}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 		if templ_7745c5c3_Err != nil {
@@ -564,7 +564,7 @@ func labelImage(media model.BeerMedia) templ.Component {
             imageSrc: '%s/width=100,quality=25/%s/%s'
         }`, cdnBaseURL, s3BaseURL, url.QueryEscape(media.Media.ExternalFilename)))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_list_page.templ`, Line: 353, Col: 81}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_list_page.templ`, Line: 364, Col: 81}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 		if templ_7745c5c3_Err != nil {
