@@ -94,7 +94,6 @@ templ beersList() {
 			<a
 				href="/workspace/beer/create"
 				class="inline-flex h-10 w-full items-center justify-center gap-2 whitespace-nowrap rounded-md bg-black px-4 py-2 text-sm font-semibold text-white shadow-md transition-all duration-300 hover:bg-gray-800 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 sm:w-auto"
-				type="button"
 			>
 				<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus">
 					<path d="M5 12h14"></path><path d="M12 5v14"></path>
@@ -180,6 +179,8 @@ templ BeerList(data BeerListData) {
 									src={ fmt.Sprintf("https://flagcdn.com/w40/%s.png", strings.ToLower(countryCode)) }
 									alt={ fmt.Sprintf("%s flag", countryCode) }
 									class="h-5 w-7 rounded border border-white object-cover shadow-sm ring-1 ring-gray-200"
+									loading="lazy"
+									decoding="async"
 								/>
 							</div>
 						}
@@ -193,7 +194,6 @@ templ BeerList(data BeerListData) {
 					<!-- Edit Button -->
 					<a
 						href={ templ.URL(fmt.Sprintf("/workspace/beer/%d/overview", beer.ID)) }
-						type="button"
 						class="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition-all duration-200 hover:bg-gray-200 hover:text-gray-800 sm:opacity-0 sm:group-hover:opacity-100"
 						aria-label="Edit beer"
 					>
@@ -290,7 +290,7 @@ templ bottleImage(media model.BeerMedia) {
             isIntersected: false,
             imageLoaded: false,
             imageSrc: '%s/width=100,quality=25/%s/%s'
-        }`, cdnBaseURL, s3BaseURL, media.Media.ExternalFilename) }
+        }`, cdnBaseURL, s3BaseURL, url.QueryEscape(media.Media.ExternalFilename)) }
 		x-intersect.threshold.25="isIntersected = true"
 		class="order-first flex flex-shrink-0 items-end justify-center"
 	>
@@ -320,7 +320,7 @@ templ capImage(media model.BeerMedia) {
             isIntersected: false,
             imageLoaded: false,
             imageSrc: '%s/width=100,quality=25/%s/%s'
-        }`, cdnBaseURL, s3BaseURL, media.Media.ExternalFilename) }
+        }`, cdnBaseURL, s3BaseURL, url.QueryEscape(media.Media.ExternalFilename)) }
 		x-intersect.threshold.25="isIntersected = true"
 		class="flex flex-shrink-0 items-end justify-center"
 	>
@@ -350,7 +350,7 @@ templ labelImage(media model.BeerMedia) {
             isIntersected: false,
             imageLoaded: false,
             imageSrc: '%s/width=100,quality=25/%s/%s'
-        }`, cdnBaseURL, s3BaseURL, media.Media.ExternalFilename) }
+        }`, cdnBaseURL, s3BaseURL, url.QueryEscape(media.Media.ExternalFilename)) }
 		x-intersect.threshold.25="isIntersected = true"
 		class="order-last flex min-w-0 flex-1 items-end justify-center"
 	>
