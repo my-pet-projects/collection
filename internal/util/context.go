@@ -53,7 +53,7 @@ func ContextWithRequest(ctx context.Context, value *http.Request) context.Contex
 	return context.WithValue(ctx, requestKey, value)
 }
 
-func ContextWithUser(ctx context.Context, value interface{}) context.Context {
+func ContextWithUser[T any](ctx context.Context, value T) context.Context {
 	return context.WithValue(ctx, userKey, value)
 }
 

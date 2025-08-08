@@ -78,8 +78,10 @@ func NewBeerFromUploadForm(formValue UploadFormValues) Beer {
 		brand = strings.TrimSuffix(brand, ext)
 	}
 
+	brand = fmt.Sprintf("Uncategorized - %s", brand)
+
 	return Beer{
-		Brand:      fmt.Sprintf("Uncategorized - %s", brand),
+		Brand:      brand,
 		IsActive:   false,
 		SearchName: util.NormalizeText(brand),
 	}

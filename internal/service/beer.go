@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"log/slog"
+	"strings"
 
 	"github.com/pkg/errors"
 
@@ -38,9 +39,9 @@ func (s BeerService) GetBeer(id int) (*model.Beer, error) {
 func (s BeerService) CreateBeer(
 	brand string, beerType *string, styleId *int, breweryId *int, active bool,
 ) (*model.Beer, error) {
-	searchName := brand
+	searchName := strings.TrimSpace(brand)
 	if beerType != nil {
-		searchName += " " + *beerType
+		searchName += " " + strings.TrimSpace(*beerType)
 	}
 	beer := model.Beer{
 		Brand:     brand,
@@ -64,9 +65,9 @@ func (s BeerService) UpdateBeer(
 	id int, brand string, beerType *string, styleId *int, breweryId *int, active bool,
 ) error {
 	// timeNow := time.Now().UTC()
-	searchName := brand
+	searchName := strings.TrimSpace(brand)
 	if beerType != nil {
-		searchName += " " + *beerType
+		searchName += " " + strings.TrimSpace(*beerType)
 	}
 	beer := model.Beer{
 		ID:        id,
@@ -87,7 +88,9 @@ func (s BeerService) UpdateBeer(
 }
 
 func (s BeerService) PaginateBeers(ctx context.Context, filter model.BeerFilter) (*model.Pagination[model.Beer], error) {
-	filter.Query = util.NormalizeText(filter.Query)
+	if filter.Query != "" {
+		filter.Query = util.NormalizeText(filter.Query)
+	}
 	beers, beersErr := s.beerStore.PaginateBeers(ctx, filter)
 	if beersErr != nil {
 		return nil, errors.Wrap(beersErr, "paginate beers")

@@ -4,129 +4,175 @@ import (
 	"strings"
 	"unicode"
 
+	"golang.org/x/text/runes"
 	"golang.org/x/text/transform"
 	"golang.org/x/text/unicode/norm"
 )
 
-// NormalizeText removes diacritics and converts special characters
-// to their ASCII equivalents for search purposes
-func NormalizeText(s string) string {
-	// Step 1: Convert to lowercase
-	s = strings.ToLower(s)
+var (
+	// Pre-compiled Unicode transformer for removing diacritics
+	diacriticRemover = transform.Chain(
+		norm.NFD,
+		runes.Remove(runes.In(unicode.Mn)),
+		norm.NFC,
+	)
 
-	// Step 2: Apply Unicode normalization (NFD) to decompose characters
-	// This separates base characters from their diacritical marks
-	t := transform.Chain(norm.NFD, transform.RemoveFunc(isMn), norm.NFC)
-	result, _, _ := transform.String(t, s)
-
-	// Step 3: Handle specific characters that Unicode normalization might miss
-	// or characters that need special treatment
-	replacements := map[rune]rune{
+	// Pre-compiled character-to-character replacements
+	charReplacements = map[rune]rune{
 		// German
-		'ß': 's', // Will be handled by replacer below for "ss"
+		'ß': 's',
 
 		// Icelandic/Old English
-		'ð': 'd', 'þ': 't',
-		'Ð': 'D', 'Þ': 'T',
+		'ð': 'd',
+		'þ': 't',
 
 		// Polish
-		'ł': 'l', 'Ł': 'L',
+		'ł': 'l',
 
 		// Scandinavian
-		'ø': 'o', 'Ø': 'O',
-		'å': 'a', 'Å': 'A',
+		'ø': 'o',
+		'å': 'a',
 
-		// Slavic (in case Unicode normalization misses some)
-		'č': 'c', 'Č': 'C',
-		'ć': 'c', 'Ć': 'C',
-		'ž': 'z', 'Ž': 'Z',
-		'š': 's', 'Š': 'S',
-		'đ': 'd', 'Đ': 'D',
-		'ř': 'r', 'Ř': 'R',
-		'ň': 'n', 'Ň': 'N',
-		'ť': 't', 'Ť': 'T',
-		'ď': 'd', 'Ď': 'D',
-		'ľ': 'l', 'Ľ': 'L',
-		'ĺ': 'l', 'Ĺ': 'L',
-		'ŕ': 'r', 'Ŕ': 'R',
+		// Slavic
+		'č': 'c',
+		'ć': 'c',
+		'ž': 'z',
+		'š': 's',
+		'đ': 'd',
+		'ř': 'r',
+		'ň': 'n',
+		'ť': 't',
+		'ď': 'd',
+		'ľ': 'l',
+		'ĺ': 'l',
+		'ŕ': 'r',
 
 		// Romanian
-		'ă': 'a', 'Ă': 'A',
-		'â': 'a', 'Â': 'A',
-		'î': 'i', 'Î': 'I',
-		'ș': 's', 'Ș': 'S',
-		'ț': 't', 'Ț': 'T',
+		'ă': 'a',
+		'â': 'a',
+		'î': 'i',
+		'ș': 's',
+		'ț': 't',
 
 		// Turkish
-		'ğ': 'g', 'Ğ': 'G',
-		'ı': 'i', 'İ': 'I',
-		'ş': 's', 'Ş': 'S',
+		'ğ': 'g',
+		'ı': 'i',
+		'ş': 's',
 
 		// Hungarian
-		'ő': 'o', 'Ő': 'O',
-		'ű': 'u', 'Ű': 'U',
+		'ő': 'o',
+		'ű': 'u',
 
-		// Other European
-		'ñ': 'n', 'Ñ': 'N', // Spanish
-		'ç': 'c', 'Ç': 'C', // French/Turkish/Portuguese
+		// Spanish
+		'ñ': 'n',
 
-		// Currency and symbols that might appear in names
-		'€': 'e', '£': 'l', '$': 's',
+		// French/Portuguese
+		'ç': 'c',
+
+		// Currency symbols
+		'€': 'e',
+		'£': 'l',
+		'$': 's',
+
+		// Greek letters
+		'α': 'a',
+		'β': 'b',
+		'γ': 'g',
+		'δ': 'd',
+		'ε': 'e',
+		'ζ': 'z',
+		'η': 'e',
+		'θ': 't',
+		'ι': 'i',
+		'κ': 'k',
+		'λ': 'l',
+		'μ': 'm',
+		'ν': 'n',
+		'ξ': 'x',
+		'ο': 'o',
+		'π': 'p',
+		'ρ': 'r',
+		'σ': 's',
+		'τ': 't',
+		'υ': 'u',
+		'φ': 'f',
+		'χ': 'c',
+		'ψ': 'p',
+		'ω': 'o',
 	}
 
-	// Apply character-by-character replacements
-	var normalized strings.Builder
-	for _, r := range result {
-		if replacement, exists := replacements[r]; exists {
-			normalized.WriteRune(replacement)
-		} else {
-			normalized.WriteRune(r)
-		}
-	}
-
-	result = normalized.String()
-
-	// Step 4: Handle multi-character replacements and ligatures
-	stringReplacer := strings.NewReplacer(
+	// Pre-compiled string replacer for multi-character replacements
+	textReplacer = strings.NewReplacer(
 		// German
 		"ß", "ss",
 
 		// Ligatures
-		"æ", "ae", "Æ", "AE",
-		"œ", "oe", "Œ", "OE",
-		"ĳ", "ij", "Ĳ", "IJ", // Dutch
+		"æ", "ae",
+		"œ", "oe",
+		"ĳ", "ij",
 
-		// Icelandic digraphs
-		"þ", "th", "Þ", "TH",
+		// Icelandic
+		"þ", "th",
 
-		// Other multi-character cases
-		"ﬀ", "ff", "ﬁ", "fi", "ﬂ", "fl", // Typography ligatures
-		"ﬃ", "ffi", "ﬄ", "ffl",
+		// Typography ligatures
+		"ﬀ", "ff",
+		"ﬁ", "fi",
+		"ﬂ", "fl",
+		"ﬃ", "ffi",
+		"ﬄ", "ffl",
 
-		// Remove common punctuation that might interfere with search
-		"'", "", "'", "", "'", "",
+		// Remove quotes
+		"'", "",
 		`"`, "",
-		"«", "", "»", "",
-		"‚", "", "„", "",
+		"«", "",
+		"»", "",
+		"‚", "",
+		"„", "",
 
-		// Normalize various dashes and spaces
-		"–", "-", "—", "-", "―", "-",
-		" ", " ", " ", " ", // Various Unicode spaces to regular space
+		// Normalize dashes
+		"–", "-",
+		"—", "-",
+		"―", "-",
 
-		// Remove or normalize other problematic characters
+		// Normalize spaces
+		" ", " ",
+		" ", " ",
+		" ", " ",
+
+		// Other characters
 		"…", "...",
 	)
+)
 
-	result = stringReplacer.Replace(result)
+// NormalizeTextComprehensive removes diacritics and converts special characters
+// to their ASCII equivalents for search purposes
+func NormalizeText(s string) string {
+	if s == "" {
+		return ""
+	}
 
-	// Step 5: Clean up multiple spaces and trim
+	// Convert to lowercase first
+	s = strings.ToLower(s)
+
+	// Apply Unicode normalization to remove diacritics
+	result, _, err := transform.String(diacriticRemover, s)
+	if err != nil {
+		result = s // fallback
+	}
+
+	// Apply character replacements
+	runes := []rune(result)
+	for i, r := range runes {
+		if replacement, exists := charReplacements[r]; exists {
+			runes[i] = replacement
+		}
+	}
+	result = string(runes)
+
+	// Apply multi-character replacements
+	result = textReplacer.Replace(result)
+
+	// Clean up spaces and trim
 	result = strings.Join(strings.Fields(result), " ")
-	result = strings.TrimSpace(result)
-
-	return result
-}
-
-// isMn checks if a rune is a nonspacing mark (diacritic)
-func isMn(r rune) bool {
-	return unicode.Is(unicode.Mn, r)
+	return strings.TrimSpace(result)
 }
