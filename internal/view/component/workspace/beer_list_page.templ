@@ -105,9 +105,6 @@ templ beersList() {
 		<div
 			x-data="{ searching: false, hasErrors: false }"
 			hx-ext="response-targets"
-			@htmx:before-request="searching = true"
-			@htmx:after-request="searching = false"
-			@htmx:response-error="searching = false; hasErrors = true;"
 		>
 			<!-- Search Section -->
 			<div class="relative mb-4 sm:mb-6">
@@ -120,6 +117,9 @@ templ beersList() {
 					hx-target="#beer-list"
 					hx-trigger="load, keyup changed delay:500ms from:#search"
 					hx-target-error="#beer-list-errors"
+					@htmx:before-request="searching = true"
+					@htmx:after-request="searching = false"
+					@htmx:response-error="searching = false; hasErrors = true;"
 					class="mb-0 flex h-12 w-full rounded-lg border border-gray-300 bg-white px-4 py-3 pr-12 text-base placeholder:text-gray-500 focus:border-black focus:ring-2 focus:ring-black focus:ring-opacity-20 focus-visible:outline-none sm:h-10 sm:text-sm"
 					placeholder="Search beers or breweries..."
 				/>
@@ -158,6 +158,14 @@ templ beersList() {
 }
 
 templ BeerList(data BeerListData) {
+	if data.TotalResults == 0 {
+		<div class="container mx-auto px-3 py-4 sm:px-4 lg:px-6">
+			<div class="text-center text-gray-500">
+				<p class="text-lg">No beers found for your search.</p>
+				<p class="text-sm">Try adjusting your search criteria.</p>
+			</div>
+		</div>
+	}
 	for idx, beer := range data.Beers {
 		<div class="group overflow-hidden rounded-xl bg-white shadow-md transition-all duration-300 hover:shadow-lg sm:rounded-2xl sm:hover:-translate-y-2 sm:hover:shadow-xl">
 			<div class="p-4 sm:p-6">
@@ -264,6 +272,7 @@ templ BeerList(data BeerListData) {
 					hx-target="#beer-list"
 					hx-indicator=".htmx-indicator"
 					hx-target-error="#beer-list-errors"
+					@htmx:response-error="hasErrors = true"
 				></span>
 			}
 		</div>
