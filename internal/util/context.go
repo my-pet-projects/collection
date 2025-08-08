@@ -5,8 +5,6 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-
-	"github.com/my-pet-projects/collection/internal/model"
 )
 
 type key string
@@ -55,11 +53,13 @@ func ContextWithRequest(ctx context.Context, value *http.Request) context.Contex
 	return context.WithValue(ctx, requestKey, value)
 }
 
-func ContextWithUser(ctx context.Context, value model.User) context.Context {
+func ContextWithUser(ctx context.Context, value interface{}) context.Context {
 	return context.WithValue(ctx, userKey, value)
 }
 
 // UserFromContext returns the user from the context.
-func UserFromContext(ctx context.Context) model.User {
-	return getContextValue(ctx, userKey, model.User{})
+// If the user is not found in the context, it returns the zero value of T and false.
+func UserFromContext[T any](ctx context.Context) (T, bool) {
+	value, ok := ctx.Value(userKey).(T)
+	return value, ok
 }

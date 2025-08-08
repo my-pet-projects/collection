@@ -8,6 +8,7 @@ import (
 
 	"github.com/my-pet-projects/collection/internal/db"
 	"github.com/my-pet-projects/collection/internal/model"
+	"github.com/my-pet-projects/collection/internal/util"
 )
 
 type BeerService struct {
@@ -37,6 +38,10 @@ func (s BeerService) GetBeer(id int) (*model.Beer, error) {
 func (s BeerService) CreateBeer(
 	brand string, beerType *string, styleId *int, breweryId *int, active bool,
 ) (*model.Beer, error) {
+	searchName := brand
+	if beerType != nil {
+		searchName += " " + *beerType
+	}
 	beer := model.Beer{
 		Brand:     brand,
 		Type:      beerType,
@@ -44,6 +49,7 @@ func (s BeerService) CreateBeer(
 		BreweryID: breweryId,
 		IsActive:  active,
 		// CreatedAt: time.Now().UTC(),
+		SearchName: util.NormalizeText(searchName),
 	}
 
 	insertedId, insertErr := s.beerStore.InsertBeer(beer)
@@ -58,6 +64,10 @@ func (s BeerService) UpdateBeer(
 	id int, brand string, beerType *string, styleId *int, breweryId *int, active bool,
 ) error {
 	// timeNow := time.Now().UTC()
+	searchName := brand
+	if beerType != nil {
+		searchName += " " + *beerType
+	}
 	beer := model.Beer{
 		ID:        id,
 		Brand:     brand,
@@ -66,6 +76,7 @@ func (s BeerService) UpdateBeer(
 		BreweryID: breweryId,
 		IsActive:  active,
 		// UpdatedAt: &timeNow,
+		SearchName: util.NormalizeText(searchName),
 	}
 
 	updErr := s.beerStore.UpdateBeer(beer)
@@ -76,6 +87,7 @@ func (s BeerService) UpdateBeer(
 }
 
 func (s BeerService) PaginateBeers(ctx context.Context, filter model.BeerFilter) (*model.Pagination[model.Beer], error) {
+	filter.Query = util.NormalizeText(filter.Query)
 	beers, beersErr := s.beerStore.PaginateBeers(ctx, filter)
 	if beersErr != nil {
 		return nil, errors.Wrap(beersErr, "paginate beers")
