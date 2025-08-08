@@ -38,11 +38,11 @@ func breweriesJson(countriesData BreweriesData) string {
 			selected = true
 		}
 		choices = append(choices, choicesData{
-			Value:            fmt.Sprint(brewery.ID),
-			Label:            brewery.Name,
-			Selected:         selected,
-			Disabled:         false,
-			CustomProperties: customProperty{SearchableValue: brewery.City.Country.NameCommon},
+			Value:    fmt.Sprint(brewery.ID),
+			Label:    brewery.Name,
+			Selected: selected,
+			Disabled: false,
+			// CustomProperties: customProperty{SearchableValue: brewery.City.Country.NameCommon},
 		})
 	}
 	bytes, _ := json.Marshal(choices)
