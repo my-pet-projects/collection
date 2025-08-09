@@ -9,11 +9,7 @@ import (
 	"golang.org/x/text/unicode/norm"
 )
 
-// Precompiled transforms/tables are read-only and reused for performance.
 var (
-	// Pre-compiled Unicode transformer for removing diacritics.
-	diacriticRemover = transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFC) //nolint:gochecknoglobals
-
 	// Pre-compiled character-to-character replacements.
 	charReplacements = map[rune]rune{ //nolint:gochecknoglobals
 		// Icelandic/Old English
@@ -145,6 +141,7 @@ var (
 		"\u200C", "", // Zero-width non-joiner
 		"\u200D", "", // Zero-width joiner
 		"\u2060", "", // Word joiner
+		"\uFEFF", "", // Zero-width no-break space (BOM)
 
 		// Other problematic characters
 		"…", "...",
@@ -161,8 +158,10 @@ func NormalizeText(text string) string {
 	text = strings.ToLower(text)
 
 	// Apply Unicode normalization to remove diacritics or fallback
+	diacriticRemover := transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFC)
 	result, _, err := transform.String(diacriticRemover, text)
 	if err != nil {
+		// If transformation fails, fall back to the original text
 		result = text
 	}
 

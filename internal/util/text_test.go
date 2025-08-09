@@ -61,15 +61,29 @@ func TestNormalizeText(t *testing.T) {
 		{"Cañón", "canon"},
 		{"Budějovice", "budejovice"},
 		{"Łódź", "lodz"},
+		{"“l’été”", "lete"}, // covers U+201C/U+201D and U+2019
+		{"l’ete", "lete"},     // U+2019
+		{"A\uFEFFB", "ab"},
+		{"A\u2060B", "ab"},
+		{"a‒b–c—d−e‑f", "a-b-c-d-e-f"}, // U+2012, U+2013, U+2014, U+2212, U+2011
+		{"", ""},                       // empty input
+		{" ", ""},                      // spaces collapse/trim
+		{" A B C ", "a b c"},           // multi-space normalization
+		{"B-52", "b-52"},               // ensure digits/punctuation stay as intended
+		{"coöperate", "cooperate"},     // diaeresis
+		{"Smørrebrød", "smorrebrod"},   // slashed o
 	}
 
-	for _, test := range tests {
-		// Act
-		res := NormalizeText(test.input)
+	for _, tc := range tests {
+		t.Run(tc.input, func(t *testing.T) {
+			t.Parallel()
+			// Act
+			res := NormalizeText(tc.input)
 
-		// Assert
-		if res != test.expected {
-			t.Errorf("NormalizeText(%q) = %q; want %q", test.input, res, test.expected)
-		}
+			// Assert
+			if res != tc.expected {
+				t.Errorf("NormalizeText(%q) = %q; want %q", tc.input, res, tc.expected)
+			}
+		})
 	}
 }
