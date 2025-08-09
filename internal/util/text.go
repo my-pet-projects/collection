@@ -9,15 +9,15 @@ import (
 	"golang.org/x/text/unicode/norm"
 )
 
-var (
-	// Pre-compiled Unicode transformer for removing diacritics
+var ( //nolint:gochecknoglobals // Precompiled transforms/tables are read-only and reused for performance.
+	// Pre-compiled Unicode transformer for removing diacritics.
 	diacriticRemover = transform.Chain(
 		norm.NFD,
 		runes.Remove(runes.In(unicode.Mn)),
 		norm.NFC,
 	)
 
-	// Pre-compiled character-to-character replacements
+	// Pre-compiled character-to-character replacements.
 	charReplacements = map[rune]rune{
 		// German
 		'ß': 's',
@@ -69,11 +69,6 @@ var (
 		// French/Portuguese
 		'ç': 'c',
 
-		// Currency symbols
-		'€': 'e',
-		'£': 'l',
-		'$': 's',
-
 		// Greek letters
 		'α': 'a',
 		'β': 'b',
@@ -101,18 +96,16 @@ var (
 		'ω': 'o',
 	}
 
-	// Pre-compiled string replacer for multi-character replacements
+	// Pre-compiled string replacer for multi-character replacements.
 	textReplacer = strings.NewReplacer(
-		// German
-		"ß", "ss",
+		// Multi-character replacements (these take precedence)
+		"ß", "ss", // German eszett
+		"þ", "th", // Icelandic thorn
 
 		// Ligatures
 		"æ", "ae",
 		"œ", "oe",
 		"ĳ", "ij",
-
-		// Icelandic
-		"þ", "th",
 
 		// Typography ligatures
 		"ﬀ", "ff",
@@ -121,53 +114,63 @@ var (
 		"ﬃ", "ffi",
 		"ﬄ", "ffl",
 
-		// Remove quotes
+		// Remove currency symbols
+		"€", "",
+		"£", "",
+		"$", "",
+
+		// Remove quotes and similar punctuation
 		"'", "",
-		`"`, "",
+		"\"", "",
 		"«", "",
 		"»", "",
 		"‚", "",
 		"„", "",
 
-		// Normalize dashes
+		// Normalize dashes to regular hyphen
 		"–", "-",
 		"—", "-",
 		"―", "-",
 
-		// Normalize spaces
-		" ", " ",
-		" ", " ",
-		" ", " ",
+		// Normalize various Unicode spaces to regular space
+		"\u00A0", " ", // Non-breaking space
+		"\u2002", " ", // En space
+		"\u2003", " ", // Em space
+		"\u2009", " ", // Thin space
+		"\u200A", " ", // Hair space
+		"\u202F", " ", // Narrow no-break space
+		"\u200B", "", // Zero-width space
+		"\u2060", "", // Word joiner
 
-		// Other characters
+		// Other problematic characters
 		"…", "...",
 	)
 )
 
 // NormalizeTextComprehensive removes diacritics and converts special characters
-// to their ASCII equivalents for search purposes
-func NormalizeText(s string) string {
-	if s == "" {
+// to their ASCII equivalents for search purposes.
+func NormalizeText(text string) string {
+	if text == "" {
 		return ""
 	}
 
 	// Convert to lowercase first
-	s = strings.ToLower(s)
+	text = strings.ToLower(text)
 
-	// Apply Unicode normalization to remove diacritics
-	result, _, err := transform.String(diacriticRemover, s)
+	// Apply Unicode normalization to remove diacritics or fallback
+	result, _, err := transform.String(diacriticRemover, text)
 	if err != nil {
-		result = s // fallback
+		result = text
 	}
 
 	// Apply character replacements
-	runes := []rune(result)
-	for i, r := range runes {
+	rr := []rune(result)
+	for i, r := range rr {
 		if replacement, exists := charReplacements[r]; exists {
-			runes[i] = replacement
+			rr[i] = replacement
 		}
 	}
-	result = string(runes)
+	result = string(rr)
 
 	// Apply multi-character replacements
 	result = textReplacer.Replace(result)
