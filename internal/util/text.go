@@ -9,22 +9,15 @@ import (
 	"golang.org/x/text/unicode/norm"
 )
 
-var ( //nolint:gochecknoglobals // Precompiled transforms/tables are read-only and reused for performance.
+// Precompiled transforms/tables are read-only and reused for performance.
+var (
 	// Pre-compiled Unicode transformer for removing diacritics.
-	diacriticRemover = transform.Chain(
-		norm.NFD,
-		runes.Remove(runes.In(unicode.Mn)),
-		norm.NFC,
-	)
+	diacriticRemover = transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFC) //nolint:gochecknoglobals
 
 	// Pre-compiled character-to-character replacements.
-	charReplacements = map[rune]rune{
-		// German
-		'ß': 's',
-
+	charReplacements = map[rune]rune{ //nolint:gochecknoglobals
 		// Icelandic/Old English
 		'ð': 'd',
-		'þ': 't',
 
 		// Polish
 		'ł': 'l',
@@ -94,10 +87,11 @@ var ( //nolint:gochecknoglobals // Precompiled transforms/tables are read-only a
 		'χ': 'c',
 		'ψ': 'p',
 		'ω': 'o',
+		'ς': 's',
 	}
 
 	// Pre-compiled string replacer for multi-character replacements.
-	textReplacer = strings.NewReplacer(
+	textReplacer = strings.NewReplacer( //nolint:gochecknoglobals
 		// Multi-character replacements (these take precedence)
 		"ß", "ss", // German eszett
 		"þ", "th", // Icelandic thorn
@@ -122,6 +116,10 @@ var ( //nolint:gochecknoglobals // Precompiled transforms/tables are read-only a
 		// Remove quotes and similar punctuation
 		"'", "",
 		"\"", "",
+		"‘", "",
+		"’", "",
+		"“", "",
+		"”", "",
 		"«", "",
 		"»", "",
 		"‚", "",
@@ -131,6 +129,10 @@ var ( //nolint:gochecknoglobals // Precompiled transforms/tables are read-only a
 		"–", "-",
 		"—", "-",
 		"―", "-",
+		"‑", "-", // U+2011 No-Break hyphen
+		"‒", "-", // U+2012 Figure Dash
+		"−", "-", // U+2212 Minus sign
+		"\u00AD", "", // Soft hyphen (discretionary)
 
 		// Normalize various Unicode spaces to regular space
 		"\u00A0", " ", // Non-breaking space
@@ -140,6 +142,8 @@ var ( //nolint:gochecknoglobals // Precompiled transforms/tables are read-only a
 		"\u200A", " ", // Hair space
 		"\u202F", " ", // Narrow no-break space
 		"\u200B", "", // Zero-width space
+		"\u200C", "", // Zero-width non-joiner
+		"\u200D", "", // Zero-width joiner
 		"\u2060", "", // Word joiner
 
 		// Other problematic characters
@@ -147,8 +151,7 @@ var ( //nolint:gochecknoglobals // Precompiled transforms/tables are read-only a
 	)
 )
 
-// NormalizeTextComprehensive removes diacritics and converts special characters
-// to their ASCII equivalents for search purposes.
+// NormalizeText removes diacritics and converts special characters to ASCII-friendly equivalents for search purposes.
 func NormalizeText(text string) string {
 	if text == "" {
 		return ""
