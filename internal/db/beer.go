@@ -46,7 +46,7 @@ func (s BeerStore) PaginateBeers(ctx context.Context, filter model.BeerFilter) (
 	}
 
 	if filter.Query != "" {
-		pagination.WhereQuery = "beers.brand LIKE @name OR beers.type LIKE @name OR brewery.name LIKE @name"
+		pagination.WhereQuery = "beers.search_name LIKE @name OR brewery.search_name LIKE @name"
 		pagination.WhereArgs = map[string]interface{}{
 			"name": "%" + filter.Query + "%",
 		}

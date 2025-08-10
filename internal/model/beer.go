@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/my-pet-projects/collection/internal/util"
 )
 
 type Beer struct {
@@ -20,6 +22,7 @@ type Beer struct {
 	StyleID     *int
 	BeerStyle   *BeerStyle  `gorm:"foreignKey:StyleID;references:ID"`
 	BeerMedias  []BeerMedia `gorm:"foreignKey:BeerID;references:ID"`
+	SearchName  string
 }
 
 func (b Beer) HasBeerStyle() bool {
@@ -75,9 +78,12 @@ func NewBeerFromUploadForm(formValue UploadFormValues) Beer {
 		brand = strings.TrimSuffix(brand, ext)
 	}
 
+	brand = fmt.Sprintf("Uncategorized - %s", brand)
+
 	return Beer{
-		Brand:    fmt.Sprintf("Uncategorized - %s", brand),
-		IsActive: false,
+		Brand:      brand,
+		IsActive:   false,
+		SearchName: util.NormalizeText(brand),
 	}
 }
 
@@ -88,7 +94,8 @@ type Brewery struct {
 	GeoID   int
 	OldId   *string
 	// Country *Country `gorm:"foreignKey:Cca2"`
-	City *City `gorm:"foreignKey:GeoID;references:ID"`
+	City       *City `gorm:"foreignKey:GeoID;references:ID"`
+	SearchName string
 }
 
 func (b Brewery) GetCountryName() string {

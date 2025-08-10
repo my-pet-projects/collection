@@ -9,6 +9,7 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	"github.com/my-pet-projects/collection/internal/model"
 	"github.com/my-pet-projects/collection/internal/util"
 	"github.com/my-pet-projects/collection/internal/view/component/shared"
 )
@@ -102,7 +103,7 @@ func head(title string) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/layout/base_layout.templ`, Line: 34, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/layout/base_layout.templ`, Line: 35, Col: 16}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -253,8 +254,8 @@ func navigation() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		user := util.UserFromContext(ctx)
-		if user.IsAuthenticated() {
+		user, ok := util.UserFromContext[model.User](ctx)
+		if ok && user.IsAuthenticated() {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<span>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -262,7 +263,7 @@ func navigation() templ.Component {
 			var templ_7745c5c3_Var15 string
 			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(user.GetDisplayName())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/layout/base_layout.templ`, Line: 125, Col: 37}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/layout/base_layout.templ`, Line: 126, Col: 37}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {
