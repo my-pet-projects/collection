@@ -7,6 +7,7 @@ import (
 
 	"github.com/my-pet-projects/collection/internal/db"
 	"github.com/my-pet-projects/collection/internal/model"
+	"github.com/my-pet-projects/collection/internal/util"
 )
 
 type BreweryService struct {
@@ -25,8 +26,9 @@ func NewBreweryService(breweryStore *db.BreweryStore, geoStore *db.GeographyStor
 
 func (s BreweryService) CreateBrewery(name string, geoId int) (*model.Brewery, error) {
 	brewery := model.Brewery{
-		Name:  name,
-		GeoID: geoId,
+		Name:       name,
+		GeoID:      geoId,
+		SearchName: util.NormalizeText(name),
 	}
 	insertedId, insertErr := s.breweryStore.InsertBrewery(brewery)
 	if insertErr != nil {
@@ -38,9 +40,10 @@ func (s BreweryService) CreateBrewery(name string, geoId int) (*model.Brewery, e
 
 func (s BreweryService) UpdateBrewery(id int, name string, geoId int) error {
 	brewery := model.Brewery{
-		ID:    id,
-		Name:  name,
-		GeoID: geoId,
+		ID:         id,
+		Name:       name,
+		GeoID:      geoId,
+		SearchName: util.NormalizeText(name),
 	}
 	updErr := s.breweryStore.UpdateBrewery(brewery)
 	if updErr != nil {
