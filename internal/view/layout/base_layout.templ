@@ -1,6 +1,7 @@
 package layout
 
 import (
+	"github.com/my-pet-projects/collection/internal/model"
 	"github.com/my-pet-projects/collection/internal/util"
 	"github.com/my-pet-projects/collection/internal/view/component/shared"
 )
@@ -120,8 +121,8 @@ templ navigation() {
 				<div class="hidden sm:ml-6 sm:flex sm:items-center">
 					<div class="relative ml-3">
 						<div>
-							{{ user := util.UserFromContext(ctx) }}
-							if user.IsAuthenticated() {
+							{{ user, ok := util.UserFromContext[model.User](ctx) }}
+							if ok && user.IsAuthenticated() {
 								<span>{ user.GetDisplayName() }</span>
 							}
 							<button class="focus:outline-hidden flex rounded-full bg-white text-sm focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
