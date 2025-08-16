@@ -10,19 +10,15 @@ templ BaseLayout() {
 	<!DOCTYPE html>
 	<html lang="en">
 		@head("test")
-		<body>
-			<div class="min-h-screen bg-gray-100">
-				@navigation()
-				<div class="py-6">
-					<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-						<div class="flex flex-col lg:flex-row">
-							{ children... }
-						</div>
-					</div>
-				</div>
-				<div>
-					@shared.Notification()
-				</div>
+		<body class="min-h-screen bg-gray-50">
+			<!-- Navigation -->
+			@navigation()
+			<!-- Main Content -->
+			<div class="container mx-auto px-3 py-4 sm:px-4 lg:px-6">
+				{ children... }
+			</div>
+			<div>
+				@shared.Notification()
 			</div>
 		</body>
 	</html>
@@ -46,11 +42,15 @@ templ head(title string) {
 		<script src="https://unpkg.com/htmx.org@1.9.11/dist/ext/path-params.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 		<script src="/assets/js/select.js"></script>
+		<!-- Alpine Plugins -->
+		<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/intersect@3.x.x/dist/cdn.min.js"></script>
+		<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
+		<!-- Alpine Core -->
+		<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+		<!-- Uppy -->
 		<script src="/assets/js/upload.js" type="module"></script>
 		// <script src="https://cdn.tailwindcss.com"></script>
 		<link href="https://releases.transloadit.com/uppy/v3.27.0/uppy.min.css" rel="stylesheet"/>
-		<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/intersect@3.x.x/dist/cdn.min.js"></script>
-		<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 	</head>
 }
 
@@ -60,12 +60,14 @@ templ navigation() {
 		<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 			<div class="flex h-16 justify-between">
 				<div class="flex">
+					<!-- Logo Section -->
 					<div class="flex shrink-0 items-center">
 						<a href="/" class="ml-2 flex">
 							<img src="/assets/img/pint-of-beer-svgrepo-com.svg" class="mr-3 h-8" alt="Beer Collection"/>
 							<span class="self-center whitespace-nowrap text-2xl font-bold">Beer Collection</span>
 						</a>
 					</div>
+					<!-- Navigation Items -->
 					<div class="hidden sm:ml-6 sm:flex sm:space-x-8">
 						// <Link href="/" className="px-1 pt-1 border-b-2 text-sm font-medium">
 						<a
@@ -118,19 +120,24 @@ templ navigation() {
 						</a>
 					</div>
 				</div>
-				<div class="hidden sm:ml-6 sm:flex sm:items-center">
-					<div class="relative ml-3">
-						<div>
+				<!-- Right Side -->
+				<div class="flex items-center space-x-4">
+					<!-- User Profile -->
+					<div class="flex items-center space-x-3">
+						<div class="hidden text-right sm:block">
 							{{ user, ok := util.UserFromContext[model.User](ctx) }}
 							if ok && user.IsAuthenticated() {
-								<span>{ user.GetDisplayName() }</span>
+								<div class="text-sm font-medium text-gray-900">{ user.GetDisplayName() }</div>
+								<div class="text-xs text-gray-500">Beer Enthusiast</div>
 							}
-							<button class="focus:outline-hidden flex rounded-full bg-white text-sm focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-								<span class="sr-only">Open user menu</span>
-								<img class="h-8 w-8 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt=""/>
-							</button>
 						</div>
+						<img
+							class="h-8 w-8 rounded-full shadow-sm ring-2 ring-white"
+							src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+							alt="Profile"
+						/>
 					</div>
+					<!-- Mobile Menu Button -->
 				</div>
 				// <div class="-mr-2 flex items-center sm:hidden">
 				//   <button

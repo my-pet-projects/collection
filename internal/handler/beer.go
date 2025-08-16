@@ -29,9 +29,22 @@ func NewBeerHandler(beerService service.BeerService, breweryService service.Brew
 }
 
 func (h WorkspaceServer) HandleBeerListPage(reqResp *web.ReqRespPair) error {
+	query, queryErr := reqResp.GetStringQueryParam("query")
+	if queryErr != nil {
+		return apperr.NewBadRequestError("Invalid query", queryErr)
+	}
+	country, countryErr := reqResp.GetStringQueryParam("country")
+	if countryErr != nil {
+		return apperr.NewBadRequestError("Invalid country", queryErr)
+	}
+
 	page := workspace.Page{Title: fmt.Sprintf("Beer Workspace")}
-	beerPage := workspace.BeerPageData{
+	beerPage := workspace.BeerListPageData{
 		Page: page,
+		SearchData: workspace.BeerListSearchData{
+			Query:   query,
+			Country: country,
+		},
 	}
 	return reqResp.Render(workspace.BeerListPage(beerPage))
 }
@@ -176,6 +189,7 @@ func (h WorkspaceServer) ListBeers(reqResp *web.ReqRespPair) error {
 		CurrentPage:  pagination.Page,
 		TotalPages:   pagination.TotalPages,
 		TotalResults: pagination.TotalResults,
+		LimitPerPage: pagination.Limit,
 	}
 
 	return reqResp.Render(workspace.BeerList(pageData))
