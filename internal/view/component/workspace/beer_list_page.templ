@@ -6,15 +6,24 @@ import (
 	"github.com/my-pet-projects/collection/internal/view/layout"
 	"net/url"
 	"strconv"
-	"strings"
 )
 
 type BeerListData struct {
 	Beers        []model.Beer
 	Query        string
+	CountryIso   string
 	CurrentPage  int
 	TotalPages   int
 	TotalResults int
+	LimitPerPage int
+}
+
+func (d BeerListData) CalculateDisplayedCount() int {
+	displayed := d.CurrentPage * d.LimitPerPage
+	if displayed > d.TotalResults {
+		return d.TotalResults
+	}
+	return displayed
 }
 
 templ LoadingShimmer(cardsCount ...int) {
@@ -29,358 +38,351 @@ templ LoadingShimmer(cardsCount ...int) {
 	}
 }
 
-templ BeerCardSkeleton() {
-	<div class="overflow-hidden rounded-xl bg-white shadow-md sm:rounded-2xl">
-		<div class="p-4 sm:p-6">
-			<!-- Header skeleton -->
-			<div class="mb-4 flex items-center justify-between sm:mb-6">
-				<div class="flex min-w-0 flex-1 items-center space-x-3 sm:space-x-4">
-					<!-- Flag skeleton -->
-					<div class="h-5 w-7 animate-pulse rounded bg-gray-200"></div>
-					<!-- Title skeleton -->
-					<div class="min-w-0 flex-1">
-						<div class="h-6 w-3/4 animate-pulse rounded bg-gray-200 sm:h-7"></div>
+templ BeerListPage(page BeerListPageData) {
+	@layout.BaseLayout() {
+		<!-- Header Section -->
+		<div class="py-8">
+			<div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+				<!-- Title Section -->
+				<div class="flex items-center space-x-3 space-y-1">
+					<div class="p-2">
+						<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-800" title="Beer Collection Icon">
+							<path d="M17 11h1a3 3 0 0 1 0 6h-1"></path>
+							<path d="M9 12v6"></path>
+							<path d="M13 12v6"></path>
+							<path d="M14 7.5c-1 0-1.44.5-3 .5s-2-.5-3-.5-1.72.5-2.5.5a2.5 2.5 0 0 1 0-5c.78 0 1.57.5 2.5.5s2-.5 3-.5 2 .5 3 .5 1.72-.5 2.5-.5a2.5 2.5 0 0 1 0 5c-.78 0-1.5-.5-2.5-.5Z"></path>
+							<path d="M5 8v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8"></path>
+						</svg>
+					</div>
+					<div>
+						<h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">Beer Collection</h1>
+						<p class="text-gray-600">Discover and catalog your brews that you tasted</p>
 					</div>
 				</div>
-				<!-- Edit button skeleton -->
-				<div class="h-8 w-8 animate-pulse rounded-full bg-gray-200"></div>
-			</div>
-			<!-- Images skeleton -->
-			<div class="mb-3 flex flex-wrap items-end gap-2 rounded-lg bg-gray-50 p-2 sm:flex-nowrap">
-				<!-- Bottle skeleton -->
-				<div class="flex h-20 w-12 animate-pulse items-center justify-center rounded-lg bg-gray-200 sm:h-28 sm:w-14"></div>
-				<!-- Cap skeleton -->
-				<div class="h-20 w-20 animate-pulse rounded-full bg-gray-200 sm:h-28 sm:w-28"></div>
-				<!-- Label skeleton -->
-				<div class="flex h-20 w-full animate-pulse items-center justify-center rounded-lg bg-gray-200 sm:h-28"></div>
-			</div>
-			<!-- Info section skeleton -->
-			<div class="mb-4 space-y-3 sm:mb-6">
-				<!-- Brewery info -->
-				<div class="flex items-center gap-2 sm:gap-3">
-					<div class="h-6 w-6 animate-pulse rounded-md bg-gray-200 sm:h-8 sm:w-8"></div>
-					<div class="h-4 w-1/2 animate-pulse rounded bg-gray-200"></div>
-				</div>
-				<!-- Location info -->
-				<div class="flex items-center gap-2 sm:gap-3">
-					<div class="h-6 w-6 animate-pulse rounded-md bg-gray-200 sm:h-8 sm:w-8"></div>
-					<div class="h-4 w-2/3 animate-pulse rounded bg-gray-200"></div>
-				</div>
-				<!-- Cap slots info -->
-				<div class="flex items-center gap-2 sm:gap-3">
-					<div class="h-6 w-6 animate-pulse rounded-md bg-gray-200 sm:h-8 sm:w-8"></div>
-					<div class="h-4 w-1/3 animate-pulse rounded bg-gray-200"></div>
+				<!-- Add Beer Button -->
+				<div class="flex-shrink-0">
+					<a
+						href="/workspace/beer/create"
+						class="group inline-flex h-10 w-full items-center justify-center gap-2 whitespace-nowrap rounded-md bg-black px-4 py-2 text-sm font-semibold text-white shadow-md transition-all duration-300 hover:bg-gray-800 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 active:bg-gray-900 sm:w-auto"
+					>
+						<svg class="mr-2 h-4 w-4 transition-transform duration-300 group-hover:rotate-90 group-focus:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+						</svg>
+						Add Beer
+					</a>
 				</div>
 			</div>
-			<!-- Badge skeleton -->
-			<div class="flex items-center">
-				<div class="h-8 w-24 animate-pulse rounded-full bg-gray-200"></div>
-			</div>
-		</div>
-	</div>
-}
-
-templ BeerListPage(page BeerPageData) {
-	@layout.BaseLayout() {
-		@beersList()
-	}
-}
-
-templ beersList() {
-	<div class="container mx-auto px-3 py-4 sm:px-4 lg:px-6">
-		<!-- Header Section -->
-		<div class="mb-4 flex flex-col gap-3 sm:mb-6 sm:flex-row sm:items-center sm:justify-between">
-			<h1 class="text-2xl font-bold text-slate-800 sm:text-3xl">Beer Collection</h1>
-			<a
-				href="/workspace/beer/create"
-				class="inline-flex h-10 w-full items-center justify-center gap-2 whitespace-nowrap rounded-md bg-black px-4 py-2 text-sm font-semibold text-white shadow-md transition-all duration-300 hover:bg-gray-800 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 sm:w-auto"
-			>
-				<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus">
-					<path d="M5 12h14"></path><path d="M12 5v14"></path>
-				</svg>
-				<span class="sm:inline">Add Beer</span>
-			</a>
 		</div>
 		<div
-			x-data="{ searching: false, hasErrors: false }"
+			x-data="{ 
+				searching: false, 
+				hasErrors: false, 
+				loadingMore: false, 
+				scrollY: 0,
+				searchValue: '',
+				countryFilterLoaded: false,
+			}"
+			x-init="window.addEventListener('scroll', () => scrollY = window.scrollY)"
 			hx-ext="response-targets"
 		>
-			<!-- Search Section -->
-			<div class="relative mb-4 sm:mb-6">
-				<input
-					id="search"
-					name="query"
-					type="text"
-					hx-get="/beers"
-					hx-swap="innerHTML"
-					hx-target="#beer-list"
-					hx-trigger="load, keyup changed delay:500ms from:#search"
-					hx-target-error="#beer-list-errors"
-					@htmx:before-request="searching = true"
-					@htmx:after-request="searching = false"
-					@htmx:response-error="searching = false; hasErrors = true;"
-					class="mb-0 flex h-12 w-full rounded-lg border border-gray-300 bg-white px-4 py-3 pr-12 text-base placeholder:text-gray-500 focus:border-black focus:ring-2 focus:ring-black focus:ring-opacity-20 focus-visible:outline-none sm:h-10 sm:text-sm"
-					placeholder="Search beers or breweries..."
-				/>
-				<svg class="absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 transform text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-				</svg>
+			<div class="pb-8">
+				<div class="rounded-lg border border-gray-200 bg-white shadow">
+					<div class="px-6 py-5">
+						<!-- Search Section -->
+						<form
+							id="search-form"
+							hx-get="/beers"
+							hx-swap="innerHTML"
+							hx-target="#beer-grid"
+							hx-trigger="load, keyup changed delay:500ms from:#search, country-selected from:body"
+							hx-target-error="#beer-list-errors"
+							x-on:htmx:before-request="searching = true"
+							x-on:htmx:response-error="searching = false; hasErrors = true;"
+							x-on:htmx:config-request="
+							const params = new URLSearchParams();
+							const searchValue = document.getElementById('search')?.value?.trim();
+							const countryValue = document.querySelector('[name=country]')?.value;
+							const sizeValue = document.querySelector('[name=size]').value;
+							
+							if (searchValue) {
+								params.set('query', searchValue);
+							}
+							if (countryValue) {
+								params.set('country', countryValue);
+							}
+					        if (!params.has('page')) {
+					          params.set('page', '1');
+					        }
+
+							params.set('size', sizeValue);
+							
+							// Override the parameters
+							event.detail.parameters = Object.fromEntries(params.entries());						
+						"
+							x-on:htmx:after-request="
+							searching = false;
+                            hasErrors = !event.detail.successful;
+							const form = event.target;
+							const formData = new FormData(form);
+							const params = new URLSearchParams();
+							
+							for (let [key, value] of formData.entries()) {
+								if (value.trim()) {
+									params.set(key, value.trim());
+								}
+							}
+							
+							const newUrl = '/workspace/beer' + (params.toString() ? '?' + params.toString() : '');
+							
+							history.pushState(null, '', newUrl);
+						"
+							class="flex flex-col gap-4 sm:flex-row sm:items-stretch"
+						>
+							<!-- Search Input -->
+							<div class="relative flex-1">
+								<input
+									id="search"
+									name="query"
+									type="text"
+									class="block w-full rounded-md border border-gray-300 bg-white py-2 pl-10 pr-3 leading-5 placeholder-gray-500 focus:border-gray-500 focus:placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-500"
+									placeholder="Search beers by name or brewery..."
+									x-model="searchValue"
+								/>
+								<!-- Search Icon -->
+								<div
+									x-show="!searching && countryFilterLoaded"
+									class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
+								>
+									<svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+									</svg>
+								</div>
+								<!-- Clear Search Button -->
+								<button
+									type="button"
+									x-show="searchValue.length > 0"
+									x-on:click="searchValue = ''; document.getElementById('search').value = ''; document.getElementById('search').dispatchEvent(new Event('keyup'))"
+									class="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-gray-400 transition-colors hover:text-gray-600"
+								>
+									<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+									</svg>
+								</button>
+								<!-- Loading indicator -->
+								<div
+									x-show="searching || !countryFilterLoaded"
+									class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
+								>
+									<div class="h-5 w-5 animate-spin rounded-full border-2 border-gray-300 border-t-black"></div>
+								</div>
+							</div>
+							<!-- Country Filter -->
+							<div class="flex h-10 w-full items-center justify-center sm:w-80" id="country-filter-container">
+								<!-- Loading indicator -->
+								<div class="h-5 w-5 animate-spin rounded-full border-2 border-gray-300 border-t-black"></div>
+							</div>
+							<!-- Size Filter -->
+							<input
+								type="hidden"
+								id="size"
+								name="size"
+								value={ fmt.Sprintf("%d", page.LimitPerPage) }
+							/>
+						</form>
+						<!-- Separate element to load the country filter -->
+						<div
+							hx-get="/geo/countries?hasBreweries=true&useAlpineComponent=true"
+							hx-swap="innerHTML"
+							hx-target="#country-filter-container"
+							hx-trigger="load"
+							x-on:htmx:after-request="countryFilterLoaded = true"
+							style="display: none;"
+						></div>
+					</div>
+				</div>
+			</div>
+			<!-- Error Messages -->
+			<div
+				id="beer-list-errors"
+				class="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+				x-show="hasErrors"
+				x-transition:enter="transition ease-out duration-300"
+				x-transition:enter-start="opacity-0 transform scale-95"
+				x-transition:enter-end="opacity-100 transform scale-100"
+			></div>
+			<!-- Controls Section -->
+			<div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+				<!-- Search Results Count -->
+				<div class="flex items-center gap-3">
+					<div id="results-count" class="mb-4 text-sm text-gray-600 sm:text-base"></div>
+				</div>
+				<!-- View Toggle -->
+				<div class="flex items-center gap-2 rounded-lg bg-gray-100 p-1">
+					<button
+						type="button"
+						class="rounded-md bg-white px-3 py-1.5 text-xs font-medium text-gray-700 shadow-sm transition-all duration-200"
+					>
+						<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+						</svg>
+					</button>
+					<button
+						type="button"
+						class="rounded-md px-3 py-1.5 text-xs font-medium text-gray-500 transition-all duration-200 hover:text-gray-700"
+					>
+						<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+						</svg>
+					</button>
+				</div>
 			</div>
 			<!-- Results Section -->
-			<div>
-				<!-- Error Messages -->
-				<div id="beer-list-errors" class="mb-4"></div>
-				<!-- Results Counter -->
-				<div class="mb-4 text-sm text-gray-600 sm:text-base">
-					<span id="results-count" class="font-medium"></span>
-				</div>
-				<!-- Beer Grid -->
+			<div class="pb-8">
+				<!-- Beer Grid Container -->
 				<div
-					id="beer-list"
+					id="beer-grid"
 					x-show="!searching"
-					class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+					x-transition:enter="transition ease-out duration-300"
+					x-transition:enter-start="opacity-0 transform scale-98"
+					x-transition:enter-end="opacity-100 transform scale-100"
+					class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
 				></div>
 				<!-- Loading Shimmer -->
 				<div
 					x-show="searching"
-					class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+					x-transition:enter="transition ease-out duration-300"
+					x-transition:enter-start="opacity-0"
+					x-transition:enter-end="opacity-100"
+					class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
 				>
 					@LoadingShimmer(3)
 				</div>
-				<!-- Loading Indicator for load more -->
-				<div class="flex justify-center py-8">
-					<img class="htmx-indicator h-8 w-8" alt="Loading..." src="/assets/img/tail-spin.svg"/>
+			</div>
+			<!-- Progress Section -->
+			<div class="border-t border-gray-200 pt-6">
+				<div id="page-info" class="text-center">
+					<!-- This will be updated via HTMX -->
 				</div>
 			</div>
+			<!-- Back to Top Button -->
+			<button
+				type="button"
+				x-show="scrollY > 300"
+				x-transition:enter="transition ease-out duration-300"
+				x-transition:enter-start="opacity-0 transform translate-y-4"
+				x-transition:enter-end="opacity-100 transform translate-y-0"
+				x-on:click="window.scrollTo({ top: 0, behavior: 'smooth' })"
+				class="fixed bottom-6 right-6 z-50 rounded-full bg-gray-900 p-3 text-white shadow-lg transition-all duration-200 hover:-translate-y-1 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+			>
+				<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+				</svg>
+			</button>
 		</div>
-	</div>
+	}
 }
 
 templ BeerList(data BeerListData) {
+	<!-- Results Count -->
+	<div id="results-count" hx-swap-oob="true" class="mb-4 text-sm text-gray-600 sm:text-base">
+		if data.TotalResults > 0 {
+			Showing <span class="font-semibold text-gray-900">{ fmt.Sprintf("%d", data.CalculateDisplayedCount()) }</span>
+			of <span class="font-semibold text-gray-900">{ fmt.Sprintf("%d", data.TotalResults) }</span> beers
+		}
+	</div>
+	<div id="page-info" hx-swap-oob="true">
+		if data.TotalResults > 0 {
+			<div class="rounded-lg bg-gray-50 px-4 py-3">
+				<div class="flex flex-col items-center gap-2 text-sm">
+					<!-- Main count -->
+					<div class="font-semibold text-gray-900">
+						{ fmt.Sprintf("%d", data.CalculateDisplayedCount()) } of { fmt.Sprintf("%d", data.TotalResults) } beers
+					</div>
+					<!-- Progress bar -->
+					<div class="w-full max-w-xs">
+						<div class="h-2 w-full rounded-full bg-gray-200">
+							<div
+								class="h-2 rounded-full bg-blue-600 transition-all duration-300"
+								style={ fmt.Sprintf("width: %.1f%%", float64(data.CalculateDisplayedCount())/float64(data.TotalResults)*100) }
+							></div>
+						</div>
+					</div>
+					<!-- Page indicator -->
+					if data.TotalPages > 1 {
+						<div class="text-xs text-gray-600">
+							Page { fmt.Sprintf("%d", data.CurrentPage) } of { fmt.Sprintf("%d", data.TotalPages) }
+						</div>
+					}
+				</div>
+			</div>
+		}
+	</div>
 	if data.TotalResults == 0 {
-		<div class="container mx-auto px-3 py-4 sm:px-4 lg:px-6">
-			<div class="text-center text-gray-500">
-				<p class="text-lg">No beers found for your search.</p>
-				<p class="text-sm">Try adjusting your search criteria.</p>
+		<!-- No Results -->
+		<div class="col-span-full flex flex-col items-center justify-center px-4 py-8 text-center sm:py-24">
+			<div class="mb-4 p-6 sm:mb-8 sm:p-10">
+				<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400 sm:h-20 sm:w-20">
+					<path d="M17 11h1a3 3 0 0 1 0 6h-1"></path>
+					<path d="M9 12v6"></path>
+					<path d="M13 12v6"></path>
+					<path d="M14 7.5c-1 0-1.44.5-3 .5s-2-.5-3-.5-1.72.5-2.5.5a2.5 2.5 0 0 1 0-5c.78 0 1.57.5 2.5.5s2-.5 3-.5 2 .5 3 .5 1.72-.5 2.5-.5a2.5 2.5 0 0 1 0 5c-.78 0-1.5-.5-2.5-.5Z"></path>
+					<path d="M5 8v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8"></path>
+				</svg>
+			</div>
+			<h3 class="mb-3 text-lg font-semibold text-gray-900 sm:mb-4 sm:text-2xl">No beers found</h3>
+			<p class="mb-6 max-w-sm text-sm text-gray-500 sm:mb-8 sm:max-w-lg sm:text-lg">Try adjusting your search terms or filters to discover more beers</p>
+		</div>
+	} else {
+		<!-- Beer Cards -->
+		for _, beer := range data.Beers {
+			@beerCard(beer)
+		}
+		<!-- Load More Trigger -->
+		if data.CurrentPage < data.TotalPages {
+			<div
+				id="load-more-trigger"
+				hx-get={ buildNextPageURL(data) }
+				hx-trigger="intersect once threshold:0.8"
+				hx-swap="beforeend"
+				hx-target="#beer-grid"
+				hx-target-error="#beer-list-errors"
+				x-on:htmx:response-error="hasErrors = true"
+				x-on:htmx:before-request="loadingMore = true"
+				x-on:htmx:after-request="loadingMore = false; $el.remove()"
+				class="invisible h-20 w-full"
+			></div>
+		}
+		<!-- Loading more indicator -->
+		<div
+			x-show="loadingMore"
+			x-transition:enter="transition ease-out duration-300"
+			x-transition:enter-start="opacity-0 transform translate-y-4"
+			x-transition:enter-end="opacity-100 transform translate-y-0"
+			class="col-span-full py-4 text-center"
+		>
+			<div class="inline-flex items-center gap-3 rounded-xl bg-gray-50 px-4 py-3">
+				<div class="flex space-x-1">
+					<div class="h-2 w-2 animate-bounce rounded-full bg-gray-600"></div>
+					<div class="h-2 w-2 animate-bounce rounded-full bg-gray-600" style="animation-delay: 0.1s"></div>
+					<div class="h-2 w-2 animate-bounce rounded-full bg-gray-600" style="animation-delay: 0.2s"></div>
+				</div>
+				<span class="font-medium text-gray-700">Loading more beers...</span>
 			</div>
 		</div>
 	}
-	for idx, beer := range data.Beers {
-		<div class="group overflow-hidden rounded-xl bg-white shadow-md transition-all duration-300 hover:shadow-lg sm:rounded-2xl sm:hover:-translate-y-2 sm:hover:shadow-xl">
-			<div class="p-4 sm:p-6">
-				<!-- Header -->
-				<div class="mb-4 flex items-center justify-between sm:mb-6">
-					<!-- Brand and Country -->
-					<div class="flex min-w-0 flex-1 items-center space-x-3 sm:space-x-4">
-						if beer.HasCountry() {
-							<div class="flex-shrink-0">
-								{{ countryCode := beer.GetCountry().Cca2 }}
-								<img
-									src={ fmt.Sprintf("https://flagcdn.com/w40/%s.png", strings.ToLower(countryCode)) }
-									alt={ fmt.Sprintf("%s flag", countryCode) }
-									class="h-5 w-7 rounded border border-white object-cover shadow-sm ring-1 ring-gray-200"
-									loading="lazy"
-									decoding="async"
-								/>
-							</div>
-						}
-						<div class="min-w-0 flex-1">
-							<div class="flex items-center gap-2">
-								<h2 class="truncate text-lg font-bold tracking-tight text-slate-800 sm:text-xl lg:text-2xl">{ beer.Brand }</h2>
-								<span class="flex-shrink-0 text-xs text-slate-400 sm:text-sm">#{ strconv.Itoa(beer.ID) }</span>
-							</div>
-						</div>
-					</div>
-					<!-- Edit Button -->
-					<a
-						href={ templ.URL(fmt.Sprintf("/workspace/beer/%d/overview", beer.ID)) }
-						class="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition-all duration-200 hover:bg-gray-200 hover:text-gray-800 sm:opacity-0 sm:group-hover:opacity-100"
-						aria-label="Edit beer"
-					>
-						<svg class="h-4 w-4" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-							<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
-							<path d="m15 5 4 4"></path>
-						</svg>
-					</a>
-				</div>
-				<!-- Images Section -->
-				<div class="mb-3 flex flex-wrap items-end gap-2 rounded-lg bg-gray-50 p-2 sm:flex-nowrap">
-					for _, media := range beer.BeerMedias {
-						if media.Type.IsBottle() {
-							@bottleImage(media)
-						} else if media.Type.IsCap() {
-							@capImage(media)
-						} else if media.Type.IsLabel() {
-							@labelImage(media)
-						}
-					}
-				</div>
-				<!-- Info Section -->
-				<div class="mb-4 space-y-2 sm:mb-6 sm:space-y-3">
-					if beer.HasBrewery() {
-						{{ brewery := beer.Brewery }}
-						<div class="flex items-center gap-2 text-slate-600 sm:gap-3">
-							<div class="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md bg-blue-50 text-blue-600 sm:h-8 sm:w-8 sm:rounded-lg">
-								<svg class="h-3 w-3 sm:h-4 sm:w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-7 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-								</svg>
-							</div>
-							<div>
-								<div class="muted text-xs">Brewery</div>
-								<div class="min-w-0 flex-1 truncate text-xs font-semibold sm:text-sm">{ brewery.Name }</div>
-							</div>
-						</div>
-						<div class="flex items-center gap-2 text-slate-600 sm:gap-3">
-							<div class="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md bg-emerald-50 text-emerald-600 sm:h-8 sm:w-8 sm:rounded-lg">
-								<svg class="h-3 w-3 sm:h-4 sm:w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-								</svg>
-							</div>
-							<div>
-								<div class="muted text-xs">Location</div>
-								<div class="min-w-0 flex-1 truncate text-xs font-semibold sm:text-sm">{ brewery.GetCityName() }, { brewery.GetCountryName() }</div>
-							</div>
-						</div>
-					}
-					if beer.HasCapSlots() {
-						{{ capSlots := beer.GetCapSlots() }}
-						<div class="flex items-center gap-2 text-slate-600 sm:gap-3">
-							<div class="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md bg-purple-50 text-purple-600 sm:h-8 sm:w-8 sm:rounded-lg">
-								<svg class="h-3 w-3 sm:h-4 sm:w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2v2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-								</svg>
-							</div>
-							<div>
-								<div class="muted text-xs">Slot</div>
-								<div class="min-w-0 flex-1 truncate text-xs font-medium sm:text-sm">
-									<div class="flex min-w-0 flex-1 flex-wrap gap-1">
-										for _, slot := range capSlots {
-											<span class="text-xs font-semibold sm:text-sm">{ slot }</span>
-										}
-									</div>
-								</div>
-							</div>
-						</div>
-					}
-				</div>
-				<!-- Badge section -->
-				if beer.HasBeerStyle() {
-					<div class="flex items-center">
-						<!-- Beer Style Badge -->
-						<div class="inline-flex items-center rounded-full border border-slate-300/50 bg-gradient-to-r from-slate-100 to-slate-200 px-3 py-1.5 shadow-sm sm:px-4 sm:py-2">
-							<span class="text-xs font-medium text-slate-700 sm:text-sm">{ beer.BeerStyle.Name }</span>
-						</div>
-					</div>
-				}
-			</div>
-			<!-- Load More Trigger -->
-			if idx == len(data.Beers)-1 && data.CurrentPage < data.TotalPages {
-				<span
-					hx-get={ fmt.Sprintf("/beers?page=%d&query=%s", data.CurrentPage+1, url.QueryEscape(data.Query)) }
-					hx-trigger="intersect once"
-					hx-swap="beforeend"
-					hx-target="#beer-list"
-					hx-indicator=".htmx-indicator"
-					hx-target-error="#beer-list-errors"
-					@htmx:response-error="hasErrors = true"
-				></span>
-			}
-		</div>
+}
+
+func buildNextPageURL(data BeerListData) string {
+	params := url.Values{}
+	params.Set("page", strconv.Itoa(data.CurrentPage+1))
+	if data.Query != "" {
+		params.Set("query", data.Query)
 	}
-}
-
-const (
-	cdnBaseURL = "https://collection-new.filimonov.life/cdn-cgi/image"
-	s3BaseURL  = "https://beer-collection-bucket.s3.eu-central-1.amazonaws.com/original"
-)
-
-templ bottleImage(media model.BeerMedia) {
-	<div
-		x-data={ fmt.Sprintf(`{
-            isIntersected: false,
-            imageLoaded: false,
-            imageSrc: '%s/width=100,quality=25/%s/%s'
-        }`, cdnBaseURL, s3BaseURL, url.QueryEscape(media.Media.ExternalFilename)) }
-		x-intersect.threshold.25="isIntersected = true"
-		class="order-first flex flex-shrink-0 items-end justify-center"
-	>
-		<div class="flex h-20 w-12 items-center justify-center rounded-lg border border-slate-200/60 bg-white p-1.5 shadow-sm transition duration-300 ease-in-out hover:scale-105 sm:h-28 sm:w-14 sm:rounded-xl sm:p-2">
-			<!-- Shimmer placeholder -->
-			<div
-				x-show="isIntersected && !imageLoaded"
-				class="h-full w-full animate-pulse rounded-lg bg-slate-200"
-			></div>
-			<!-- Actual image -->
-			<img
-				x-bind:class="imageLoaded ? 'h-full w-auto object-contain opacity-100 transition-opacity duration-700 ease-out' : 'h-full w-auto object-contain opacity-0 absolute transition-opacity duration-700 ease-out'"
-				x-bind:src="isIntersected ? imageSrc : null"
-				@load="imageLoaded = true"
-				@error="imageLoaded = true"
-				alt="bottle image"
-				loading="lazy"
-				decoding="async"
-			/>
-		</div>
-	</div>
-}
-
-templ capImage(media model.BeerMedia) {
-	<div
-		x-data={ fmt.Sprintf(`{
-            isIntersected: false,
-            imageLoaded: false,
-            imageSrc: '%s/width=100,quality=25/%s/%s'
-        }`, cdnBaseURL, s3BaseURL, url.QueryEscape(media.Media.ExternalFilename)) }
-		x-intersect.threshold.25="isIntersected = true"
-		class="flex flex-shrink-0 items-end justify-center"
-	>
-		<div class="flex h-20 w-20 items-center justify-center rounded-full border border-slate-200/60 bg-white p-1.5 shadow-sm transition duration-300 ease-in-out hover:scale-105 sm:h-28 sm:w-28 sm:p-2">
-			<!-- Shimmer placeholder -->
-			<div
-				x-show="isIntersected && !imageLoaded"
-				class="h-full w-full animate-pulse rounded-full bg-slate-200"
-			></div>
-			<!-- Actual image -->
-			<img
-				x-bind:class="imageLoaded ? 'h-full w-auto object-contain opacity-100 transition-opacity duration-700 ease-out' : 'h-full w-auto object-contain opacity-0 absolute transition-opacity duration-700 ease-out'"
-				x-bind:src="isIntersected ? imageSrc : null"
-				@load="imageLoaded = true"
-				@error="imageLoaded = true"
-				alt="cap image"
-				loading="lazy"
-				decoding="async"
-			/>
-		</div>
-	</div>
-}
-
-templ labelImage(media model.BeerMedia) {
-	<div
-		x-data={ fmt.Sprintf(`{
-            isIntersected: false,
-            imageLoaded: false,
-            imageSrc: '%s/width=100,quality=25/%s/%s'
-        }`, cdnBaseURL, s3BaseURL, url.QueryEscape(media.Media.ExternalFilename)) }
-		x-intersect.threshold.25="isIntersected = true"
-		class="order-last flex min-w-0 flex-1 items-end justify-center"
-	>
-		<div class="flex h-20 w-full items-center justify-center overflow-hidden rounded-lg border border-slate-200/60 bg-white p-1.5 shadow-sm transition duration-300 ease-in-out hover:scale-105 sm:h-28 sm:rounded-xl sm:p-2">
-			<!-- Shimmer placeholder -->
-			<div
-				x-show="isIntersected && !imageLoaded"
-				class="h-full w-full animate-pulse rounded-lg bg-slate-200"
-			></div>
-			<!-- Actual image -->
-			<img
-				x-bind:class="imageLoaded ? 'h-full w-auto object-contain opacity-100 transition-opacity duration-700 ease-out' : 'h-full w-auto object-contain opacity-0 absolute transition-opacity duration-700 ease-out'"
-				x-bind:src="isIntersected ? imageSrc : null"
-				@load="imageLoaded = true"
-				@error="imageLoaded = true"
-				alt="label image"
-				loading="lazy"
-				decoding="async"
-			/>
-		</div>
-	</div>
+	if data.CountryIso != "" {
+		params.Set("country", data.CountryIso)
+	}
+	if data.LimitPerPage != 0 {
+		params.Set("size", strconv.Itoa(data.LimitPerPage))
+	}
+	return "/beers?" + params.Encode()
 }

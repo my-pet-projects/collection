@@ -21,6 +21,18 @@ type CountriesData struct {
 	StoreSelectionInQuery bool
 }
 
+func (c CountriesData) ToAutocompleteData() []AutoCompleteData {
+	data := make([]AutoCompleteData, len(c.Countries))
+	for i, country := range c.Countries {
+		data[i] = AutoCompleteData{
+			Label: country.NameCommon,
+			Value: strings.ToLower(country.Cca3),
+			Image: fmt.Sprintf("https://flagcdn.com/%s.svg", strings.ToLower(country.Cca2)),
+		}
+	}
+	return data
+}
+
 type choicesData struct {
 	Value            string         `json:"value"`
 	Label            string         `json:"label"`
@@ -115,7 +127,7 @@ func CountriesSelector(countriesData CountriesData) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(countriesJson(countriesData))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/geography.templ`, Line: 92, Col: 44}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/geography.templ`, Line: 104, Col: 44}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -157,13 +169,51 @@ func CitiesSelector(cities []model.City) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(citiesJson(cities))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/geography.templ`, Line: 100, Col: 33}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/geography.templ`, Line: 112, Col: 33}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\"></app-select>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func CountriesAutoComplete(countriesData CountriesData) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var5 == nil {
+			templ_7745c5c3_Var5 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = AutoComplete(AutoCompleteProps{
+			ID:             "country",
+			Name:           "country",
+			Data:           countriesData.ToAutocompleteData(),
+			ShowAllOption:  true,
+			AllOptionLabel: "All countries",
+			AllOptionIcon:  "🌍",
+			EventNamespace: "country",
+			ShowLabel:      false,
+		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

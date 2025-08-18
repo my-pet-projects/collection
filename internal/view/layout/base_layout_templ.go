@@ -43,7 +43,7 @@ func BaseLayout() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<body><div class=\"min-h-screen bg-gray-100\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<body class=\"min-h-screen bg-gray-50\"><!-- Navigation -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -51,7 +51,7 @@ func BaseLayout() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"py-6\"><div class=\"mx-auto max-w-7xl px-4 sm:px-6 lg:px-8\"><div class=\"flex flex-col lg:flex-row\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<!-- Main Content --><div class=\"container mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -59,7 +59,7 @@ func BaseLayout() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div></div></div><div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div><div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -67,7 +67,7 @@ func BaseLayout() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div></div></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -103,13 +103,13 @@ func head(title string) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/layout/base_layout.templ`, Line: 35, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/layout/base_layout.templ`, Line: 31, Col: 16}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</title><link rel=\"icon\" type=\"image/svg\" sizes=\"32x32\" href=\"/assets/img/pint-of-beer-svgrepo-com.svg\"><link href=\"/assets/css/tailwind-output.gen.css\" rel=\"stylesheet\"><link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css\"><link href=\"/assets/css/app.css\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@2.0.3\" crossorigin=\"anonymous\"></script><script src=\"https://unpkg.com/htmx-ext-response-targets@2.0.1/response-targets.js\"></script><script src=\"https://unpkg.com/htmx-ext-debug@2.0.0/debug.js\"></script><script src=\"https://unpkg.com/htmx.org@1.9.11/dist/ext/path-params.js\"></script><script src=\"https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js\"></script><script src=\"/assets/js/select.js\"></script><script src=\"/assets/js/upload.js\" type=\"module\"></script><link href=\"https://releases.transloadit.com/uppy/v3.27.0/uppy.min.css\" rel=\"stylesheet\"><script defer src=\"https://cdn.jsdelivr.net/npm/@alpinejs/intersect@3.x.x/dist/cdn.min.js\"></script><script defer src=\"https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js\"></script></head>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</title><link rel=\"icon\" type=\"image/svg\" sizes=\"32x32\" href=\"/assets/img/pint-of-beer-svgrepo-com.svg\"><link href=\"/assets/css/tailwind-output.gen.css\" rel=\"stylesheet\"><link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css\"><link href=\"/assets/css/app.css\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@2.0.3\" crossorigin=\"anonymous\"></script><script src=\"https://unpkg.com/htmx-ext-response-targets@2.0.1/response-targets.js\"></script><script src=\"https://unpkg.com/htmx-ext-debug@2.0.0/debug.js\"></script><script src=\"https://unpkg.com/htmx.org@1.9.11/dist/ext/path-params.js\"></script><script src=\"https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js\"></script><script src=\"/assets/js/select.js\"></script><!-- Alpine Plugins --><script defer src=\"https://cdn.jsdelivr.net/npm/@alpinejs/intersect@3.x.x/dist/cdn.min.js\"></script><script defer src=\"https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.x.x/dist/cdn.min.js\"></script><!-- Alpine Core --><script defer src=\"https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js\"></script><!-- Uppy --><script src=\"/assets/js/upload.js\" type=\"module\"></script><link href=\"https://releases.transloadit.com/uppy/v3.27.0/uppy.min.css\" rel=\"stylesheet\"></head>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -138,7 +138,7 @@ func navigation() templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<nav class=\"shadow-xs bg-white\"><div class=\"mx-auto max-w-7xl px-4 sm:px-6 lg:px-8\"><div class=\"flex h-16 justify-between\"><div class=\"flex\"><div class=\"flex shrink-0 items-center\"><a href=\"/\" class=\"ml-2 flex\"><img src=\"/assets/img/pint-of-beer-svgrepo-com.svg\" class=\"mr-3 h-8\" alt=\"Beer Collection\"> <span class=\"self-center whitespace-nowrap text-2xl font-bold\">Beer Collection</span></a></div><div class=\"hidden sm:ml-6 sm:flex sm:space-x-8\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<nav class=\"shadow-xs bg-white\"><div class=\"mx-auto max-w-7xl px-4 sm:px-6 lg:px-8\"><div class=\"flex h-16 justify-between\"><div class=\"flex\"><!-- Logo Section --><div class=\"flex shrink-0 items-center\"><a href=\"/\" class=\"ml-2 flex\"><img src=\"/assets/img/pint-of-beer-svgrepo-com.svg\" class=\"mr-3 h-8\" alt=\"Beer Collection\"> <span class=\"self-center whitespace-nowrap text-2xl font-bold\">Beer Collection</span></a></div><!-- Navigation Items --><div class=\"hidden sm:ml-6 sm:flex sm:space-x-8\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -209,8 +209,8 @@ func navigation() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var11 = []any{"inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium",
-			templ.KV("border-indigo-500 text-gray-900", util.UrlStartsWith(ctx, "/workspace/images")),
-			templ.KV("border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700", !util.UrlStartsWith(ctx, "/workspace/images"))}
+			templ.KV("border-indigo-500 text-gray-900", util.UrlStartsWith(ctx, "/workspace/images") && !util.UrlStartsWith(ctx, "/workspace/images/upload")),
+			templ.KV("border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700", !(util.UrlStartsWith(ctx, "/workspace/images") && !util.UrlStartsWith(ctx, "/workspace/images/upload")))}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var11...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -250,31 +250,31 @@ func navigation() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "\"><svg class=\"mr-2 h-5 w-5\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M12 13v8\"></path><path d=\"M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242\"></path><path d=\"m8 17 4-4 4 4\"></path></svg> Upload</a></div></div><div class=\"hidden sm:ml-6 sm:flex sm:items-center\"><div class=\"relative ml-3\"><div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "\"><svg class=\"mr-2 h-5 w-5\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M12 13v8\"></path><path d=\"M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242\"></path><path d=\"m8 17 4-4 4 4\"></path></svg> Upload</a></div></div><!-- Right Side --><div class=\"flex items-center space-x-4\"><!-- User Profile --><div class=\"flex items-center space-x-3\"><div class=\"hidden text-right sm:block\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		user, ok := util.UserFromContext[model.User](ctx)
 		if ok && user.IsAuthenticated() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<span>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<div class=\"text-sm font-medium text-gray-900\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var15 string
 			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(user.GetDisplayName())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/layout/base_layout.templ`, Line: 126, Col: 37}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/layout/base_layout.templ`, Line: 130, Col: 78}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</span> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</div><div class=\"text-xs text-gray-500\">Beer Enthusiast</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<button class=\"focus:outline-hidden flex rounded-full bg-white text-sm focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2\"><span class=\"sr-only\">Open user menu</span> <img class=\"h-8 w-8 rounded-full\" src=\"https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80\" alt=\"\"></button></div></div></div></div></div></nav>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</div><img class=\"h-8 w-8 rounded-full shadow-sm ring-2 ring-white\" src=\"https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80\" alt=\"Profile\"></div><!-- Mobile Menu Button --></div></div></div></nav>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
