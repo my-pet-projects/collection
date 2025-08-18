@@ -97,7 +97,6 @@ templ BeerListPage(page BeerListPageData) {
 							hx-trigger="load, keyup changed delay:500ms from:#search, country-selected from:body"
 							hx-target-error="#beer-list-errors"
 							x-on:htmx:before-request="searching = true"
-							x-on:htmx:after-request="searching = false"
 							x-on:htmx:response-error="searching = false; hasErrors = true;"
 							x-on:htmx:config-request="
 							const params = new URLSearchParams();
@@ -118,6 +117,7 @@ templ BeerListPage(page BeerListPageData) {
 							event.detail.parameters = Object.fromEntries(params.entries());						
 						"
 							x-on:htmx:after-request="
+							searching = false;
 							const form = event.target;
 							const formData = new FormData(form);
 							const params = new URLSearchParams();
