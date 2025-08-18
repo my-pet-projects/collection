@@ -6,6 +6,17 @@ import (
 	"github.com/my-pet-projects/collection/internal/model"
 )
 
+type BeerListSearchData struct {
+	Query      string
+	CountryIso string
+}
+
+type BeerListPageData struct {
+	Page         Page
+	SearchData   BeerListSearchData
+	LimitPerPage int
+}
+
 type BeerPageData struct {
 	Page
 	Beer       model.Beer

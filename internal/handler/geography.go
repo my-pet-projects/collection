@@ -40,6 +40,12 @@ func (h GeographyHandler) ListCountries(reqResp *web.ReqRespPair) error {
 		Countries:    countries,
 		HasBreweries: hasBreweries,
 	}
+
+	// Temporary use useAlpineComponent query parameter to switch between Alpine and non-Alpine components
+	if reqResp.Request.URL.Query().Get("useAlpineComponent") == "true" {
+		return reqResp.Render(shared.CountriesAutoComplete(data))
+	}
+
 	return reqResp.Render(shared.CountriesSelector(data))
 }
 

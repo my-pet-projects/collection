@@ -26,6 +26,7 @@ func (s GeographyStore) FetchCountries() ([]model.Country, error) {
 	result := s.db.gorm.
 		Debug().
 		Clauses(dbresolver.Use(GeographyDBResolverName)).
+		Order("name_common").
 		Find(&items)
 
 	return items, result.Error

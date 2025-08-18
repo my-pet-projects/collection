@@ -94,8 +94,9 @@ type Brewery struct {
 	GeoID   int
 	OldId   *string
 	// Country *Country `gorm:"foreignKey:Cca2"`
-	City       *City `gorm:"foreignKey:GeoID;references:ID"`
-	SearchName string
+	City        *City `gorm:"foreignKey:GeoID;references:ID"`
+	SearchName  string
+	CountryCca3 string
 }
 
 func (b Brewery) GetCountryName() string {
@@ -148,7 +149,8 @@ type City struct {
 // }
 
 type BeerFilter struct {
-	Query string
-	Page  int
-	Limit int
+	Query       string
+	CountryCca3 string
+	Page        int
+	Limit       int
 }

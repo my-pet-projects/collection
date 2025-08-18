@@ -29,9 +29,23 @@ func NewBeerHandler(beerService service.BeerService, breweryService service.Brew
 }
 
 func (h WorkspaceServer) HandleBeerListPage(reqResp *web.ReqRespPair) error {
+	query, queryErr := reqResp.GetStringQueryParam("query")
+	if queryErr != nil {
+		return apperr.NewBadRequestError("Invalid query", queryErr)
+	}
+	country, countryErr := reqResp.GetStringQueryParam("country")
+	if countryErr != nil {
+		return apperr.NewBadRequestError("Invalid country", countryErr)
+	}
+
 	page := workspace.Page{Title: fmt.Sprintf("Beer Workspace")}
-	beerPage := workspace.BeerPageData{
+	beerPage := workspace.BeerListPageData{
 		Page: page,
+		SearchData: workspace.BeerListSearchData{
+			Query:      query,
+			CountryIso: country,
+		},
+		LimitPerPage: 20, //nolint:mnd
 	}
 	return reqResp.Render(workspace.BeerListPage(beerPage))
 }
@@ -154,16 +168,24 @@ func (h WorkspaceServer) ListBeers(reqResp *web.ReqRespPair) error {
 	if pageErr != nil {
 		return apperr.NewBadRequestError("Invalid page number", pageErr)
 	}
-
 	query, queryErr := reqResp.GetStringQueryParam("query")
 	if queryErr != nil {
 		return apperr.NewBadRequestError("Invalid query", queryErr)
 	}
+	country, countryErr := reqResp.GetStringQueryParam("country")
+	if countryErr != nil {
+		return apperr.NewBadRequestError("Invalid country", countryErr)
+	}
+	size, sizeErr := reqResp.GetIntQueryParam("size")
+	if sizeErr != nil {
+		return apperr.NewBadRequestError("Invalid size", sizeErr)
+	}
 
 	filter := model.BeerFilter{
-		Query: query,
-		Page:  page,
-		Limit: 20, //nolint:mnd
+		Query:       query,
+		CountryCca3: country,
+		Page:        page,
+		Limit:       size,
 	}
 	pagination, paginationErr := h.beerService.PaginateBeers(reqResp.Request.Context(), filter)
 	if paginationErr != nil {
@@ -173,9 +195,11 @@ func (h WorkspaceServer) ListBeers(reqResp *web.ReqRespPair) error {
 	pageData := workspace.BeerListData{
 		Beers:        pagination.Results,
 		Query:        query,
+		CountryIso:   country,
 		CurrentPage:  pagination.Page,
 		TotalPages:   pagination.TotalPages,
 		TotalResults: pagination.TotalResults,
+		LimitPerPage: pagination.Limit,
 	}
 
 	return reqResp.Render(workspace.BeerList(pageData))
