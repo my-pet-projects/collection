@@ -26,7 +26,7 @@ func (c CountriesData) ToAutocompleteData() []AutoCompleteData {
 	for i, country := range c.Countries {
 		data[i] = AutoCompleteData{
 			Label: country.NameCommon,
-			Value: country.NameCommon,
+			Value: strings.ToLower(country.Cca3),
 			Image: fmt.Sprintf("https://flagcdn.com/%s.svg", strings.ToLower(country.Cca2)),
 		}
 	}
@@ -205,10 +205,14 @@ func CountriesAutoComplete(countriesData CountriesData) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = AutoComplete(AutoCompleteProps{
-			ID:        "country",
-			Name:      "country",
-			Data:      countriesData.ToAutocompleteData(),
-			ShowLabel: false,
+			ID:             "country",
+			Name:           "country",
+			Data:           countriesData.ToAutocompleteData(),
+			ShowAllOption:  true,
+			AllOptionLabel: "All countries",
+			AllOptionIcon:  "🌍",
+			EventNamespace: "country",
+			ShowLabel:      false,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

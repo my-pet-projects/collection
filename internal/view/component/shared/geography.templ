@@ -18,7 +18,7 @@ func (c CountriesData) ToAutocompleteData() []AutoCompleteData {
 	for i, country := range c.Countries {
 		data[i] = AutoCompleteData{
 			Label: country.NameCommon,
-			Value: country.NameCommon,
+			Value: strings.ToLower(country.Cca3),
 			Image: fmt.Sprintf("https://flagcdn.com/%s.svg", strings.ToLower(country.Cca2)),
 		}
 	}
@@ -115,9 +115,13 @@ templ CitiesSelector(cities []model.City) {
 
 templ CountriesAutoComplete(countriesData CountriesData) {
 	@AutoComplete(AutoCompleteProps{
-		ID:        "country",
-		Name:      "country",
-		Data:      countriesData.ToAutocompleteData(),
-		ShowLabel: false,
+		ID:             "country",
+		Name:           "country",
+		Data:           countriesData.ToAutocompleteData(),
+		ShowAllOption:  true,
+		AllOptionLabel: "All countries",
+		AllOptionIcon:  "🌍",
+		EventNamespace: "country",
+		ShowLabel:      false,
 	})
 }

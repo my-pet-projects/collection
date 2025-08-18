@@ -3,7 +3,9 @@ package db
 import (
 	"context"
 	"log/slog"
+	"strings"
 
+	"github.com/pkg/errors"
 	"gorm.io/gorm"
 	"gorm.io/plugin/dbresolver"
 
@@ -45,11 +47,22 @@ func (s BeerStore) PaginateBeers(ctx context.Context, filter model.BeerFilter) (
 		Sort:  "beers.id DESC",
 	}
 
+	whereConditions := []string{}
+	whereArgs := map[string]interface{}{}
+
 	if filter.Query != "" {
-		pagination.WhereQuery = "beers.search_name LIKE @name OR brewery.search_name LIKE @name"
-		pagination.WhereArgs = map[string]interface{}{
-			"name": "%" + filter.Query + "%",
-		}
+		whereConditions = append(whereConditions, "(beers.search_name LIKE @name OR brewery.search_name LIKE @name)")
+		whereArgs["name"] = "%" + filter.Query + "%"
+	}
+
+	if filter.CountryIso != "" {
+		whereConditions = append(whereConditions, "brewery.country_cca3 = @countryIso")
+		whereArgs["countryIso"] = filter.CountryIso
+	}
+
+	if len(whereConditions) > 0 {
+		pagination.WhereQuery = strings.Join(whereConditions, " AND ")
+		pagination.WhereArgs = whereArgs
 	}
 
 	var itemsWithCount []model.ResultWithCount[model.Beer]
@@ -64,11 +77,13 @@ func (s BeerStore) PaginateBeers(ctx context.Context, filter model.BeerFilter) (
 			return db.Clauses(dbresolver.Use(GeographyDBResolverName)).
 				Joins("Country")
 		}).
-		Preload("BeerMedias.Media").
+		Preload("BeerMedias", func(db *gorm.DB) *gorm.DB {
+			return db.Joins("Media")
+		}).
 		Find(&itemsWithCount)
 
 	if result.Error != nil {
-		return nil, result.Error
+		return nil, errors.Wrap(result.Error, "fetch beers with pagination")
 	}
 
 	pagination.SetTotalResults(itemsWithCount)

@@ -35,7 +35,7 @@ func (h WorkspaceServer) HandleBeerListPage(reqResp *web.ReqRespPair) error {
 	}
 	country, countryErr := reqResp.GetStringQueryParam("country")
 	if countryErr != nil {
-		return apperr.NewBadRequestError("Invalid country", queryErr)
+		return apperr.NewBadRequestError("Invalid country", countryErr)
 	}
 
 	page := workspace.Page{Title: fmt.Sprintf("Beer Workspace")}
@@ -167,16 +167,20 @@ func (h WorkspaceServer) ListBeers(reqResp *web.ReqRespPair) error {
 	if pageErr != nil {
 		return apperr.NewBadRequestError("Invalid page number", pageErr)
 	}
-
 	query, queryErr := reqResp.GetStringQueryParam("query")
 	if queryErr != nil {
 		return apperr.NewBadRequestError("Invalid query", queryErr)
 	}
+	country, countryErr := reqResp.GetStringQueryParam("country")
+	if countryErr != nil {
+		return apperr.NewBadRequestError("Invalid country", countryErr)
+	}
 
 	filter := model.BeerFilter{
-		Query: query,
-		Page:  page,
-		Limit: 20, //nolint:mnd
+		Query:      query,
+		CountryIso: country,
+		Page:       page,
+		Limit:      20, //nolint:mnd
 	}
 	pagination, paginationErr := h.beerService.PaginateBeers(reqResp.Request.Context(), filter)
 	if paginationErr != nil {
@@ -186,6 +190,7 @@ func (h WorkspaceServer) ListBeers(reqResp *web.ReqRespPair) error {
 	pageData := workspace.BeerListData{
 		Beers:        pagination.Results,
 		Query:        query,
+		CountryIso:   country,
 		CurrentPage:  pagination.Page,
 		TotalPages:   pagination.TotalPages,
 		TotalResults: pagination.TotalResults,
