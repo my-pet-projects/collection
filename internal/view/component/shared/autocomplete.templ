@@ -52,149 +52,146 @@ templ AutoComplete(props AutoCompleteProps) {
 		if searchPlaceholder == "" {
 			searchPlaceholder = "Search"
 		}
-		listenEvents := ""
-		if len(props.ListenToEvents) > 0 {
-			for i, event := range props.ListenToEvents {
-				if i > 0 {
-					listenEvents += " "
-				}
-				listenEvents += fmt.Sprintf("x-on:%s.window=\"handleExternalEvent($event)\"", event)
-			}
-		}
 		showAllOptionStr := "false"
 		if props.ShowAllOption {
 			showAllOptionStr = "true"
 		}
 
-		// Escape single quotes in strings for JavaScript
+		// JSON-encode strings for safe JS embedding
 		placeholderJSON, _ := templ.JSONString(placeholder)
 		allOptionLabelJSON, _ := templ.JSONString(allOptionLabel)
 		allOptionIconJSON, _ := templ.JSONString(allOptionIcon)
 		eventNamespaceJSON, _ := templ.JSONString(eventNamespace)
 		idJSON, _ := templ.JSONString(props.ID)
 		nameJSON, _ := templ.JSONString(props.Name)
+		eventsJSON, _ := templ.JSONString(props.ListenToEvents)
 
 		initScript := fmt.Sprintf(`{
-        allOptions: %s,
-        options: [],
-        isOpen: false,
-        openedWithKeyboard: false,
-        selectedOption: null,
-        placeholder: %s,
-        allOptionLabel: %s,
-        allOptionIcon: %s,
-        eventNamespace: %s,
-        showAllOption: %s,
-        fieldId: %s,
-        fieldName: %s,
-        
-        init() {
-            this.refreshOptions()
-        },
-        
-        refreshOptions() {
-            if (this.showAllOption) {
-                const allOption = {
-                    label: this.allOptionLabel,
-                    value: '',
-                    image: '',
-                    emoji: '',
-                    isAllOption: true
-                }
-                this.options = [allOption, ...this.allOptions]
-            } else {
-                this.options = [...this.allOptions]
-            }
-        },
-        
-        setSelectedOption(option) {
-            if (option.isAllOption) {
-                this.selectedOption = null
-                this.$refs.hiddenTextField.value = ''
-            } else {
-                this.selectedOption = option
-                this.$refs.hiddenTextField.value = option.value
-            }
-            this.isOpen = false
-            this.openedWithKeyboard = false
+			allOptions: %s,
+			options: [],
+			isOpen: false,
+			openedWithKeyboard: false,
+			selectedOption: null,
+			placeholder: %s,
+			allOptionLabel: %s,
+			allOptionIcon: %s,
+			eventNamespace: %s,
+			showAllOption: %s,
+			listenToEvents: %s,
+			fieldId: %s,
+			fieldName: %s,
+			
+			init() {
+				this.refreshOptions();
+				(this.listenToEvents || []).forEach(evt =>
+              		window.addEventListener(evt, (e) => this.handleExternalEvent(e))
+				);
+			},
+			
+			refreshOptions() {
+				if (this.showAllOption) {
+					const allOption = {
+						label: this.allOptionLabel,
+						value: '',
+						image: '',
+						emoji: '',
+						isAllOption: true
+					}
+					this.options = [allOption, ...this.allOptions]
+				} else {
+					this.options = [...this.allOptions]
+				}
+			},
+			
+			setSelectedOption(option) {
+				if (option.isAllOption) {
+					this.selectedOption = null
+					this.$refs.hiddenTextField.value = ''
+				} else {
+					this.selectedOption = option
+					this.$refs.hiddenTextField.value = option.value
+				}
+				this.isOpen = false
+				this.openedWithKeyboard = false
 
-            // Dispatch selection event
-            this.$dispatch(this.eventNamespace + '-selected', {
-                selectedValue: this.selectedOption ? this.selectedOption.value : '',
-                selectedLabel: this.selectedOption ? this.selectedOption.label : this.allOptionLabel,
-                selectedOption: this.selectedOption,
-                fieldId: this.fieldId,
-                fieldName: this.fieldName
-            })
-        },
-        
-        clearSelection() {
-            this.selectedOption = null
-            this.$refs.hiddenTextField.value = ''
-            this.$dispatch(this.eventNamespace + '-cleared', { 
-				fieldId: this.fieldId, 
-				fieldName: this.fieldName 
-			})
-        },
-        
-        updateOptions(newOptions) {
-            this.allOptions = newOptions
-            this.refreshOptions()
-            // Clear selection if current selection is not in new options
-            if (this.selectedOption && !newOptions.find(opt => opt.value === this.selectedOption.value)) {
-                this.clearSelection()
-            }
-        },
-        
-        selectByValue(value) {
-            if (!value) {
-                this.clearSelection()
-                return
-            }
-            const option = this.allOptions.find(opt => opt.value === value)
-            if (option) {
-                this.setSelectedOption(option)
-            }
-        },
-        
-        handleExternalEvent(event) {
-            const { action, target, options, value } = event.detail
-            if (target !== this.fieldId) return
-            
-            if (action === 'update-options') this.updateOptions(options || [])
-            else if (action === 'clear-selection') this.clearSelection()
-            else if (action === 'select-value') this.selectByValue(value)
-        },
-        
-        getFilteredOptions(query) {
-            const filtered = this.allOptions.filter(option => 
-                option.label.toLowerCase().includes(query.toLowerCase())
-            )
-            
-            if (this.showAllOption) {
-                const allOption = {
-                    label: this.allOptionLabel,
-                    value: '',
-                    image: '',
-                    emoji: '',
-                    isAllOption: true
-                }
-                this.options = [allOption, ...filtered]
-            } else {
-                this.options = filtered
-            }
-            
-            const hasResults = this.showAllOption ? this.options.length > 1 : this.options.length > 0
-            this.$refs.noResultsMessage.classList.toggle('hidden', hasResults)
-        },
-        
-        handleKeydownOnOptions(event) {
-            const isAlphaNumeric = (event.keyCode >= 65 && event.keyCode <= 90) || 
-                                  (event.keyCode >= 48 && event.keyCode <= 57) || 
-                                  event.keyCode === 8
-            if (isAlphaNumeric) this.$refs.searchField.focus()
-        }
-    }`, data, placeholderJSON, allOptionLabelJSON, allOptionIconJSON, eventNamespaceJSON, showAllOptionStr, idJSON, nameJSON)
+				// Dispatch selection event
+				this.$dispatch(this.eventNamespace + '-selected', {
+					selectedValue: this.selectedOption ? this.selectedOption.value : '',
+					selectedLabel: this.selectedOption ? this.selectedOption.label : this.allOptionLabel,
+					selectedOption: this.selectedOption,
+					fieldId: this.fieldId,
+					fieldName: this.fieldName
+				})
+			},
+			
+			clearSelection() {
+				this.selectedOption = null
+				this.$refs.hiddenTextField.value = ''
+				this.$dispatch(this.eventNamespace + '-cleared', { 
+					fieldId: this.fieldId, 
+					fieldName: this.fieldName 
+				})
+			},
+			
+			updateOptions(newOptions) {
+				this.allOptions = newOptions
+				this.refreshOptions()
+				// Clear selection if current selection is not in new options
+				if (this.selectedOption && !newOptions.find(opt => opt.value === this.selectedOption.value)) {
+					this.clearSelection()
+				}
+			},
+			
+			selectByValue(value) {
+				if (!value) {
+					this.clearSelection()
+					return
+				}
+				const option = this.allOptions.find(opt => opt.value === value)
+				if (option) {
+					this.setSelectedOption(option)
+				}
+			},
+			
+			handleExternalEvent(event) {
+				const { action, target, options, value } = event.detail
+				if (target !== this.fieldId) return
+				
+				if (action === 'update-options') this.updateOptions(options || [])
+				else if (action === 'clear-selection') this.clearSelection()
+				else if (action === 'select-value') this.selectByValue(value)
+			},
+			
+			getFilteredOptions(query) {
+				const filtered = this.allOptions.filter(option => 
+					option.label.toLowerCase().includes(query.toLowerCase())
+				)
+				
+				if (this.showAllOption) {
+					const allOption = {
+						label: this.allOptionLabel,
+						value: '',
+						image: '',
+						emoji: '',
+						isAllOption: true
+					}
+					this.options = [allOption, ...filtered]
+				} else {
+					this.options = filtered
+				}
+				
+				const hasResults = this.showAllOption ? this.options.length > 1 : this.options.length > 0
+				this.$refs.noResultsMessage.classList.toggle('hidden', hasResults)
+			},
+			
+			handleKeydownOnOptions(event) {
+				const isAlphaNumeric = (event.keyCode >= 65 && event.keyCode <= 90) || 
+									(event.keyCode >= 48 && event.keyCode <= 57) || 
+									event.keyCode === 8
+				if (isAlphaNumeric) this.$refs.searchField.focus()
+			}
+		}`, data, placeholderJSON, allOptionLabelJSON, allOptionIconJSON,
+			eventNamespaceJSON, showAllOptionStr, eventsJSON, idJSON, nameJSON)
 	}}
 	<div
 		x-data={ initScript }
@@ -202,7 +199,6 @@ templ AutoComplete(props AutoCompleteProps) {
 		x-on:keydown="handleKeydownOnOptions($event)"
 		x-on:keydown.esc.window="isOpen = false, openedWithKeyboard = false"
 		x-init="init()"
-		{ listenEvents }
 	>
 		if props.ShowLabel {
 			<label for={ props.ID } class="text-on-surface dark:text-on-surface-dark w-fit pl-0.5 text-sm">{ props.Label }</label>
