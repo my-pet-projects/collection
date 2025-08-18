@@ -67,12 +67,12 @@ templ AutoComplete(props AutoCompleteProps) {
 		}
 
 		// Escape single quotes in strings for JavaScript
-		escapedPlaceholder, _ := templ.JSONString(placeholder)
-		escapedAllOptionLabel, _ := templ.JSONString(allOptionLabel)
-		escapedAllOptionIcon, _ := templ.JSONString(allOptionIcon)
-		escapedEventNamespace, _ := templ.JSONString(eventNamespace)
-		id, _ := templ.JSONString(props.ID)
-		name, _ := templ.JSONString(props.Name)
+		placeholderJSON, _ := templ.JSONString(placeholder)
+		allOptionLabelJSON, _ := templ.JSONString(allOptionLabel)
+		allOptionIconJSON, _ := templ.JSONString(allOptionIcon)
+		eventNamespaceJSON, _ := templ.JSONString(eventNamespace)
+		idJSON, _ := templ.JSONString(props.ID)
+		nameJSON, _ := templ.JSONString(props.Name)
 
 		initScript := fmt.Sprintf(`{
         allOptions: %s,
@@ -194,7 +194,7 @@ templ AutoComplete(props AutoCompleteProps) {
                                   event.keyCode === 8
             if (isAlphaNumeric) this.$refs.searchField.focus()
         }
-    }`, data, escapedPlaceholder, escapedAllOptionLabel, escapedAllOptionIcon, escapedEventNamespace, showAllOptionStr, id, name)
+    }`, data, placeholderJSON, allOptionLabelJSON, allOptionIconJSON, eventNamespaceJSON, showAllOptionStr, idJSON, nameJSON)
 	}}
 	<div
 		x-data={ initScript }
@@ -257,6 +257,7 @@ templ AutoComplete(props AutoCompleteProps) {
 			<!-- Hidden Input To Grab The Selected Value  -->
 			<input
 				id={ props.ID }
+				type="hidden"
 				name={ props.Name }
 				autocomplete="off"
 				x-ref="hiddenTextField"
