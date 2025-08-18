@@ -34,7 +34,9 @@ func (s BeerStore) GetBeer(id int) (*model.Beer, error) {
 			return db.Clauses(dbresolver.Use(GeographyDBResolverName)).
 				Joins("Country")
 		}).
-		Preload("BeerMedias.Media").
+		Preload("BeerMedias", func(db *gorm.DB) *gorm.DB {
+			return db.Joins("Media")
+		}).
 		First(&beer, id)
 
 	return &beer, result.Error
@@ -55,9 +57,9 @@ func (s BeerStore) PaginateBeers(ctx context.Context, filter model.BeerFilter) (
 		whereArgs["name"] = "%" + filter.Query + "%"
 	}
 
-	if filter.CountryIso != "" {
+	if filter.CountryCca3 != "" {
 		whereConditions = append(whereConditions, "brewery.country_cca3 = @countryIso")
-		whereArgs["countryIso"] = filter.CountryIso
+		whereArgs["countryIso"] = filter.CountryCca3
 	}
 
 	if len(whereConditions) > 0 {

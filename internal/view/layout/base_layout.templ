@@ -101,8 +101,8 @@ templ navigation() {
 						<a
 							href="/workspace/images"
 							class={ "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium", 
-							templ.KV("border-indigo-500 text-gray-900", util.UrlStartsWith(ctx, "/workspace/images")), 
-							templ.KV("border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700", !util.UrlStartsWith(ctx, "/workspace/images")) }
+							templ.KV("border-indigo-500 text-gray-900", util.UrlStartsWith(ctx, "/workspace/images") && !util.UrlStartsWith(ctx, "/workspace/images/upload")), 
+ 							templ.KV("border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700", !(util.UrlStartsWith(ctx, "/workspace/images") && !util.UrlStartsWith(ctx, "/workspace/images/upload"))) }
 						>
 							<svg class="mr-2 h-5 w-5" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
 								<path d="M18 22H4a2 2 0 0 1-2-2V6"></path><path d="m22 13-1.296-1.296a2.41 2.41 0 0 0-3.408 0L11 18"></path><circle cx="12" cy="8" r="2"></circle><rect width="16" height="16" x="6" y="2" rx="2"></rect>

@@ -42,8 +42,8 @@ func (h WorkspaceServer) HandleBeerListPage(reqResp *web.ReqRespPair) error {
 	beerPage := workspace.BeerListPageData{
 		Page: page,
 		SearchData: workspace.BeerListSearchData{
-			Query:   query,
-			Country: country,
+			Query:      query,
+			CountryIso: country,
 		},
 	}
 	return reqResp.Render(workspace.BeerListPage(beerPage))
@@ -177,10 +177,10 @@ func (h WorkspaceServer) ListBeers(reqResp *web.ReqRespPair) error {
 	}
 
 	filter := model.BeerFilter{
-		Query:      query,
-		CountryIso: country,
-		Page:       page,
-		Limit:      20, //nolint:mnd
+		Query:       query,
+		CountryCca3: country,
+		Page:        page,
+		Limit:       20, //nolint:mnd
 	}
 	pagination, paginationErr := h.beerService.PaginateBeers(reqResp.Request.Context(), filter)
 	if paginationErr != nil {

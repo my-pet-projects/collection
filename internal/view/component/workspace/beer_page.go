@@ -7,8 +7,8 @@ import (
 )
 
 type BeerListSearchData struct {
-	Query   string
-	Country string
+	Query      string
+	CountryIso string
 }
 
 type BeerListPageData struct {

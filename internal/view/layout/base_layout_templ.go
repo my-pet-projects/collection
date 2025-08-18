@@ -209,8 +209,8 @@ func navigation() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var11 = []any{"inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium",
-			templ.KV("border-indigo-500 text-gray-900", util.UrlStartsWith(ctx, "/workspace/images")),
-			templ.KV("border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700", !util.UrlStartsWith(ctx, "/workspace/images"))}
+			templ.KV("border-indigo-500 text-gray-900", util.UrlStartsWith(ctx, "/workspace/images") && !util.UrlStartsWith(ctx, "/workspace/images/upload")),
+			templ.KV("border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700", !(util.UrlStartsWith(ctx, "/workspace/images") && !util.UrlStartsWith(ctx, "/workspace/images/upload")))}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var11...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

@@ -110,11 +110,14 @@ templ BeerListPage(page BeerListPageData) {
 							if (countryValue) {
 								params.set('country', countryValue);
 							}
+					        if (!params.has('page')) {
+					          params.set('page', '1');
+					        }
 							
 							// Override the parameters
 							event.detail.parameters = Object.fromEntries(params.entries());						
 						"
-							hx-on::after-request="
+							x-on:htmx:after-request="
 							const form = event.target;
 							const formData = new FormData(form);
 							const params = new URLSearchParams();
@@ -282,14 +285,14 @@ templ BeerList(data BeerListData) {
 				<div class="flex flex-col items-center gap-2 text-sm">
 					<!-- Main count -->
 					<div class="font-semibold text-gray-900">
-						{ fmt.Sprintf("%d", len(data.Beers) * data.CurrentPage) } of { fmt.Sprintf("%d", data.TotalResults) } beers
+						{ data.CalculateDisplayedCount() } of { fmt.Sprintf("%d", data.TotalResults) } beers
 					</div>
 					<!-- Progress bar -->
 					<div class="w-full max-w-xs">
 						<div class="h-2 w-full rounded-full bg-gray-200">
 							<div
 								class="h-2 rounded-full bg-blue-600 transition-all duration-300"
-								style={ fmt.Sprintf("width: %.1f%%", float64(len(data.Beers)*data.CurrentPage)/float64(data.TotalResults)*100) }
+								style={ fmt.Sprintf("width: %.1f%%", float64(data.CalculateDisplayedCount())/float64(data.TotalResults)*100) }
 							></div>
 						</div>
 					</div>

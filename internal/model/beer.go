@@ -149,8 +149,8 @@ type City struct {
 // }
 
 type BeerFilter struct {
-	Query      string
-	CountryIso string
-	Page       int
-	Limit      int
+	Query       string
+	CountryCca3 string
+	Page        int
+	Limit       int
 }
