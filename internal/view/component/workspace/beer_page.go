@@ -12,8 +12,9 @@ type BeerListSearchData struct {
 }
 
 type BeerListPageData struct {
-	Page       Page
-	SearchData BeerListSearchData
+	Page         Page
+	SearchData   BeerListSearchData
+	LimitPerPage int
 }
 
 type BeerPageData struct {

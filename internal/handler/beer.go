@@ -45,6 +45,7 @@ func (h WorkspaceServer) HandleBeerListPage(reqResp *web.ReqRespPair) error {
 			Query:      query,
 			CountryIso: country,
 		},
+		LimitPerPage: 20, //nolint:mnd
 	}
 	return reqResp.Render(workspace.BeerListPage(beerPage))
 }
@@ -175,12 +176,16 @@ func (h WorkspaceServer) ListBeers(reqResp *web.ReqRespPair) error {
 	if countryErr != nil {
 		return apperr.NewBadRequestError("Invalid country", countryErr)
 	}
+	size, sizeErr := reqResp.GetIntQueryParam("size")
+	if sizeErr != nil {
+		return apperr.NewBadRequestError("Invalid size", sizeErr)
+	}
 
 	filter := model.BeerFilter{
 		Query:       query,
 		CountryCca3: country,
 		Page:        page,
-		Limit:       20, //nolint:mnd
+		Limit:       size,
 	}
 	pagination, paginationErr := h.beerService.PaginateBeers(reqResp.Request.Context(), filter)
 	if paginationErr != nil {

@@ -102,6 +102,7 @@ templ BeerListPage(page BeerListPageData) {
 							const params = new URLSearchParams();
 							const searchValue = document.getElementById('search')?.value?.trim();
 							const countryValue = document.querySelector('[name=country]')?.value;
+							const sizeValue = document.querySelector('[name=size]').value;
 							
 							if (searchValue) {
 								params.set('query', searchValue);
@@ -112,12 +113,15 @@ templ BeerListPage(page BeerListPageData) {
 					        if (!params.has('page')) {
 					          params.set('page', '1');
 					        }
+
+							params.set('size', sizeValue);
 							
 							// Override the parameters
 							event.detail.parameters = Object.fromEntries(params.entries());						
 						"
 							x-on:htmx:after-request="
 							searching = false;
+                            hasErrors = !event.detail.successful;
 							const form = event.target;
 							const formData = new FormData(form);
 							const params = new URLSearchParams();
@@ -177,6 +181,13 @@ templ BeerListPage(page BeerListPageData) {
 								<!-- Loading indicator -->
 								<div class="h-5 w-5 animate-spin rounded-full border-2 border-gray-300 border-t-black"></div>
 							</div>
+							<!-- Size Filter -->
+							<input
+								type="hidden"
+								id="size"
+								name="size"
+								value={ fmt.Sprintf("%d", page.LimitPerPage) }
+							/>
 						</form>
 						<!-- Separate element to load the country filter -->
 						<div
@@ -273,7 +284,7 @@ templ BeerListPage(page BeerListPageData) {
 
 templ BeerList(data BeerListData) {
 	<!-- Results Count -->
-	<div id="results-count" hx-swap-oob="true" class="text-sm text-gray-600">
+	<div id="results-count" hx-swap-oob="true" class="mb-4 text-sm text-gray-600 sm:text-base">
 		if data.TotalResults > 0 {
 			Showing <span class="font-semibold text-gray-900">{ fmt.Sprintf("%d", data.CalculateDisplayedCount()) }</span>
 			of <span class="font-semibold text-gray-900">{ fmt.Sprintf("%d", data.TotalResults) }</span> beers
@@ -369,6 +380,9 @@ func buildNextPageURL(data BeerListData) string {
 	}
 	if data.CountryIso != "" {
 		params.Set("country", data.CountryIso)
+	}
+	if data.LimitPerPage != 0 {
+		params.Set("size", strconv.Itoa(data.LimitPerPage))
 	}
 	return "/beers?" + params.Encode()
 }
