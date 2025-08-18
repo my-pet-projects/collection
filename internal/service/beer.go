@@ -91,6 +91,9 @@ func (s BeerService) PaginateBeers(ctx context.Context, filter model.BeerFilter)
 	if filter.Query != "" {
 		filter.Query = util.NormalizeText(filter.Query)
 	}
+	if filter.CountryCca3 != "" {
+		filter.CountryCca3 = strings.ToUpper(filter.CountryCca3)
+	}
 	beers, beersErr := s.beerStore.PaginateBeers(ctx, filter)
 	if beersErr != nil {
 		return nil, errors.Wrap(beersErr, "paginate beers")

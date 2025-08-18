@@ -13,6 +13,18 @@ type CountriesData struct {
 	StoreSelectionInQuery bool
 }
 
+func (c CountriesData) ToAutocompleteData() []AutoCompleteData {
+	data := make([]AutoCompleteData, len(c.Countries))
+	for i, country := range c.Countries {
+		data[i] = AutoCompleteData{
+			Label: country.NameCommon,
+			Value: strings.ToLower(country.Cca3),
+			Image: fmt.Sprintf("https://flagcdn.com/%s.svg", strings.ToLower(country.Cca2)),
+		}
+	}
+	return data
+}
+
 type choicesData struct {
 	Value            string         `json:"value"`
 	Label            string         `json:"label"`
@@ -99,4 +111,17 @@ templ CitiesSelector(cities []model.City) {
 		name="city"
 		data-items={ citiesJson(cities) }
 	></app-select>
+}
+
+templ CountriesAutoComplete(countriesData CountriesData) {
+	@AutoComplete(AutoCompleteProps{
+		ID:             "country",
+		Name:           "country",
+		Data:           countriesData.ToAutocompleteData(),
+		ShowAllOption:  true,
+		AllOptionLabel: "All countries",
+		AllOptionIcon:  "🌍",
+		EventNamespace: "country",
+		ShowLabel:      false,
+	})
 }
