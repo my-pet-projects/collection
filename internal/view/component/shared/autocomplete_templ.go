@@ -142,8 +142,12 @@ func AutoComplete(props AutoCompleteProps) templ.Component {
  				  window.removeEventListener('scroll', onScroll, { capture: true });
  				  window.removeEventListener('resize', onScroll);
  				};
- 				this.$watch('isOpen', v => v ? attach() : detach());
- 				this.$watch('openedWithKeyboard', v => v ? attach() : detach());
+ 				const updateListeners = () => {
+                  (this.isOpen || this.openedWithKeyboard) ? attach() : detach();
+                };
+                this.$watch('isOpen', updateListeners);
+                this.$watch('openedWithKeyboard', updateListeners);
+                this.$nextTick(updateListeners);
 			},
 			
 			checkDropdownPosition() {
@@ -315,7 +319,7 @@ func AutoComplete(props AutoCompleteProps) templ.Component {
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(props.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 282, Col: 69}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 286, Col: 69}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -355,7 +359,7 @@ func AutoComplete(props AutoCompleteProps) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(initScript)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 300, Col: 21}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 304, Col: 21}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -373,7 +377,7 @@ func AutoComplete(props AutoCompleteProps) templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(props.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 307, Col: 24}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 311, Col: 24}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -386,7 +390,7 @@ func AutoComplete(props AutoCompleteProps) templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(props.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 307, Col: 86}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 311, Col: 86}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -417,7 +421,7 @@ func AutoComplete(props AutoCompleteProps) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(props.ID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 312, Col: 17}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 316, Col: 17}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -443,7 +447,7 @@ func AutoComplete(props AutoCompleteProps) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%sList", props.ID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 320, Col: 51}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 324, Col: 51}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
@@ -456,7 +460,7 @@ func AutoComplete(props AutoCompleteProps) templ.Component {
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s-hidden", props.ID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 364, Col: 43}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 368, Col: 43}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
@@ -469,7 +473,7 @@ func AutoComplete(props AutoCompleteProps) templ.Component {
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(props.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 366, Col: 21}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 370, Col: 21}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
@@ -482,7 +486,7 @@ func AutoComplete(props AutoCompleteProps) templ.Component {
 		var templ_7745c5c3_Var14 string
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%sList", props.ID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 375, Col: 40}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 379, Col: 40}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
@@ -495,7 +499,7 @@ func AutoComplete(props AutoCompleteProps) templ.Component {
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(searchPlaceholder)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 400, Col: 37}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 404, Col: 37}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
@@ -508,7 +512,7 @@ func AutoComplete(props AutoCompleteProps) templ.Component {
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(noResultsMessage)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 409, Col: 30}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 413, Col: 30}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 		if templ_7745c5c3_Err != nil {

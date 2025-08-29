@@ -114,8 +114,12 @@ templ AutoComplete(props AutoCompleteProps) {
  				  window.removeEventListener('scroll', onScroll, { capture: true });
  				  window.removeEventListener('resize', onScroll);
  				};
- 				this.$watch('isOpen', v => v ? attach() : detach());
- 				this.$watch('openedWithKeyboard', v => v ? attach() : detach());
+ 				const updateListeners = () => {
+                  (this.isOpen || this.openedWithKeyboard) ? attach() : detach();
+                };
+                this.$watch('isOpen', updateListeners);
+                this.$watch('openedWithKeyboard', updateListeners);
+                this.$nextTick(updateListeners);
 			},
 			
 			checkDropdownPosition() {

@@ -280,7 +280,7 @@ templ BeerMedia(beerMedia model.BeerMedia) {
 			templ.KV("h-[80%]", beerMedia.Type == model.BeerMediaBottle),
 			templ.KV("w-[80%]", beerMedia.Type != model.BeerMediaBottle),
 		}
-		alt={ fmt.Sprintf("%s image", beerMedia.Type) }
+		alt={ fmt.Sprintf("%d image", beerMedia.Type) }
 		loading="lazy"
 		decoding="async"
 		src={ fmt.Sprintf("https://collection-new.filimonov.life/cdn-cgi/image/width=100,quality=25/https://beer-collection-bucket.s3.eu-central-1.amazonaws.com/original/%s", beerMedia.Media.ExternalFilename) }
