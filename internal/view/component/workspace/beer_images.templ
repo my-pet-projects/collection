@@ -16,7 +16,14 @@ templ BeerImagesPage(params BeerPageData) {
 				</div>
 				if len(params.BeerMedias) > 0 {
 					<div class="text-right text-sm text-neutral-500">
-						<div>Total: { fmt.Sprint(len(params.BeerMedias)) } images</div>
+						<div>
+							Total: { fmt.Sprint(len(params.BeerMedias)) }
+							if len(params.BeerMedias) == 1 {
+								image
+							} else {
+								images
+							}
+						</div>
 					</div>
 				}
 			</div>
@@ -73,7 +80,7 @@ templ BeerImagesPage(params BeerPageData) {
 				hx-target-error="#beer-images-errors"
 				hx-trigger="submit"
 				hx-indicator=".hx-save-indicator-toggle"
-				hx-disabled-elt="input,button"
+				hx-disabled-elt="button,input:not([type='hidden'])"
 			>
 				<!-- Images Section -->
 				<div class="mb-10">
@@ -172,6 +179,7 @@ templ BeerImagesPage(params BeerPageData) {
 									if (media.Type.IsCap()) {
 										<div
 											class="space-y-3 rounded-xl border border-neutral-200 bg-gradient-to-b from-white to-neutral-50 p-4 transition-all duration-300"
+											x-cloak
 											x-show="selected"
 											x-transition:enter="transition ease-out duration-300"
 											x-transition:enter-start="opacity-0 transform scale-95 translate-y-2"
@@ -183,13 +191,14 @@ templ BeerImagesPage(params BeerPageData) {
 											<div class="flex items-center gap-2 text-sm font-semibold text-neutral-800">
 												<span>Cap Location</span>
 											</div>
+											{{ slot := media.ParseSlotID(params.Beer) }}
 											<div class="space-y-1.5">
 												<div>
 													<label class="mb-1 block text-xs font-medium text-neutral-700">Geographic Prefix</label>
 													<input
 														type="text"
 														name="media.slot.geoPrefix"
-														value={ media.ParseSlotID(params.Beer).GeoPrefix }
+														value={ slot.GeoPrefix }
 														placeholder="e.g., US, EU, CA"
 														class="w-full rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-xs placeholder:text-neutral-400 focus:border-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-500"
 													/>
@@ -199,7 +208,7 @@ templ BeerImagesPage(params BeerPageData) {
 													<input
 														type="text"
 														name="media.slot.sheetId"
-														value={ media.ParseSlotID(params.Beer).SheetID }
+														value={ slot.SheetID }
 														placeholder="Sheet identifier"
 														class="w-full rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-xs placeholder:text-neutral-400 focus:border-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-500"
 													/>
@@ -209,7 +218,7 @@ templ BeerImagesPage(params BeerPageData) {
 													<input
 														type="text"
 														name="media.slot.sheetSlot"
-														value={ media.ParseSlotID(params.Beer).SheetSlot }
+														value={ slot.SheetSlot }
 														placeholder="Slot position"
 														class="w-full rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-xs placeholder:text-neutral-400 focus:border-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-500"
 													/>
@@ -268,6 +277,9 @@ templ BeerMedia(beerMedia model.BeerMedia) {
 			templ.KV("h-[80%]", beerMedia.Type == model.BeerMediaBottle),
 			templ.KV("w-[80%]", beerMedia.Type != model.BeerMediaBottle),
 		}
+		alt={ fmt.Sprintf("%s image", beerMedia.Type) }
+		loading="lazy"
+		decoding="async"
 		src={ fmt.Sprintf("https://collection-new.filimonov.life/cdn-cgi/image/width=100,quality=25/https://beer-collection-bucket.s3.eu-central-1.amazonaws.com/original/%s", beerMedia.Media.ExternalFilename) }
 	/>
 }

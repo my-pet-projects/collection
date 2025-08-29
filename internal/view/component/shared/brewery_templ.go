@@ -130,7 +130,7 @@ func BreweriesAutocomplete(data BreweriesData) templ.Component {
 			Name:           "brewery",
 			Data:           data.ToAutocompleteData(),
 			EventNamespace: "brewery",
-			ShowLabel:      true,
+			ShowLabel:      false,
 			HasError:       data.HasError,
 		}
 		if data.SelectedBrewery != nil {

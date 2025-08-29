@@ -49,20 +49,14 @@
         display: none !important;
     }
 
-    /* HTMX indicator styles */
-    .htmx-indicator {
-        display: none;
+    /* HTMX indicator styles */    
+    .htmx-indicator { 
+        display: none; 
     }
-    
-    .htmx-request {
-        display: flex;
+    .htmx-indicator.htmx-request { 
+        display: flex; 
     }
-    
-    .htmx-request.hide-on-hx-request {
-        display: none;
+    .hide-on-hx-request.htmx-request { 
+        display: none; 
     }
-    
-    .hide-on-hx-request {
-        display: flex;
-    }      
 }

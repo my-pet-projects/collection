@@ -24,8 +24,7 @@ type AutoCompleteProps struct {
 	NoResultsMessage  string
 	SearchPlaceholder string
 	PreselectedValue  string
-	HasError          bool   // New field for error state
-	ErrorID           string // For accessibility
+	HasError          bool
 }
 
 templ AutoComplete(props AutoCompleteProps) {
@@ -100,17 +99,14 @@ templ AutoComplete(props AutoCompleteProps) {
 				);
 				
 				// Reposition dropdown on scroll/resize - only when actually open
-				window.addEventListener('scroll', () => {
+				const onScroll = () => {
 					if (this.isOpen || this.openedWithKeyboard) {
 						this.checkDropdownPosition();
 					}
-				}, true);
+				};
 				
-				window.addEventListener('resize', () => {
-					if (this.isOpen || this.openedWithKeyboard) {
-						this.checkDropdownPosition();
-					}
-				});
+				window.addEventListener('scroll', onScroll, { capture: true, passive: true });
+				window.addEventListener('resize', onScroll);
 			},
 			
 			checkDropdownPosition() {
@@ -126,7 +122,7 @@ templ AutoComplete(props AutoCompleteProps) {
 					
 					const triggerRect = trigger.getBoundingClientRect();
 					const viewportHeight = window.innerHeight;
-					const dropdownHeight = 200; // Approximate dropdown height
+					const dropdownHeight = dropdown.offsetHeight || dropdown.scrollHeight || 200; // Approximate dropdown height
 					
 					const spaceBelow = viewportHeight - triggerRect.bottom;
 					const spaceAbove = triggerRect.top;
@@ -272,7 +268,7 @@ templ AutoComplete(props AutoCompleteProps) {
 			eventNamespaceJSON, showAllOptionStr, eventsJSON, idJSON, nameJSON, initialValueJSON)
 	}}
 	<!-- Loading spinner (visible before Alpine loads) -->
-	<div class="flex w-full flex-col gap-1" x-data x-show="false">
+	<div class="flex w-full flex-col gap-1" x-data x-show="false" x-cloak>
 		if props.ShowLabel {
 			<label class="w-fit pl-0.5 text-sm text-neutral-900">{ props.Label }</label>
 		}

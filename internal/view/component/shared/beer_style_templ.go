@@ -129,7 +129,7 @@ func StylesAutocomplete(data StyleData) templ.Component {
 			Name:           "style",
 			Data:           data.ToAutocompleteData(),
 			EventNamespace: "style",
-			ShowLabel:      true,
+			ShowLabel:      false,
 			HasError:       data.HasError,
 		}
 		if data.SelectedStyleId != nil {
