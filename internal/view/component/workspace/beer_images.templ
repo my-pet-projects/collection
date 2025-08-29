@@ -199,6 +199,7 @@ templ BeerImagesPage(params BeerPageData) {
 														type="text"
 														name="media.slot.geoPrefix"
 														value={ slot.GeoPrefix }
+														:disabled="!selected"
 														placeholder="e.g., US, EU, CA"
 														class="w-full rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-xs placeholder:text-neutral-400 focus:border-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-500"
 													/>
@@ -209,6 +210,7 @@ templ BeerImagesPage(params BeerPageData) {
 														type="text"
 														name="media.slot.sheetId"
 														value={ slot.SheetID }
+														:disabled="!selected"
 														placeholder="Sheet identifier"
 														class="w-full rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-xs placeholder:text-neutral-400 focus:border-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-500"
 													/>
@@ -219,6 +221,7 @@ templ BeerImagesPage(params BeerPageData) {
 														type="text"
 														name="media.slot.sheetSlot"
 														value={ slot.SheetSlot }
+														:disabled="!selected"
 														placeholder="Slot position"
 														class="w-full rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-xs placeholder:text-neutral-400 focus:border-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-500"
 													/>

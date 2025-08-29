@@ -98,15 +98,24 @@ templ AutoComplete(props AutoCompleteProps) {
               		window.addEventListener(evt, (e) => this.handleExternalEvent(e))
 				);
 				
-				// Reposition dropdown on scroll/resize - only when actually open
-				const onScroll = () => {
-					if (this.isOpen || this.openedWithKeyboard) {
-						this.checkDropdownPosition();
-					}
-				};
-				
-				window.addEventListener('scroll', onScroll, { capture: true, passive: true });
-				window.addEventListener('resize', onScroll);
+ 				// Reposition dropdown on scroll/resize - throttle with rAF and only when open
+ 				const onScroll = () => {
+ 				  if (this._raf) return;
+ 				  this._raf = requestAnimationFrame(() => {
+ 				    this._raf = null;
+ 				    if (this.isOpen || this.openedWithKeyboard) this.checkDropdownPosition();
+ 				  });
+ 				};
+ 				const attach = () => {
+ 				  window.addEventListener('scroll', onScroll, { capture: true, passive: true });
+ 				  window.addEventListener('resize', onScroll);
+ 				};
+ 				const detach = () => {
+ 				  window.removeEventListener('scroll', onScroll, { capture: true });
+ 				  window.removeEventListener('resize', onScroll);
+ 				};
+ 				this.$watch('isOpen', v => v ? attach() : detach());
+ 				this.$watch('openedWithKeyboard', v => v ? attach() : detach());
 			},
 			
 			checkDropdownPosition() {
@@ -300,6 +309,7 @@ templ AutoComplete(props AutoCompleteProps) {
 		<div class="relative">
 			<!-- Trigger button -->
 			<button
+				id={ props.ID }
 				type="button"
 				class={
 					"inline-flex w-full items-center justify-between gap-2 border px-4 py-3 text-sm font-medium tracking-wide transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 rounded-xl focus-visible:outline-neutral-900 ring-1 ring-inset",
@@ -351,7 +361,7 @@ templ AutoComplete(props AutoCompleteProps) {
 			</button>
 			<!-- Hidden Input To Grab The Selected Value -->
 			<input
-				id={ props.ID }
+				id={ fmt.Sprintf("%s-hidden", props.ID) }
 				type="hidden"
 				name={ props.Name }
 				autocomplete="off"
