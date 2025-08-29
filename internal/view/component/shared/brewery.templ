@@ -9,6 +9,18 @@ import (
 type BreweriesData struct {
 	Breweries       []model.Brewery
 	SelectedBrewery *int
+	HasError        bool
+}
+
+func (d BreweriesData) ToAutocompleteData() []AutoCompleteData {
+	data := make([]AutoCompleteData, len(d.Breweries))
+	for i, brewery := range d.Breweries {
+		data[i] = AutoCompleteData{
+			Label: brewery.Name,
+			Value: fmt.Sprint(brewery.ID),
+		}
+	}
+	return data
 }
 
 func breweriesJson(countriesData BreweriesData) string {
@@ -46,4 +58,21 @@ templ BrewerySelector(data BreweriesData) {
 		name="brewery"
 		data-items={ breweriesJson(data) }
 	></app-select>
+}
+
+templ BreweriesAutocomplete(data BreweriesData) {
+	{{
+		props := AutoCompleteProps{
+			ID:             "brewery",
+			Name:           "brewery",
+			Data:           data.ToAutocompleteData(),
+			EventNamespace: "brewery",
+			ShowLabel:      false,
+			HasError:       data.HasError,
+		}
+		if data.SelectedBrewery != nil {
+			props.PreselectedValue = fmt.Sprint(*data.SelectedBrewery)
+		}
+	}}
+	@AutoComplete(props)
 }
