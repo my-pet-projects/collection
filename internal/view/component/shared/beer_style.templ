@@ -9,6 +9,18 @@ import (
 type StyleData struct {
 	Styles          []model.BeerStyle
 	SelectedStyleId *int
+	HasError        bool
+}
+
+func (d StyleData) ToAutocompleteData() []AutoCompleteData {
+	data := make([]AutoCompleteData, len(d.Styles))
+	for i, style := range d.Styles {
+		data[i] = AutoCompleteData{
+			Label: style.Name,
+			Value: fmt.Sprint(style.ID),
+		}
+	}
+	return data
 }
 
 func beerStylesJson(stylesData StyleData) string {
@@ -45,4 +57,21 @@ templ StylesSelector(data StyleData) {
 		name="style"
 		data-items={ beerStylesJson(data) }
 	></app-select>
+}
+
+templ StylesAutocomplete(data StyleData) {
+	{{
+		props := AutoCompleteProps{
+			ID:             "style",
+			Name:           "style",
+			Data:           data.ToAutocompleteData(),
+			EventNamespace: "style",
+			ShowLabel:      false,
+			HasError:       data.HasError,
+		}
+		if data.SelectedStyleId != nil {
+			props.PreselectedValue = fmt.Sprint(*data.SelectedStyleId)
+		}
+	}}
+	@AutoComplete(props)
 }
