@@ -42,3 +42,27 @@
     /* border radius */
     --radius-radius: var(--radius-md);
 }
+
+@layer utilities {
+    /* Hide Alpine.js elements until Alpine is initialized */
+    [x-cloak] {
+        display: none !important;
+    }
+
+    /* HTMX indicator styles */
+    .htmx-indicator {
+        display: none;
+    }
+    
+    .htmx-request {
+        display: flex;
+    }
+    
+    .htmx-request.hide-on-hx-request {
+        display: none;
+    }
+    
+    .hide-on-hx-request {
+        display: flex;
+    }      
+}

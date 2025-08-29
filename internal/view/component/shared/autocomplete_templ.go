@@ -31,6 +31,9 @@ type AutoCompleteProps struct {
 	ListenToEvents    []string
 	NoResultsMessage  string
 	SearchPlaceholder string
+	PreselectedValue  string
+	HasError          bool   // New field for error state
+	ErrorID           string // For accessibility
 }
 
 func AutoComplete(props AutoCompleteProps) templ.Component {
@@ -93,6 +96,7 @@ func AutoComplete(props AutoCompleteProps) templ.Component {
 		idJSON, _ := templ.JSONString(props.ID)
 		nameJSON, _ := templ.JSONString(props.Name)
 		eventsJSON, _ := templ.JSONString(props.ListenToEvents)
+		initialValueJSON, _ := templ.JSONString(props.PreselectedValue)
 
 		initScript := fmt.Sprintf(`{
 			allOptions: %s,
@@ -108,12 +112,69 @@ func AutoComplete(props AutoCompleteProps) templ.Component {
 			listenToEvents: %s,
 			fieldId: %s,
 			fieldName: %s,
+			initialValue: %s,
 			
 			init() {
 				this.refreshOptions();
+				
+				// Set initial selection if provided
+				if (this.initialValue) {
+					this.selectByValue(this.initialValue);
+				}
+				
+				// Listen to external events
 				(this.listenToEvents || []).forEach(evt =>
               		window.addEventListener(evt, (e) => this.handleExternalEvent(e))
 				);
+				
+				// Reposition dropdown on scroll/resize - only when actually open
+				window.addEventListener('scroll', () => {
+					if (this.isOpen || this.openedWithKeyboard) {
+						this.checkDropdownPosition();
+					}
+				}, true);
+				
+				window.addEventListener('resize', () => {
+					if (this.isOpen || this.openedWithKeyboard) {
+						this.checkDropdownPosition();
+					}
+				});
+			},
+			
+			checkDropdownPosition() {
+				// Only proceed if dropdown is actually open
+				if (!this.isOpen && !this.openedWithKeyboard) {
+					return;
+				}
+
+				this.$nextTick(() => {
+					const dropdown = this.$refs.dropdown;
+					const trigger = this.$refs.trigger;
+					if (!dropdown || !trigger) return;
+					
+					const triggerRect = trigger.getBoundingClientRect();
+					const viewportHeight = window.innerHeight;
+					const dropdownHeight = 200; // Approximate dropdown height
+					
+					const spaceBelow = viewportHeight - triggerRect.bottom;
+					const spaceAbove = triggerRect.top;
+					
+					// Reset positioning
+					dropdown.style.position = 'fixed';
+					dropdown.style.left = triggerRect.left + 'px';
+					dropdown.style.width = triggerRect.width + 'px';
+					dropdown.style.top = 'auto';
+					dropdown.style.bottom = 'auto';
+					dropdown.style.marginTop = '0';
+					dropdown.style.marginBottom = '0';
+					
+					// Position below if there's space, otherwise above
+					if (spaceBelow >= dropdownHeight || spaceBelow > spaceAbove) {
+						dropdown.style.top = (triggerRect.bottom + 4) + 'px';
+					} else {
+						dropdown.style.bottom = (viewportHeight - triggerRect.top + 4) + 'px';
+					}
+				});
 			},
 			
 			refreshOptions() {
@@ -155,6 +216,7 @@ func AutoComplete(props AutoCompleteProps) templ.Component {
 			clearSelection() {
 				this.selectedOption = null
 				this.$refs.hiddenTextField.value = ''
+				
 				this.$dispatch(this.eventNamespace + '-cleared', { 
 					fieldId: this.fieldId, 
 					fieldName: this.fieldName 
@@ -217,137 +279,224 @@ func AutoComplete(props AutoCompleteProps) templ.Component {
 									(event.keyCode >= 48 && event.keyCode <= 57) || 
 									event.keyCode === 8
 				if (isAlphaNumeric) this.$refs.searchField.focus()
+			},
+
+			// Method to handle clicks on trigger
+			handleTriggerClick() {
+				this.isOpen = !this.isOpen;
+				this.openedWithKeyboard = false;
+				if (this.isOpen) {
+					this.$nextTick(() => this.checkDropdownPosition());
+				}
+			},
+
+			// Method to handle keyboard navigation
+			handleKeyboardOpen() {
+				this.openedWithKeyboard = true;
+				this.isOpen = false;
+				this.$nextTick(() => this.checkDropdownPosition());
 			}
 		}`, data, placeholderJSON, allOptionLabelJSON, allOptionIconJSON,
-			eventNamespaceJSON, showAllOptionStr, eventsJSON, idJSON, nameJSON)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div x-data=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var2 string
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(initScript)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 197, Col: 21}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" class=\"flex w-full max-w-xs flex-col gap-1\" x-on:keydown=\"handleKeydownOnOptions($event)\" x-on:keydown.esc.window=\"isOpen = false, openedWithKeyboard = false\" x-init=\"init()\">")
+			eventNamespaceJSON, showAllOptionStr, eventsJSON, idJSON, nameJSON, initialValueJSON)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!-- Loading spinner (visible before Alpine loads) --><div class=\"flex w-full flex-col gap-1\" x-data x-show=\"false\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if props.ShowLabel {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<label for=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<label class=\"w-fit pl-0.5 text-sm text-neutral-900\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var3 string
-			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(props.ID)
+			var templ_7745c5c3_Var2 string
+			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(props.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 204, Col: 24}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 277, Col: 69}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" class=\"text-on-surface dark:text-on-surface-dark w-fit pl-0.5 text-sm\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var4 string
-			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(props.Label)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 204, Col: 111}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</label>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</label>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div class=\"relative\"><!-- Trigger button  --><button type=\"button\" class=\"border-outline rounded-radius bg-surface-alt text-on-surface focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:text-on-surface-dark dark:focus-visible:outline-primary-dark inline-flex w-full items-center justify-between gap-2 border px-4 py-2 text-sm font-medium tracking-wide transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2\" role=\"combobox\" aria-controls=\"")
+		var templ_7745c5c3_Var3 = []any{
+			"inline-flex w-full items-center justify-center gap-2 border px-4 py-2 text-sm rounded-xl transition-all duration-200",
+			templ.KV("bg-red-50 border-red-300", props.HasError),
+			templ.KV("bg-neutral-50 border-neutral-300", !props.HasError),
+		}
+		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var3...)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div class=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var4 string
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var3).String())
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 1, Col: 0}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\"><svg class=\"h-4 w-4 animate-spin\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\"><circle class=\"opacity-25\" cx=\"12\" cy=\"12\" r=\"10\" stroke=\"currentColor\" stroke-width=\"4\"></circle> <path class=\"opacity-75\" fill=\"currentColor\" d=\"m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z\"></path></svg> <span class=\"text-neutral-500\">Loading...</span></div></div><!-- Main component (hidden until Alpine loads) --><div x-data=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
-		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%sList", props.ID))
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(initScript)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 212, Col: 51}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 295, Col: 21}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\" aria-haspopup=\"listbox\" x-on:click=\"isOpen = ! isOpen\" x-on:keydown.down.prevent=\"openedWithKeyboard = true\" x-on:keydown.enter.prevent=\"openedWithKeyboard = true\" x-on:keydown.space.prevent=\"openedWithKeyboard = true\" x-bind:aria-expanded=\"isOpen || openedWithKeyboard\" x-bind:aria-label=\"selectedOption ? selectedOption.label : placeholder\"><div class=\"flex items-center gap-2\"><!-- All option icon (when no selection and showAllOption is true) --><span x-show=\"!selectedOption && showAllOption\" class=\"text-base\" x-text=\"allOptionIcon\"></span><!-- Selected item emoji --><span x-show=\"selectedOption && selectedOption.emoji && !selectedOption.image\" class=\"text-base\" x-text=\"selectedOption ? selectedOption.emoji : ''\"></span><!-- Selected item image (takes priority over emoji) --><img class=\"h-3.5 w-5 object-contain\" x-show=\"selectedOption && selectedOption.image\" x-bind:src=\"selectedOption ? selectedOption.image : ''\" alt=\"\" aria-hidden=\"true\"><!-- Selected option label --><span class=\"text-sm font-normal\" x-text=\"selectedOption ? selectedOption.label : (showAllOption ? allOptionLabel : placeholder)\"></span></div><!-- Chevron  --><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\" fill=\"currentColor\" class=\"size-5\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" d=\"M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z\" clip-rule=\"evenodd\"></path></svg></button><!-- Hidden Input To Grab The Selected Value  --><input id=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" class=\"flex w-full flex-col gap-1\" x-on:keydown=\"handleKeydownOnOptions($event)\" x-on:keydown.esc.window=\"isOpen = false, openedWithKeyboard = false\" x-cloak>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var6 string
-		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(props.ID)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 255, Col: 17}
+		if props.ShowLabel {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<label for=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var6 string
+			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(props.ID)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 302, Col: 24}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" class=\"w-fit pl-0.5 text-sm text-neutral-900\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var7 string
+			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(props.Label)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 302, Col: 86}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</label>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div class=\"relative\"><!-- Trigger button -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" type=\"hidden\" name=\"")
+		var templ_7745c5c3_Var8 = []any{
+			"inline-flex w-full items-center justify-between gap-2 border px-4 py-3 text-sm font-medium tracking-wide transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 rounded-xl focus-visible:outline-neutral-900 ring-1 ring-inset",
+			templ.KV("bg-red-50 border-red-300 ring-red-300 text-red-900 placeholder:text-red-400 focus:ring-red-500 focus-visible:outline-red-500", props.HasError),
+			templ.KV("bg-white border-neutral-300 ring-neutral-300 text-neutral-900 placeholder:text-neutral-500 focus:ring-neutral-900", !props.HasError),
+		}
+		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var8...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var7 string
-		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(props.Name)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 257, Col: 21}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" autocomplete=\"off\" x-ref=\"hiddenTextField\" hidden=\"\"><div x-show=\"isOpen || openedWithKeyboard\" id=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var8 string
-		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%sList", props.ID))
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 264, Col: 40}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" class=\"rounded-radius border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt absolute left-0 top-11 z-10 w-full overflow-hidden border\" role=\"listbox\" x-bind:aria-label=\"'Options list'\" x-on:click.outside=\"isOpen = false, openedWithKeyboard = false\" x-on:keydown.down.prevent=\"$focus.wrap().next()\" x-on:keydown.up.prevent=\"$focus.wrap().previous()\" x-transition x-trap=\"openedWithKeyboard\"><!-- Search  --><div class=\"relative\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"1.5\" class=\"size-5 text-on-surface/50 dark:text-on-surface-dark/50 absolute left-4 top-1/2 -translate-y-1/2\" aria-hidden=\"true\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z\"></path></svg> <input type=\"text\" class=\"border-outline bg-surface-alt text-on-surface focus:outline-hidden focus-visible:border-primary dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark dark:focus-visible:border-primary-dark w-full border-b py-2.5 pl-11 pr-4 text-sm disabled:cursor-not-allowed disabled:opacity-75\" name=\"searchField\" autocomplete=\"off\" aria-label=\"Search\" x-on:input=\"getFilteredOptions($el.value)\" x-ref=\"searchField\" placeholder=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<button type=\"button\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var9 string
-		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(searchPlaceholder)
+		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var8).String())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 287, Col: 37}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 1, Col: 0}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\"></div><!-- Options  --><ul class=\"flex max-h-44 flex-col overflow-y-auto\"><li class=\"text-on-surface dark:text-on-surface-dark hidden px-4 py-2 text-sm\" x-ref=\"noResultsMessage\"><span>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\" role=\"combobox\" aria-controls=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var10 string
-		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(noResultsMessage)
+		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%sList", props.ID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 296, Col: 30}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 314, Col: 51}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</span></li><template x-for=\"(item, index) in options\" x-bind:key=\"item.value || 'all'\"><li class=\"combobox-option bg-surface-alt text-on-surface hover:bg-surface-dark-alt/5 hover:text-on-surface-strong focus-visible:bg-surface-dark-alt/5 focus-visible:text-on-surface-strong focus-visible:outline-hidden dark:bg-surface-dark-alt dark:text-on-surface-dark dark:hover:bg-surface-alt/5 dark:hover:text-on-surface-dark-strong dark:focus-visible:bg-surface-alt/10 dark:focus-visible:text-on-surface-dark-strong inline-flex justify-between gap-6 px-4 py-2 text-sm\" role=\"option\" x-on:click=\"setSelectedOption(item)\" x-on:keydown.enter=\"setSelectedOption(item)\" x-bind:id=\"'option-' + index\" tabindex=\"0\"><div class=\"flex items-center gap-2\"><!-- All option icon --><span x-show=\"item.isAllOption\" class=\"text-base\" x-text=\"allOptionIcon\"></span><!-- Item emoji (shown when no image and emoji exists) --><span x-show=\"!item.isAllOption && item.emoji && !item.image\" class=\"text-base\" x-text=\"item.emoji\"></span><!-- Item image (takes priority over emoji) --><img class=\"h-3.5 w-5 object-contain\" x-show=\"!item.isAllOption && item.image\" x-bind:src=\"item.image\" x-bind:alt=\"item.label + ' image'\" aria-hidden=\"true\"><!-- Label  --><span x-bind:class=\"(selectedOption == null && item.isAllOption) || (selectedOption != null && selectedOption == item) ? 'font-bold' : null\" x-text=\"item.label\"></span><!-- Screen reader 'selected' indicator  --><span class=\"sr-only\" x-text=\"(selectedOption == null && item.isAllOption) || (selectedOption != null && selectedOption == item) ? 'selected' : null\"></span></div><!-- Checkmark  --><svg x-cloak x-show=\"(selectedOption == null && item.isAllOption) || (selectedOption != null && selectedOption == item)\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" class=\"size-4\" aria-hidden=\"true\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"m4.5 12.75 6 6 9-13.5\"></path></svg></li></template></ul></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\" aria-haspopup=\"listbox\" x-on:click=\"handleTriggerClick()\" x-on:keydown.down.prevent=\"handleKeyboardOpen()\" x-on:keydown.enter.prevent=\"handleKeyboardOpen()\" x-on:keydown.space.prevent=\"handleKeyboardOpen()\" x-bind:aria-expanded=\"isOpen || openedWithKeyboard\" x-bind:aria-label=\"selectedOption ? selectedOption.label : placeholder\" x-ref=\"trigger\"><div class=\"flex min-w-0 items-center gap-2\"><!-- All option icon (when no selection and showAllOption is true) --><span x-show=\"!selectedOption && showAllOption\" class=\"flex-shrink-0 text-base\" x-text=\"allOptionIcon\"></span><!-- Selected item emoji --><span x-show=\"selectedOption && selectedOption.emoji && !selectedOption.image\" class=\"flex-shrink-0 text-base\" x-text=\"selectedOption ? selectedOption.emoji : ''\"></span><!-- Selected item image (takes priority over emoji) --><img class=\"h-3.5 w-5 flex-shrink-0 object-contain\" x-show=\"selectedOption && selectedOption.image\" x-bind:src=\"selectedOption ? selectedOption.image : ''\" alt=\"\" aria-hidden=\"true\"><!-- Selected option label --><span class=\"truncate text-sm font-normal\" x-text=\"selectedOption ? selectedOption.label : (showAllOption ? allOptionLabel : placeholder)\"></span></div><!-- Chevron --><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\" fill=\"currentColor\" class=\"size-5 flex-shrink-0\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" d=\"M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z\" clip-rule=\"evenodd\"></path></svg></button><!-- Hidden Input To Grab The Selected Value --><input id=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var11 string
+		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(props.ID)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 358, Col: 17}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "\" type=\"hidden\" name=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var12 string
+		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(props.Name)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 360, Col: 21}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\" autocomplete=\"off\" x-ref=\"hiddenTextField\" x-bind:value=\"selectedOption ? selectedOption.value : ''\" hidden=\"\"><!-- Dropdown --><div x-show=\"isOpen || openedWithKeyboard\" id=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var13 string
+		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%sList", props.ID))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 369, Col: 40}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\" class=\"fixed z-50 overflow-hidden rounded-xl border border-neutral-300 bg-white shadow-lg\" style=\"display: none;\" role=\"listbox\" x-bind:aria-label=\"'Options list'\" x-on:click.outside=\"isOpen = false, openedWithKeyboard = false\" x-on:keydown.down.prevent=\"$focus.wrap().next()\" x-on:keydown.up.prevent=\"$focus.wrap().previous()\" x-transition x-trap=\"openedWithKeyboard\" x-ref=\"dropdown\"><!-- Search --><div class=\"relative\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"1.5\" class=\"size-5 absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400\" aria-hidden=\"true\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z\"></path></svg> <input type=\"text\" class=\"w-full border-b border-neutral-300 bg-white py-2.5 pl-11 pr-4 text-sm text-neutral-900 focus:outline-none focus-visible:border-neutral-900 disabled:cursor-not-allowed disabled:opacity-75\" name=\"searchField\" autocomplete=\"off\" aria-label=\"Search\" x-on:input=\"getFilteredOptions($el.value)\" x-ref=\"searchField\" placeholder=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var14 string
+		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(searchPlaceholder)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 394, Col: 37}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "\"></div><!-- Options --><ul class=\"flex max-h-44 flex-col overflow-y-auto\"><li class=\"hidden px-4 py-2 text-sm text-neutral-900\" x-ref=\"noResultsMessage\"><span>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var15 string
+		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(noResultsMessage)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 403, Col: 30}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</span></li><template x-for=\"(item, index) in options\" x-bind:key=\"item.value || 'all'\"><li class=\"combobox-option inline-flex cursor-pointer justify-between gap-6 bg-white px-4 py-2 text-sm text-neutral-900 hover:bg-neutral-50 hover:text-neutral-900 focus-visible:bg-neutral-50 focus-visible:text-neutral-900 focus-visible:outline-none\" role=\"option\" x-on:click=\"setSelectedOption(item)\" x-on:keydown.enter=\"setSelectedOption(item)\" x-bind:id=\"'option-' + index\" tabindex=\"0\"><div class=\"flex min-w-0 items-center gap-2\"><!-- All option icon --><span x-show=\"item.isAllOption\" class=\"flex-shrink-0 text-base\" x-text=\"allOptionIcon\"></span><!-- Item emoji (shown when no image and emoji exists) --><span x-show=\"!item.isAllOption && item.emoji && !item.image\" class=\"flex-shrink-0 text-base\" x-text=\"item.emoji\"></span><!-- Item image (takes priority over emoji) --><img class=\"h-3.5 w-5 flex-shrink-0 object-contain\" x-show=\"!item.isAllOption && item.image\" x-bind:src=\"item.image\" x-bind:alt=\"item.label + ' image'\" aria-hidden=\"true\"><!-- Label --><span x-bind:class=\"(selectedOption == null && item.isAllOption) || (selectedOption != null && selectedOption == item) ? 'font-bold' : null\" x-text=\"item.label\" class=\"truncate\"></span><!-- Screen reader 'selected' indicator --><span class=\"sr-only\" x-text=\"(selectedOption == null && item.isAllOption) || (selectedOption != null && selectedOption == item) ? 'selected' : null\"></span></div><!-- Checkmark --><svg x-cloak x-show=\"(selectedOption == null && item.isAllOption) || (selectedOption != null && selectedOption == item)\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" class=\"size-4 flex-shrink-0\" aria-hidden=\"true\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"m4.5 12.75 6 6 9-13.5\"></path></svg></li></template></ul></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
