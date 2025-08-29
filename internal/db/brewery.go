@@ -38,6 +38,7 @@ func (s BreweryStore) FetchBreweries() ([]model.Brewery, error) {
 	var items []model.Brewery
 	result := s.db.gorm.
 		Debug().
+		Order("name").
 		Preload("City", func(db *gorm.DB) *gorm.DB {
 			return db.Clauses(dbresolver.Use(GeographyDBResolverName)).
 				Joins("Country")

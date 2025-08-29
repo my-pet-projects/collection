@@ -17,6 +17,18 @@ import (
 type BreweriesData struct {
 	Breweries       []model.Brewery
 	SelectedBrewery *int
+	HasError        bool
+}
+
+func (d BreweriesData) ToAutocompleteData() []AutoCompleteData {
+	data := make([]AutoCompleteData, len(d.Breweries))
+	for i, brewery := range d.Breweries {
+		data[i] = AutoCompleteData{
+			Label: brewery.Name,
+			Value: fmt.Sprint(brewery.ID),
+		}
+	}
+	return data
 }
 
 func breweriesJson(countriesData BreweriesData) string {
@@ -77,13 +89,54 @@ func BrewerySelector(data BreweriesData) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(breweriesJson(data))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/brewery.templ`, Line: 47, Col: 34}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/brewery.templ`, Line: 59, Col: 34}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\"></app-select>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func BreweriesAutocomplete(data BreweriesData) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var3 == nil {
+			templ_7745c5c3_Var3 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+
+		props := AutoCompleteProps{
+			ID:             "brewery",
+			Name:           "brewery",
+			Data:           data.ToAutocompleteData(),
+			EventNamespace: "brewery",
+			ShowLabel:      false,
+			HasError:       data.HasError,
+		}
+		if data.SelectedBrewery != nil {
+			props.PreselectedValue = fmt.Sprint(*data.SelectedBrewery)
+		}
+		templ_7745c5c3_Err = AutoComplete(props).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
