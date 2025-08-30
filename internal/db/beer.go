@@ -57,9 +57,9 @@ func (s BeerStore) PaginateBeers(ctx context.Context, filter model.BeerFilter) (
 		whereArgs["name"] = "%" + filter.Query + "%"
 	}
 
-	if filter.CountryCca3 != "" {
-		whereConditions = append(whereConditions, "brewery.country_cca3 = @countryIso")
-		whereArgs["countryIso"] = filter.CountryCca3
+	if filter.CountryCca2 != "" {
+		whereConditions = append(whereConditions, "brewery.country_cca2 = @countryIso")
+		whereArgs["countryIso"] = filter.CountryCca2
 	}
 
 	if len(whereConditions) > 0 {

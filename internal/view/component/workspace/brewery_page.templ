@@ -3,6 +3,7 @@ package workspace
 import (
 	"fmt"
 	"github.com/my-pet-projects/collection/internal/view/layout"
+	"strings"
 )
 
 type BreweryPage struct {
@@ -13,119 +14,234 @@ type BreweryPage struct {
 
 templ BreweryPageLayout(page BreweryPage) {
 	@layout.BaseLayout() {
-		@BreweryC(page.FormParams, page.FormErrors)
+		@breweryLayout(page) {
+			@BreweryForm(page.FormParams, page.FormErrors)
+		}
 	}
 }
 
-templ BreweryC(params BreweryFormParams, errors BreweryFormErrors) {
-	<div class="flex-1 px-10">
-		<div>
-			<div class="mb-6">
-				<h1 class="border-b border-gray-400 pb-2 text-2xl font-semibold text-slate-800">Brewery</h1>
+templ breweryLayout(page BreweryPage) {
+	<div class="min-h-screen bg-neutral-50">
+		<div class="px-4 pb-12 pt-8 sm:px-6 lg:px-8">
+			<div class="mx-auto max-w-2xl lg:max-w-5xl">
+				<!-- Header -->
+				<div class="mb-8">
+					<div class="flex items-center justify-between">
+						<div>
+							<h1 class="text-3xl font-bold tracking-tight text-neutral-900 sm:text-4xl">
+								Brewery Details
+							</h1>
+							<p class="mt-3 text-lg text-neutral-600 sm:text-xl">
+								Manage and view brewery information
+							</p>
+						</div>
+					</div>
+				</div>
+				<!-- Main Content Card -->
+				<div class="overflow-hidden rounded-3xl bg-white shadow-xl shadow-neutral-200/20 ring-1 ring-neutral-200/50">
+					<!-- Content Area -->
+					<div class="bg-white">
+						<div class="px-6 py-6 sm:px-8 sm:py-8 lg:px-12 lg:py-10">
+							{ children... }
+						</div>
+					</div>
+				</div>
 			</div>
-		</div>
-		<div class="grid grid-cols-2 gap-x-8 gap-y-5">
-			@BreweryForm(params, errors)
 		</div>
 	</div>
 }
 
 templ BreweryForm(params BreweryFormParams, errs BreweryFormErrors) {
-	<div hx-ext="response-targets">
+	<div
+		id="brewery-form"
+		hx-ext="response-targets"
+		x-data={ fmt.Sprintf(`{ 
+			preselectedCountry: '%s',
+			preselectedCity: %d
+		}`, params.CountryCode, params.CityId) }
+		x-on:country-selected.window="
+			const cityContainer = document.getElementById('city-container');
+			const cityLoading = document.getElementById('city-loading');
+			
+			if (cityContainer) cityContainer.style.display = 'none';
+			if (cityLoading) cityLoading.style.display = 'block';
+
+			// Load cities for selected country
+			htmx.ajax('GET', '/geo/countries/' + $event.detail.selectedValue + '/cities?preselected=' + preselectedCity + '&showAllOption=false', {
+				target: '#city-container', 
+				swap: 'innerHTML'
+			}).then(() => {
+				// Show city container and hide loading
+				if (cityContainer) cityContainer.style.display = 'block';
+				if (cityLoading) cityLoading.style.display = 'none';
+			}).catch((error) => {
+				console.error('Error loading cities:', error);
+				if (cityContainer) cityContainer.style.display = 'block';
+				if (cityLoading) cityLoading.style.display = 'none';
+			});
+		"
+	>
+		<div class="mb-8">
+			<h2 class="text-xl font-medium text-neutral-900">Brewery Information</h2>
+			<p class="mt-1 text-sm text-neutral-600">Fill out the details about this brewery</p>
+		</div>
 		<form
-			class="col-span-1"
+			class="space-y-6"
 			hx-post="/workspace/brewery"
 			hx-on::before-request="document.getElementById('brewery-errors').innerHTML = ''"
+			hx-target="#brewery-form"
 			hx-target-error="#brewery-errors"
 			hx-trigger="submit"
-			hx-indicator="#indicator"
-			hx-disabled-elt="input,button"
+			hx-indicator=".hx-save-indicator-toggle"
+			hx-disabled-elt="input:not([type=hidden]),button"
 		>
 			<input type="hidden" id="id" name="id" value={ fmt.Sprint(params.Id) }/>
-			<div
-				if errs.Name != "" {
-					class="form-group has-err"
-				}
-			>
-				<label for="name" class="text-sm font-medium leading-10">
-					<span>Name</span>
-				</label>
+			<!-- Brewery Name -->
+			<div class="space-y-2">
+				<div class="flex items-center justify-between">
+					<label for="brand" class="block text-sm font-medium text-neutral-900">
+						Brewery <span class="text-orange-500">*</span>
+					</label>
+					if errs.Name != "" {
+						<p class="flex items-center text-xs text-red-600">
+							<svg class="mr-1 h-3 w-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"></path>
+							</svg>
+							<span class="truncate">{ errs.Name }</span>
+						</p>
+					}
+				</div>
 				<input
 					type="text"
 					id="name"
 					name="name"
-					placeholder=""
+					placeholder="Enter brewery name"
 					value={ params.Name }
 					autocapitalize="none"
 					autocomplete="off"
 					autocorrect="off"
-					class="border-input ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex w-full rounded-sm border border-gray-300 bg-transparent px-3 py-3 text-sm focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+					class={
+						"block w-full rounded-xl border-0 px-4 py-3 text-sm ring-1 ring-inset transition-all duration-200 focus:ring-2 focus:ring-inset disabled:cursor-not-allowed disabled:bg-neutral-50 disabled:opacity-50",
+						templ.KV("bg-red-50 text-red-900 ring-red-300 placeholder:text-red-400 focus:ring-red-500", errs.Name != ""),
+						templ.KV("bg-white ring-neutral-300 placeholder:text-neutral-500 focus:ring-neutral-900", errs.Name == ""),
+					}
 				/>
-				<span class="form-group-error mt-1 text-sm text-red-600">{ errs.Name }</span>
-			</div>
-			<div
-				if errs.Country != "" {
-					class="form-group has-err"
+				if errs.Name != "" {
+					<p class="mt-1 text-sm text-red-600">{ errs.Name }</p>
 				}
-			>
-				<label for="name" class="text-sm font-medium leading-10">
-					<span>Country</span>
-				</label>
-				<input type="hidden" id="selected-country" name="selectedCountry" value={ params.CountryCode }/>
-				<div
-					hx-get={ "/geo/countries?hasBreweries=true" }
-					hx-target-error="#countries-errors"
-					hx-trigger="load"
-				>
-					<div id="countries-errors"></div>
-					<img alt="Loading ..." width="20" src="/assets/img/tail-spin.svg"/>
-				</div>
-				<span class="form-group-error mt-1 text-sm text-red-600">{ errs.Country }</span>
 			</div>
-			<div
-				if errs.City != "" {
-					class="form-group has-err"
-				}
-			>
-				<label for="city" class="text-sm font-medium leading-10">
-					<span>City</span>
-				</label>
-				<input type="hidden" id="selected-city" name="selectedCity" value={ fmt.Sprint(params.CityId) }/>
-				<div id="cityContainer">
-					<select
-						type="text"
-						id="name"
-						name="name"
-						class="border-input ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex w-full rounded-sm border border-gray-300 bg-transparent px-3 py-3 text-sm focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-						disabled
-					>
-						<option>Select a country first</option>
-					</select>
+			<!-- Country Selection -->
+			<div class="space-y-2">
+				<div class="flex items-center justify-between">
+					<label for="brand" class="block text-sm font-medium text-neutral-900">
+						Country <span class="text-orange-500">*</span>
+					</label>
+					if errs.Country != "" {
+						<p class="flex items-center text-xs text-red-600">
+							<svg class="mr-1 h-3 w-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"></path>
+							</svg>
+							<span class="truncate">{ errs.Country }</span>
+						</p>
+					}
 				</div>
-				<span class="form-group-error mt-1 text-sm text-red-600">{ errs.City }</span>
+				<div id="country-container">
+					<!-- Loading indicator -->
+					<div class="flex h-12 w-full items-center justify-center rounded-lg border border-gray-300 bg-gray-50">
+						<div class="flex items-center space-x-2 text-gray-500">
+							<div class="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-blue-600"></div>
+							<span class="text-sm">Loading countries...</span>
+						</div>
+					</div>
+				</div>
 			</div>
-			<div class="mt-6">
+			<!-- City Selection -->
+			<div class="space-y-2">
+				<div class="flex items-center justify-between">
+					<label for="brand" class="block text-sm font-medium text-neutral-900">
+						City <span class="text-orange-500">*</span>
+					</label>
+					if errs.City != "" {
+						<p class="flex items-center text-xs text-red-600">
+							<svg class="mr-1 h-3 w-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"></path>
+							</svg>
+							<span class="truncate">{ errs.City }</span>
+						</p>
+					}
+				</div>
+				<div class="space-y-2">
+					<!-- City Container -->
+					<div id="city-container" class="w-full">
+						<!-- Initial disabled state -->
+						<div class="w-full">
+							<div class="flex h-12 w-full cursor-not-allowed items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-medium text-gray-400">
+								<span>Select a country first</span>
+								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-5 w-5">
+									<path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"></path>
+								</svg>
+							</div>
+						</div>
+					</div>
+					<!-- Loading indicator -->
+					<div id="city-loading" class="w-full" style="display: none;">
+						<div class="flex h-12 w-full items-center justify-center rounded-lg border border-gray-300 bg-gray-50">
+							<div class="flex items-center space-x-2 text-gray-500">
+								<div class="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-blue-600"></div>
+								<span class="text-sm">Loading cities...</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- Error Container -->
+			<div id="brewery-errors" class="mt-4"></div>
+			<!-- Submit Button -->
+			<div class="border-t border-gray-200 pt-4">
 				<button
 					type="submit"
-					class="me-2 inline-flex items-center rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 disabled:cursor-not-allowed disabled:opacity-50"
+					class="inline-flex w-48 items-center justify-center rounded-lg bg-gray-900 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
 				>
-					<span id="indicator" class="htmx-indicator">
-						<svg aria-hidden="true" role="status" class="me-3 inline h-4 w-4 animate-spin text-white" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-							<path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="#E5E7EB"></path>
-							<path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentColor"></path>
+					<!-- Loading Content -->
+					<span class="hx-save-indicator-toggle htmx-indicator flex items-center">
+						<svg class="mr-2 h-4 w-4 animate-spin text-white" fill="none" viewBox="0 0 24 24">
+							<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+							<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
 						</svg>
-						Processing ...
+						<span>
+							if params.IsNew() {
+								Creating...
+							} else {
+								Updating...
+							}
+						</span>
 					</span>
-					<span class="btn-content">
-						if params.IsNew() {
-							Create bewery
-						} else {
-							Update brewery
-						}
+					<!-- Default Content -->
+					<span class="hx-save-indicator-toggle hide-on-hx-request flex items-center">
+						<svg class="mr-2 h-4 w-4 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+							<path d="M5 4h11l3 3v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"></path>
+							<path d="M7 4v4h8V4"></path>
+							<circle cx="12" cy="14" r="2"></circle>
+						</svg>
+						<span>
+							if params.IsNew() {
+								Create Brewery
+							} else {
+								Update Brewery
+							}
+						</span>
 					</span>
 				</button>
 			</div>
 		</form>
-		<div id="brewery-errors"></div>
+		<!-- Separate element to load the country selection to avoid conflicts in the main form -->
+		<div
+			class="w-full"
+			hx-get={ fmt.Sprintf("/geo/countries?preselected=%s&showAllOption=false", strings.ToLower(params.CountryCode)) }
+			hx-target="#country-container"
+			hx-swap="innerHTML"
+			hx-trigger="load"
+			class="hidden"
+		></div>
 	</div>
 }
