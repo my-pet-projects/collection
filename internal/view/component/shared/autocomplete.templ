@@ -255,8 +255,8 @@ templ AutoComplete(props AutoCompleteProps) {
 			
 			handleKeydownOnOptions(event) {
 				const k = event.key;
-				const isAlphaNumeric = (k.length === 1 && /\w/.test(k)) || k === 'Backspace';
-				if (isAlphaNumeric) this.$refs.searchField.focus();
+				const isTypeable = (k.length === 1 && /[\p{L}\p{N}]/u.test(k)) || k === 'Backspace';
+				if (isTypeable) this.$refs.searchField.focus();
 			},
 
 			// Method to handle clicks on trigger
@@ -361,7 +361,7 @@ templ AutoComplete(props AutoCompleteProps) {
 			x-show="isOpen || openedWithKeyboard"
 			class="fixed z-50 overflow-hidden rounded-xl border border-neutral-300 bg-white shadow-xl"
 			style="display: none;"
-			x-on:click.outside="isOpen = false, openedWithKeyboard = false"
+			x-on:click.outside="isOpen = false; openedWithKeyboard = false"
 			x-on:keydown.down.prevent="$focus.wrap().next()"
 			x-on:keydown.up.prevent="$focus.wrap().previous()"
 			x-transition
