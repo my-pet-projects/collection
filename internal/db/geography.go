@@ -39,7 +39,7 @@ func (s GeographyStore) FetchCitiesByCountry(countryCode string) ([]model.City, 
 		Where(&model.City{CountryCode: strings.ToUpper(countryCode)}).
 		Joins("Country").
 		Clauses(dbresolver.Use(GeographyDBResolverName)).
-		Order("name").
+		Order("name, id").
 		Find(&items)
 
 	return items, result.Error

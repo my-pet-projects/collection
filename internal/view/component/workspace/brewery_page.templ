@@ -55,10 +55,9 @@ templ BreweryForm(params BreweryFormParams, errs BreweryFormErrors) {
 	<div
 		id="brewery-form"
 		hx-ext="response-targets"
-		x-data={ fmt.Sprintf(`{ 
-			preselectedCountry: '%s',
-			preselectedCity: %d
-		}`, params.CountryCode, params.CityId) }
+		data-preselected-country={ strings.ToLower(params.CountryCode) }
+		data-preselected-city={ fmt.Sprint(params.CityId) }
+		x-data={ `{ preselectedCountry: $el.dataset.preselectedCountry || '', preselectedCity: parseInt($el.dataset.preselectedCity) || 0 }` }
 		x-on:country-selected.window="
 			const cityContainer = document.getElementById('city-container');
 			const cityLoading = document.getElementById('city-loading');
@@ -236,12 +235,11 @@ templ BreweryForm(params BreweryFormParams, errs BreweryFormErrors) {
 		</form>
 		<!-- Separate element to load the country selection to avoid conflicts in the main form -->
 		<div
-			class="w-full"
+			class="hidden"
 			hx-get={ fmt.Sprintf("/geo/countries?preselected=%s&showAllOption=false", strings.ToLower(params.CountryCode)) }
 			hx-target="#country-container"
 			hx-swap="innerHTML"
 			hx-trigger="load"
-			class="hidden"
 		></div>
 	</div>
 }

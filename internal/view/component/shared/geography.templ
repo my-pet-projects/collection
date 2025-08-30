@@ -8,11 +8,10 @@ import (
 )
 
 type CountriesData struct {
-	Countries             []model.Country
-	HasBreweries          bool
-	StoreSelectionInQuery bool
-	PreselectedCountry    string
-	ShowAllOption         bool
+	Countries          []model.Country
+	HasBreweries       bool
+	PreselectedCountry string
+	ShowAllOption      bool
 }
 
 func (c CountriesData) ToAutocompleteData() []AutoCompleteData {
@@ -37,7 +36,7 @@ templ CountriesAutoComplete(countriesData CountriesData) {
 		AllOptionIcon:    "🌍",
 		EventNamespace:   "country",
 		ListenToEvents:   []string{"country-selected", "country-cleared"},
-		PreselectedValue: countriesData.PreselectedCountry,
+		PreselectedValue: strings.ToLower(countriesData.PreselectedCountry),
 	})
 }
 
@@ -64,6 +63,7 @@ templ CitiesAutoComplete(citiesData CitiesData) {
 		Name:             "city",
 		Data:             citiesData.ToAutocompleteData(),
 		ShowAllOption:    citiesData.ShowAllOption,
+		AllOptionLabel:   "All cities",
 		EventNamespace:   "city",
 		PreselectedValue: citiesData.PreselectedCity,
 	})

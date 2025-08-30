@@ -254,10 +254,9 @@ templ AutoComplete(props AutoCompleteProps) {
 			},
 			
 			handleKeydownOnOptions(event) {
-				const isAlphaNumeric = (event.keyCode >= 65 && event.keyCode <= 90) || 
-									(event.keyCode >= 48 && event.keyCode <= 57) || 
-									event.keyCode === 8
-				if (isAlphaNumeric) this.$refs.searchField.focus()
+				const k = event.key;
+				const isAlphaNumeric = (k.length === 1 && /\w/.test(k)) || k === 'Backspace';
+				if (isAlphaNumeric) this.$refs.searchField.focus();
 			},
 
 			// Method to handle clicks on trigger
@@ -299,7 +298,7 @@ templ AutoComplete(props AutoCompleteProps) {
 		x-data={ initScript }
 		class="relative w-full"
 		x-on:keydown="handleKeydownOnOptions($event)"
-		x-on:keydown.esc.window="isOpen = false, openedWithKeyboard = false"
+		x-on:keydown.esc.window="isOpen = false; openedWithKeyboard = false"
 		x-cloak
 	>
 		<!-- Trigger button -->

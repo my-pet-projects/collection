@@ -143,210 +143,233 @@ func BreweryForm(params BreweryFormParams, errs BreweryFormErrors) templ.Compone
 			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div id=\"brewery-form\" hx-ext=\"response-targets\" x-data=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div id=\"brewery-form\" hx-ext=\"response-targets\" data-preselected-country=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var6 string
-		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf(`{ 
-			preselectedCountry: '%s',
-			preselectedCity: %d
-		}`, params.CountryCode, params.CityId))
+		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(strings.ToLower(params.CountryCode))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/brewery_page.templ`, Line: 61, Col: 40}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/brewery_page.templ`, Line: 58, Col: 64}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" x-on:country-selected.window=\"\n\t\t\tconst cityContainer = document.getElementById('city-container');\n\t\t\tconst cityLoading = document.getElementById('city-loading');\n\t\t\t\n\t\t\tif (cityContainer) cityContainer.style.display = 'none';\n\t\t\tif (cityLoading) cityLoading.style.display = 'block';\n\n\t\t\t// Load cities for selected country\n\t\t\thtmx.ajax('GET', '/geo/countries/' + $event.detail.selectedValue + '/cities?preselected=' + preselectedCity + '&showAllOption=false', {\n\t\t\t\ttarget: '#city-container', \n\t\t\t\tswap: 'innerHTML'\n\t\t\t}).then(() => {\n\t\t\t\t// Show city container and hide loading\n\t\t\t\tif (cityContainer) cityContainer.style.display = 'block';\n\t\t\t\tif (cityLoading) cityLoading.style.display = 'none';\n\t\t\t}).catch((error) => {\n\t\t\t\tconsole.error('Error loading cities:', error);\n\t\t\t\tif (cityContainer) cityContainer.style.display = 'block';\n\t\t\t\tif (cityLoading) cityLoading.style.display = 'none';\n\t\t\t});\n\t\t\"><div class=\"mb-8\"><h2 class=\"text-xl font-medium text-neutral-900\">Brewery Information</h2><p class=\"mt-1 text-sm text-neutral-600\">Fill out the details about this brewery</p></div><form class=\"space-y-6\" hx-post=\"/workspace/brewery\" hx-on::before-request=\"document.getElementById('brewery-errors').innerHTML = ''\" hx-target=\"#brewery-form\" hx-target-error=\"#brewery-errors\" hx-trigger=\"submit\" hx-indicator=\".hx-save-indicator-toggle\" hx-disabled-elt=\"input:not([type=hidden]),button\"><input type=\"hidden\" id=\"id\" name=\"id\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" data-preselected-city=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var7 string
-		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(params.Id))
+		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(params.CityId))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/brewery_page.templ`, Line: 98, Col: 71}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/brewery_page.templ`, Line: 59, Col: 51}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\"><!-- Brewery Name --><div class=\"space-y-2\"><div class=\"flex items-center justify-between\"><label for=\"brand\" class=\"block text-sm font-medium text-neutral-900\">Brewery <span class=\"text-orange-500\">*</span></label> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" x-data=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var8 string
+		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(`{ preselectedCountry: $el.dataset.preselectedCountry || '', preselectedCity: parseInt($el.dataset.preselectedCity) || 0 }`)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/brewery_page.templ`, Line: 60, Col: 134}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" x-on:country-selected.window=\"\n\t\t\tconst cityContainer = document.getElementById('city-container');\n\t\t\tconst cityLoading = document.getElementById('city-loading');\n\t\t\t\n\t\t\tif (cityContainer) cityContainer.style.display = 'none';\n\t\t\tif (cityLoading) cityLoading.style.display = 'block';\n\n\t\t\t// Load cities for selected country\n\t\t\thtmx.ajax('GET', '/geo/countries/' + $event.detail.selectedValue + '/cities?preselected=' + preselectedCity + '&showAllOption=false', {\n\t\t\t\ttarget: '#city-container', \n\t\t\t\tswap: 'innerHTML'\n\t\t\t}).then(() => {\n\t\t\t\t// Show city container and hide loading\n\t\t\t\tif (cityContainer) cityContainer.style.display = 'block';\n\t\t\t\tif (cityLoading) cityLoading.style.display = 'none';\n\t\t\t}).catch((error) => {\n\t\t\t\tconsole.error('Error loading cities:', error);\n\t\t\t\tif (cityContainer) cityContainer.style.display = 'block';\n\t\t\t\tif (cityLoading) cityLoading.style.display = 'none';\n\t\t\t});\n\t\t\"><div class=\"mb-8\"><h2 class=\"text-xl font-medium text-neutral-900\">Brewery Information</h2><p class=\"mt-1 text-sm text-neutral-600\">Fill out the details about this brewery</p></div><form class=\"space-y-6\" hx-post=\"/workspace/brewery\" hx-on::before-request=\"document.getElementById('brewery-errors').innerHTML = ''\" hx-target=\"#brewery-form\" hx-target-error=\"#brewery-errors\" hx-trigger=\"submit\" hx-indicator=\".hx-save-indicator-toggle\" hx-disabled-elt=\"input:not([type=hidden]),button\"><input type=\"hidden\" id=\"id\" name=\"id\" value=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var9 string
+		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(params.Id))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/brewery_page.templ`, Line: 97, Col: 71}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\"><!-- Brewery Name --><div class=\"space-y-2\"><div class=\"flex items-center justify-between\"><label for=\"brand\" class=\"block text-sm font-medium text-neutral-900\">Brewery <span class=\"text-orange-500\">*</span></label> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if errs.Name != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<p class=\"flex items-center text-xs text-red-600\"><svg class=\"mr-1 h-3 w-3 flex-shrink-0\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z\"></path></svg> <span class=\"truncate\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<p class=\"flex items-center text-xs text-red-600\"><svg class=\"mr-1 h-3 w-3 flex-shrink-0\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z\"></path></svg> <span class=\"truncate\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var8 string
-			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(errs.Name)
+			var templ_7745c5c3_Var10 string
+			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(errs.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/brewery_page.templ`, Line: 110, Col: 41}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/brewery_page.templ`, Line: 109, Col: 41}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</span></p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</span></p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var9 = []any{
+		var templ_7745c5c3_Var11 = []any{
 			"block w-full rounded-xl border-0 px-4 py-3 text-sm ring-1 ring-inset transition-all duration-200 focus:ring-2 focus:ring-inset disabled:cursor-not-allowed disabled:bg-neutral-50 disabled:opacity-50",
 			templ.KV("bg-red-50 text-red-900 ring-red-300 placeholder:text-red-400 focus:ring-red-500", errs.Name != ""),
 			templ.KV("bg-white ring-neutral-300 placeholder:text-neutral-500 focus:ring-neutral-900", errs.Name == ""),
 		}
-		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var9...)
+		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var11...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<input type=\"text\" id=\"name\" name=\"name\" placeholder=\"Enter brewery name\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<input type=\"text\" id=\"name\" name=\"name\" placeholder=\"Enter brewery name\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var10 string
-		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(params.Name)
+		var templ_7745c5c3_Var12 string
+		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(params.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/brewery_page.templ`, Line: 119, Col: 24}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/brewery_page.templ`, Line: 118, Col: 24}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" autocapitalize=\"none\" autocomplete=\"off\" autocorrect=\"off\" class=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var11 string
-		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var9).String())
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\" autocapitalize=\"none\" autocomplete=\"off\" autocorrect=\"off\" class=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var13 string
+		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var11).String())
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/brewery_page.templ`, Line: 1, Col: 0}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\"> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\"> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if errs.Name != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<p class=\"mt-1 text-sm text-red-600\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var12 string
-			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(errs.Name)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/brewery_page.templ`, Line: 130, Col: 53}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</p>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div><!-- Country Selection --><div class=\"space-y-2\"><div class=\"flex items-center justify-between\"><label for=\"brand\" class=\"block text-sm font-medium text-neutral-900\">Country <span class=\"text-orange-500\">*</span></label> ")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		if errs.Country != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<p class=\"flex items-center text-xs text-red-600\"><svg class=\"mr-1 h-3 w-3 flex-shrink-0\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z\"></path></svg> <span class=\"truncate\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var13 string
-			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(errs.Country)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/brewery_page.templ`, Line: 144, Col: 44}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</span></p>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div><div id=\"country-container\"><!-- Loading indicator --><div class=\"flex h-12 w-full items-center justify-center rounded-lg border border-gray-300 bg-gray-50\"><div class=\"flex items-center space-x-2 text-gray-500\"><div class=\"h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-blue-600\"></div><span class=\"text-sm\">Loading countries...</span></div></div></div></div><!-- City Selection --><div class=\"space-y-2\"><div class=\"flex items-center justify-between\"><label for=\"brand\" class=\"block text-sm font-medium text-neutral-900\">City <span class=\"text-orange-500\">*</span></label> ")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		if errs.City != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<p class=\"flex items-center text-xs text-red-600\"><svg class=\"mr-1 h-3 w-3 flex-shrink-0\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z\"></path></svg> <span class=\"truncate\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<p class=\"mt-1 text-sm text-red-600\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var14 string
-			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(errs.City)
+			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(errs.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/brewery_page.templ`, Line: 169, Col: 41}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/brewery_page.templ`, Line: 129, Col: 53}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</span></p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</div><div class=\"space-y-2\"><!-- City Container --><div id=\"city-container\" class=\"w-full\"><!-- Initial disabled state --><div class=\"w-full\"><div class=\"flex h-12 w-full cursor-not-allowed items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-medium text-gray-400\"><span>Select a country first</span> <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\" fill=\"currentColor\" class=\"h-5 w-5\"><path fill-rule=\"evenodd\" d=\"M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z\" clip-rule=\"evenodd\"></path></svg></div></div></div><!-- Loading indicator --><div id=\"city-loading\" class=\"w-full\" style=\"display: none;\"><div class=\"flex h-12 w-full items-center justify-center rounded-lg border border-gray-300 bg-gray-50\"><div class=\"flex items-center space-x-2 text-gray-500\"><div class=\"h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-blue-600\"></div><span class=\"text-sm\">Loading cities...</span></div></div></div></div></div><!-- Error Container --><div id=\"brewery-errors\" class=\"mt-4\"></div><!-- Submit Button --><div class=\"border-t border-gray-200 pt-4\"><button type=\"submit\" class=\"inline-flex w-48 items-center justify-center rounded-lg bg-gray-900 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50\"><!-- Loading Content --><span class=\"hx-save-indicator-toggle htmx-indicator flex items-center\"><svg class=\"mr-2 h-4 w-4 animate-spin text-white\" fill=\"none\" viewBox=\"0 0 24 24\"><circle class=\"opacity-25\" cx=\"12\" cy=\"12\" r=\"10\" stroke=\"currentColor\" stroke-width=\"4\"></circle> <path class=\"opacity-75\" fill=\"currentColor\" d=\"M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z\"></path></svg> <span>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div><!-- Country Selection --><div class=\"space-y-2\"><div class=\"flex items-center justify-between\"><label for=\"brand\" class=\"block text-sm font-medium text-neutral-900\">Country <span class=\"text-orange-500\">*</span></label> ")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if errs.Country != "" {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<p class=\"flex items-center text-xs text-red-600\"><svg class=\"mr-1 h-3 w-3 flex-shrink-0\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z\"></path></svg> <span class=\"truncate\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var15 string
+			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(errs.Country)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/brewery_page.templ`, Line: 143, Col: 44}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</span></p>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</div><div id=\"country-container\"><!-- Loading indicator --><div class=\"flex h-12 w-full items-center justify-center rounded-lg border border-gray-300 bg-gray-50\"><div class=\"flex items-center space-x-2 text-gray-500\"><div class=\"h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-blue-600\"></div><span class=\"text-sm\">Loading countries...</span></div></div></div></div><!-- City Selection --><div class=\"space-y-2\"><div class=\"flex items-center justify-between\"><label for=\"brand\" class=\"block text-sm font-medium text-neutral-900\">City <span class=\"text-orange-500\">*</span></label> ")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if errs.City != "" {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<p class=\"flex items-center text-xs text-red-600\"><svg class=\"mr-1 h-3 w-3 flex-shrink-0\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z\"></path></svg> <span class=\"truncate\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var16 string
+			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(errs.City)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/brewery_page.templ`, Line: 168, Col: 41}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</span></p>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</div><div class=\"space-y-2\"><!-- City Container --><div id=\"city-container\" class=\"w-full\"><!-- Initial disabled state --><div class=\"w-full\"><div class=\"flex h-12 w-full cursor-not-allowed items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-medium text-gray-400\"><span>Select a country first</span> <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\" fill=\"currentColor\" class=\"h-5 w-5\"><path fill-rule=\"evenodd\" d=\"M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z\" clip-rule=\"evenodd\"></path></svg></div></div></div><!-- Loading indicator --><div id=\"city-loading\" class=\"w-full\" style=\"display: none;\"><div class=\"flex h-12 w-full items-center justify-center rounded-lg border border-gray-300 bg-gray-50\"><div class=\"flex items-center space-x-2 text-gray-500\"><div class=\"h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-blue-600\"></div><span class=\"text-sm\">Loading cities...</span></div></div></div></div></div><!-- Error Container --><div id=\"brewery-errors\" class=\"mt-4\"></div><!-- Submit Button --><div class=\"border-t border-gray-200 pt-4\"><button type=\"submit\" class=\"inline-flex w-48 items-center justify-center rounded-lg bg-gray-900 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50\"><!-- Loading Content --><span class=\"hx-save-indicator-toggle htmx-indicator flex items-center\"><svg class=\"mr-2 h-4 w-4 animate-spin text-white\" fill=\"none\" viewBox=\"0 0 24 24\"><circle class=\"opacity-25\" cx=\"12\" cy=\"12\" r=\"10\" stroke=\"currentColor\" stroke-width=\"4\"></circle> <path class=\"opacity-75\" fill=\"currentColor\" d=\"M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z\"></path></svg> <span>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if params.IsNew() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "Creating...")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "Creating...")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "Updating...")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "Updating...")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</span></span><!-- Default Content --><span class=\"hx-save-indicator-toggle hide-on-hx-request flex items-center\"><svg class=\"mr-2 h-4 w-4 text-white\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" viewBox=\"0 0 24 24\"><path d=\"M5 4h11l3 3v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z\"></path> <path d=\"M7 4v4h8V4\"></path> <circle cx=\"12\" cy=\"14\" r=\"2\"></circle></svg> <span>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</span></span><!-- Default Content --><span class=\"hx-save-indicator-toggle hide-on-hx-request flex items-center\"><svg class=\"mr-2 h-4 w-4 text-white\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" viewBox=\"0 0 24 24\"><path d=\"M5 4h11l3 3v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z\"></path> <path d=\"M7 4v4h8V4\"></path> <circle cx=\"12\" cy=\"14\" r=\"2\"></circle></svg> <span>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if params.IsNew() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "Create Brewery")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "Create Brewery")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "Update Brewery")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "Update Brewery")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</span></span></button></div></form><!-- Separate element to load the country selection to avoid conflicts in the main form --><div class=\"w-full\" hx-get=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</span></span></button></div></form><!-- Separate element to load the country selection to avoid conflicts in the main form --><div class=\"hidden\" hx-get=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var15 string
-		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/geo/countries?preselected=%s&showAllOption=false", strings.ToLower(params.CountryCode)))
+		var templ_7745c5c3_Var17 string
+		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/geo/countries?preselected=%s&showAllOption=false", strings.ToLower(params.CountryCode)))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/brewery_page.templ`, Line: 240, Col: 113}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/brewery_page.templ`, Line: 239, Col: 113}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "\" hx-target=\"#country-container\" hx-swap=\"innerHTML\" hx-trigger=\"load\" class=\"hidden\"></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "\" hx-target=\"#country-container\" hx-swap=\"innerHTML\" hx-trigger=\"load\"></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
