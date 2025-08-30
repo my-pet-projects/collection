@@ -304,7 +304,7 @@ func AutoComplete(props AutoCompleteProps) templ.Component {
 			}
 		}`, data, placeholderJSON, allOptionLabelJSON, allOptionIconJSON,
 			eventNamespaceJSON, showAllOptionStr, eventsJSON, idJSON, nameJSON, initialValueJSON)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!-- Loading spinner (visible before Alpine loads) --><div class=\"w-full\" x-data x-show=\"false\" x-cloak>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!-- Loading spinner (visible before Alpine loads) --><div class=\"w-full\" x-data x-show=\"false\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
