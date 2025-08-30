@@ -408,14 +408,14 @@ func AutoComplete(props AutoCompleteProps) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" autocomplete=\"off\" x-ref=\"hiddenTextField\" x-bind:value=\"selectedOption ? selectedOption.value : ''\" hidden=\"\"><!-- Dropdown --><div x-show=\"isOpen || openedWithKeyboard\" class=\"fixed z-50 overflow-hidden rounded-xl border border-neutral-300 bg-white shadow-xl\" style=\"display: none;\" x-on:click.outside=\"isOpen = false, openedWithKeyboard = false\" x-on:keydown.down.prevent=\"$focus.wrap().next()\" x-on:keydown.up.prevent=\"$focus.wrap().previous()\" x-transition x-trap=\"openedWithKeyboard\" x-ref=\"dropdown\"><!-- Search --><div class=\"relative\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"1.5\" class=\"size-5 absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z\"></path></svg> <input type=\"text\" class=\"w-full border-b border-neutral-300 bg-white py-2.5 pl-11 pr-4 text-sm text-neutral-900 focus:outline-none focus-visible:border-neutral-900 disabled:cursor-not-allowed disabled:opacity-75\" name=\"searchField\" autocomplete=\"off\" x-on:input=\"getFilteredOptions($el.value)\" x-ref=\"searchField\" placeholder=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" autocomplete=\"off\" x-ref=\"hiddenTextField\" x-bind:value=\"selectedOption ? selectedOption.value : ''\"><!-- Dropdown --><div x-show=\"isOpen || openedWithKeyboard\" class=\"fixed z-50 overflow-hidden rounded-xl border border-neutral-300 bg-white shadow-xl\" style=\"display: none;\" x-on:click.outside=\"isOpen = false, openedWithKeyboard = false\" x-on:keydown.down.prevent=\"$focus.wrap().next()\" x-on:keydown.up.prevent=\"$focus.wrap().previous()\" x-transition x-trap=\"openedWithKeyboard\" x-ref=\"dropdown\"><!-- Search --><div class=\"relative\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"1.5\" class=\"size-5 absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z\"></path></svg> <input type=\"text\" class=\"w-full border-b border-neutral-300 bg-white py-2.5 pl-11 pr-4 text-sm text-neutral-900 focus:outline-none focus-visible:border-neutral-900 disabled:cursor-not-allowed disabled:opacity-75\" name=\"searchField\" autocomplete=\"off\" x-on:input=\"getFilteredOptions($el.value)\" x-ref=\"searchField\" placeholder=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(searchPlaceholder)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 384, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 383, Col: 36}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
@@ -428,7 +428,7 @@ func AutoComplete(props AutoCompleteProps) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(noResultsMessage)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 393, Col: 29}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/autocomplete.templ`, Line: 392, Col: 29}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
