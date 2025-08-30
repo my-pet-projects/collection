@@ -191,7 +191,7 @@ templ BeerListPage(page BeerListPageData) {
 						</form>
 						<!-- Separate element to load the country filter -->
 						<div
-							hx-get="/geo/countries?hasBreweries=true&useAlpineComponent=true"
+							hx-get="/geo/countries?hasBreweries=true&showAllOption=true"
 							hx-swap="innerHTML"
 							hx-target="#country-filter-container"
 							hx-trigger="load"

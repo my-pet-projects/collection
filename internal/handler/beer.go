@@ -183,7 +183,7 @@ func (h WorkspaceServer) ListBeers(reqResp *web.ReqRespPair) error {
 
 	filter := model.BeerFilter{
 		Query:       query,
-		CountryCca3: country,
+		CountryCca2: country,
 		Page:        page,
 		Limit:       size,
 	}

@@ -36,6 +36,7 @@ func (s BreweryStore) GetBrewery(id int) (model.Brewery, error) {
 
 func (s BreweryStore) FetchBreweries() ([]model.Brewery, error) {
 	var items []model.Brewery
+
 	result := s.db.gorm.
 		Debug().
 		Order("name").

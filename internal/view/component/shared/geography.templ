@@ -1,16 +1,17 @@
 package shared
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/my-pet-projects/collection/internal/model"
+	"strconv"
 	"strings"
 )
 
 type CountriesData struct {
-	Countries             []model.Country
-	HasBreweries          bool
-	StoreSelectionInQuery bool
+	Countries          []model.Country
+	HasBreweries       bool
+	PreselectedCountry string
+	ShowAllOption      bool
 }
 
 func (c CountriesData) ToAutocompleteData() []AutoCompleteData {
@@ -18,110 +19,52 @@ func (c CountriesData) ToAutocompleteData() []AutoCompleteData {
 	for i, country := range c.Countries {
 		data[i] = AutoCompleteData{
 			Label: country.NameCommon,
-			Value: strings.ToLower(country.Cca3),
+			Value: strings.ToLower(country.Cca2),
 			Image: fmt.Sprintf("https://flagcdn.com/%s.svg", strings.ToLower(country.Cca2)),
 		}
 	}
 	return data
 }
 
-type choicesData struct {
-	Value            string         `json:"value"`
-	Label            string         `json:"label"`
-	Selected         bool           `json:"selected"`
-	Disabled         bool           `json:"disabled"`
-	CustomProperties customProperty `json:"customProperties"`
-}
-
-type customProperty struct {
-	SearchableValue string `json:"searchableValue"`
-}
-
-func countriesJson(countriesData CountriesData) string {
-	choices := make([]choicesData, 0)
-	emptyChoice := choicesData{
-		Value:    "",
-		Label:    "Select a country",
-		Selected: true,
-		Disabled: false,
-	}
-	choices = append(choices, emptyChoice)
-	for _, country := range countriesData.Countries {
-		choices = append(choices, choicesData{
-			Value:            strings.ToLower(country.Cca2),
-			Label:            fmt.Sprintf(`<span class="flex items-center justify-center"><img src="https://flagcdn.com/w20/%s.png" width="20" /></span><span class="ml-4">%s</span>`, strings.ToLower(country.Cca2), country.NameCommon),
-			Selected:         false,
-			Disabled:         false,
-			CustomProperties: customProperty{SearchableValue: country.NameCommon},
-		})
-	}
-	bytes, err := json.Marshal(choices)
-	if err != nil {
-		panic(err)
-	}
-	return string(bytes)
-}
-
-func citiesJson(cities []model.City) string {
-	choices := make([]choicesData, 0)
-	emptyChoice := choicesData{
-		Value:    "",
-		Label:    "Select a city",
-		Selected: true,
-		Disabled: false,
-	}
-	choices = append(choices, emptyChoice)
-	for _, city := range cities {
-		choices = append(choices, choicesData{
-			Value:    fmt.Sprint(city.ID),
-			Label:    city.Name,
-			Selected: false,
-			Disabled: false,
-		})
-	}
-	bytes, err := json.Marshal(choices)
-	if err != nil {
-		panic(err)
-	}
-	return string(bytes)
-}
-
-// On initial load "country-change-choice" event is being ignored for some reason, so there is a hack with hx-trigger.
-// 1. As a workaround for the lost first "country-change-choice" event, hx-trigger has "load" option, so that hx-get could be triggered
-// on document load event. For that case countryIso parameter is taken from the "selected-country" element. That is ugly, but that works.
-// 2. hx-trigger has "country-change-choice", so that hx-get is triggered on every country change, as it should be. In that case countryIso
-// parameter is taken from the event details.
-templ CountriesSelector(countriesData CountriesData) {
-	<div hx-ext="path-params">
-		<app-select
-			name="country"
-			hx-get="/geo/countries/{countryIso}/cities"
-			hx-vals="js:{countryIso: event ? event.detail.choice.toLowerCase() : document.getElementById('selected-country')?.value}"
-			hx-trigger="country-change-choice from:document, load[document.getElementById('selected-country')?.value.length > 0]"
-			hx-target="#cityContainer"
-			hx-swap="innerHTML"
-			hx-params="countryIso"
-			data-items={ countriesJson(countriesData) }
-		></app-select>
-	</div>
-}
-
-templ CitiesSelector(cities []model.City) {
-	<app-select
-		name="city"
-		data-items={ citiesJson(cities) }
-	></app-select>
-}
-
 templ CountriesAutoComplete(countriesData CountriesData) {
 	@AutoComplete(AutoCompleteProps{
-		ID:             "country",
-		Name:           "country",
-		Data:           countriesData.ToAutocompleteData(),
-		ShowAllOption:  true,
-		AllOptionLabel: "All countries",
-		AllOptionIcon:  "🌍",
-		EventNamespace: "country",
-		ShowLabel:      false,
+		ID:               "country",
+		Name:             "country",
+		Data:             countriesData.ToAutocompleteData(),
+		ShowAllOption:    countriesData.ShowAllOption,
+		AllOptionLabel:   "All countries",
+		AllOptionIcon:    "🌍",
+		EventNamespace:   "country",
+		ListenToEvents:   []string{"country-selected", "country-cleared"},
+		PreselectedValue: strings.ToLower(countriesData.PreselectedCountry),
+	})
+}
+
+type CitiesData struct {
+	Cities          []model.City
+	PreselectedCity string
+	ShowAllOption   bool
+}
+
+func (c CitiesData) ToAutocompleteData() []AutoCompleteData {
+	data := make([]AutoCompleteData, len(c.Cities))
+	for i, city := range c.Cities {
+		data[i] = AutoCompleteData{
+			Label: city.Name,
+			Value: strconv.Itoa(city.ID),
+		}
+	}
+	return data
+}
+
+templ CitiesAutoComplete(citiesData CitiesData) {
+	@AutoComplete(AutoCompleteProps{
+		ID:               "city",
+		Name:             "city",
+		Data:             citiesData.ToAutocompleteData(),
+		ShowAllOption:    citiesData.ShowAllOption,
+		AllOptionLabel:   "All cities",
+		EventNamespace:   "city",
+		PreselectedValue: citiesData.PreselectedCity,
 	})
 }
