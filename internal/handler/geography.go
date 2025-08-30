@@ -36,17 +36,24 @@ func (h GeographyHandler) ListCountries(reqResp *web.ReqRespPair) error {
 		}
 		hasBreweries = parsedVal
 	}
+
+	preselected, paramErr := reqResp.GetStringQueryParam("preselected")
+	if paramErr != nil {
+		return reqResp.RenderError(http.StatusBadRequest, paramErr)
+	}
+	showAllOption, showAllOptionErr := reqResp.GetBoolQueryParam("showAllOption")
+	if showAllOptionErr != nil {
+		return reqResp.RenderError(http.StatusBadRequest, showAllOptionErr)
+	}
+
 	data := shared.CountriesData{
-		Countries:    countries,
-		HasBreweries: hasBreweries,
+		Countries:          countries,
+		HasBreweries:       hasBreweries,
+		PreselectedCountry: preselected,
+		ShowAllOption:      showAllOption,
 	}
 
-	// Temporary use useAlpineComponent query parameter to switch between Alpine and non-Alpine components
-	if reqResp.Request.URL.Query().Get("useAlpineComponent") == "true" {
-		return reqResp.Render(shared.CountriesAutoComplete(data))
-	}
-
-	return reqResp.Render(shared.CountriesSelector(data))
+	return reqResp.Render(shared.CountriesAutoComplete(data))
 }
 
 func (h GeographyHandler) ListCities(reqResp *web.ReqRespPair) error {
@@ -54,13 +61,20 @@ func (h GeographyHandler) ListCities(reqResp *web.ReqRespPair) error {
 	if citiesErr != nil {
 		return reqResp.RenderError(http.StatusInternalServerError, citiesErr)
 	}
-	// currentUrl, urlErr := url.Parse(ctx.Request().Header.Get("HX-Current-URL"))
-	// if urlErr != nil {
-	// 	return ctx.HTML(http.StatusInternalServerError, urlErr.Error())
-	// }
-	// queryValues := currentUrl.Query()
-	// queryValues.Set("country", ctx.Param("countryIso"))
-	// currentUrl.RawQuery = queryValues.Encode()
-	// ctx.Response().Header().Set("HX-Replace-Url", currentUrl.String())
-	return reqResp.Render(shared.CitiesSelector(cities))
+
+	preselected, paramErr := reqResp.GetStringQueryParam("preselected")
+	if paramErr != nil {
+		return reqResp.RenderError(http.StatusBadRequest, paramErr)
+	}
+	showAllOption, showAllOptionErr := reqResp.GetBoolQueryParam("showAllOption")
+	if showAllOptionErr != nil {
+		return reqResp.RenderError(http.StatusBadRequest, showAllOptionErr)
+	}
+
+	data := shared.CitiesData{
+		Cities:          cities,
+		PreselectedCity: preselected,
+		ShowAllOption:   showAllOption,
+	}
+	return reqResp.Render(shared.CitiesAutoComplete(data))
 }
