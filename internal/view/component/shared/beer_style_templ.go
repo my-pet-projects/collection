@@ -9,7 +9,6 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/my-pet-projects/collection/internal/model"
 )
@@ -31,36 +30,7 @@ func (d StyleData) ToAutocompleteData() []AutoCompleteData {
 	return data
 }
 
-func beerStylesJson(stylesData StyleData) string {
-	choices := make([]choicesData, 0)
-	selected := false
-	if stylesData.SelectedStyleId == nil || *stylesData.SelectedStyleId == 0 {
-		selected = true
-	}
-	emptyChoice := choicesData{
-		Value:    "",
-		Label:    "Select a beer style",
-		Selected: selected,
-		Disabled: false,
-	}
-	choices = append(choices, emptyChoice)
-	for _, style := range stylesData.Styles {
-		selected := false
-		if stylesData.SelectedStyleId != nil && *stylesData.SelectedStyleId == style.ID {
-			selected = true
-		}
-		choices = append(choices, choicesData{
-			Value:    fmt.Sprint(style.ID),
-			Label:    style.Name,
-			Selected: selected,
-			Disabled: false,
-		})
-	}
-	bytes, _ := json.Marshal(choices)
-	return string(bytes)
-}
-
-func StylesSelector(data StyleData) templ.Component {
+func StylesAutocomplete(data StyleData) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -81,55 +51,12 @@ func StylesSelector(data StyleData) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<app-select name=\"style\" data-items=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var2 string
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(beerStylesJson(data))
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/beer_style.templ`, Line: 58, Col: 35}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\"></app-select>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		return nil
-	})
-}
-
-func StylesAutocomplete(data StyleData) templ.Component {
-	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
-			return templ_7745c5c3_CtxErr
-		}
-		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-		if !templ_7745c5c3_IsBuffer {
-			defer func() {
-				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err == nil {
-					templ_7745c5c3_Err = templ_7745c5c3_BufErr
-				}
-			}()
-		}
-		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var3 == nil {
-			templ_7745c5c3_Var3 = templ.NopComponent
-		}
-		ctx = templ.ClearChildren(ctx)
 
 		props := AutoCompleteProps{
 			ID:             "style",
 			Name:           "style",
 			Data:           data.ToAutocompleteData(),
 			EventNamespace: "style",
-			ShowLabel:      false,
 			HasError:       data.HasError,
 		}
 		if data.SelectedStyleId != nil {

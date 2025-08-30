@@ -113,6 +113,19 @@ func (rrp *ReqRespPair) GetStringQueryParam(name string) (string, error) {
 	return param, nil
 }
 
+func (rrp *ReqRespPair) GetBoolQueryParam(name string) (bool, error) {
+	param := false
+	strBoolParam := rrp.Request.URL.Query().Get(name)
+	if strBoolParam != "" {
+		parsedVal, parseErr := strconv.ParseBool(strBoolParam)
+		if parseErr != nil {
+			return false, errors.Wrap(parseErr, "parse bool query param")
+		}
+		param = parsedVal
+	}
+	return param, nil
+}
+
 func (rrp *ReqRespPair) GetIntFormValues(formKey string) ([]int, error) {
 	formErr := rrp.Request.ParseForm()
 	if formErr != nil {

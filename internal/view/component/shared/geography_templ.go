@@ -9,16 +9,17 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/my-pet-projects/collection/internal/model"
+	"strconv"
 	"strings"
 )
 
 type CountriesData struct {
-	Countries             []model.Country
-	HasBreweries          bool
-	StoreSelectionInQuery bool
+	Countries          []model.Country
+	HasBreweries       bool
+	PreselectedCountry string
+	ShowAllOption      bool
 }
 
 func (c CountriesData) ToAutocompleteData() []AutoCompleteData {
@@ -26,80 +27,14 @@ func (c CountriesData) ToAutocompleteData() []AutoCompleteData {
 	for i, country := range c.Countries {
 		data[i] = AutoCompleteData{
 			Label: country.NameCommon,
-			Value: strings.ToLower(country.Cca3),
+			Value: strings.ToLower(country.Cca2),
 			Image: fmt.Sprintf("https://flagcdn.com/%s.svg", strings.ToLower(country.Cca2)),
 		}
 	}
 	return data
 }
 
-type choicesData struct {
-	Value            string         `json:"value"`
-	Label            string         `json:"label"`
-	Selected         bool           `json:"selected"`
-	Disabled         bool           `json:"disabled"`
-	CustomProperties customProperty `json:"customProperties"`
-}
-
-type customProperty struct {
-	SearchableValue string `json:"searchableValue"`
-}
-
-func countriesJson(countriesData CountriesData) string {
-	choices := make([]choicesData, 0)
-	emptyChoice := choicesData{
-		Value:    "",
-		Label:    "Select a country",
-		Selected: true,
-		Disabled: false,
-	}
-	choices = append(choices, emptyChoice)
-	for _, country := range countriesData.Countries {
-		choices = append(choices, choicesData{
-			Value:            strings.ToLower(country.Cca2),
-			Label:            fmt.Sprintf(`<span class="flex items-center justify-center"><img src="https://flagcdn.com/w20/%s.png" width="20" /></span><span class="ml-4">%s</span>`, strings.ToLower(country.Cca2), country.NameCommon),
-			Selected:         false,
-			Disabled:         false,
-			CustomProperties: customProperty{SearchableValue: country.NameCommon},
-		})
-	}
-	bytes, err := json.Marshal(choices)
-	if err != nil {
-		panic(err)
-	}
-	return string(bytes)
-}
-
-func citiesJson(cities []model.City) string {
-	choices := make([]choicesData, 0)
-	emptyChoice := choicesData{
-		Value:    "",
-		Label:    "Select a city",
-		Selected: true,
-		Disabled: false,
-	}
-	choices = append(choices, emptyChoice)
-	for _, city := range cities {
-		choices = append(choices, choicesData{
-			Value:    fmt.Sprint(city.ID),
-			Label:    city.Name,
-			Selected: false,
-			Disabled: false,
-		})
-	}
-	bytes, err := json.Marshal(choices)
-	if err != nil {
-		panic(err)
-	}
-	return string(bytes)
-}
-
-// On initial load "country-change-choice" event is being ignored for some reason, so there is a hack with hx-trigger.
-// 1. As a workaround for the lost first "country-change-choice" event, hx-trigger has "load" option, so that hx-get could be triggered
-// on document load event. For that case countryIso parameter is taken from the "selected-country" element. That is ugly, but that works.
-// 2. hx-trigger has "country-change-choice", so that hx-get is triggered on every country change, as it should be. In that case countryIso
-// parameter is taken from the event details.
-func CountriesSelector(countriesData CountriesData) templ.Component {
+func CountriesAutoComplete(countriesData CountriesData) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -120,20 +55,17 @@ func CountriesSelector(countriesData CountriesData) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div hx-ext=\"path-params\"><app-select name=\"country\" hx-get=\"/geo/countries/{countryIso}/cities\" hx-vals=\"js:{countryIso: event ? event.detail.choice.toLowerCase() : document.getElementById('selected-country')?.value}\" hx-trigger=\"country-change-choice from:document, load[document.getElementById('selected-country')?.value.length > 0]\" hx-target=\"#cityContainer\" hx-swap=\"innerHTML\" hx-params=\"countryIso\" data-items=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var2 string
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(countriesJson(countriesData))
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/geography.templ`, Line: 104, Col: 44}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\"></app-select></div>")
+		templ_7745c5c3_Err = AutoComplete(AutoCompleteProps{
+			ID:               "country",
+			Name:             "country",
+			Data:             countriesData.ToAutocompleteData(),
+			ShowAllOption:    countriesData.ShowAllOption,
+			AllOptionLabel:   "All countries",
+			AllOptionIcon:    "🌍",
+			EventNamespace:   "country",
+			ListenToEvents:   []string{"country-selected", "country-cleared"},
+			PreselectedValue: strings.ToLower(countriesData.PreselectedCountry),
+		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -141,7 +73,24 @@ func CountriesSelector(countriesData CountriesData) templ.Component {
 	})
 }
 
-func CitiesSelector(cities []model.City) templ.Component {
+type CitiesData struct {
+	Cities          []model.City
+	PreselectedCity string
+	ShowAllOption   bool
+}
+
+func (c CitiesData) ToAutocompleteData() []AutoCompleteData {
+	data := make([]AutoCompleteData, len(c.Cities))
+	for i, city := range c.Cities {
+		data[i] = AutoCompleteData{
+			Label: city.Name,
+			Value: strconv.Itoa(city.ID),
+		}
+	}
+	return data
+}
+
+func CitiesAutoComplete(citiesData CitiesData) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -157,62 +106,19 @@ func CitiesSelector(cities []model.City) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var3 == nil {
-			templ_7745c5c3_Var3 = templ.NopComponent
-		}
-		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<app-select name=\"city\" data-items=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(citiesJson(cities))
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/shared/geography.templ`, Line: 112, Col: 33}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\"></app-select>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		return nil
-	})
-}
-
-func CountriesAutoComplete(countriesData CountriesData) templ.Component {
-	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
-			return templ_7745c5c3_CtxErr
-		}
-		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-		if !templ_7745c5c3_IsBuffer {
-			defer func() {
-				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err == nil {
-					templ_7745c5c3_Err = templ_7745c5c3_BufErr
-				}
-			}()
-		}
-		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var5 == nil {
-			templ_7745c5c3_Var5 = templ.NopComponent
+		templ_7745c5c3_Var2 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var2 == nil {
+			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = AutoComplete(AutoCompleteProps{
-			ID:             "country",
-			Name:           "country",
-			Data:           countriesData.ToAutocompleteData(),
-			ShowAllOption:  true,
-			AllOptionLabel: "All countries",
-			AllOptionIcon:  "🌍",
-			EventNamespace: "country",
-			ShowLabel:      false,
+			ID:               "city",
+			Name:             "city",
+			Data:             citiesData.ToAutocompleteData(),
+			ShowAllOption:    citiesData.ShowAllOption,
+			AllOptionLabel:   "All cities",
+			EventNamespace:   "city",
+			PreselectedValue: citiesData.PreselectedCity,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
