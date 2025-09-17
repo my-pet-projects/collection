@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	cdnBaseURL = "https://collection-new.filimonov.life/cdn-cgi/image"
+	cdnBaseURL = "https://collection.seasharper.com/cdn-cgi/image"
 	s3BaseURL  = "https://beer-collection-bucket.s3.eu-central-1.amazonaws.com/original"
 )
 
