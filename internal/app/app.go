@@ -105,7 +105,6 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 	imageService := service.NewImageService(&mediaStore, &beerStore, &beerMediaStore, &s3Storage, logger)
 
 	geoHandler := handler.NewGeographyHandler(geoService, logger)
-	breweryHandler := handler.NewBreweryHandler(breweryService, geoService, logger)
 	// beerHandler := handler.NewBeerHandler(beerService, breweryService, logger)
 	workspaceSrv := handler.NewWorkspaceServer(beerService, breweryService, geoService, imageService, logger)
 	uploadHandler := handler.NewUploadHandler(imageService, logger)
@@ -145,7 +144,7 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 	})
 
 	router.With(middleware.WithAuthentication).Group(func(router chi.Router) {
-		router.Get("/breweries", appHandler.Handle(breweryHandler.ListBreweries))
+		router.Get("/breweries", appHandler.Handle(workspaceSrv.ListBreweries))
 		router.Get("/workspace/brewery", appHandler.Handle(workspaceSrv.HandleBreweryListPage))
 		router.Get("/workspace/brewery/create", appHandler.Handle(workspaceSrv.HandleCreateBreweryPage))
 		router.Post("/workspace/brewery", appHandler.Handle(workspaceSrv.SubmitBreweryPage))

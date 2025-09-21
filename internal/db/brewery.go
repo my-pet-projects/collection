@@ -1,8 +1,11 @@
 package db
 
 import (
+	"context"
 	"log/slog"
+	"strings"
 
+	"github.com/pkg/errors"
 	"gorm.io/gorm"
 	"gorm.io/plugin/dbresolver"
 
@@ -47,6 +50,52 @@ func (s BreweryStore) FetchBreweries() ([]model.Brewery, error) {
 		Find(&items)
 
 	return items, result.Error
+}
+
+func (s BreweryStore) PaginateBreweries(ctx context.Context, filter model.BreweryFilter) (*model.Pagination[model.Brewery], error) {
+	pagination := model.Pagination[model.Brewery]{
+		Page:  filter.Page,
+		Limit: filter.Limit,
+		Sort:  "name,id ASC",
+	}
+
+	whereConditions := []string{}
+	whereArgs := map[string]interface{}{}
+
+	if filter.Query != "" {
+		whereConditions = append(whereConditions, "(search_name LIKE @name)")
+		whereArgs["name"] = "%" + filter.Query + "%"
+	}
+
+	if filter.CountryCca2 != "" {
+		whereConditions = append(whereConditions, "country_cca2 = @countryIso")
+		whereArgs["countryIso"] = filter.CountryCca2
+	}
+
+	if len(whereConditions) > 0 {
+		pagination.WhereQuery = strings.Join(whereConditions, " AND ")
+		pagination.WhereArgs = whereArgs
+	}
+
+	var itemsWithCount []model.ResultWithCount[model.Brewery]
+	result := s.db.gorm.
+		WithContext(ctx).
+		Debug().
+		Model(&model.Brewery{}).
+		Scopes(paginate(&pagination)).
+		Preload("City", func(db *gorm.DB) *gorm.DB {
+			return db.Clauses(dbresolver.Use(GeographyDBResolverName)).
+				Joins("Country")
+		}).
+		Find(&itemsWithCount)
+
+	if result.Error != nil {
+		return nil, errors.Wrap(result.Error, "fetch breweries with pagination")
+	}
+
+	pagination.SetTotalResults(itemsWithCount)
+
+	return &pagination, nil
 }
 
 func (s BreweryStore) InsertBrewery(brewery model.Brewery) (int, error) {

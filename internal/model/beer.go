@@ -154,3 +154,10 @@ type BeerFilter struct {
 	Page        int
 	Limit       int
 }
+
+type BreweryFilter struct {
+	Query       string
+	CountryCca2 string
+	Page        int
+	Limit       int
+}
