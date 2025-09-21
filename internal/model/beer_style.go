@@ -21,7 +21,7 @@ func (bs BeerStyle) Validate() (BeerStyleErrors, bool) {
 }
 
 type BeerStyleFilter struct {
-	Name  string
+	Query string
 	Page  int
 	Limit int
 }
