@@ -283,6 +283,6 @@ templ BeerMedia(beerMedia model.BeerMedia) {
 		alt={ fmt.Sprintf("%d image", beerMedia.Type) }
 		loading="lazy"
 		decoding="async"
-		src={ fmt.Sprintf("https://collection-new.filimonov.life/cdn-cgi/image/width=100,quality=25/https://beer-collection-bucket.s3.eu-central-1.amazonaws.com/original/%s", beerMedia.Media.ExternalFilename) }
+		src={ fmt.Sprintf("https://collection.seasharper.com/cdn-cgi/image/width=100,quality=25/https://beer-collection-bucket.s3.eu-central-1.amazonaws.com/original/%s", beerMedia.Media.ExternalFilename) }
 	/>
 }

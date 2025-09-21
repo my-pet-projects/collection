@@ -1,7 +1,9 @@
 package service
 
 import (
+	"context"
 	"log/slog"
+	"strings"
 
 	"github.com/pkg/errors"
 
@@ -64,6 +66,20 @@ func (s BreweryService) ListBreweries() ([]model.Brewery, error) {
 	breweries, breweriesErr := s.breweryStore.FetchBreweries()
 	if breweriesErr != nil {
 		return nil, errors.Wrap(breweriesErr, "fetch breweries")
+	}
+	return breweries, nil
+}
+
+func (s BreweryService) PaginateBreweries(ctx context.Context, filter model.BreweryFilter) (*model.Pagination[model.Brewery], error) {
+	if filter.Query != "" {
+		filter.Query = util.NormalizeText(filter.Query)
+	}
+	if filter.CountryCca2 != "" {
+		filter.CountryCca2 = strings.ToUpper(filter.CountryCca2)
+	}
+	breweries, breweriesErr := s.breweryStore.PaginateBreweries(ctx, filter)
+	if breweriesErr != nil {
+		return nil, errors.Wrap(breweriesErr, "paginate breweries")
 	}
 	return breweries, nil
 }
