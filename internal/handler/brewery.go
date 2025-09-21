@@ -28,8 +28,8 @@ func NewWorkspaceServer(
 	geoService service.GeographyService,
 	mediaService service.ImageService,
 	logger *slog.Logger,
-) WorkspaceServer {
-	return WorkspaceServer{
+) *WorkspaceServer {
+	return &WorkspaceServer{
 		beerService:    beerService,
 		breweryService: breweryService,
 		geoService:     geoService,
@@ -38,7 +38,7 @@ func NewWorkspaceServer(
 	}
 }
 
-func (h WorkspaceServer) HandleBreweryListPage(reqResp *web.ReqRespPair) error {
+func (h *WorkspaceServer) HandleBreweryListPage(reqResp *web.ReqRespPair) error {
 	page := workspace.Page{Title: fmt.Sprintf("Brewery Workspace")}
 	pageParams := workspace.BreweryListPageParams{
 		Page:         page,
@@ -47,7 +47,7 @@ func (h WorkspaceServer) HandleBreweryListPage(reqResp *web.ReqRespPair) error {
 	return reqResp.Render(workspace.BreweryListPage(pageParams))
 }
 
-func (h WorkspaceServer) HandleBreweryPage(reqResp *web.ReqRespPair) error {
+func (h *WorkspaceServer) HandleBreweryPage(reqResp *web.ReqRespPair) error {
 	breweryId, parseErr := strconv.Atoi(reqResp.Request.PathValue("id"))
 	if parseErr != nil {
 		return reqResp.RenderError(http.StatusBadRequest, parseErr)
@@ -71,7 +71,7 @@ func (h WorkspaceServer) HandleBreweryPage(reqResp *web.ReqRespPair) error {
 	return reqResp.Render(workspace.BreweryPageLayout(breweryPage))
 }
 
-func (h WorkspaceServer) HandleCreateBreweryPage(reqResp *web.ReqRespPair) error {
+func (h *WorkspaceServer) HandleCreateBreweryPage(reqResp *web.ReqRespPair) error {
 	page := workspace.Page{Title: fmt.Sprintf("Create Brewery")}
 	breweryPage := workspace.BreweryPage{
 		Page: page,
@@ -79,7 +79,7 @@ func (h WorkspaceServer) HandleCreateBreweryPage(reqResp *web.ReqRespPair) error
 	return reqResp.Render(workspace.BreweryPageLayout(breweryPage))
 }
 
-func (h WorkspaceServer) SubmitBreweryPage(reqResp *web.ReqRespPair) error {
+func (h *WorkspaceServer) SubmitBreweryPage(reqResp *web.ReqRespPair) error {
 	idStr := reqResp.Request.FormValue("id")
 	id, _ := strconv.Atoi(idStr)
 	geoIdStr := reqResp.Request.FormValue("city")
@@ -114,7 +114,7 @@ func (h WorkspaceServer) SubmitBreweryPage(reqResp *web.ReqRespPair) error {
 	return reqResp.Render(workspace.BreweryForm(formParams, workspace.BreweryFormErrors{}))
 }
 
-func (h WorkspaceServer) ListBreweries(reqResp *web.ReqRespPair) error {
+func (h *WorkspaceServer) ListBreweries(reqResp *web.ReqRespPair) error {
 	page, pageErr := reqResp.GetIntQueryParam("page")
 	if pageErr != nil {
 		return apperr.NewBadRequestError("Invalid page number", pageErr)

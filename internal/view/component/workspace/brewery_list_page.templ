@@ -73,12 +73,12 @@ templ breweriesList(params BreweryListPageParams) {
 						x-on:htmx:response-error="searching = false; hasErrors = true;"
 						x-on:htmx:config-request="
 							const params = new URLSearchParams();
-							const searchValue = document.getElementById('search')?.value?.trim();
-							const countryValue = document.querySelector('[name=country]')?.value;
-							const sizeValue = document.querySelector('[name=size]').value;
+							const searchValue = document.getElementById('search')?.value ?? '';
+							const countryValue = document.querySelector('[name=country]')?.value ?? '';
+							const sizeValue = document.querySelector('[name=size]').value ?? '';
 							
 							if (searchValue) {
-								params.set('query', searchValue);
+								params.set('query', searchValue.trim());
 							}
 							if (countryValue) {
 								params.set('country', countryValue);
@@ -253,7 +253,6 @@ templ BreweryListContent(data BreweryListData) {
 		@LoadingBreweriesShimmer(data.LimitPerPage)
 	</div>
 	<div
-		id="brewery-grid"
 		x-show="!searching"
 		class="overflow-hidden"
 	>
@@ -306,7 +305,7 @@ templ BreweryListContent(data BreweryListData) {
 												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
 												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
 											</svg>
-											<span>{ brewery.City.Name }, { brewery.City.Country.NameCommon }</span>
+											<span>{ brewery.GetCityName() }, { brewery.GetCountryName() }</span>
 										</div>
 									</div>
 								</div>
