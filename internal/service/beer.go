@@ -122,7 +122,7 @@ func (s BeerService) PaginateBeerStyles(ctx context.Context, filter model.BeerSt
 	if paginationErr != nil {
 		return nil, errors.Wrap(paginationErr, "paginate beer styles")
 	}
-	return &pagination, nil
+	return pagination, nil
 }
 
 func (s BeerService) GetBeerStyle(id int) (*model.BeerStyle, error) {

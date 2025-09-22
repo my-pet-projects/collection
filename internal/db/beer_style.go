@@ -3,8 +3,10 @@ package db
 import (
 	"context"
 	"log/slog"
+	"strings"
 
 	"github.com/my-pet-projects/collection/internal/model"
+	"github.com/pkg/errors"
 )
 
 type BeerStyleStore struct {
@@ -28,26 +30,41 @@ func (s BeerStyleStore) GetBeerStyle(id int) (model.BeerStyle, error) {
 	return item, result.Error
 }
 
-func (s BeerStyleStore) PaginateBeerStyles(ctx context.Context, filter model.BeerStyleFilter) (model.Pagination[model.BeerStyle], error) {
-	var items []model.BeerStyle
+func (s BeerStyleStore) PaginateBeerStyles(ctx context.Context, filter model.BeerStyleFilter) (*model.Pagination[model.BeerStyle], error) {
 	pagination := model.Pagination[model.BeerStyle]{
-		Page:       filter.Page,
-		Limit:      filter.Limit,
-		Sort:       "Name",
-		WhereQuery: "Name LIKE ?",
-		WhereArgs:  "%" + filter.Name + "%",
+		Page:  filter.Page,
+		Limit: filter.Limit,
+		Sort:  "name,id ASC",
 	}
+
+	whereConditions := []string{}
+	whereArgs := map[string]interface{}{}
+
+	if filter.Query != "" {
+		whereConditions = append(whereConditions, "(Name LIKE @name)")
+		whereArgs["name"] = "%" + filter.Query + "%"
+	}
+
+	if len(whereConditions) > 0 {
+		pagination.WhereQuery = strings.Join(whereConditions, " AND ")
+		pagination.WhereArgs = whereArgs
+	}
+
+	var itemsWithCount []model.ResultWithCount[model.BeerStyle]
 	result := s.db.gorm.
 		WithContext(ctx).
 		Debug().
 		Model(&model.BeerStyle{}).
-		Where(pagination.WhereQuery, pagination.WhereArgs).
 		Scopes(paginate(&pagination)).
-		Find(&items)
+		Find(&itemsWithCount)
 
-	pagination.Results = items
+	if result.Error != nil {
+		return nil, errors.Wrap(result.Error, "fetch styles with pagination")
+	}
 
-	return pagination, result.Error
+	pagination.SetTotalResults(itemsWithCount)
+
+	return &pagination, result.Error
 }
 
 func (s BeerStyleStore) InsertBeerStyle(style model.BeerStyle) (int, error) {
