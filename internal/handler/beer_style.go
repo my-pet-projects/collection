@@ -2,6 +2,7 @@ package handler
 
 import (
 	"strconv"
+	"strings"
 
 	"github.com/my-pet-projects/collection/internal/apperr"
 	"github.com/my-pet-projects/collection/internal/model"
@@ -22,7 +23,7 @@ func (h WorkspaceServer) ListBeerStyles(reqResp *web.ReqRespPair) error {
 		return apperr.NewBadRequestError("Invalid page number", pageErr)
 	}
 
-	query := reqResp.Request.FormValue("query")
+	query := strings.TrimSpace(reqResp.Request.FormValue("query"))
 
 	filter := model.BeerStyleFilter{
 		Query: query,
