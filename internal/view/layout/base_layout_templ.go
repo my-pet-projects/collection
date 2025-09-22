@@ -142,7 +142,9 @@ func navigation() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var5 = []any{"inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium", templ.KV("border-indigo-500 text-gray-900", util.UrlStartsWith(ctx, "/workspace/beer")), templ.KV("border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700", !util.UrlStartsWith(ctx, "/workspace/beer"))}
+		var templ_7745c5c3_Var5 = []any{"inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium",
+			templ.KV("border-indigo-500 text-gray-900", util.UrlStartsWith(ctx, "/workspace/beer") && !util.UrlStartsWith(ctx, "/workspace/beer-style")),
+			templ.KV("border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700", !util.UrlStartsWith(ctx, "/workspace/beer") || util.UrlStartsWith(ctx, "/workspace/beer-style"))}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var5...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -186,7 +188,9 @@ func navigation() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var9 = []any{"inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium", templ.KV("border-indigo-500 text-gray-900", util.UrlStartsWith(ctx, "/workspace/beer-style")), templ.KV("border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700", !util.UrlStartsWith(ctx, "/workspace/beer-style"))}
+		var templ_7745c5c3_Var9 = []any{"inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium",
+			templ.KV("border-indigo-500 text-gray-900", util.UrlStartsWith(ctx, "/workspace/beer-style")),
+			templ.KV("border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700", !util.UrlStartsWith(ctx, "/workspace/beer-style"))}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var9...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -263,7 +267,7 @@ func navigation() templ.Component {
 			var templ_7745c5c3_Var15 string
 			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(user.GetDisplayName())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/layout/base_layout.templ`, Line: 124, Col: 78}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/layout/base_layout.templ`, Line: 128, Col: 78}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {

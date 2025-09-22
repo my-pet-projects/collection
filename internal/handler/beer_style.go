@@ -2,6 +2,7 @@ package handler
 
 import (
 	"strconv"
+	"strings"
 
 	"github.com/my-pet-projects/collection/internal/apperr"
 	"github.com/my-pet-projects/collection/internal/model"
@@ -22,9 +23,11 @@ func (h WorkspaceServer) ListBeerStyles(reqResp *web.ReqRespPair) error {
 		return apperr.NewBadRequestError("Invalid page number", pageErr)
 	}
 
+	query := strings.TrimSpace(reqResp.Request.FormValue("query"))
+
 	filter := model.BeerStyleFilter{
-		Name: reqResp.Request.FormValue("name"),
-		Page: page,
+		Query: query,
+		Page:  page,
 	}
 	pagination, paginationErr := h.beerService.PaginateBeerStyles(reqResp.Request.Context(), filter)
 	if paginationErr != nil {
@@ -33,9 +36,11 @@ func (h WorkspaceServer) ListBeerStyles(reqResp *web.ReqRespPair) error {
 
 	pageData := workspace.BeerStyleTableData{
 		Styles:       pagination.Results,
-		Page:         pagination.Page,
+		Query:        query,
+		CurrentPage:  pagination.Page,
 		TotalPages:   pagination.TotalPages,
 		TotalResults: pagination.TotalResults,
+		LimitPerPage: pagination.Limit,
 	}
 
 	return reqResp.Render(workspace.BeerStylesTable(pageData))
