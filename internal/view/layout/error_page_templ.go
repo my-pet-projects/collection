@@ -8,7 +8,11 @@ package layout
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "net/http"
+import (
+	"fmt"
+	"github.com/my-pet-projects/collection/internal/view/component/asset"
+	"net/http"
+)
 
 func ErrorPageLayout(code int) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -31,30 +35,58 @@ func ErrorPageLayout(code int) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Beer Collection - Error</title><link rel=\"icon\" type=\"image/svg+xml\" sizes=\"32x32\" href=\"/assets/img/pint-of-beer-svgrepo-com.svg\"><link href=\"/assets/css/tailwind-output.gen.css\" rel=\"stylesheet\"></head><body class=\"min-h-screen bg-gray-50\"><!-- Container --><div class=\"flex min-h-screen items-center justify-center px-4 py-8\"><div class=\"w-full max-w-sm sm:max-w-md lg:max-w-lg\"><!-- Header Section --><div class=\"mb-8 text-center\"><div class=\"group mb-6 inline-flex h-16 w-16 items-center justify-center rounded-full shadow-xl ring-2 ring-white transition-all duration-300 hover:scale-110 hover:shadow-2xl\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = head("test").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = asset.MainBeerLogo("h-full w-full transition-transform duration-300 group-hover:rotate-12").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<body><div class=\"min-h-screen bg-gray-100\"><div class=\"py-6\"><div class=\"mx-auto max-w-7xl px-4 sm:px-6 lg:px-8\"><div class=\"flex flex-col lg:flex-row\">Error page ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if code == http.StatusUnauthorized {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<h1>StatusUnauthorized</h1><a href=\"/login\">Login</a>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<h1 class=\"mb-4 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-6xl font-bold leading-tight tracking-tight text-transparent sm:text-7xl lg:text-8xl\">401</h1><h2 class=\"mb-2 text-xl font-bold text-gray-900 sm:text-2xl\">Access Denied</h2><p class=\"mb-8 text-sm text-gray-600 sm:text-base\">You need to be signed in to access your beer collection</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<h1>Internal server error</h1>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<h1 class=\"mb-4 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-6xl font-bold leading-tight tracking-tight text-transparent sm:text-7xl lg:text-8xl\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var2 string
+			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", code))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/layout/error_page.templ`, Line: 40, Col: 33}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</h1><h2 class=\"mb-2 text-xl font-bold text-gray-900 sm:text-2xl\">Something went wrong</h2><p class=\"mb-8 text-sm text-gray-600 sm:text-base\">We're having trouble with our beer taps right now</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div></div></div></div></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div><!-- Error Card --><div class=\"mb-6 overflow-hidden rounded-2xl bg-white shadow-xl ring-1 ring-gray-200/50\"><div class=\"px-6 py-8 text-center sm:px-8\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if code == http.StatusUnauthorized {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<!-- Unauthorized specific content --> <div class=\"mb-6\"><div class=\"mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-amber-100\"><svg class=\"h-6 w-6 text-amber-600\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M12 15v2m0 0v2m0-2h2m-2 0H10m4-6V9a4 4 0 00-8 0v2m0 6h8a2 2 0 002-2v-4a2 2 0 00-2-2H6a2 2 0 00-2 2v4a2 2 0 002 2z\"></path></svg></div><p class=\"text-sm text-gray-600 sm:text-base\">Please sign in to continue managing your beer collection and discover new breweries.</p></div><!-- Login Button --> <a href=\"/login\" class=\"group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-xl bg-gray-900 px-6 py-3 text-sm font-semibold text-white shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2\"><svg class=\"h-5 w-5 transition-transform duration-300 group-hover:rotate-180\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1\"></path></svg> Sign In</a>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<!-- General error content --> <div class=\"mb-6\"><div class=\"mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-red-100\"><svg class=\"h-6 w-6 text-red-600\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z\"></path></svg></div><p class=\"mb-6 text-sm text-gray-600 sm:text-base\">Don't worry, our brewmaster is working on fixing this issue. Please try again in a few moments.</p></div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div></div><!-- Navigation Link --><div class=\"text-center\"><a href=\"/\" class=\"inline-flex items-center gap-2 text-sm text-gray-500 transition-colors duration-200 hover:text-amber-600 sm:text-base\"><svg class=\"h-4 w-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M10 19l-7-7m0 0l7-7m-7 7h18\"></path></svg> Back to Beer Collection</a></div></div></div></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
