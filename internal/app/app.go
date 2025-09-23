@@ -171,11 +171,11 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 		router.Post("/workspace/images/uploads", appHandler.Handle(uploadHandler.UploadImage))
 	})
 
-	router.Get("/*", appHandler.Handle(func(reqResp *web.ReqRespPair) error {
+	router.NotFound(appHandler.Handle(func(reqResp *web.ReqRespPair) error {
 		if reqResp.IsHtmxRequest() {
 			return reqResp.RenderError(http.StatusNotFound, errors.New("handler not found"))
 		}
-		return reqResp.Text(http.StatusNotFound, "Error page should be rendered here")
+		return reqResp.RenderErrorPage(http.StatusNotFound, errors.New("handler not found"))
 	}))
 
 	return router, nil
