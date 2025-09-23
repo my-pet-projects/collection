@@ -57,13 +57,16 @@ templ LoginPage(data LoginData) {
 										e.preventDefault();
 										this.loading = true; 
 										try {
+											const identifier = document.getElementById('username').value.trim();
++											const password = document.getElementById('password').value.trim();
 											const res = await Clerk.client.signIn.create({
 												strategy: 'password',
-												identifier: document.getElementById('username').value,
-												password: document.getElementById('password').value,
+												identifier,
++												password,
 											});
 											if (res.status === 'complete') {
 												await Clerk.setActive({ session: res.createdSessionId });
+												window.location.assign('/workspace/beer');
 											} else {
 												console.error('Clerk sign in attempt has invalid status', JSON.stringify(res));
 											}

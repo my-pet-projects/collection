@@ -80,7 +80,7 @@ templ beerStylesList() {
 				hx-indicator="#loading-indicator"
 				hx-target-error="#styles-errors"
 				x-on:htmx:before-request="searching = true;"
-				x-on:htmx:after-request="searching = false;"
+				x-on:htmx:after-request="searching = false; hasErrors = !$event.detail.successful;"
 				x-on:htmx:response-error="searching = false; hasErrors = true;"
 				class="flex flex-col gap-4 sm:flex-row sm:items-stretch"
 			>
@@ -90,7 +90,7 @@ templ beerStylesList() {
 						id="search"
 						name="query"
 						type="text"
-						class="sm:pl-13 sm:pr-13 block h-full w-full rounded-2xl border-0 bg-gray-50/50 px-4 py-3 pl-12 pr-12 text-base shadow-inner ring-1 ring-inset ring-gray-200 transition-all duration-300 placeholder:text-gray-400 hover:bg-white hover:ring-gray-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 sm:px-5 sm:text-lg lg:px-6 lg:pl-14 lg:pr-14"
+						class="block h-full w-full rounded-2xl border-0 bg-gray-50/50 px-4 py-3 pl-12 pr-12 text-base shadow-inner ring-1 ring-inset ring-gray-200 transition-all duration-300 placeholder:text-gray-400 hover:bg-white hover:ring-gray-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 sm:px-5 sm:text-lg lg:px-6 lg:pl-14 lg:pr-14"
 						placeholder="Search beer styles..."
 						x-model="searchValue"
 					/>
@@ -128,7 +128,7 @@ templ beerStylesList() {
 			</form>
 		</div>
 		<!-- Error Messages -->
-		<div id="styles-errors" class="mt-2 hidden text-sm text-red-600"></div>
+		<div id="styles-errors" x-show="hasErrors"  class="mt-2 hidden text-sm text-red-600"></div>
 		<!-- Loading Indicator -->
 		<div id="loading-indicator" class="hidden">
 			<div class="flex items-center justify-center py-8">
@@ -142,6 +142,7 @@ templ beerStylesList() {
 				hx-get="/workspace/beer-style/search"
 				hx-trigger="load"
 				hx-indicator="#loading-indicator"
+				hx-target-error="#styles-errors"
 			></div>
 		</div>
 	</div>
@@ -179,6 +180,7 @@ templ BeerStylesTable(data BeerStyleTableData) {
 			<h3 class="mb-2 text-lg font-semibold text-gray-900 sm:text-xl lg:text-2xl">No beer styles found</h3>
 			<p class="text-sm text-gray-500 sm:text-base lg:text-lg">Add your first beer style to get started</p>
 		</div>
+		<div id="styles-list" class="divide-y divide-gray-200/60"></div>
 	} else {
 		<div id="styles-list" class="divide-y divide-gray-200/60">
 			for _, style := range data.Styles {

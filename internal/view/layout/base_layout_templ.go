@@ -271,7 +271,7 @@ func navigation() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var15 = []any{"flex items-center px-4 py-3 text-sm font-medium transition-colors duration-200 border-l-3 border-transparent",
+		var templ_7745c5c3_Var15 = []any{"flex items-center px-4 py-3 text-sm font-medium transition-colors duration-200 border-l-[3px] border-transparent",
 			templ.KV("text-gray-900 bg-amber-50 border-l-amber-500", util.UrlStartsWith(ctx, "/workspace/beer") && !util.UrlStartsWith(ctx, "/workspace/beer-style")),
 			templ.KV("text-gray-500 hover:text-gray-700 hover:bg-gray-50", !util.UrlStartsWith(ctx, "/workspace/beer") || util.UrlStartsWith(ctx, "/workspace/beer-style"))}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var15...)
@@ -295,7 +295,7 @@ func navigation() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var17 = []any{"flex items-center px-4 py-3 text-sm font-medium transition-colors duration-200 border-l-3 border-transparent",
+		var templ_7745c5c3_Var17 = []any{"flex items-center px-4 py-3 text-sm font-medium transition-colors duration-200 border-l-[3px] border-transparent",
 			templ.KV("text-gray-900 bg-amber-50 border-l-amber-500", util.UrlStartsWith(ctx, "/workspace/brewery")),
 			templ.KV("text-gray-500 hover:text-gray-700 hover:bg-gray-50", !util.UrlStartsWith(ctx, "/workspace/brewery"))}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var17...)
@@ -319,7 +319,7 @@ func navigation() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var19 = []any{"flex items-center px-4 py-3 text-sm font-medium transition-colors duration-200 border-l-3 border-transparent",
+		var templ_7745c5c3_Var19 = []any{"flex items-center px-4 py-3 text-sm font-medium transition-colors duration-200 border-l-[3px] border-transparent",
 			templ.KV("text-gray-900 bg-amber-50 border-l-amber-500", util.UrlStartsWith(ctx, "/workspace/beer-style")),
 			templ.KV("text-gray-500 hover:text-gray-700 hover:bg-gray-50", !util.UrlStartsWith(ctx, "/workspace/beer-style"))}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var19...)
@@ -343,7 +343,7 @@ func navigation() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var21 = []any{"flex items-center px-4 py-3 text-sm font-medium transition-colors duration-200 border-l-3 border-transparent",
+		var templ_7745c5c3_Var21 = []any{"flex items-center px-4 py-3 text-sm font-medium transition-colors duration-200 border-l-[3px] border-transparent",
 			templ.KV("text-gray-900 bg-amber-50 border-l-amber-500", util.UrlStartsWith(ctx, "/workspace/images") && !util.UrlStartsWith(ctx, "/workspace/images/upload")),
 			templ.KV("text-gray-500 hover:text-gray-700 hover:bg-gray-50", !(util.UrlStartsWith(ctx, "/workspace/images") && !util.UrlStartsWith(ctx, "/workspace/images/upload")))}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var21...)
@@ -367,7 +367,7 @@ func navigation() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var23 = []any{"flex items-center px-4 py-3 text-sm font-medium transition-colors duration-200 border-l-3 border-transparent",
+		var templ_7745c5c3_Var23 = []any{"flex items-center px-4 py-3 text-sm font-medium transition-colors duration-200 border-l-[3px] border-transparent",
 			templ.KV("text-gray-900 bg-amber-50 border-l-amber-500", util.UrlStartsWith(ctx, "/workspace/images/upload")),
 			templ.KV("text-gray-500 hover:text-gray-700 hover:bg-gray-50", !util.UrlStartsWith(ctx, "/workspace/images/upload"))}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var23...)
