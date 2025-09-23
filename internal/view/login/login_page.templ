@@ -1,6 +1,9 @@
 package login 
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/my-pet-projects/collection/internal/view/component/asset"
+)
 
 type LoginData struct {
 	ClerkAuthHost       string
@@ -10,109 +13,139 @@ type LoginData struct {
 templ LoginPage(data LoginData) {
 	<!DOCTYPE html>
 	<html lang="en">
-		<title>Beer Collection</title>
-		<link href="/assets/css/tailwind-output.gen.css" rel="stylesheet"/>
-		<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-		<script async crossorigin="anonymous" data-clerk-publishable-key={ data.ClerkPublishableKey } src={ fmt.Sprintf("%s/npm/@clerk/clerk-js@latest/dist/clerk.browser.js", data.ClerkAuthHost) } type="text/javascript"></script>
-		<script type="text/javascript">
-			window.addEventListener("load", async function () {
-				try {
-					await Clerk.load();
-				} catch (err) {
-					console.error("Failed to load Clerk", err);
-				}
-			});
-		</script>
-		<body class="flex min-h-screen items-center justify-center p-4">
-			<div
-				class="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl"
-			>
-				<div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-					<div class="text-center sm:mx-auto sm:w-full sm:max-w-md">
-						<img
-							src="/assets/img/pint-of-beer-svgrepo-com.svg"
-							class="mx-auto h-12 w-auto"
-							alt="Beer Collection"
-						/>
-						<h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>Beer Collection - Sign In</title>
+			<link rel="icon" type="image/svg+xml" sizes="32x32" href="/assets/img/pint-of-beer.svg"/>
+			<link href="/assets/css/tailwind-output.gen.css" rel="stylesheet"/>
+			<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+			<script async crossorigin="anonymous" data-clerk-publishable-key={ data.ClerkPublishableKey } src={ fmt.Sprintf("%s/npm/@clerk/clerk-js@latest/dist/clerk.browser.js", data.ClerkAuthHost) } type="text/javascript"></script>
+			<script type="text/javascript">
+				window.addEventListener("load", async function () {
+					try {
+						await Clerk.load();
+					} catch (err) {
+						console.error("Failed to load Clerk", err);
+					}
+				});
+			</script>
+		</head>
+		<body class="min-h-screen bg-gray-50">
+			<!-- Container -->
+			<div class="flex min-h-screen items-center justify-center px-4 py-8">
+				<div class="w-full max-w-sm sm:max-w-md">
+					<!-- Header Section -->
+					<div class="mb-8 text-center">
+						<div class="group mb-6 inline-flex h-16 w-16 items-center justify-center rounded-full shadow-xl ring-2 ring-white transition-all duration-300 hover:scale-110 hover:shadow-2xl">
+							@asset.MainBeerLogo("h-full w-full transition-transform duration-300 group-hover:rotate-12")
+						</div>
+						<h1 class="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-2xl font-bold leading-tight tracking-tight text-transparent sm:text-3xl">
 							Welcome back
-						</h2>
-						<p class="mt-2 text-sm text-gray-600">Sign in to your account</p>
+						</h1>
+						<p class="mt-2 text-sm text-gray-600 sm:text-base">Sign in to your beer collection</p>
 					</div>
-					<div class="bg-white px-4 py-8 shadow sm:rounded-lg sm:px-10">
-						<form
-							id="sign-in-form"
-							class="space-y-6"
-							x-data="{
-								loading: false,
-								onSignIn: async function(e) {
-									e.preventDefault();
-									this.loading=true; 
-									try {
-										const res = await Clerk.client.signIn.create({
-											strategy: 'password',
-											identifier: document.getElementById('username').value,
-											password: document.getElementById('password').value,
-										});
-										if (res.status === 'complete') {
-											await Clerk.setActive({ session: res.createdSessionId });
-										} else {
-											console.error('Clerk sign in attempt has invalid status', JSON.stringify(res));
+					<!-- Login Form Card -->
+					<div class="overflow-hidden rounded-2xl bg-white shadow-xl ring-1 ring-gray-200/50">
+						<div class="px-6 py-8 sm:px-8">
+							<form
+								id="sign-in-form"
+								class="space-y-6"
+								x-data="{
+									loading: false,
+									onSignIn: async function(e) {
+										e.preventDefault();
+										this.loading = true; 
+										try {
+											const identifier = document.getElementById('username').value.trim();
++											const password = document.getElementById('password').value.trim();
+											const res = await Clerk.client.signIn.create({
+												strategy: 'password',
+												identifier,
++												password,
+											});
+											if (res.status === 'complete') {
+												await Clerk.setActive({ session: res.createdSessionId });
+												window.location.assign('/workspace/beer');
+											} else {
+												console.error('Clerk sign in attempt has invalid status', JSON.stringify(res));
+											}
+										} catch (err) {
+											if (err.clerkError) {
+												console.error('Failed to login', JSON.stringify(err));
+											} else {
+												console.error(err);
+											}
+										} finally {
+											this.loading = false;
 										}
-									} catch (err) {
-										if (err.clerkError) {
-											console.error('Failed to login', JSON.stringify(err));
-										} else {
-											console.error(err);
-										}
-									} finally {
-										this.loading = false;
-									}
-								},
-							}"
-							x-on:submit.prevent="onSignIn($event)"
-						>
-							<div>
-								<label for="username" class="block text-sm font-medium text-gray-700">
-									Username
-								</label>
-								<div class="mt-1">
-									<input
-										id="username"
-										name="username"
-										type="text"
-										autocomplete="username"
-										required
-										class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-									/>
+									},
+								}"
+								x-on:submit.prevent="onSignIn($event)"
+							>
+								<!-- Username Field -->
+								<div>
+									<label for="username" class="mb-2 block text-sm font-semibold text-gray-900">
+										Username
+									</label>
+									<div class="relative">
+										<input
+											id="username"
+											name="username"
+											type="text"
+											autocomplete="username"
+											required
+											class="block w-full rounded-xl border-0 bg-gray-50/50 px-4 py-3 text-gray-900 shadow-inner ring-1 ring-inset ring-gray-200 transition-all duration-300 placeholder:text-gray-400 hover:bg-white hover:ring-gray-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 sm:text-sm"
+											placeholder="Enter your username"
+										/>
+									</div>
 								</div>
-							</div>
-							<div>
-								<label for="password" class="block text-sm font-medium text-gray-700">
-									Password
-								</label>
-								<div class="mt-1">
-									<input
-										id="password"
-										name="password"
-										type="password"
-										autocomplete="current-password"
-										required
-										class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-									/>
+								<!-- Password Field -->
+								<div>
+									<label for="password" class="mb-2 block text-sm font-semibold text-gray-900">
+										Password
+									</label>
+									<div class="relative">
+										<input
+											id="password"
+											name="password"
+											type="password"
+											autocomplete="current-password"
+											required
+											class="block w-full rounded-xl border-0 bg-gray-50/50 px-4 py-3 text-gray-900 shadow-inner ring-1 ring-inset ring-gray-200 transition-all duration-300 placeholder:text-gray-400 hover:bg-white hover:ring-gray-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 sm:text-sm"
+											placeholder="Enter your password"
+										/>
+									</div>
 								</div>
-							</div>
-							<div>
-								<button
-									type="submit"
-									class="flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
-									x-html="loading ? `<i class='uil uil-loding uil-sign-in-alt'></i> Please Wait ...` : 'Login'"
-									x-bind:disabled="loading"
-								>
-									Sign in
-								</button>
-							</div>
-						</form>
+								<!-- Sign In Button -->
+								<div class="pt-2">
+									<button
+										type="submit"
+										class="group relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-gray-900 px-6 py-3 text-sm font-semibold text-white shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
+										x-bind:disabled="loading"
+									>
+										<!-- Loading State -->
+										<div x-show="loading" class="flex items-center gap-2">
+											<div class="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white"></div>
+											<span>Signing in...</span>
+										</div>
+										<!-- Default State -->
+										<div x-show="!loading" class="flex items-center gap-2">
+											<svg class="h-5 w-5 transition-transform duration-300 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+											</svg>
+											<span>Sign In</span>
+										</div>
+									</button>
+								</div>
+							</form>
+						</div>
+					</div>
+					<!-- Footer -->
+					<div class="mt-6 text-center">
+						<p class="text-xs text-gray-500 sm:text-sm">
+							Secure access to your beer collection
+						</p>
 					</div>
 				</div>
 			</div>
