@@ -34,19 +34,19 @@ func BeerForm(params BeerFormParams, errs BeerFormErrors) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"beer-form\" hx-ext=\"response-targets\"><div class=\"mb-8\"><h2 class=\"text-xl font-medium text-neutral-900\">Beer Information</h2><p class=\"mt-1 text-sm text-neutral-600\">Fill out the details about this beer</p></div><div class=\"space-y-6\"><!-- Brewery Location -->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"beer-form\" hx-ext=\"response-targets\"><div class=\"mb-8\"><h2 class=\"bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-3xl font-bold leading-tight tracking-tight text-transparent sm:text-4xl\">Beer Information</h2><p class=\"mt-2 text-base text-gray-600 sm:text-lg\">Fill out the details about this beer</p></div><div class=\"space-y-6\"><!-- Brewery Location -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if params.Brewery != nil && params.Brewery.City != nil && params.Brewery.City.Country != nil {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"rounded-xl bg-neutral-50 p-4\"><div class=\"flex items-center space-x-3\"><img class=\"h-6 w-10 rounded object-cover shadow-sm\" src=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"rounded-2xl bg-gray-50 p-4 shadow-sm ring-1 ring-gray-100\"><div class=\"flex items-center space-x-3\"><img class=\"h-6 w-10 rounded border border-white object-cover shadow-sm ring-1 ring-gray-200\" src=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(params.Brewery.City.Country.FlagUrl)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_form.templ`, Line: 22, Col: 100}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_form.templ`, Line: 22, Col: 141}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -59,33 +59,33 @@ func BeerForm(params BeerFormParams, errs BeerFormErrors) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(params.Brewery.GetCountryName())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_form.templ`, Line: 22, Col: 140}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_form.templ`, Line: 22, Col: 181}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\"><div class=\"min-w-0 flex-1\"><p class=\"truncate text-sm font-medium text-neutral-900\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\"><div class=\"min-w-0 flex-1\"><p class=\"truncate text-sm font-medium text-gray-900\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(params.Brewery.GetCityName())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_form.templ`, Line: 24, Col: 94}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_form.templ`, Line: 24, Col: 91}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</p><p class=\"truncate text-xs text-neutral-600\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</p><p class=\"truncate text-xs text-gray-600\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(params.Brewery.GetCountryName())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_form.templ`, Line: 25, Col: 85}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_form.templ`, Line: 25, Col: 82}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -101,7 +101,7 @@ func BeerForm(params BeerFormParams, errs BeerFormErrors) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if errs.Error != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div class=\"rounded-xl border border-red-200 bg-red-50 p-4\"><div class=\"flex\"><svg class=\"h-5 w-5 flex-shrink-0 text-red-400\" viewBox=\"0 0 20 20\" fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z\" clip-rule=\"evenodd\"></path></svg><div class=\"ml-3\"><p class=\"text-sm text-red-800\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div class=\"rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 shadow-md\"><div class=\"flex items-center\"><svg class=\"h-5 w-5 flex-shrink-0 text-red-400\" viewBox=\"0 0 20 20\" fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z\" clip-rule=\"evenodd\"></path></svg><div class=\"ml-3\"><p class=\"text-sm text-red-800\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -145,7 +145,7 @@ func BeerForm(params BeerFormParams, errs BeerFormErrors) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\"><!-- Brand Field --><div class=\"space-y-2\"><div class=\"flex items-center justify-between\"><label for=\"brand\" class=\"block text-sm font-medium text-neutral-900\">Brand <span class=\"text-orange-500\">*</span></label> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\"><!-- Brand Field --><div class=\"space-y-2\"><div class=\"flex items-center justify-between\"><label for=\"brand\" class=\"block text-sm font-medium text-gray-900\">Brand <span class=\"text-orange-500\">*</span></label> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -172,9 +172,9 @@ func BeerForm(params BeerFormParams, errs BeerFormErrors) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var10 = []any{"block w-full rounded-xl border-0 px-4 py-3 text-sm ring-1 ring-inset transition-all duration-200 focus:ring-2 focus:ring-inset disabled:cursor-not-allowed disabled:bg-neutral-50 disabled:opacity-50",
-			templ.KV("bg-red-50 text-red-900 ring-red-300 placeholder:text-red-400 focus:ring-red-500", errs.Brand != ""),
-			templ.KV("bg-white ring-neutral-300 placeholder:text-neutral-500 focus:ring-neutral-900", errs.Brand == ""),
+		var templ_7745c5c3_Var10 = []any{"block w-full rounded-2xl outline-none border-0 px-4 py-3 text-sm ring-1 ring-inset transition-all duration-200 focus:ring-2 focus:ring-inset focus:ring-amber-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:opacity-50", // Added focus:ring-offset-2, updated focus color
+			templ.KV("bg-red-50 text-red-900 ring-red-300 placeholder:text-red-400 focus:ring-red-500 focus:ring-offset-2", errs.Brand != ""), // Added focus:ring-offset-2
+			templ.KV("bg-white ring-gray-200 placeholder:text-gray-500", errs.Brand == ""),
 		}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var10...)
 		if templ_7745c5c3_Err != nil {
@@ -206,7 +206,7 @@ func BeerForm(params BeerFormParams, errs BeerFormErrors) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "\"></div><!-- Type Field --><div class=\"space-y-2\"><div class=\"flex items-center justify-between\"><label for=\"type\" class=\"block text-sm font-medium text-neutral-900\">Type</label> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "\"></div><!-- Type Field --><div class=\"space-y-2\"><div class=\"flex items-center justify-between\"><label for=\"type\" class=\"block text-sm font-medium text-gray-900\">Type</label> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -233,9 +233,9 @@ func BeerForm(params BeerFormParams, errs BeerFormErrors) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var14 = []any{"block w-full rounded-xl border-0 px-4 py-3 text-sm ring-1 ring-inset transition-all duration-200 focus:ring-2 focus:ring-inset disabled:cursor-not-allowed disabled:bg-neutral-50 disabled:opacity-50",
-			templ.KV("bg-red-50 text-red-900 ring-red-300 placeholder:text-red-400 focus:ring-red-500", errs.Type != ""),
-			templ.KV("bg-white ring-neutral-300 placeholder:text-neutral-500 focus:ring-neutral-900", errs.Type == ""),
+		var templ_7745c5c3_Var14 = []any{"block w-full rounded-2xl outline-none border-0 px-4 py-3 text-sm ring-1 ring-inset transition-all duration-200 focus:ring-2 focus:ring-inset focus:ring-amber-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:opacity-50", // Added focus:ring-offset-2, updated focus color
+			templ.KV("bg-red-50 text-red-900 ring-red-300 placeholder:text-red-400 focus:ring-red-500 focus:ring-offset-2", errs.Type != ""), // Added focus:ring-offset-2
+			templ.KV("bg-white ring-gray-200 placeholder:text-gray-500", errs.Type == ""),
 		}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var14...)
 		if templ_7745c5c3_Err != nil {
@@ -277,7 +277,7 @@ func BeerForm(params BeerFormParams, errs BeerFormErrors) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "\"></div><!-- Style Field --><div class=\"space-y-2\"><div class=\"flex items-center justify-between\"><label for=\"style\" class=\"block text-sm font-medium text-neutral-900\">Style</label> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "\"></div><!-- Style Field --><div class=\"space-y-2\"><div class=\"flex items-center justify-between\"><label for=\"style\" class=\"block text-sm font-medium text-gray-900\">Style</label> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -312,7 +312,7 @@ func BeerForm(params BeerFormParams, errs BeerFormErrors) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</div><!-- Brewery Field --><div class=\"space-y-2\"><div class=\"flex items-center justify-between\"><label for=\"brewery\" class=\"block text-sm font-medium text-neutral-900\">Brewery</label> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</div><!-- Brewery Field --><div class=\"space-y-2\"><div class=\"flex items-center justify-between\"><label for=\"brewery\" class=\"block text-sm font-medium text-gray-900\">Brewery</label> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -347,7 +347,7 @@ func BeerForm(params BeerFormParams, errs BeerFormErrors) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</div><!-- Form Actions --><div class=\"flex flex-col gap-4 border-t border-gray-100 pt-8 sm:flex-row sm:items-center sm:justify-between\"><div><button type=\"submit\" class=\"inline-flex w-40 items-center justify-center rounded-lg bg-gray-900 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50\"><!-- Loading Content --><span class=\"hx-save-indicator-toggle htmx-indicator flex items-center\"><svg class=\"mr-2 h-4 w-4 animate-spin text-white\" fill=\"none\" viewBox=\"0 0 24 24\"><circle class=\"opacity-25\" cx=\"12\" cy=\"12\" r=\"10\" stroke=\"currentColor\" stroke-width=\"4\"></circle> <path class=\"opacity-75\" fill=\"currentColor\" d=\"M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z\"></path></svg> <span>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</div><!-- Form Actions --><div class=\"flex flex-col gap-4 border-t border-gray-200 pt-8 sm:flex-row sm:items-center sm:justify-between\"><div><button type=\"submit\" class=\"inline-flex w-40 items-center justify-center rounded-2xl bg-gray-900 px-6 py-3 text-sm font-medium text-white shadow-lg transition-all duration-300 hover:scale-105 hover:bg-gray-800 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50\"><!-- Loading Content --><span class=\"hx-save-indicator-toggle htmx-indicator flex items-center\"><svg class=\"mr-2 h-4 w-4 animate-spin text-amber-300\" fill=\"none\" viewBox=\"0 0 24 24\"><circle class=\"opacity-25\" cx=\"12\" cy=\"12\" r=\"10\" stroke=\"currentColor\" stroke-width=\"4\"></circle> <path class=\"opacity-75\" fill=\"currentColor\" d=\"M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z\"></path></svg> <span>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -395,12 +395,12 @@ func BeerForm(params BeerFormParams, errs BeerFormErrors) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "\" hx-confirm=\"Are you sure you want to delete this beer?\" hx-target-error=\"#beer-errors\" hx-indicator=\"#delete-indicator\" hx-disabled-elt=\"input,button\" class=\"inline-flex w-full items-center justify-center rounded-lg border border-red-300 bg-white px-6 py-3 text-sm font-medium text-red-700 transition-colors hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto\"><span id=\"delete-indicator\" class=\"htmx-indicator mr-2\"><svg class=\"h-4 w-4 animate-spin\" viewBox=\"0 0 24 24\"><circle class=\"opacity-25\" cx=\"12\" cy=\"12\" r=\"10\" stroke=\"currentColor\" stroke-width=\"4\" fill=\"none\"></circle> <path class=\"opacity-75\" fill=\"currentColor\" d=\"M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z\"></path></svg></span> <svg class=\"mr-2 h-4 w-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0\"></path></svg> Delete Beer</button></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "\" hx-confirm=\"Are you sure you want to delete this beer?\" hx-target-error=\"#beer-errors\" hx-indicator=\"#delete-indicator\" hx-disabled-elt=\"input,button\" class=\"inline-flex w-full items-center justify-center rounded-2xl border border-red-300 bg-white px-6 py-3 text-sm font-medium text-red-700 shadow-lg transition-all duration-300 hover:scale-105 hover:bg-red-50 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto\"><span id=\"delete-indicator\" class=\"htmx-indicator mr-2\"><svg class=\"h-4 w-4 animate-spin text-red-400\" viewBox=\"0 0 24 24\"><circle class=\"opacity-25\" cx=\"12\" cy=\"12\" r=\"10\" stroke=\"currentColor\" stroke-width=\"4\" fill=\"none\"></circle> <path class=\"opacity-75\" fill=\"currentColor\" d=\"M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z\"></path></svg></span> <svg class=\"mr-2 h-4 w-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0\"></path></svg> Delete Beer</button></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "</div></form><div id=\"beer-errors\" class=\"mt-6\"></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "</div></form><div id=\"beer-errors\" class=\"mt-6 hidden rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 shadow-md\"></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

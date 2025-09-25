@@ -34,25 +34,25 @@ func BeerImagesPage(params BeerPageData) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"beer-images-form\" hx-ext=\"response-targets\" class=\"mx-auto max-w-7xl\"><!-- Header Section --><div class=\"mb-10\"><div class=\"flex items-center justify-between\"><div><h2 class=\"text-2xl font-bold text-neutral-900\">Beer Images</h2><p class=\"mt-2 text-neutral-600\">Select images and add cap collection details</p></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"beer-images-form\" hx-ext=\"response-targets\" class=\"mx-auto max-w-7xl\"><!-- Header Section --><div class=\"mb-10\"><div class=\"flex items-center justify-between\"><div><h2 class=\"bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-3xl font-bold leading-tight tracking-tight text-transparent sm:text-4xl\">Beer Images</h2><p class=\"mt-2 text-base text-gray-600 sm:text-lg\">Select images and add cap collection details</p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(params.BeerMedias) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"text-right text-sm text-neutral-500\"><div>Total: ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"text-right text-sm text-gray-500\"><div>Total: <span class=\"font-semibold text-gray-700\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(len(params.BeerMedias)))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_images.templ`, Line: 20, Col: 50}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_images.templ`, Line: 20, Col: 92}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</span> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -77,17 +77,17 @@ func BeerImagesPage(params BeerPageData) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if len(params.BeerMedias) == 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<!-- Empty State --> <div class=\"py-20 text-center\"><div class=\"mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-neutral-100 to-neutral-200\"><svg class=\"h-12 w-12 text-neutral-400\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\" d=\"m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z\"></path></svg></div><h3 class=\"mb-3 text-xl font-semibold text-neutral-900\">No images yet</h3><p class=\"mx-auto mb-8 max-w-md text-neutral-600\">Upload your first images to start organizing your beer collection</p><button class=\"inline-flex items-center rounded-lg bg-neutral-900 px-6 py-3 font-medium text-white transition-colors hover:bg-neutral-800\"><svg class=\"mr-2 h-5 w-5\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M12 6v6m0 0v6m0-6h6m-6 0H6\"></path></svg> Upload Images</button></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<!-- Empty State --> <div class=\"py-20 text-center\"><div class=\"mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-2xl bg-gradient-to-br from-gray-100 to-gray-200\"><svg class=\"h-12 w-12 text-gray-400\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\" d=\"m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z\"></path></svg></div><h3 class=\"mb-3 text-2xl font-semibold text-gray-900\">No images yet</h3><p class=\"mx-auto mb-8 max-w-md text-base text-gray-600\">Upload your first images to start organizing your beer collection</p><button class=\"inline-flex items-center rounded-2xl bg-gray-900 px-6 py-3 font-medium text-white shadow-lg transition-all duration-300 hover:scale-105 hover:bg-gray-800 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2\"><svg class=\"mr-2 h-5 w-5 transition-transform duration-300 group-hover:rotate-90\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M12 6v6m0 0v6m0-6h6m-6 0H6\"></path></svg> Upload Images</button></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<!-- Upload Area --> <div class=\"mb-10\"><div class=\"rounded-xl border-2 border-dashed border-neutral-300 bg-neutral-50 p-8 py-8 text-center transition-colors hover:border-neutral-400 hover:bg-neutral-100\"><svg class=\"mx-auto h-12 w-12 text-neutral-400\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\" d=\"m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z\"></path></svg><div class=\"mt-4\"><p class=\"mb-2 text-lg font-semibold text-neutral-900\">Add More Images</p><p class=\"mb-4 text-neutral-600\">Drop images here or click to browse</p><div class=\"mx-auto grid max-w-md grid-cols-1 gap-3 text-xs text-neutral-500 sm:grid-cols-2\"><div class=\"rounded-lg bg-white p-3\"><div class=\"mb-1 font-medium text-neutral-700\">Bottles</div><div>138×400px • PNG up to 10MB</div></div><div class=\"rounded-lg bg-white p-3\"><div class=\"mb-1 font-medium text-neutral-700\">Caps</div><div>800×800px • PNG up to 10MB</div></div></div><div class=\"mx-auto mt-3 max-w-md rounded-lg bg-white p-3\"><div class=\"mb-1 font-medium text-neutral-700\">Labels</div><div class=\"text-xs text-neutral-500\">1000/1500/2000px width • PNG up to 10MB</div></div></div><input type=\"file\" class=\"hidden\" multiple accept=\"image/*\"></div></div><!-- Main Form --> <form hx-post=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<!-- Upload Area --> <div class=\"mb-10\"><div class=\"rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50 p-8 py-8 text-center transition-colors focus-within:ring-2 focus-within:ring-amber-500 focus-within:ring-offset-2 hover:border-gray-400 hover:bg-gray-100\"><svg class=\"mx-auto h-12 w-12 text-gray-400\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\" d=\"m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z\"></path></svg><div class=\"mt-4\"><p class=\"mb-2 text-xl font-semibold text-gray-900\">Add More Images</p><p class=\"mb-4 text-base text-gray-600\">Drop images here or click to browse</p><div class=\"mx-auto grid max-w-md grid-cols-1 gap-3 text-sm text-gray-500 sm:grid-cols-2\"><div class=\"rounded-lg bg-white p-3 shadow-sm ring-1 ring-gray-100\"><div class=\"mb-1 font-medium text-gray-700\">Bottles</div><div>138×400px • PNG up to 10MB</div></div><div class=\"rounded-lg bg-white p-3 shadow-sm ring-1 ring-gray-100\"><div class=\"mb-1 font-medium text-gray-700\">Caps</div><div>800×800px • PNG up to 10MB</div></div></div><div class=\"mx-auto mt-3 max-w-md rounded-lg bg-white p-3 shadow-sm ring-1 ring-gray-100\"><div class=\"mb-1 font-medium text-gray-700\">Labels</div><div class=\"text-sm text-gray-500\">1000/1500/2000px width • PNG up to 10MB</div></div></div><input type=\"file\" class=\"hidden\" multiple accept=\"image/*\"></div></div><!-- Main Form --> <form hx-post=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var3 string
-			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/workspace/%d/beer-images", params.Beer.ID))
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/workspace/beer/%d/images", params.Beer.ID))
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_images.templ`, Line: 78, Col: 70}
 			}
@@ -95,7 +95,7 @@ func BeerImagesPage(params BeerPageData) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" hx-target=\"#beer-images-form\" hx-target-error=\"#beer-images-errors\" hx-trigger=\"submit\" hx-indicator=\".hx-save-indicator-toggle\" hx-disabled-elt=\"button,input:not([type='hidden'])\"><!-- Images Section --><div class=\"mb-10\"><!-- Section Header --><div class=\"mb-8 flex items-center justify-between\"><div><h3 class=\"text-lg font-semibold text-neutral-900\">Available Images</h3><p class=\"mt-1 text-sm text-neutral-600\">Select images to include in your beer collection</p></div><!-- Legend --><div class=\"flex items-center gap-6 text-sm\"><div class=\"flex items-center gap-2\"><div class=\"h-3 w-3 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500\"></div><span class=\"font-medium text-neutral-700\">Selected</span></div><div class=\"flex items-center gap-2\"><div class=\"h-3 w-3 rounded-full bg-neutral-300\"></div><span class=\"text-neutral-600\">Available</span></div></div></div><!-- Images Grid --><div class=\"mb-6 grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" hx-target=\"#beer-images-form\" hx-target-error=\"#beer-images-errors\" hx-trigger=\"submit\" hx-indicator=\".hx-save-indicator-toggle\" hx-disabled-elt=\"button,input:not([type='hidden'])\"><!-- Images Section --><div class=\"mb-10\"><!-- Section Header --><div class=\"mb-8 flex items-center justify-between\"><div><h3 class=\"text-xl font-semibold text-gray-900\">Available Images</h3><p class=\"mt-1 text-sm text-gray-600\">Select images to include in your beer collection</p></div><!-- Legend --><div class=\"flex items-center gap-6 text-sm\"><div class=\"flex items-center gap-2\"><div class=\"h-3 w-3 rounded-full bg-gradient-to-r from-amber-500 to-orange-500\"></div><span class=\"font-medium text-gray-700\">Selected</span></div><div class=\"flex items-center gap-2\"><div class=\"h-3 w-3 rounded-full bg-gray-300\"></div><span class=\"text-gray-600\">Available</span></div></div></div><!-- Images Grid --><div class=\"mb-6 grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -115,7 +115,7 @@ func BeerImagesPage(params BeerPageData) templ.Component {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "><div class=\"flex flex-col space-y-3\"><!-- Image Card --><div class=\"relative aspect-square transform cursor-pointer overflow-hidden rounded-xl border-2 border-gray-300 transition-all duration-200 ease-in-out hover:scale-105 hover:border-gray-400\" :class=\"{ \n\t\t\t\t\t\t\t\t\t\t'bg-indigo-50 ring-2 ring-indigo-500 ring-offset-2' : selected,\n\t\t\t\t\t\t\t\t\t\t'border-neutral-200 hover:border-neutral-300 hover:shadow-md' : !selected \n\t\t\t\t\t\t\t\t\t}\" @click=\"selected = !selected\"><!-- Media Content --><div class=\"flex h-full w-full items-center justify-center bg-neutral-50\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "><div class=\"flex flex-col space-y-3\"><!-- Image Card --><div class=\"relative aspect-square transform cursor-pointer overflow-hidden rounded-2xl border-2 border-gray-300 transition-all duration-200 ease-in-out hover:scale-105 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2\" :class=\"{\n\t\t\t\t\t\t\t\t\t\t'bg-amber-50 ring-2 ring-amber-500 ring-offset-2' : selected, \n\t\t\t\t\t\t\t\t\t\t'border-neutral-200 hover:border-neutral-300 hover:shadow-md' : !selected\n\t\t\t\t\t\t\t\t\t}\" @click=\"selected = !selected\"><!-- Media Content --><div class=\"flex h-full w-full items-center justify-center bg-gray-50\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -145,7 +145,7 @@ func BeerImagesPage(params BeerPageData) templ.Component {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</div></div><!-- Selection Indicator --><div class=\"absolute right-3 top-3 rounded-full p-1.5 transition-all duration-300\" :class=\"{ \n\t\t\t\t\t\t\t\t\t\t\t'bg-indigo-500 scale-100 shadow-lg' : selected,\n\t\t\t\t\t\t\t\t\t\t\t'bg-neutral-400 scale-75 opacity-0 group-hover:opacity-100 shadow-sm' : !selected \n\t\t\t\t\t\t\t\t\t\t}\"><svg class=\"h-4 w-4 text-white\" viewBox=\"0 0 20 20\" fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z\" clip-rule=\"evenodd\"></path></svg></div><!-- Hidden Form Fields --><input type=\"hidden\" name=\"media.id\" value=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</div></div><!-- Selection Indicator --><div class=\"absolute right-3 top-3 rounded-full p-1.5 transition-all duration-300\" :class=\"{\n\t\t\t\t\t\t\t\t\t\t\t'bg-amber-500 scale-100 shadow-lg' : selected, \n\t\t\t\t\t\t\t\t\t\t\t'bg-gray-400 scale-75 opacity-0 group-hover:opacity-100 shadow-sm' : !selected \n\t\t\t\t\t\t\t\t\t\t}\"><svg class=\"h-4 w-4 text-white\" viewBox=\"0 0 20 20\" fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z\" clip-rule=\"evenodd\"></path></svg></div><!-- Hidden Form Fields --><input type=\"hidden\" name=\"media.id\" value=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -202,12 +202,12 @@ func BeerImagesPage(params BeerPageData) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				if media.Type.IsCap() {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<div class=\"space-y-3 rounded-xl border border-neutral-200 bg-gradient-to-b from-white to-neutral-50 p-4 transition-all duration-300\" x-cloak x-show=\"selected\" x-transition:enter=\"transition ease-out duration-300\" x-transition:enter-start=\"opacity-0 transform scale-95 translate-y-2\" x-transition:enter-end=\"opacity-100 transform scale-100 translate-y-0\" x-transition:leave=\"transition ease-in duration-200\" x-transition:leave-start=\"opacity-100 transform scale-100 translate-y-0\" x-transition:leave-end=\"opacity-0 transform scale-95 translate-y-2\"><div class=\"flex items-center gap-2 text-sm font-semibold text-neutral-800\"><span>Cap Location</span></div>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<div class=\"space-y-3 rounded-2xl border border-gray-200 bg-gradient-to-b from-white to-gray-50 p-4 shadow-sm transition-all duration-300\" x-cloak x-show=\"selected\" x-transition:enter=\"transition ease-out duration-300\" x-transition:enter-start=\"opacity-0 transform scale-95 translate-y-2\" x-transition:enter-end=\"opacity-100 transform scale-100 translate-y-0\" x-transition:leave=\"transition ease-in duration-200\" x-transition:leave-start=\"opacity-100 transform scale-100 translate-y-0\" x-transition:leave-end=\"opacity-0 transform scale-95 translate-y-2\"><div class=\"flex items-center gap-2 text-sm font-semibold text-gray-800\"><span>Cap Location</span></div>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					slot := media.ParseSlotID(params.Beer)
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<div class=\"space-y-1.5\"><div><label class=\"mb-1 block text-xs font-medium text-neutral-700\">Geographic Prefix</label> <input type=\"text\" name=\"media.slot.geoPrefix\" value=\"")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<div class=\"space-y-1.5\"><div><label class=\"mb-1 block text-xs font-medium text-gray-700\">Geographic Prefix</label> <input type=\"text\" name=\"media.slot.geoPrefix\" value=\"")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -220,7 +220,7 @@ func BeerImagesPage(params BeerPageData) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "\" :disabled=\"!selected\" placeholder=\"e.g., US, EU, CA\" class=\"w-full rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-xs placeholder:text-neutral-400 focus:border-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-500\"></div><div><label class=\"mb-1 block text-xs font-medium text-neutral-700\">Sheet ID</label> <input type=\"text\" name=\"media.slot.sheetId\" value=\"")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "\" :disabled=\"!selected\" placeholder=\"e.g., US, EU, CA\" class=\"w-full rounded-2xl border border-gray-300 bg-white px-3 py-1.5 text-xs placeholder:text-gray-400 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500\"></div><div><label class=\"mb-1 block text-xs font-medium text-gray-700\">Sheet ID</label> <input type=\"text\" name=\"media.slot.sheetId\" value=\"")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -233,7 +233,7 @@ func BeerImagesPage(params BeerPageData) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "\" :disabled=\"!selected\" placeholder=\"Sheet identifier\" class=\"w-full rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-xs placeholder:text-neutral-400 focus:border-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-500\"></div><div><label class=\"mb-1 block text-xs font-medium text-neutral-700\">Slot Number</label> <input type=\"text\" name=\"media.slot.sheetSlot\" value=\"")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "\" :disabled=\"!selected\" placeholder=\"Sheet identifier\" class=\"w-full rounded-2xl border border-gray-300 bg-white px-3 py-1.5 text-xs placeholder:text-gray-400 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500\"></div><div><label class=\"mb-1 block text-xs font-medium text-gray-700\">Slot Number</label> <input type=\"text\" name=\"media.slot.sheetSlot\" value=\"")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -246,7 +246,7 @@ func BeerImagesPage(params BeerPageData) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "\" :disabled=\"!selected\" placeholder=\"Slot position\" class=\"w-full rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-xs placeholder:text-neutral-400 focus:border-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-500\"></div></div></div>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "\" :disabled=\"!selected\" placeholder=\"Slot position\" class=\"w-full rounded-2xl border border-gray-300 bg-white px-3 py-1.5 text-xs placeholder:text-gray-400 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500\"></div></div></div>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -261,12 +261,12 @@ func BeerImagesPage(params BeerPageData) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</div><!-- Action Bar --><div class=\"flex flex-col gap-4 border-t border-gray-100 pt-8 sm:flex-row sm:items-center sm:justify-between\"><!-- Save Button --><button type=\"submit\" class=\"inline-flex w-40 items-center justify-center rounded-lg bg-gray-900 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50\"><!-- Loading State --><span class=\"hx-save-indicator-toggle htmx-indicator flex items-center\"><svg class=\"mr-2 h-4 w-4 animate-spin text-white\" fill=\"none\" viewBox=\"0 0 24 24\"><circle class=\"opacity-25\" cx=\"12\" cy=\"12\" r=\"10\" stroke=\"currentColor\" stroke-width=\"4\"></circle> <path class=\"opacity-75\" fill=\"currentColor\" d=\"M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z\"></path></svg> <span>Saving...</span></span><!-- Default State --><span class=\"hx-save-indicator-toggle hide-on-hx-request flex items-center\"><svg class=\"mr-2 h-4 w-4 text-white\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" viewBox=\"0 0 24 24\"><path d=\"M5 4h11l3 3v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z\"></path> <path d=\"M7 4v4h8V4\"></path> <circle cx=\"12\" cy=\"14\" r=\"2\"></circle></svg> <span>Save</span></span></button></div></div></form>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</div><!-- Action Bar --><div class=\"flex flex-col gap-4 border-t border-gray-200 pt-8 sm:flex-row sm:items-center sm:justify-between\"><!-- Save Button --><button type=\"submit\" class=\"inline-flex w-40 items-center justify-center rounded-2xl bg-gray-900 px-6 py-3 text-sm font-medium text-white shadow-lg transition-all duration-300 hover:scale-105 hover:bg-gray-800 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50\"><!-- Loading State --><span class=\"hx-save-indicator-toggle htmx-indicator flex items-center\"><svg class=\"mr-2 h-4 w-4 animate-spin text-amber-300\" fill=\"none\" viewBox=\"0 0 24 24\"><circle class=\"opacity-25\" cx=\"12\" cy=\"12\" r=\"10\" stroke=\"currentColor\" stroke-width=\"4\"></circle> <path class=\"opacity-75\" fill=\"currentColor\" d=\"M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z\"></path></svg> <span>Saving...</span></span><!-- Default State --><span class=\"hx-save-indicator-toggle hide-on-hx-request flex items-center\"><svg class=\"mr-2 h-4 w-4 text-white\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" viewBox=\"0 0 24 24\"><path d=\"M5 4h11l3 3v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z\"></path> <path d=\"M7 4v4h8V4\"></path> <circle cx=\"12\" cy=\"14\" r=\"2\"></circle></svg> <span>Save</span></span></button></div></div></form>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<div id=\"beer-images-errors\" class=\"mt-6\"></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<div id=\"beer-images-errors\" class=\"mt-6 hidden rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 shadow-md\"></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
