@@ -118,7 +118,7 @@ func BeerCreatePageLayout(page BeerPageData) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"min-h-screen bg-neutral-50\"><div class=\"px-4 pb-12 pt-6 sm:px-6 lg:px-8\"><div class=\"mx-auto max-w-2xl lg:max-w-4xl\"><div class=\"mb-8\"><h1 class=\"text-2xl font-semibold text-neutral-900 sm:text-3xl\">Create Beer</h1><p class=\"mt-2 text-sm text-neutral-600 sm:text-base\">Add a new beer to your collection</p></div><div class=\"rounded-2xl bg-white p-6 shadow-sm ring-1 ring-neutral-200/50 sm:p-8\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"mx-auto max-w-3xl lg:max-w-5xl\"><!-- Header Section --><div class=\"mb-8 flex flex-col items-center text-center lg:flex-row lg:items-center lg:text-left\"><div class=\"group mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 via-orange-500 to-red-500 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl lg:mb-0 lg:mr-6\"><svg width=\"28\" height=\"28\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" xmlns=\"http://www.w3.org/2000/svg\" class=\"transition-transform duration-300 group-hover:rotate-12\"><path d=\"M17 11h1a3 3 0 0 1 0 6h-1\"></path> <path d=\"M9 12v6\"></path> <path d=\"M13 12v6\"></path> <path d=\"M14 7.5c-1 0-1.44.5-3 .5s-2-.5-3-.5-1.72.5-2.5.5a2.5 2.5 0 0 1 0-5c.78 0 1.57.5 2.5.5s2-.5 3-.5 2 .5 3 .5 1.72-.5 2.5-.5a2.5 2.5 0 0 1 0 5c-.78 0-1.5-.5-2.5-.5Z\"></path> <path d=\"M5 8v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8\"></path></svg></div><div><h1 class=\"bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-3xl font-bold leading-tight tracking-tight text-transparent sm:text-4xl lg:text-5xl\">Create Beer</h1><p class=\"text-base text-gray-600 sm:text-lg lg:text-xl\">Add a new beer to your collection</p></div></div><div class=\"rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-200/50 sm:p-8\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -126,7 +126,7 @@ func BeerCreatePageLayout(page BeerPageData) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div></div></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -163,13 +163,13 @@ func beerLayout(page BeerPageData) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		isOverviewPage := util.IsSameURL(ctx, page.GetOverviewPageUrl())
 		isImagesPage := util.IsSameURL(ctx, page.GetImagesPageUrl())
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"min-h-screen bg-neutral-50\"><div class=\"px-4 pb-12 pt-8 sm:px-6 lg:px-8\"><div class=\"mx-auto max-w-2xl lg:max-w-5xl\"><!-- Header --><div class=\"mb-8\"><div class=\"flex items-center justify-between\"><div><h1 class=\"text-3xl font-bold tracking-tight text-neutral-900 sm:text-4xl\">Beer Details</h1><p class=\"mt-3 text-lg text-neutral-600 sm:text-xl\">Manage and view your beer information</p></div></div></div><!-- Main Content Card --><div class=\"overflow-hidden rounded-3xl bg-white shadow-xl shadow-neutral-200/20 ring-1 ring-neutral-200/50\"><!-- Tab Navigation --><div class=\"border-b border-neutral-200 bg-neutral-50/30\"><nav class=\"flex\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"mx-auto max-w-3xl lg:max-w-5xl\"><!-- Header --><div class=\"mb-8 flex flex-col items-center text-center lg:flex-row lg:items-center lg:text-left\"><div class=\"group mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 via-orange-500 to-red-500 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl lg:mb-0 lg:mr-6\"><svg width=\"28\" height=\"28\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" xmlns=\"http://www.w3.org/2000/svg\" class=\"transition-transform duration-300 group-hover:rotate-12\"><path d=\"M17 11h1a3 3 0 0 1 0 6h-1\"></path> <path d=\"M9 12v6\"></path> <path d=\"M13 12v6\"></path> <path d=\"M14 7.5c-1 0-1.44.5-3 .5s-2-.5-3-.5-1.72.5-2.5.5a2.5 2.5 0 0 1 0-5c.78 0 1.57.5 2.5.5s2-.5 3-.5 2 .5 3 .5 1.72-.5 2.5-.5a2.5 2.5 0 0 1 0 5c-.78 0-1.5-.5-2.5-.5Z\"></path> <path d=\"M5 8v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8\"></path></svg></div><div><h1 class=\"bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-3xl font-bold leading-tight tracking-tight text-transparent sm:text-4xl lg:text-5xl\">Beer Details</h1><p class=\"text-base text-gray-600 sm:text-lg lg:text-xl\">Manage and view your beer information</p></div></div><!-- Main Content Card --><div class=\"overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-gray-200/50\"><!-- Tab Navigation --><div class=\"border-b border-gray-200 bg-gray-50/50\"><nav class=\"flex\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var7 = []any{"group relative flex-1 inline-flex items-center justify-center py-4 px-6 text-sm font-semibold transition-all duration-200 ease-out border-b-2 -mb-px",
-			templ.KV("border-indigo-500 text-indigo-600", isOverviewPage),
-			templ.KV("border-transparent text-neutral-600 hover:text-neutral-900 hover:border-neutral-300", !isOverviewPage),
+		var templ_7745c5c3_Var7 = []any{"group relative flex-1 inline-flex items-center justify-center py-4 px-6 text-sm font-semibold transition-all duration-200 ease-out border-b-2 -mb-px focus:outline-none focus:ring-amber-500",
+			templ.KV("border-amber-500 text-amber-600", isOverviewPage),
+			templ.KV("border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300", !isOverviewPage),
 		}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var7...)
 		if templ_7745c5c3_Err != nil {
@@ -182,7 +182,7 @@ func beerLayout(page BeerPageData) templ.Component {
 		var templ_7745c5c3_Var8 templ.SafeURL
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(page.GetOverviewPageUrl()))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_page.templ`, Line: 63, Col: 51}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_page.templ`, Line: 76, Col: 49}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -206,8 +206,8 @@ func beerLayout(page BeerPageData) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var10 = []any{"mr-3 h-5 w-5 transition-colors duration-200",
-			templ.KV("text-indigo-500", isOverviewPage),
-			templ.KV("text-neutral-400 group-hover:text-neutral-600", !isOverviewPage),
+			templ.KV("text-amber-500", isOverviewPage),
+			templ.KV("text-gray-400 group-hover:text-gray-600", !isOverviewPage),
 		}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var10...)
 		if templ_7745c5c3_Err != nil {
@@ -230,9 +230,9 @@ func beerLayout(page BeerPageData) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var12 = []any{"group relative flex-1 inline-flex items-center justify-center py-4 px-6 text-sm font-semibold transition-all duration-200 ease-out border-b-2 -mb-px",
-			templ.KV("border-indigo-500 text-indigo-600", isImagesPage),
-			templ.KV("border-transparent text-neutral-600 hover:text-neutral-900 hover:border-neutral-300", !isImagesPage),
+		var templ_7745c5c3_Var12 = []any{"group relative flex-1 inline-flex items-center justify-center py-4 px-6 text-sm font-semibold transition-all duration-200 ease-out border-b-2 -mb-px focus:outline-none focus:ring-amber-500",
+			templ.KV("border-amber-500 text-amber-600", isImagesPage),
+			templ.KV("border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300", !isImagesPage),
 		}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var12...)
 		if templ_7745c5c3_Err != nil {
@@ -245,7 +245,7 @@ func beerLayout(page BeerPageData) templ.Component {
 		var templ_7745c5c3_Var13 templ.SafeURL
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(page.GetImagesPageUrl()))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_page.templ`, Line: 86, Col: 49}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/beer_page.templ`, Line: 99, Col: 47}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
@@ -269,8 +269,8 @@ func beerLayout(page BeerPageData) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var15 = []any{"mr-3 h-5 w-5 transition-colors duration-200",
-			templ.KV("text-indigo-500", isImagesPage),
-			templ.KV("text-neutral-400 group-hover:text-neutral-600", !isImagesPage),
+			templ.KV("text-amber-500", isImagesPage),
+			templ.KV("text-gray-400 group-hover:text-gray-600", !isImagesPage),
 		}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var15...)
 		if templ_7745c5c3_Err != nil {
@@ -297,7 +297,7 @@ func beerLayout(page BeerPageData) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div></div></div></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

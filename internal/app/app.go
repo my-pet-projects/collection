@@ -139,7 +139,7 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 		router.Get("/workspace/beer/{id}/overview", appHandler.Handle(workspaceSrv.HandleBeerPage))
 		router.Get("/workspace/beer/{id}/images", appHandler.Handle(workspaceSrv.HandleBeerImagesPage))
 		router.Post("/workspace/beer", appHandler.Handle(workspaceSrv.SubmitBeerPage))
-		router.Post("/workspace/{id}/beer-images", appHandler.Handle(workspaceSrv.SubmitBeerImages))
+		router.Post("/workspace/beer/{id}/images", appHandler.Handle(workspaceSrv.SubmitBeerImages))
 		router.Delete("/workspace/beer/{id}", appHandler.Handle(workspaceSrv.DeleteBeer))
 	})
 
