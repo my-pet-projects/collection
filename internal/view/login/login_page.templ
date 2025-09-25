@@ -54,15 +54,14 @@ templ LoginPage(data LoginData) {
 								x-data="{
 									loading: false,
 									onSignIn: async function(e) {
-										e.preventDefault();
 										this.loading = true; 
 										try {
 											const identifier = document.getElementById('username').value.trim();
-+											const password = document.getElementById('password').value.trim();
+											const password = document.getElementById('password').value.trim();
 											const res = await Clerk.client.signIn.create({
 												strategy: 'password',
 												identifier,
-+												password,
+												password,
 											});
 											if (res.status === 'complete') {
 												await Clerk.setActive({ session: res.createdSessionId });

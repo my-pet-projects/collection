@@ -11,12 +11,14 @@ templ BaseLayout() {
 	<!DOCTYPE html>
 	<html lang="en">
 		@head("Beer Collection")
-		<body class="min-h-screen bg-gray-50">
+		<body class="min-h-screen bg-gray-50 antialiased">
 			<!-- Navigation -->
 			@navigation()
-			<!-- Main Content -->
-			<main class="container mx-auto min-h-[calc(100vh-theme(spacing.16)-theme(spacing.16))] max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-				{ children... }
+			<!-- Main Content Wrapper -->
+			<main class="container mx-auto min-h-[calc(100vh_-_theme(spacing.16)_-_theme(spacing.16))] max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+				<div class="lg:pt-8">
+					{ children... }
+				</div>
 			</main>
 			<div>
 				@shared.Notification()
@@ -56,7 +58,7 @@ templ navigation() {
 				<div class="flex">
 					<!-- Logo Section -->
 					<div class="flex shrink-0 items-center">
-						<a href="/" class="flex items-center transition-all duration-200 hover:scale-105">
+						<a href="/" class="flex items-center rounded-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
 							<div class="mr-3 h-8 w-8">
 								@asset.MainBeerLogo("h-full w-full drop-shadow-md transition-transform duration-300 hover:rotate-12")
 							</div>
@@ -64,7 +66,7 @@ templ navigation() {
 						</a>
 					</div>
 					<!-- Navigation Items (Desktop) -->
-					<div class="hidden sm:ml-8 sm:flex sm:space-x-6">
+					<div class="hidden sm:ml-8 sm:flex sm:space-x-4">
 						<a
 							href="/workspace/beer"
 							class={ "inline-flex items-center px-3 py-2 text-sm font-medium transition-all duration-200 rounded-t-lg border-b-3",
@@ -254,7 +256,7 @@ templ navigation() {
 								<form action="/logout" method="POST" class="block">
 									<button
 										type="submit"
-										class="flex w-full items-center px-4 py-2 text-sm text-gray-700 transition-colors duration-200 hover:bg-gray-50 hover:text-gray-900"
+										class="flex w-full items-center rounded-lg px-4 py-2 text-sm text-gray-700 transition-colors duration-200 hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
 									>
 										<svg class="mr-3 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
