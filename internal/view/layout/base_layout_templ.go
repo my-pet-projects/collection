@@ -52,7 +52,7 @@ func BaseLayout() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<!-- Main Content Wrapper --><main class=\"container mx-auto min-h-[calc(100vh-theme(spacing.16)-theme(spacing.16))] max-w-7xl px-4 py-4 sm:px-6 lg:px-8\"><div class=\"lg:pt-8\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<!-- Main Content Wrapper --><main class=\"container mx-auto min-h-[calc(100vh_-_theme(spacing.16)_-_theme(spacing.16))] max-w-7xl px-4 py-4 sm:px-6 lg:px-8\"><div class=\"lg:pt-8\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

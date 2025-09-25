@@ -97,6 +97,8 @@ templ BreweryForm(params BreweryFormParams, errs BreweryFormErrors) {
 			hx-trigger="submit"
 			hx-indicator=".hx-save-indicator-toggle"
 			hx-disabled-elt="input:not([type=hidden]),button"
+			hx-on::response-error="document.getElementById('brewery-errors')?.classList.remove('hidden')"
+			hx-on::after-request="if ($event.detail.successful) document.getElementById('brewery-errors')?.classList.add('hidden')"
 		>
 			<input type="hidden" id="id" name="id" value={ fmt.Sprint(params.Id) }/>
 			<!-- Brewery Name -->

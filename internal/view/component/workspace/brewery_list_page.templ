@@ -73,7 +73,7 @@ templ breweriesList(params BreweryListPageParams) {
 							const params = new URLSearchParams();
 							const searchValue = document.getElementById('search')?.value ?? '';
 							const countryValue = document.querySelector('[name=country]')?.value ?? '';
-							const sizeValue = document.querySelector('[name=size]').value ?? '';
+							const sizeValue = document.querySelector('[name=size]')?.value ?? '';
 							
 							if (searchValue) {
 								params.set('query', searchValue.trim());

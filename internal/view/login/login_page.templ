@@ -54,7 +54,6 @@ templ LoginPage(data LoginData) {
 								x-data="{
 									loading: false,
 									onSignIn: async function(e) {
-										e.preventDefault();
 										this.loading = true; 
 										try {
 											const identifier = document.getElementById('username').value.trim();

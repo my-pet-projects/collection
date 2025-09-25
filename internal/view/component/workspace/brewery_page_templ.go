@@ -182,14 +182,14 @@ func BreweryForm(params BreweryFormParams, errs BreweryFormErrors) templ.Compone
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" x-on:country-selected.window=\"\n\t\t\tconst cityContainer = document.getElementById('city-container');\n\t\t\tconst cityLoading = document.getElementById('city-loading');\n\n\t\t\tif (cityContainer) cityContainer.style.display = 'none';\n\t\t\tif (cityLoading) cityLoading.style.display = 'block';\n\n\t\t\tconst countryCode = $event.detail.selectedValue;\n            let cityUrl = '/geo/countries/' + countryCode + '/cities?showAllOption=false';\n            if (preselectedCity !== 0) {\n                cityUrl += '&preselected=' + preselectedCity;\n            }\n\n\t\t\t// Load cities for selected country\n\t\t\thtmx.ajax('GET', cityUrl, {\n\t\t\t\ttarget: '#city-container',\n\t\t\t\tswap: 'innerHTML'\n\t\t\t}).then(() => {\n\t\t\t\t// Show city container and hide loading\n\t\t\t\tif (cityContainer) cityContainer.style.display = 'block';\n\t\t\t\tif (cityLoading) cityLoading.style.display = 'none';\n\t\t\t}).catch((error) => {\n\t\t\t\tconsole.error('Error loading cities:', error);\n\t\t\t\tif (cityContainer) cityContainer.style.display = 'block';\n\t\t\t\tif (cityLoading) cityLoading.style.display = 'none';\n\t\t\t});\n\t\t\"><div class=\"mb-8\"><h2 class=\"bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-3xl font-bold leading-tight tracking-tight text-transparent sm:text-4xl\">Brewery Information</h2><p class=\"mt-2 text-base text-gray-600 sm:text-lg\">Fill out the details about this brewery</p></div><form class=\"space-y-6\" hx-post=\"/workspace/brewery\" hx-on::before-request=\"document.getElementById('brewery-errors').innerHTML = ''\" hx-target=\"#brewery-form\" hx-target-error=\"#brewery-errors\" hx-trigger=\"submit\" hx-indicator=\".hx-save-indicator-toggle\" hx-disabled-elt=\"input:not([type=hidden]),button\"><input type=\"hidden\" id=\"id\" name=\"id\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" x-on:country-selected.window=\"\n\t\t\tconst cityContainer = document.getElementById('city-container');\n\t\t\tconst cityLoading = document.getElementById('city-loading');\n\n\t\t\tif (cityContainer) cityContainer.style.display = 'none';\n\t\t\tif (cityLoading) cityLoading.style.display = 'block';\n\n\t\t\tconst countryCode = $event.detail.selectedValue;\n            let cityUrl = '/geo/countries/' + countryCode + '/cities?showAllOption=false';\n            if (preselectedCity !== 0) {\n                cityUrl += '&preselected=' + preselectedCity;\n            }\n\n\t\t\t// Load cities for selected country\n\t\t\thtmx.ajax('GET', cityUrl, {\n\t\t\t\ttarget: '#city-container',\n\t\t\t\tswap: 'innerHTML'\n\t\t\t}).then(() => {\n\t\t\t\t// Show city container and hide loading\n\t\t\t\tif (cityContainer) cityContainer.style.display = 'block';\n\t\t\t\tif (cityLoading) cityLoading.style.display = 'none';\n\t\t\t}).catch((error) => {\n\t\t\t\tconsole.error('Error loading cities:', error);\n\t\t\t\tif (cityContainer) cityContainer.style.display = 'block';\n\t\t\t\tif (cityLoading) cityLoading.style.display = 'none';\n\t\t\t});\n\t\t\"><div class=\"mb-8\"><h2 class=\"bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-3xl font-bold leading-tight tracking-tight text-transparent sm:text-4xl\">Brewery Information</h2><p class=\"mt-2 text-base text-gray-600 sm:text-lg\">Fill out the details about this brewery</p></div><form class=\"space-y-6\" hx-post=\"/workspace/brewery\" hx-on::before-request=\"document.getElementById('brewery-errors').innerHTML = ''\" hx-target=\"#brewery-form\" hx-target-error=\"#brewery-errors\" hx-trigger=\"submit\" hx-indicator=\".hx-save-indicator-toggle\" hx-disabled-elt=\"input:not([type=hidden]),button\" hx-on::response-error=\"document.getElementById('brewery-errors')?.classList.remove('hidden')\" hx-on::after-request=\"if ($event.detail.successful) document.getElementById('brewery-errors')?.classList.add('hidden')\"><input type=\"hidden\" id=\"id\" name=\"id\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(params.Id))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/brewery_page.templ`, Line: 101, Col: 71}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/brewery_page.templ`, Line: 103, Col: 71}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -207,7 +207,7 @@ func BreweryForm(params BreweryFormParams, errs BreweryFormErrors) templ.Compone
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(errs.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/brewery_page.templ`, Line: 113, Col: 41}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/brewery_page.templ`, Line: 115, Col: 41}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
@@ -237,7 +237,7 @@ func BreweryForm(params BreweryFormParams, errs BreweryFormErrors) templ.Compone
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(params.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/brewery_page.templ`, Line: 122, Col: 24}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/brewery_page.templ`, Line: 124, Col: 24}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
@@ -268,7 +268,7 @@ func BreweryForm(params BreweryFormParams, errs BreweryFormErrors) templ.Compone
 			var templ_7745c5c3_Var14 string
 			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(errs.Country)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/brewery_page.templ`, Line: 144, Col: 44}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/brewery_page.templ`, Line: 146, Col: 44}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
@@ -291,7 +291,7 @@ func BreweryForm(params BreweryFormParams, errs BreweryFormErrors) templ.Compone
 			var templ_7745c5c3_Var15 string
 			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(errs.City)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/brewery_page.templ`, Line: 169, Col: 41}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/brewery_page.templ`, Line: 171, Col: 41}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {
@@ -339,7 +339,7 @@ func BreweryForm(params BreweryFormParams, errs BreweryFormErrors) templ.Compone
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/geo/countries?preselected=%s&showAllOption=false", strings.ToLower(params.CountryCode)))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/brewery_page.templ`, Line: 240, Col: 113}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/workspace/brewery_page.templ`, Line: 242, Col: 113}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 		if templ_7745c5c3_Err != nil {
