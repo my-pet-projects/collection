@@ -400,7 +400,7 @@ func BeerForm(params BeerFormParams, errs BeerFormErrors) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "</div></form><div id=\"beer-errors\" class=\"mt-6 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 shadow-md\"></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "</div></form><div id=\"beer-errors\" class=\"mt-6 hidden rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 shadow-md\"></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

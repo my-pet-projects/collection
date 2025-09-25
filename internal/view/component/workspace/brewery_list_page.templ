@@ -88,12 +88,12 @@ templ breweriesList(params BreweryListPageParams) {
 							params.set('size', sizeValue);
 							
 							// Override the parameters
-							event.detail.parameters = Object.fromEntries(params.entries());						
+							$event.detail.parameters = Object.fromEntries(params.entries());						
 						"
 				x-on:htmx:after-request="
 							searching = false;
-							hasErrors = !event.detail.successful;
-							const form = event.target;
+							hasErrors = !$event.detail.successful;
+							const form = $event.target;
 							const formData = new FormData(form);
 							const params = new URLSearchParams();
 							
