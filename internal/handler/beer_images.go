@@ -7,7 +7,7 @@ import (
 
 	"github.com/my-pet-projects/collection/internal/apperr"
 	"github.com/my-pet-projects/collection/internal/model"
-	"github.com/my-pet-projects/collection/internal/view/component/workspace"
+	beerpage "github.com/my-pet-projects/collection/internal/view/page/beer"
 	"github.com/my-pet-projects/collection/internal/web"
 )
 
@@ -30,11 +30,11 @@ func (h WorkspaceServer) HandleBeerImagesPage(reqResp *web.ReqRespPair) error {
 		return reqResp.RenderError(http.StatusInternalServerError, itemsErr)
 	}
 
-	beerPage := workspace.BeerPageData{
+	beerPage := beerpage.BeerPageData{
 		Beer:       *beer,
 		BeerMedias: items,
 	}
-	return reqResp.Render(workspace.BeerPageLayout(beerPage))
+	return reqResp.Render(beerpage.Page(beerPage))
 }
 
 func (h WorkspaceServer) SubmitBeerImages(reqResp *web.ReqRespPair) error {
@@ -87,9 +87,9 @@ func (h WorkspaceServer) SubmitBeerImages(reqResp *web.ReqRespPair) error {
 		return apperr.NewInternalServerError("Failed to update beer media items", updErr)
 	}
 
-	beerPage := workspace.BeerPageData{
+	beerPage := beerpage.BeerPageData{
 		Beer:       *beer,
 		BeerMedias: mediaItems,
 	}
-	return reqResp.Render(workspace.BeerImagesPage(beerPage))
+	return reqResp.Render(beerpage.Page(beerPage))
 }

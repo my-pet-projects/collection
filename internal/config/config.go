@@ -38,6 +38,10 @@ type TursoDbConfig struct {
 	AuthToken string
 }
 
+type AppConfig struct {
+	AuthCfg AuthConfig
+}
+
 // NewConfig creates application configuration.
 func NewConfig() (*Config, error) {
 	env, ok := os.LookupEnv("APP_ENV")

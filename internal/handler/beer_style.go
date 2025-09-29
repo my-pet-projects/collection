@@ -6,15 +6,16 @@ import (
 
 	"github.com/my-pet-projects/collection/internal/apperr"
 	"github.com/my-pet-projects/collection/internal/model"
-	"github.com/my-pet-projects/collection/internal/view/component/workspace"
+	"github.com/my-pet-projects/collection/internal/view/layout"
+	stylepage "github.com/my-pet-projects/collection/internal/view/page/style"
 	"github.com/my-pet-projects/collection/internal/web"
 )
 
 func (h WorkspaceServer) HandleBeerStyleListPage(reqResp *web.ReqRespPair) error {
-	beerStyleListPage := workspace.BeerStyleListPageData{
-		PageData: workspace.Page{Title: "Beer Style"},
+	beerStyleListPage := stylepage.BeerStyleListPageData{
+		PageData: layout.Page{Title: "Beer Style"},
 	}
-	return reqResp.Render(workspace.BeerStyleListPage(beerStyleListPage))
+	return reqResp.Render(stylepage.List(beerStyleListPage))
 }
 
 func (h WorkspaceServer) ListBeerStyles(reqResp *web.ReqRespPair) error {
@@ -34,7 +35,7 @@ func (h WorkspaceServer) ListBeerStyles(reqResp *web.ReqRespPair) error {
 		return apperr.NewInternalServerError("Failed to paginate beer styles", paginationErr)
 	}
 
-	pageData := workspace.BeerStyleTableData{
+	pageData := stylepage.BeerStyleTableData{
 		Styles:       pagination.Results,
 		Query:        query,
 		CurrentPage:  pagination.Page,
@@ -43,11 +44,11 @@ func (h WorkspaceServer) ListBeerStyles(reqResp *web.ReqRespPair) error {
 		LimitPerPage: pagination.Limit,
 	}
 
-	return reqResp.Render(workspace.BeerStylesTable(pageData))
+	return reqResp.Render(stylepage.BeerStylesTable(pageData))
 }
 
 func (h WorkspaceServer) HandleBeerStyleCreateView(reqResp *web.ReqRespPair) error {
-	return reqResp.Render(workspace.CreateBeerStyleRowView(model.BeerStyle{}, model.BeerStyleErrors{}))
+	return reqResp.Render(stylepage.CreateBeerStyleRowView(model.BeerStyle{}, model.BeerStyleErrors{}))
 }
 
 func (h WorkspaceServer) HandleBeerStyleCreateCancelView(reqResp *web.ReqRespPair) error {
@@ -59,14 +60,14 @@ func (h WorkspaceServer) CreateBeerStyle(reqResp *web.ReqRespPair) error {
 		Name: reqResp.Request.FormValue("name"),
 	}
 	if formErrs, hasErrs := style.Validate(); hasErrs {
-		return reqResp.Render(workspace.CreateBeerStyleRowView(style, formErrs))
+		return reqResp.Render(stylepage.CreateBeerStyleRowView(style, formErrs))
 	}
 	newStyle, styleErr := h.beerService.CreateBeerStyle(style)
 	if styleErr != nil {
 		return apperr.NewInternalServerError("Failed to create beer style", styleErr)
 	}
 	reqResp.TriggerHtmxNotifyEvent(web.NotifySuccessVariant, "Beer style created")
-	return reqResp.Render(workspace.DisplayBeerStyleRowView(*newStyle))
+	return reqResp.Render(stylepage.DisplayBeerStyleRowView(*newStyle))
 }
 
 func (h WorkspaceServer) SaveBeerStyle(reqResp *web.ReqRespPair) error {
@@ -79,14 +80,14 @@ func (h WorkspaceServer) SaveBeerStyle(reqResp *web.ReqRespPair) error {
 		Name: reqResp.Request.FormValue("name"),
 	}
 	if formErrs, hasErrs := style.Validate(); hasErrs {
-		return reqResp.Render(workspace.CreateBeerStyleRowView(style, formErrs))
+		return reqResp.Render(stylepage.CreateBeerStyleRowView(style, formErrs))
 	}
 	styleErr := h.beerService.UpdateBeerStyle(style)
 	if styleErr != nil {
 		return apperr.NewInternalServerError("Failed to update beer style", styleErr)
 	}
 	reqResp.TriggerHtmxNotifyEvent(web.NotifySuccessVariant, "Beer style updated")
-	return reqResp.Render(workspace.DisplayBeerStyleRowView(style))
+	return reqResp.Render(stylepage.DisplayBeerStyleRowView(style))
 }
 
 func (h WorkspaceServer) HandleBeerStyleDisplayRowView(reqResp *web.ReqRespPair) error {
@@ -98,7 +99,7 @@ func (h WorkspaceServer) HandleBeerStyleDisplayRowView(reqResp *web.ReqRespPair)
 	if styleErr != nil {
 		return apperr.NewInternalServerError("Failed to get beer style", styleErr)
 	}
-	return reqResp.Render(workspace.DisplayBeerStyleRowView(*style))
+	return reqResp.Render(stylepage.DisplayBeerStyleRowView(*style))
 }
 
 func (h WorkspaceServer) HandleBeerStyleEditRowView(reqResp *web.ReqRespPair) error {
@@ -110,7 +111,7 @@ func (h WorkspaceServer) HandleBeerStyleEditRowView(reqResp *web.ReqRespPair) er
 	if styleErr != nil {
 		return apperr.NewInternalServerError("Failed to get beer style", styleErr)
 	}
-	return reqResp.Render(workspace.EditBeerStyleRowView(*style, model.BeerStyleErrors{}))
+	return reqResp.Render(stylepage.EditBeerStyleRowView(*style, model.BeerStyleErrors{}))
 }
 
 func (h WorkspaceServer) DeleteBeerStyle(reqResp *web.ReqRespPair) error {
