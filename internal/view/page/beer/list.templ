@@ -80,24 +80,28 @@ templ ListPage(page BeerListPageData) {
 					x-on:htmx:response-error="searching = false; hasErrors = true;"
 					x-on:htmx:config-request="
 								const params = new URLSearchParams();
-								const searchValue = document.getElementById('search')?.value?.trim();
-								const countryValue = document.querySelector('[name=country]')?.value;
-								const sizeValue = document.querySelector('[name=size]').value;
+								const existingParams = $event.detail.parameters ?? {};
+								const triggerType = $event.detail.triggeringEvent?.type;
 
-								if (searchValue) {
-									params.set('query', searchValue);
+								const searchValue = document.getElementById('search')?.value ?? existingParams.query ?? '';
+								const countryValue = document.querySelector('[name=country]')?.value ?? existingParams.country ?? '';
+								const sizeValue = document.querySelector('[name=size]')?.value ?? existingParams.size ?? '';
+
+								if (searchValue.trim().length > 0) {
+									params.set('query', searchValue.trim());
 								}
 								if (countryValue) {
 									params.set('country', countryValue);
 								}
-								if (!params.has('page')) {
-									params.set('page', '1');
+								if (sizeValue) {
+									params.set('size', sizeValue);
 								}
 
-								params.set('size', sizeValue);
+								const shouldResetPage = triggerType !== 'click';
+								const requestedPage = shouldResetPage ? '1' : (existingParams.page ?? '1');
+								params.set('page', requestedPage);
 
-								// Override the parameters
-								event.detail.parameters = Object.fromEntries(params.entries());
+								$event.detail.parameters = Object.fromEntries(params.entries());
 							"
 					x-on:htmx:after-request="
 								searching = false;

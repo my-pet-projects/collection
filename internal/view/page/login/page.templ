@@ -48,8 +48,10 @@ templ Page(data LoginData) {
 								class="space-y-6"
 								x-data="{
 									loading: false,
+									errorMessage: '',
 									onSignIn: async function(e) {
 										this.loading = true; 
+										this.errorMessage = '';
 										try {
 											const identifier = document.getElementById('username').value.trim();
 											const password = document.getElementById('password').value.trim();
@@ -63,12 +65,15 @@ templ Page(data LoginData) {
 												window.location.assign('/workspace/beer');
 											} else {
 												console.error('Clerk sign in attempt has invalid status', JSON.stringify(res));
+												this.errorMessage = 'Sign-in failed. Please try again.';
 											}
 										} catch (err) {
 											if (err.clerkError) {
 												console.error('Failed to login', JSON.stringify(err));
+												this.errorMessage = err.errors?.[0]?.message || 'Invalid username or password.';
 											} else {
 												console.error(err);
+												this.errorMessage = 'An unexpected error occurred. Please try again.';
 											}
 										} finally {
 											this.loading = false;
@@ -77,6 +82,9 @@ templ Page(data LoginData) {
 								}"
 								x-on:submit.prevent="onSignIn($event)"
 							>
+								<div x-show="errorMessage" class="mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-800" role="alert">
+									<span x-text="errorMessage"></span>
+								</div>
 								<!-- Username Field -->
 								<div>
 									<label for="username" class="mb-2 block text-sm font-semibold text-gray-900">
