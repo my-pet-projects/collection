@@ -8,13 +8,16 @@ import (
 	"strings"
 
 	"github.com/my-pet-projects/collection/internal/apperr"
+	"github.com/my-pet-projects/collection/internal/config"
 	"github.com/my-pet-projects/collection/internal/model"
 	"github.com/my-pet-projects/collection/internal/service"
-	"github.com/my-pet-projects/collection/internal/view/component/workspace"
+	"github.com/my-pet-projects/collection/internal/view/layout"
+	brewerypage "github.com/my-pet-projects/collection/internal/view/page/brewery"
 	"github.com/my-pet-projects/collection/internal/web"
 )
 
 type WorkspaceServer struct {
+	appCfg         config.AppConfig
 	beerService    service.BeerService
 	breweryService service.BreweryService
 	geoService     service.GeographyService
@@ -23,6 +26,7 @@ type WorkspaceServer struct {
 }
 
 func NewWorkspaceServer(
+	appCfg config.AppConfig,
 	beerService service.BeerService,
 	breweryService service.BreweryService,
 	geoService service.GeographyService,
@@ -30,6 +34,7 @@ func NewWorkspaceServer(
 	logger *slog.Logger,
 ) *WorkspaceServer {
 	return &WorkspaceServer{
+		appCfg:         appCfg,
 		beerService:    beerService,
 		breweryService: breweryService,
 		geoService:     geoService,
@@ -39,12 +44,12 @@ func NewWorkspaceServer(
 }
 
 func (h *WorkspaceServer) HandleBreweryListPage(reqResp *web.ReqRespPair) error {
-	page := workspace.Page{Title: fmt.Sprintf("Brewery Workspace")}
-	pageParams := workspace.BreweryListPageParams{
+	page := layout.Page{Title: fmt.Sprintf("Brewery Workspace")}
+	pageParams := brewerypage.ListPageParams{
 		Page:         page,
 		LimitPerPage: 5, //nolint:mnd
 	}
-	return reqResp.Render(workspace.BreweryListPage(pageParams))
+	return reqResp.Render(brewerypage.ListPage(pageParams))
 }
 
 func (h *WorkspaceServer) HandleBreweryPage(reqResp *web.ReqRespPair) error {
@@ -57,10 +62,10 @@ func (h *WorkspaceServer) HandleBreweryPage(reqResp *web.ReqRespPair) error {
 		return reqResp.RenderError(http.StatusInternalServerError, breweryErr)
 	}
 
-	page := workspace.Page{Title: fmt.Sprintf("Edit Brewery - %s", brewery.Name)}
-	breweryPage := workspace.BreweryPage{
+	page := layout.Page{Title: fmt.Sprintf("Edit Brewery - %s", brewery.Name)}
+	breweryPage := brewerypage.PageParams{
 		Page: page,
-		FormParams: workspace.BreweryFormParams{
+		FormParams: brewerypage.BreweryFormParams{
 			Id:          brewery.ID,
 			Name:        brewery.Name,
 			CountryCode: brewery.City.CountryCode,
@@ -68,15 +73,15 @@ func (h *WorkspaceServer) HandleBreweryPage(reqResp *web.ReqRespPair) error {
 		},
 	}
 
-	return reqResp.Render(workspace.BreweryPageLayout(breweryPage))
+	return reqResp.Render(brewerypage.BreweryPageLayout(breweryPage))
 }
 
 func (h *WorkspaceServer) HandleCreateBreweryPage(reqResp *web.ReqRespPair) error {
-	page := workspace.Page{Title: fmt.Sprintf("Create Brewery")}
-	breweryPage := workspace.BreweryPage{
+	page := layout.Page{Title: fmt.Sprintf("Create Brewery")}
+	breweryPage := brewerypage.PageParams{
 		Page: page,
 	}
-	return reqResp.Render(workspace.BreweryPageLayout(breweryPage))
+	return reqResp.Render(brewerypage.BreweryPageLayout(breweryPage))
 }
 
 func (h *WorkspaceServer) SubmitBreweryPage(reqResp *web.ReqRespPair) error {
@@ -84,7 +89,7 @@ func (h *WorkspaceServer) SubmitBreweryPage(reqResp *web.ReqRespPair) error {
 	id, _ := strconv.Atoi(idStr)
 	geoIdStr := reqResp.Request.FormValue("city")
 	geoId, _ := strconv.Atoi(geoIdStr)
-	formParams := workspace.BreweryFormParams{
+	formParams := brewerypage.BreweryFormParams{
 		Id:          id,
 		Name:        strings.TrimSpace(reqResp.Request.FormValue("name")),
 		CountryCode: reqResp.Request.FormValue("country"),
@@ -92,7 +97,7 @@ func (h *WorkspaceServer) SubmitBreweryPage(reqResp *web.ReqRespPair) error {
 	}
 
 	if formErrs, hasErrs := formParams.Validate(); hasErrs {
-		return reqResp.Render(workspace.BreweryForm(formParams, formErrs))
+		return reqResp.Render(brewerypage.Form(formParams, formErrs))
 	}
 
 	if formParams.Id == 0 {
@@ -111,7 +116,7 @@ func (h *WorkspaceServer) SubmitBreweryPage(reqResp *web.ReqRespPair) error {
 		return reqResp.RenderError(http.StatusInternalServerError, updErr)
 	}
 
-	return reqResp.Render(workspace.BreweryForm(formParams, workspace.BreweryFormErrors{}))
+	return reqResp.Render(brewerypage.Form(formParams, brewerypage.BreweryFormErrors{}))
 }
 
 func (h *WorkspaceServer) ListBreweries(reqResp *web.ReqRespPair) error {
@@ -144,7 +149,7 @@ func (h *WorkspaceServer) ListBreweries(reqResp *web.ReqRespPair) error {
 		return apperr.NewInternalServerError("Failed to paginate breweries", paginationErr)
 	}
 
-	return reqResp.Render(workspace.BreweryListContent(workspace.BreweryListData{
+	return reqResp.Render(brewerypage.TableContent(brewerypage.BreweryListData{
 		Breweries:    pagination.Results,
 		Query:        query,
 		CountryIso:   country,

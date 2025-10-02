@@ -92,12 +92,16 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 	s3Client := s3.NewFromConfig(sdkConfig)
 	s3Storage := storage.NewS3Storage(s3Client, logger)
 
-	config := &clerk.ClientConfig{
+	clerkCfg := &clerk.ClientConfig{
 		BackendConfig: clerk.BackendConfig{
 			Key: &cfg.AuthConfig.ClerkSecretKey,
 		},
 	}
-	userClient := user.NewClient(config)
+	userClient := user.NewClient(clerkCfg)
+
+	appCfg := config.AppConfig{
+		AuthCfg: cfg.AuthConfig,
+	}
 
 	geoService := service.NewGeographyService(&geoStore, logger)
 	breweryService := service.NewBreweryService(&breweryStore, &geoStore, logger)
@@ -106,7 +110,7 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 
 	geoHandler := handler.NewGeographyHandler(geoService, logger)
 	// beerHandler := handler.NewBeerHandler(beerService, breweryService, logger)
-	workspaceSrv := handler.NewWorkspaceServer(beerService, breweryService, geoService, imageService, logger)
+	workspaceSrv := handler.NewWorkspaceServer(appCfg, beerService, breweryService, geoService, imageService, logger)
 	uploadHandler := handler.NewUploadHandler(imageService, logger)
 	authHandler := handler.NewAuthenticationHandler(cfg.AuthConfig, logger)
 
