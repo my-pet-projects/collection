@@ -11,7 +11,9 @@ import (
 	"github.com/my-pet-projects/collection/internal/apperr"
 	"github.com/my-pet-projects/collection/internal/model"
 	"github.com/my-pet-projects/collection/internal/service"
-	"github.com/my-pet-projects/collection/internal/view/component/workspace"
+	"github.com/my-pet-projects/collection/internal/view/layout"
+	imagepage "github.com/my-pet-projects/collection/internal/view/page/image"
+	uploadpage "github.com/my-pet-projects/collection/internal/view/page/upload"
 	"github.com/my-pet-projects/collection/internal/web"
 )
 
@@ -28,10 +30,10 @@ func NewUploadHandler(imageSvc service.ImageService, logger *slog.Logger) Upload
 }
 
 func (h UploadHandler) UploadImagePage(reqResp *web.ReqRespPair) error {
-	beerPage := workspace.UploadPage{
-		Page: workspace.Page{Title: "Upload Image"},
+	beerPage := uploadpage.UploadPage{
+		Page: layout.Page{Title: "Upload Image"},
 	}
-	return reqResp.Render(workspace.WorkspaceUploadPage(beerPage))
+	return reqResp.Render(uploadpage.Page(beerPage))
 }
 
 func (h UploadHandler) UploadImage(reqResp *web.ReqRespPair) error {
@@ -80,11 +82,11 @@ func (h UploadHandler) HandleImagesPage(reqResp *web.ReqRespPair) error {
 		return apperr.NewInternalServerError("Failed to fetch images", imagesErr)
 	}
 
-	pageData := workspace.ImagePageData{
+	pageData := imagepage.ImagePageData{
 		Images: images,
 	}
 
-	return reqResp.Render(workspace.ImagesPage(pageData))
+	return reqResp.Render(imagepage.Page(pageData))
 }
 
 func (h UploadHandler) DeleteBeerMedia(reqResp *web.ReqRespPair) error {

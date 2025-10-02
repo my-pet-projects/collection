@@ -1,0 +1,23 @@
+package component
+
+import (
+	"fmt"
+
+	"github.com/my-pet-projects/collection/internal/view/component/ui"
+)
+
+templ BreweriesAutocomplete(data BreweriesData) {
+	{{
+		props := ui.AutoCompleteProps{
+			ID:             "brewery",
+			Name:           "brewery",
+			Data:           data.ToAutocompleteData(),
+			EventNamespace: "brewery",
+			HasError:       data.HasError,
+		}
+		if data.SelectedBrewery != nil {
+			props.PreselectedValue = fmt.Sprint(*data.SelectedBrewery)
+		}
+	}}
+	@ui.AutoComplete(props)
+}

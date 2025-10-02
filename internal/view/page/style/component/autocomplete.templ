@@ -1,0 +1,23 @@
+package component
+
+import (
+	"fmt"
+
+	"github.com/my-pet-projects/collection/internal/view/component/ui"
+)
+
+templ StylesAutocomplete(data StyleData) {
+	{{
+		props := ui.AutoCompleteProps{
+			ID:             "style",
+			Name:           "style",
+			Data:           data.ToAutocompleteData(),
+			EventNamespace: "style",
+			HasError:       data.HasError,
+		}
+		if data.SelectedStyleId != nil {
+			props.PreselectedValue = fmt.Sprint(*data.SelectedStyleId)
+		}
+	}}
+	@ui.AutoComplete(props)
+}

@@ -10,7 +10,8 @@ import (
 	"github.com/my-pet-projects/collection/internal/apperr"
 	"github.com/my-pet-projects/collection/internal/model"
 	"github.com/my-pet-projects/collection/internal/service"
-	"github.com/my-pet-projects/collection/internal/view/component/workspace"
+	"github.com/my-pet-projects/collection/internal/view/layout"
+	beerpage "github.com/my-pet-projects/collection/internal/view/page/beer"
 	"github.com/my-pet-projects/collection/internal/web"
 )
 
@@ -38,16 +39,16 @@ func (h WorkspaceServer) HandleBeerListPage(reqResp *web.ReqRespPair) error {
 		return apperr.NewBadRequestError("Invalid country", countryErr)
 	}
 
-	page := workspace.Page{Title: fmt.Sprintf("Beer Workspace")}
-	beerPage := workspace.BeerListPageData{
+	page := layout.Page{Title: fmt.Sprintf("Beer Workspace")}
+	beerPage := beerpage.BeerListPageData{
 		Page: page,
-		SearchData: workspace.BeerListSearchData{
+		SearchData: beerpage.BeerListSearchData{
 			Query:      query,
 			CountryIso: country,
 		},
 		LimitPerPage: 20, //nolint:mnd
 	}
-	return reqResp.Render(workspace.BeerListPage(beerPage))
+	return reqResp.Render(beerpage.ListPage(beerPage))
 }
 
 func (h WorkspaceServer) HandleBeerPage(reqResp *web.ReqRespPair) error {
@@ -68,11 +69,11 @@ func (h WorkspaceServer) HandleBeerPage(reqResp *web.ReqRespPair) error {
 		return reqResp.RenderError(http.StatusInternalServerError, stylesErr)
 	}
 
-	page := workspace.Page{Title: fmt.Sprintf("Edit Beer - %s", beer.Brand)}
-	beerPage := workspace.BeerPageData{
+	page := layout.Page{Title: fmt.Sprintf("Edit Beer - %s", beer.Brand)}
+	beerPage := beerpage.BeerPageData{
 		Page: page,
 		Beer: *beer,
-		FormParams: workspace.BeerFormParams{
+		FormParams: beerpage.BeerFormParams{
 			ID:        beer.ID,
 			Brand:     beer.Brand,
 			Type:      beer.Type,
@@ -85,7 +86,7 @@ func (h WorkspaceServer) HandleBeerPage(reqResp *web.ReqRespPair) error {
 		},
 	}
 
-	return reqResp.Render(workspace.BeerPageLayout(beerPage))
+	return reqResp.Render(beerpage.Page(beerPage))
 }
 
 func (h WorkspaceServer) HandleCreateBeerPage(reqResp *web.ReqRespPair) error {
@@ -98,15 +99,15 @@ func (h WorkspaceServer) HandleCreateBeerPage(reqResp *web.ReqRespPair) error {
 		return reqResp.RenderError(http.StatusInternalServerError, stylesErr)
 	}
 
-	page := workspace.Page{Title: fmt.Sprintf("Create beer")}
-	beerPage := workspace.BeerPageData{
+	page := layout.Page{Title: fmt.Sprintf("Create beer")}
+	beerPage := beerpage.BeerPageData{
 		Page: page,
-		FormParams: workspace.BeerFormParams{
+		FormParams: beerpage.BeerFormParams{
 			Breweries: breweries,
 			Styles:    styles,
 		},
 	}
-	return reqResp.Render(workspace.BeerCreatePageLayout(beerPage))
+	return reqResp.Render(beerpage.Page(beerPage))
 }
 
 func (h WorkspaceServer) SubmitBeerPage(reqResp *web.ReqRespPair) error {
@@ -122,7 +123,7 @@ func (h WorkspaceServer) SubmitBeerPage(reqResp *web.ReqRespPair) error {
 		beerType = &beerTypeStr
 	}
 	isActive := reqResp.Request.FormValue("isActive") == "true"
-	formParams := workspace.BeerFormParams{
+	formParams := beerpage.BeerFormParams{
 		ID:        id,
 		Brand:     strings.TrimSpace(reqResp.Request.FormValue("brand")),
 		Type:      beerType,
@@ -142,14 +143,14 @@ func (h WorkspaceServer) SubmitBeerPage(reqResp *web.ReqRespPair) error {
 	formParams.Styles = styles
 
 	if formErrs, hasErrs := formParams.Validate(); hasErrs {
-		return reqResp.Render(workspace.BeerForm(formParams, formErrs))
+		return reqResp.Render(beerpage.Form(formParams, formErrs))
 	}
 
 	if formParams.ID == 0 {
 		newBeer, createErr := h.beerService.CreateBeer(formParams.Brand, formParams.Type, &styleId, &breweryId, isActive)
 		if createErr != nil {
 			h.logger.Error("create beer", slog.Any("error", createErr))
-			return reqResp.Render(workspace.BeerForm(formParams, workspace.BeerFormErrors{Error: createErr.Error()}))
+			return reqResp.Render(beerpage.Form(formParams, beerpage.BeerFormErrors{Error: createErr.Error()}))
 		}
 		return reqResp.Redirect(fmt.Sprintf("/workspace/beer/%d/overview", newBeer.ID))
 	}
@@ -157,10 +158,10 @@ func (h WorkspaceServer) SubmitBeerPage(reqResp *web.ReqRespPair) error {
 	updErr := h.beerService.UpdateBeer(formParams.ID, formParams.Brand, formParams.Type, &styleId, &breweryId, isActive)
 	if updErr != nil {
 		h.logger.Error("update beer", slog.Any("error", updErr))
-		return reqResp.Render(workspace.BeerForm(formParams, workspace.BeerFormErrors{Error: updErr.Error()}))
+		return reqResp.Render(beerpage.Form(formParams, beerpage.BeerFormErrors{Error: updErr.Error()}))
 	}
 
-	return reqResp.Render(workspace.BeerForm(formParams, workspace.BeerFormErrors{}))
+	return reqResp.Render(beerpage.Form(formParams, beerpage.BeerFormErrors{}))
 }
 
 func (h WorkspaceServer) ListBeers(reqResp *web.ReqRespPair) error {
@@ -192,7 +193,7 @@ func (h WorkspaceServer) ListBeers(reqResp *web.ReqRespPair) error {
 		return apperr.NewInternalServerError("Failed to paginate beers", paginationErr)
 	}
 
-	pageData := workspace.BeerListData{
+	pageData := beerpage.BeerListData{
 		Beers:        pagination.Results,
 		Query:        query,
 		CountryIso:   country,
@@ -202,7 +203,7 @@ func (h WorkspaceServer) ListBeers(reqResp *web.ReqRespPair) error {
 		LimitPerPage: pagination.Limit,
 	}
 
-	return reqResp.Render(workspace.BeerList(pageData))
+	return reqResp.Render(beerpage.BeerList(pageData))
 }
 
 func (h WorkspaceServer) DeleteBeer(reqResp *web.ReqRespPair) error {
