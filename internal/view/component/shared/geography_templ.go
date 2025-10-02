@@ -10,9 +10,11 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	"fmt"
-	"github.com/my-pet-projects/collection/internal/model"
 	"strconv"
 	"strings"
+
+	"github.com/my-pet-projects/collection/internal/model"
+	"github.com/my-pet-projects/collection/internal/view/component/ui"
 )
 
 type CountriesData struct {
@@ -22,10 +24,10 @@ type CountriesData struct {
 	ShowAllOption      bool
 }
 
-func (c CountriesData) ToAutocompleteData() []AutoCompleteData {
-	data := make([]AutoCompleteData, len(c.Countries))
+func (c CountriesData) ToAutocompleteData() []ui.AutoCompleteData {
+	data := make([]ui.AutoCompleteData, len(c.Countries))
 	for i, country := range c.Countries {
-		data[i] = AutoCompleteData{
+		data[i] = ui.AutoCompleteData{
 			Label: country.NameCommon,
 			Value: strings.ToLower(country.Cca2),
 			Image: fmt.Sprintf("https://flagcdn.com/%s.svg", strings.ToLower(country.Cca2)),
@@ -55,7 +57,7 @@ func CountriesAutoComplete(countriesData CountriesData) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = AutoComplete(AutoCompleteProps{
+		templ_7745c5c3_Err = ui.AutoComplete(ui.AutoCompleteProps{
 			ID:               "country",
 			Name:             "country",
 			Data:             countriesData.ToAutocompleteData(),
@@ -79,10 +81,10 @@ type CitiesData struct {
 	ShowAllOption   bool
 }
 
-func (c CitiesData) ToAutocompleteData() []AutoCompleteData {
-	data := make([]AutoCompleteData, len(c.Cities))
+func (c CitiesData) ToAutocompleteData() []ui.AutoCompleteData {
+	data := make([]ui.AutoCompleteData, len(c.Cities))
 	for i, city := range c.Cities {
-		data[i] = AutoCompleteData{
+		data[i] = ui.AutoCompleteData{
 			Label: city.Name,
 			Value: strconv.Itoa(city.ID),
 		}
@@ -111,7 +113,7 @@ func CitiesAutoComplete(citiesData CitiesData) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = AutoComplete(AutoCompleteProps{
+		templ_7745c5c3_Err = ui.AutoComplete(ui.AutoCompleteProps{
 			ID:               "city",
 			Name:             "city",
 			Data:             citiesData.ToAutocompleteData(),

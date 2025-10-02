@@ -4,7 +4,7 @@ import (
 	"log/slog"
 
 	"github.com/my-pet-projects/collection/internal/config"
-	"github.com/my-pet-projects/collection/internal/view/login"
+	loginpage "github.com/my-pet-projects/collection/internal/view/page/login"
 	"github.com/my-pet-projects/collection/internal/web"
 )
 
@@ -18,9 +18,9 @@ func NewAuthenticationHandler(cfg config.AuthConfig, logger *slog.Logger) Authen
 }
 
 func (h AuthenticationHandler) HandleLoginPage(reqResp *web.ReqRespPair) error {
-	data := login.LoginData{
+	data := loginpage.LoginData{
 		ClerkAuthHost:       h.cfg.ClerkAuthHost,
 		ClerkPublishableKey: h.cfg.ClerkPublishableKey,
 	}
-	return reqResp.Render(login.LoginPage(data))
+	return reqResp.Render(loginpage.Page(data))
 }
