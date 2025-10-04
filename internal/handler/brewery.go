@@ -101,7 +101,7 @@ func (h *WorkspaceServer) SubmitBreweryPage(reqResp *web.ReqRespPair) error {
 	}
 
 	if formParams.Id == 0 {
-		newBrewery, createErr := h.breweryService.CreateBrewery(formParams.Name, formParams.CityId)
+		newBrewery, createErr := h.breweryService.CreateBrewery(formParams.Name, formParams.CityId, formParams.CountryCode)
 		if createErr != nil {
 			h.logger.Error("create brewery", slog.Any("error", createErr))
 			return reqResp.RenderError(http.StatusInternalServerError, createErr)
@@ -110,7 +110,7 @@ func (h *WorkspaceServer) SubmitBreweryPage(reqResp *web.ReqRespPair) error {
 		return nil
 	}
 
-	updErr := h.breweryService.UpdateBrewery(formParams.Id, formParams.Name, formParams.CityId)
+	updErr := h.breweryService.UpdateBrewery(formParams.Id, formParams.Name, formParams.CityId, formParams.CountryCode)
 	if updErr != nil {
 		h.logger.Error("update brewery", slog.Any("error", updErr))
 		return reqResp.RenderError(http.StatusInternalServerError, updErr)

@@ -14,6 +14,7 @@ import (
 	"github.com/my-pet-projects/collection/internal/view/layout"
 	imagepage "github.com/my-pet-projects/collection/internal/view/page/image"
 	uploadpage "github.com/my-pet-projects/collection/internal/view/page/upload"
+	uploadcomponent "github.com/my-pet-projects/collection/internal/view/page/upload/component"
 	"github.com/my-pet-projects/collection/internal/web"
 )
 
@@ -43,8 +44,13 @@ func (h UploadHandler) UploadImage(reqResp *web.ReqRespPair) error {
 		return reqResp.RenderAppError(formErr)
 	}
 
+	beerID, parseErr := reqResp.GetIntFormValues("beerID")
+	if parseErr != nil {
+		return reqResp.Render(uploadcomponent.UploadError(parseErr.Error()))
+	}
+
 	images := []model.UploadFormValues{}
-	for _, fileHeader := range reqResp.Request.MultipartForm.File["files"] {
+	for _, fileHeader := range reqResp.Request.MultipartForm.File["images"] {
 		src, srcErr := fileHeader.Open()
 		if srcErr != nil {
 			h.logger.Error("Failed to open multipart file", slog.Any("error", srcErr))
@@ -59,21 +65,33 @@ func (h UploadHandler) UploadImage(reqResp *web.ReqRespPair) error {
 			return reqResp.RenderAppError(copyErr)
 		}
 
-		images = append(images, model.UploadFormValues{
+		uploadValues := model.UploadFormValues{
 			Filename:    fileHeader.Filename,
 			Content:     buf.Bytes(),
 			ContentType: fileHeader.Header.Get("Content-Type"),
-		})
+		}
+		if len(beerID) != 0 {
+			uploadValues.BeerID = &beerID[0]
+		}
+
+		images = append(images, uploadValues)
 	}
 
 	uploadErr := h.imageSvc.UploadImage(reqResp.Request.Context(), images)
 	if uploadErr != nil {
 		h.logger.Error("Failed to upload image", slog.Any("error", uploadErr))
 		return reqResp.RenderAppError(uploadErr)
-
 	}
 
-	return reqResp.NoContent()
+	uploadResults := make([]uploadcomponent.UploadResult, 0, len(images))
+	for _, img := range images {
+		uploadResults = append(uploadResults, uploadcomponent.UploadResult{
+			Filename: img.Filename,
+			BeerID:   img.BeerID,
+		})
+	}
+
+	return reqResp.Render(uploadcomponent.UploadSuccess(uploadResults))
 }
 
 func (h UploadHandler) HandleImagesPage(reqResp *web.ReqRespPair) error {

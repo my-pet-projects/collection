@@ -1,0 +1,352 @@
+package component
+
+import (
+	"fmt"
+
+	"github.com/my-pet-projects/collection/internal/model"
+)
+
+type UploadParams struct {
+	Beer     *model.Beer
+	ShowHint bool
+}
+
+templ BeerImagesUpload(params UploadParams) {
+	<div
+		id="upload-section"
+		x-data="{
+			previews: [],
+			uploading: false,
+			progress: 0,
+			dragOver: false,
+			uploadError: '',
+			maxFileSizeMB: 5,
+			allowedFileTypes: ['image/png'],
+			
+			handleFiles(inputFiles) {
+				const uploadResultDiv = document.getElementById('upload-result');
+				if (uploadResultDiv) {
+					uploadResultDiv.innerHTML = '';
+				}
+				this.uploadError = '';
+
+				let filesToAdd = [];
+				for (let i = 0; i < inputFiles.length; i++) {
+					const file = inputFiles[i];
+					const maxBytes = this.maxFileSizeMB * 1024 * 1024;
+					
+					if (file.size > maxBytes) {
+						this.uploadError = `File '${file.name}' (${this.formatFileSize(file.size)}) is too large. Max size is ${this.maxFileSizeMB}MB.`;
+						continue;
+					}
+					if (!this.allowedFileTypes.includes(file.type)) {
+						const allowedExts = this.allowedFileTypes.map(type => type.split('/')[1] || type.split('/')[0]).join(', ').toUpperCase();
+						this.uploadError = `File '${file.name}' has an unsupported type (${file.type.split('/')[1] || file.type}). Only ${allowedExts} are allowed.`;
+						continue;
+					}
+					
+					filesToAdd.push(file);
+					if (file.type.startsWith('image/')) {
+						const reader = new FileReader();
+						reader.onload = (e) => {
+							this.previews.push({
+								name: file.name,
+								size: file.size,
+								url: e.target.result
+							});
+						};
+						reader.readAsDataURL(file);
+					}
+				}
+
+				const dataTransfer = new DataTransfer();
+				filesToAdd.forEach(file => dataTransfer.items.add(file));
+				this.$refs.fileInput.files = dataTransfer.files;
+
+				// Reset previews if there was an error and no files were added
+				if (this.uploadError && filesToAdd.length === 0) {
+					this.previews = [];
+				}
+			},
+						
+			removePreview(index) {
+				const dt = new DataTransfer();
+				let currentFiles = Array.from(this.$refs.fileInput.files);
+				currentFiles.splice(index, 1);
+
+				currentFiles.forEach(file => dt.items.add(file));
+				this.$refs.fileInput.files = dt.files;
+
+				this.previews.splice(index, 1);
+				if (this.previews.length === 0) {
+					this.$refs.fileInput.value = '';
+					this.uploadError = '';
+					const uploadResultDiv = document.getElementById('upload-result');
+					if (uploadResultDiv) {
+						uploadResultDiv.innerHTML = '';
+					}
+				}
+			},
+
+			clearAll() {
+				this.previews = [];
+				this.$refs.fileInput.value = '';
+				this.uploadError = '';
+				this.uploading = false;
+				this.progress = 0;
+				const uploadResultDiv = document.getElementById('upload-result');
+				if (uploadResultDiv) {
+					uploadResultDiv.innerHTML = '';
+				}
+			},
+
+			formatFileSize(bytes) {
+				if (bytes === 0) return '0 Bytes';
+				const k = 1024;
+				const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+				const i = Math.floor(Math.log(bytes) / Math.log(k));
+				return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+			}
+		}"
+		@dragover.prevent="dragOver = true"
+		@dragleave.prevent="dragOver = false"
+		@drop.prevent="
+			dragOver = false;
+			handleFiles($event.dataTransfer.files);
+		"
+	>
+		<form
+			hx-post="/workspace/images/uploads"
+			hx-encoding="multipart/form-data"
+			hx-target="#upload-result"
+			hx-swap="innerHTML"
+			@htmx:before-request="uploading = true; progress = 0; uploadError = '';"
+			@htmx:xhr:progress="
+				if ($event.detail.lengthComputable) {
+					// Cap actual upload progress at 90%
+					progress = Math.min(Math.round(($event.detail.loaded / $event.detail.total) * 90), 90);
+				}
+			"
+			@htmx:xhr:loadend="
+				if (progress < 100) {
+					progress = 95; // After upload is complete, simulate processing before final complete
+				}
+			"
+			@htmx:after-request="
+				progress = 100;
+				setTimeout(() => {
+					uploading = false;
+					if (document.getElementById('upload-result').innerHTML.includes('Upload Successful')) {
+						previews = [];
+						$refs.fileInput.value = '';
+					}
+				}, 1000);
+			"
+			@htmx:response-error="
+				uploading = false;
+				progress = 0;
+				console.error('Upload Error:', $event.detail.xhr.status, $event.detail.xhr.responseText);
+			"
+		>
+			if params.Beer != nil {
+				<input type="hidden" name="beerID" value={ fmt.Sprint(params.Beer.ID) }/>
+			}
+			<!-- Compact Upload Area -->
+			<div
+				class="relative mb-6 rounded-2xl border-2 border-dashed p-6 transition-all duration-300 focus-within:ring-2 focus-within:ring-amber-500 focus-within:ring-offset-2"
+				:class="{
+					'border-amber-500 bg-amber-50 scale-[1.02]': dragOver,
+					'border-gray-300 bg-gray-50 hover:border-gray-400 hover:bg-gray-100': !dragOver && !uploadError,
+					'border-red-500 bg-red-50': uploadError
+				}"
+			>
+				<label for="fileInput" class="absolute inset-0 cursor-pointer"></label>
+				<div class="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
+					<div class="flex items-center gap-4">
+						<svg class="h-10 w-10 flex-shrink-0 text-gray-400 transition-transform duration-300" :class="{ 'scale-110 text-amber-500': dragOver, 'text-red-500': uploadError }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"></path>
+						</svg>
+						<div class="text-left">
+							<p class="text-lg font-semibold text-gray-900" x-text="dragOver ? 'Drop your images here!' : (uploadError ? 'Validation Error' : 'Add More Images')"></p>
+							<p class="text-sm text-gray-600" x-show="!uploadError">Drop images here or click to browse. Max <span x-text="maxFileSizeMB"></span>MB per file.</p>
+							<p class="text-sm font-medium text-red-600" x-show="uploadError" x-text="uploadError"></p>
+						</div>
+					</div>
+					<div class="flex gap-2 text-xs text-gray-500">
+						<div class="rounded-lg bg-white px-3 py-2 shadow-sm ring-1 ring-gray-100">
+							<div class="font-medium text-gray-700">Bottles</div>
+							<div>138×400px</div>
+						</div>
+						<div class="rounded-lg bg-white px-3 py-2 shadow-sm ring-1 ring-gray-100">
+							<div class="font-medium text-gray-700">Caps</div>
+							<div>800×800px</div>
+						</div>
+						<div class="rounded-lg bg-white px-3 py-2 shadow-sm ring-1 ring-gray-100">
+							<div class="font-medium text-gray-700">Labels</div>
+							<div>1000/1500/2000px</div>
+						</div>
+					</div>
+				</div>
+				<input
+					type="file"
+					id="fileInput"
+					name="images"
+					multiple
+					accept="image/*"
+					class="hidden"
+					x-ref="fileInput"
+					@change="handleFiles($event.target.files);"
+				/>
+			</div>
+			if params.ShowHint {
+				<!-- Empty State / Hint -->
+				<div x-show="previews.length === 0 && !uploading && !uploadError" x-cloak class="mb-8 p-6 text-center text-gray-500">
+					<svg class="mx-auto h-12 w-12 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+					</svg>
+					<p class="mt-3 text-lg font-medium">No images selected yet.</p>
+					<p class="text-sm">Drag & drop your first image or click the box above.</p>
+				</div>
+			}
+			<!-- Preview Grid -->
+			<div x-show="previews.length > 0" x-cloak class="mb-8">
+				<div class="mb-4 flex items-center justify-between">
+					<h3 class="text-lg font-semibold text-gray-900">
+						<span x-text="previews.length"></span>
+						<span x-text="previews.length === 1 ? 'image' : 'images'"></span> ready to upload
+					</h3>
+					<button
+						type="button"
+						@click="clearAll()"
+						class="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900"
+					>
+						Clear all
+					</button>
+				</div>
+				<div class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+					<template x-for="(preview, index) in previews" :key="index">
+						<div class="group relative">
+							<div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-md transition-all duration-200 hover:border-gray-300 hover:shadow-lg">
+								<!-- Image Container -->
+								<div class="relative aspect-square bg-gray-50 p-2">
+									<img
+										:src="preview.url"
+										:alt="preview.name"
+										class="h-full w-full object-contain"
+									/>
+									<!-- Remove Button -->
+									<button
+										type="button"
+										@click.stop="removePreview(index)"
+										class="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white text-gray-600 opacity-0 shadow-md ring-1 ring-gray-200 transition-all duration-200 hover:scale-110 hover:bg-red-500 hover:text-white hover:ring-red-500 group-hover:opacity-100"
+										title="Remove image"
+									>
+										<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+										</svg>
+									</button>
+								</div>
+								<!-- File Info -->
+								<div class="truncate border-t border-gray-100 bg-white px-3 py-2">
+									<p class="text-xs font-medium text-gray-900" x-text="preview.name"></p>
+									<p class="mt-0.5 text-xs text-gray-500" x-text="formatFileSize(preview.size)"></p>
+								</div>
+							</div>
+						</div>
+					</template>
+				</div>
+			</div>
+			<!-- Progress Bar -->
+			<div x-show="uploading" x-cloak class="mb-8">
+				<div class="h-3 overflow-hidden rounded-full bg-gray-200 shadow-inner">
+					<div
+						class="h-full rounded-full bg-gradient-to-r from-amber-500 to-orange-500 shadow-sm transition-all duration-300 ease-out"
+						:style="`width: ${progress}%`"
+					></div>
+				</div>
+				<div class="mt-2 flex items-center justify-between text-sm">
+					<span class="font-medium text-gray-700" x-text="progress < 90 ? 'Uploading images...' : (progress < 100 ? 'Processing images...' : 'Complete!')"></span>
+					<span class="font-semibold text-amber-600" x-text="`${progress}%`"></span>
+				</div>
+			</div>
+			<!-- Upload Button -->
+			<div x-show="previews.length > 0" x-cloak class="flex justify-center">
+				<button
+					type="submit"
+					class="inline-flex min-w-[200px] items-center justify-center rounded-2xl bg-gray-900 px-8 py-3 font-medium text-white shadow-lg transition-all duration-300 hover:scale-105 hover:bg-gray-800 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-gray-400 disabled:opacity-50 disabled:shadow-none"
+					:disabled="uploading || previews.length === 0"
+				>
+					<span x-show="uploading" class="flex items-center">
+						<svg class="mr-2 h-5 w-5 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+							<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+							<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+						</svg>
+						Uploading...
+					</span>
+					<span x-show="!uploading" class="flex items-center">
+						<svg class="mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+						</svg>
+						Upload Images
+					</span>
+				</button>
+			</div>
+		</form>
+		<!-- Results -->
+		<div id="upload-result" class="mb-6 mt-6"></div>
+	</div>
+}
+
+templ UploadSuccess(uploadResults []UploadResult) {
+	<div class="animate-in fade-in slide-in-from-bottom-4 rounded-2xl border border-green-200 bg-green-50 p-6 shadow-md duration-500">
+		<div class="flex items-start">
+			<div class="flex-shrink-0">
+				<svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+				</svg>
+			</div>
+			<div class="ml-3 flex-1">
+				<h3 class="text-lg font-semibold text-green-900">Upload Successful!</h3>
+				<p class="mt-1 text-sm text-green-700">
+					Successfully uploaded { fmt.Sprint(len(uploadResults)) }
+					if len(uploadResults) == 1 {
+						image
+					} else {
+						images
+					}
+					if len(uploadResults) != 0 && uploadResults[0].BeerID != nil {
+						<span>`{ "for" }` beer ID { *uploadResults[0].BeerID }</span>
+					}
+					.
+					The images will appear in the gallery after processing.
+				</p>
+				<div class="mt-4 space-y-2">
+					for _, result := range uploadResults {
+						<div class="flex items-center text-sm text-green-700">
+							<svg class="mr-2 h-4 w-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+								<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+							</svg>
+							<span class="font-medium">{ result.Filename }</span>
+						</div>
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+templ UploadError(message string) {
+	<div class="animate-in fade-in slide-in-from-bottom-4 rounded-2xl border border-red-200 bg-red-50 p-6 shadow-md duration-500">
+		<div class="flex items-start">
+			<div class="flex-shrink-0">
+				<svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+				</svg>
+			</div>
+			<div class="ml-3">
+				<h3 class="text-lg font-semibold text-red-900">Upload Failed</h3>
+				<p class="mt-1 text-sm text-red-700">{ message }</p>
+			</div>
+		</div>
+	</div>
+}
