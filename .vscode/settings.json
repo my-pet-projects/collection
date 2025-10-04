@@ -1,17 +1,48 @@
 {
   "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  },
+
   "[yaml]": {
     "editor.autoIndent": "advanced"
   },
+
   "[templ]": {
     "editor.defaultFormatter": "a-h.templ"
   },
+
+  "[go]": {
+    "editor.defaultFormatter": "golang.go",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  },
+
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
   "tailwindCSS.includeLanguages": {
     "templ": "html"
   },
+  "tailwindCSS.experimental.classRegex": [
+    ["class\\s*=\\s*\"([^\"]*)\"", "([^\\s\"]+)"]
+  ],
+
   "go.lintTool": "golangci-lint",
   "go.lintFlags": ["--fast"],
-  "go.testFlags": ["-v"],
+  "go.lintOnSave": "workspace",
+  "go.testFlags": ["-v", "-race"],
   "go.testEnvVars": {},
   "go.coverOnSave": false,
   "go.coverageDecorator": {
@@ -22,6 +53,33 @@
     "uncoveredGutterStyle": "blockred"
   },
   "go.coverOnSingleTest": true,
-  "go.buildOnSave": "workspace",
+  "gopls": {
+    "ui.semanticTokens": true,
+    "ui.completion.usePlaceholders": true
+  },
+
+  "css.lint.unknownAtRules": "ignore",
+
+  "files.associations": {
+    "*.templ": "templ"
+  },
+
+  "files.exclude": {
+    "**/.git": true,
+    "**/node_modules": true,
+    "**/*.gen.go": true,
+    "**/*.gen.css": true,
+    "**/tmp": true,
+    "**/build": true
+  },
+
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/tmp": true,
+    "**/build": true,
+    "**/*.gen.go": true,
+    "**/*.gen.css": true
+  },
+
   "cSpell.words": []
 }
