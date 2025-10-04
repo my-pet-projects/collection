@@ -31,7 +31,7 @@ func (s BreweryService) CreateBrewery(name string, geoId int, countryCode string
 		Name:        name,
 		GeoID:       geoId,
 		SearchName:  util.NormalizeText(name),
-		CountryCca2: strings.ToUpper(countryCode),
+		CountryCca2: strings.ToUpper(strings.TrimSpace(countryCode)),
 	}
 	insertedId, insertErr := s.breweryStore.InsertBrewery(brewery)
 	if insertErr != nil {
@@ -47,7 +47,7 @@ func (s BreweryService) UpdateBrewery(id int, name string, geoId int, countryCod
 		Name:        name,
 		GeoID:       geoId,
 		SearchName:  util.NormalizeText(name),
-		CountryCca2: strings.ToUpper(countryCode),
+		CountryCca2: strings.ToUpper(strings.TrimSpace(countryCode)),
 	}
 	updErr := s.breweryStore.UpdateBrewery(brewery)
 	if updErr != nil {

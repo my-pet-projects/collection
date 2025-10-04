@@ -23,6 +23,27 @@ templ BeerImagesUpload(params UploadParams) {
 			maxFileSizeMB: 5,
 			allowedFileTypes: ['image/png'],
 			
+			validateFile(file) {
+				const maxBytes = this.maxFileSizeMB * 1024 * 1024;
+				
+				if (file.size > maxBytes) {
+					return {
+						valid: false,
+						error: `File '${file.name}' (${this.formatFileSize(file.size)}) is too large. Max size is ${this.maxFileSizeMB}MB.`
+					};
+				}
+				
+				if (!this.allowedFileTypes.includes(file.type)) {
+					const allowedExts = this.allowedFileTypes.map(type => type.split('/')[1] || type.split('/')[0]).join(', ').toUpperCase();
+					return {
+						valid: false,
+						error: `File '${file.name}' has an unsupported type (${file.type.split('/')[1] || file.type}). Only ${allowedExts} are allowed.`
+					};
+				}
+				
+				return { valid: true };
+			},
+
 			handleFiles(inputFiles) {
 				const uploadResultDiv = document.getElementById('upload-result');
 				if (uploadResultDiv) {
@@ -33,15 +54,10 @@ templ BeerImagesUpload(params UploadParams) {
 				let filesToAdd = [];
 				for (let i = 0; i < inputFiles.length; i++) {
 					const file = inputFiles[i];
-					const maxBytes = this.maxFileSizeMB * 1024 * 1024;
-					
-					if (file.size > maxBytes) {
-						this.uploadError = `File '${file.name}' (${this.formatFileSize(file.size)}) is too large. Max size is ${this.maxFileSizeMB}MB.`;
-						continue;
-					}
-					if (!this.allowedFileTypes.includes(file.type)) {
-						const allowedExts = this.allowedFileTypes.map(type => type.split('/')[1] || type.split('/')[0]).join(', ').toUpperCase();
-						this.uploadError = `File '${file.name}' has an unsupported type (${file.type.split('/')[1] || file.type}). Only ${allowedExts} are allowed.`;
+
+					const validation = this.validateFile(file);					
+					if (!validation.valid) {
+						this.uploadError = validation.error;
 						continue;
 					}
 					
@@ -136,7 +152,7 @@ templ BeerImagesUpload(params UploadParams) {
 				progress = 100;
 				setTimeout(() => {
 					uploading = false;
-					if (document.getElementById('upload-result').innerHTML.includes('Upload Successful')) {
+					if (document.getElementById('upload-result').querySelector('[data-upload-status=success]')) {
 						previews = [];
 						$refs.fileInput.value = '';
 					}
@@ -298,7 +314,7 @@ templ BeerImagesUpload(params UploadParams) {
 }
 
 templ UploadSuccess(uploadResults []UploadResult) {
-	<div class="animate-in fade-in slide-in-from-bottom-4 rounded-2xl border border-green-200 bg-green-50 p-6 shadow-md duration-500">
+	<div data-upload-status="success" class="animate-in fade-in slide-in-from-bottom-4 rounded-2xl border border-green-200 bg-green-50 p-6 shadow-md duration-500">
 		<div class="flex items-start">
 			<div class="flex-shrink-0">
 				<svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
