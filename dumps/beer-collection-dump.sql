@@ -947,6 +947,13 @@ INSERT INTO breweries VALUES(771,'100 Watt Brewery',NULL,2756253,NULL,'100 watt 
 INSERT INTO breweries VALUES(772,'Brouwers',NULL,2744118,NULL,'brouwers','NL');
 INSERT INTO breweries VALUES(773,'Brasserie Caulier',NULL,2789162,NULL,'brasserie caulier','BE');
 INSERT INTO breweries VALUES(774,'San Miguel Brewery',NULL,1701966,NULL,'san miguel brewery','PH');
+INSERT INTO breweries VALUES(775,'Slot Oostende',NULL,2755476,NULL,'slot oostende','NL');
+INSERT INTO breweries VALUES(776,'Bierbrouwerij Vermeersen',NULL,2753439,NULL,'bierbrouwerij vermeersen','NL');
+INSERT INTO breweries VALUES(777,'Ichnusa',NULL,2525473,NULL,'ichnusa','IT');
+INSERT INTO breweries VALUES(778,'Chopfab Boxer',NULL,2657970,NULL,'chopfab boxer','CH');
+INSERT INTO breweries VALUES(779,'Unser Bier',NULL,2661604,NULL,'unser bier','CH');
+INSERT INTO breweries VALUES(780,'Kuehn Kunz Rosen',NULL,2874225,NULL,'kuehn kunz rosen','DE');
+INSERT INTO breweries VALUES(781,'Brasserie Mira',NULL,3006283,NULL,'brasserie mira','FR');
 CREATE TABLE IF NOT EXISTS `beers` (
    `id` integer NOT NULL PRIMARY KEY AUTOINCREMENT
  ,  `brand` varchar(100) NOT NULL
@@ -3437,7 +3444,19 @@ INSERT INTO beers VALUES(2476,'Клинское','Светлое',NULL,2,685,0,'
 INSERT INTO beers VALUES(2477,'Paix Dieu','Triple',NULL,142,773,0,'2025-06-23 21:45:15.39709+00:00','2025-08-08 21:17:04.262454+00:00',NULL,'paix dieu triple');
 INSERT INTO beers VALUES(2478,'San Miguel','Pale Pilsen',NULL,62,774,0,'2025-06-23 21:45:18.571107+00:00','2025-08-08 21:17:04.627508+00:00',NULL,'san miguel pale pilsen');
 INSERT INTO beers VALUES(2481,'Corona Extra',NULL,NULL,9,195,0,'2025-06-30 21:46:07.823213+00:00','2025-08-08 21:17:05.000693+00:00',NULL,'corona extra');
-INSERT INTO beers VALUES(2482,'Старый Мельник из Бочонка',NULL,NULL,2,685,0,'2025-06-30 21:56:20.921046+00:00','2025-08-29 20:10:43.023896779+00:00',NULL,'старыи мельник из бочонка');
+INSERT INTO beers VALUES(2482,'Старый Мельник из Бочонка',NULL,NULL,2,685,0,'2025-06-30 21:56:20.921046+00:00','2025-10-04 15:06:16.736221+00:00',NULL,'старыи мельник из бочонка');
+INSERT INTO beers VALUES(2483,'Poortwachter',NULL,NULL,56,775,0,'2025-09-26 19:03:17.073660222+00:00',NULL,NULL,'poortwachter');
+INSERT INTO beers VALUES(2484,'Leffe','Triple',NULL,14,107,0,'2025-09-26 19:25:29.977895782+00:00',NULL,NULL,'leffe triple');
+INSERT INTO beers VALUES(2485,'Bolleke','De Koninck',NULL,36,452,0,'2025-09-26 20:09:52.086732155+00:00',NULL,NULL,'bolleke de koninck');
+INSERT INTO beers VALUES(2486,'Zeeuws Wit',NULL,NULL,76,776,0,'2025-09-26 21:20:47.078999505+00:00',NULL,NULL,'zeeuws wit');
+INSERT INTO beers VALUES(2487,'Dors','Pilsener',NULL,22,741,0,'2025-09-26 22:15:37.337869572+00:00',NULL,NULL,'dors pilsener');
+INSERT INTO beers VALUES(2488,'Ichnusa','Non Filtrata',NULL,106,777,0,'2025-10-02 19:27:03.656156+00:00',NULL,NULL,'ichnusa non filtrata');
+INSERT INTO beers VALUES(2489,'Chopfab Selection','IPA',NULL,83,778,0,'2025-10-02 19:30:29.182052+00:00',NULL,NULL,'chopfab selection ipa');
+INSERT INTO beers VALUES(2490,'Zeezuiper',NULL,NULL,14,349,0,'2025-10-02 19:32:49.994639+00:00',NULL,NULL,'zeezuiper');
+INSERT INTO beers VALUES(2491,'Unser Bier','Amber',NULL,59,779,0,'2025-10-02 20:44:04.833277+00:00',NULL,NULL,'unser bier amber');
+INSERT INTO beers VALUES(2492,'Gutenberg Bock',NULL,NULL,16,780,0,'2025-10-02 21:28:10.080442+00:00',NULL,NULL,'gutenberg bock');
+INSERT INTO beers VALUES(2493,'Tripel d''Anvers',NULL,NULL,14,452,0,'2025-10-02 21:40:49.507392+00:00',NULL,NULL,'tripel danvers');
+INSERT INTO beers VALUES(2494,'Rimshot Blonde',NULL,NULL,116,781,0,'2025-10-04 17:36:35.638076+00:00','2025-10-04 17:39:11.143484+00:00',NULL,'rimshot blonde');
 CREATE TABLE IF NOT EXISTS `beer_medias` (
    `id` integer NOT NULL PRIMARY KEY AUTOINCREMENT
  ,  `media_id` integer NOT NULL
@@ -10420,6 +10439,8 @@ INSERT INTO beer_medias VALUES(7483,7480,2481,3,'NA-C1-A4');
 INSERT INTO beer_medias VALUES(7484,7485,2482,2,NULL);
 INSERT INTO beer_medias VALUES(7485,7486,2482,3,'RUS-C2-D4');
 INSERT INTO beer_medias VALUES(7486,7487,2482,1,NULL);
+INSERT INTO beer_medias VALUES(7487,7488,2493,1,NULL);
+INSERT INTO beer_medias VALUES(7488,7489,2494,1,NULL);
 CREATE TABLE IF NOT EXISTS `media_items` (
    `id` integer NOT NULL PRIMARY KEY AUTOINCREMENT
  ,  `external_filename` char(36) NOT NULL
@@ -17388,6 +17409,8 @@ INSERT INTO media_items VALUES(7483,'db67caa570ea2e98457fba535317a2e9.png','112_
 INSERT INTO media_items VALUES(7485,'5cba682805982df9c50036c4f3c3793b.png','113_l.png','image/png','5cba682805982df9c50036c4f3c3793b','2025-06-30 21:56:19.391919+00:00','2025-06-30 21:56:19.391919+00:00',550077,1000,1051);
 INSERT INTO media_items VALUES(7486,'ab3086e5fded658806346e860acda59e.png','113_c.png','image/png','ab3086e5fded658806346e860acda59e','2025-06-30 21:56:21.796584+00:00','2025-06-30 21:56:21.796584+00:00',866555,800,800);
 INSERT INTO media_items VALUES(7487,'27e03c8d773a340f0c6124e0eac2016f.png','113_b.png','image/png','27e03c8d773a340f0c6124e0eac2016f','2025-06-30 21:56:23.578228+00:00','2025-06-30 21:56:23.578228+00:00',23704,138,400);
+INSERT INTO media_items VALUES(7488,'2caed02e57852da2eb2b0550d2fb0cb1.png','2493_b.png','image/png','2caed02e57852da2eb2b0550d2fb0cb1','2025-10-04 17:27:01.146928+00:00','2025-10-04 17:27:01.146928+00:00',22413,138,400);
+INSERT INTO media_items VALUES(7489,'7bce14b5ba405c12e1104d3212bb439e.png','1_b.png','image/png','7bce14b5ba405c12e1104d3212bb439e','2025-10-04 17:36:34.727614+00:00','2025-10-04 17:36:34.727614+00:00',26042,138,400);
 CREATE TABLE IF NOT EXISTS `beer_media_types` (
    `id` integer NOT NULL PRIMARY KEY AUTOINCREMENT
  ,  `name` varchar(100) NOT NULL
@@ -17399,12 +17422,12 @@ INSERT INTO beer_media_types VALUES(4,'Twist-off Cap');
 INSERT INTO beer_media_types VALUES(5,'Pull-off Cap');
 INSERT INTO beer_media_types VALUES(6,'Ceramic Cap');
 DELETE FROM sqlite_sequence;
-INSERT INTO sqlite_sequence VALUES('beer_styles',160);
-INSERT INTO sqlite_sequence VALUES('beers',2482);
-INSERT INTO sqlite_sequence VALUES('breweries',774);
+INSERT INTO sqlite_sequence VALUES('beer_styles',165);
+INSERT INTO sqlite_sequence VALUES('beers',2494);
+INSERT INTO sqlite_sequence VALUES('breweries',781);
 INSERT INTO sqlite_sequence VALUES('beer_media_types',6);
-INSERT INTO sqlite_sequence VALUES('media_items',7487);
-INSERT INTO sqlite_sequence VALUES('beer_medias',7486);
+INSERT INTO sqlite_sequence VALUES('media_items',7489);
+INSERT INTO sqlite_sequence VALUES('beer_medias',7488);
 CREATE UNIQUE INDEX ux_beer_id_media_id ON beer_medias (media_id, ifnull(beer_id, 0));
 CREATE UNIQUE INDEX ux_hash ON media_items (hash);
 CREATE INDEX "idx_beer_medias_fk_beer_id" ON "beer_medias" (`beer_id`);

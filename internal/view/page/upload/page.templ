@@ -1,6 +1,9 @@
 package upload
 
-import "github.com/my-pet-projects/collection/internal/view/layout"
+import (
+	"github.com/my-pet-projects/collection/internal/view/layout"
+	uploadcomponent "github.com/my-pet-projects/collection/internal/view/page/upload/component"
+)
 
 type UploadPage struct {
 	layout.Page
@@ -27,7 +30,7 @@ templ Page(page UploadPage) {
 		</div>
 		<!-- Upload Container -->
 		<div class="overflow-hidden rounded-2xl bg-white p-6 shadow-xl ring-1 ring-gray-200/50 lg:p-8">
-			<app-upload></app-upload>
+			@uploadcomponent.BeerImagesUpload(uploadcomponent.UploadParams{ShowHint: true})
 		</div>
 	}
 }
