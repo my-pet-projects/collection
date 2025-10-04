@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"regexp"
 
@@ -43,6 +44,12 @@ func (s ImageService) UploadImage(ctx context.Context, formValues []model.Upload
 		matches := extractDigitsRe.FindStringSubmatch(formValue.Filename)
 		if len(matches) > 0 {
 			currentBeer = matches[1]
+		}
+
+		if formValue.BeerID != nil {
+			s.logger.Info("Using provided beer ID from upload form", slog.String("filename", formValue.Filename), slog.Int("beerID", *formValue.BeerID))
+			currentBeer = fmt.Sprint(*formValue.BeerID)
+			fileBeerIDToDBIDMap[currentBeer] = *formValue.BeerID
 		}
 
 		if currentBeer == "" {

@@ -14,8 +14,7 @@ type UploadFormValues struct {
 	Filename    string
 	Content     []byte
 	ContentType string
-	// temp
-	BeerID *int
+	BeerID      *int
 }
 
 func (f UploadFormValues) ExternalFilename() string {
