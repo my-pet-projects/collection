@@ -91,5 +91,5 @@ func (h WorkspaceServer) SubmitBeerImages(reqResp *web.ReqRespPair) error {
 		Beer:       *beer,
 		BeerMedias: mediaItems,
 	}
-	return reqResp.Render(beerpage.Page(beerPage))
+	return reqResp.Render(beerpage.Images(beerPage))
 }

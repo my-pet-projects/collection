@@ -8,7 +8,10 @@ package upload
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/my-pet-projects/collection/internal/view/layout"
+import (
+	"github.com/my-pet-projects/collection/internal/view/layout"
+	uploadcomponent "github.com/my-pet-projects/collection/internal/view/page/upload/component"
+)
 
 type UploadPage struct {
 	layout.Page
@@ -47,7 +50,15 @@ func Page(page UploadPage) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!-- Header Section --> <div class=\"mb-6 flex flex-col lg:mb-8 lg:flex-row lg:items-center lg:justify-between\"><!-- Title Section --><div class=\"mb-6 flex flex-col items-center text-center lg:mb-0 lg:flex-row lg:items-center lg:text-left\"><div class=\"group mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 via-orange-500 to-red-500 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl lg:mb-0 lg:mr-6\"><svg class=\"h-7 w-7 text-white transition-transform duration-300 group-hover:-translate-y-1\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12\"></path></svg></div><div><h1 class=\"bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-3xl font-bold leading-tight tracking-tight text-transparent sm:text-4xl lg:text-5xl\">Upload</h1><p class=\"text-base text-gray-600 sm:text-lg lg:text-xl\">Add new images to your collection</p></div></div></div><!-- Upload Container --> <div class=\"overflow-hidden rounded-2xl bg-white p-6 shadow-xl ring-1 ring-gray-200/50 lg:p-8\"><app-upload></app-upload></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!-- Header Section --> <div class=\"mb-6 flex flex-col lg:mb-8 lg:flex-row lg:items-center lg:justify-between\"><!-- Title Section --><div class=\"mb-6 flex flex-col items-center text-center lg:mb-0 lg:flex-row lg:items-center lg:text-left\"><div class=\"group mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 via-orange-500 to-red-500 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl lg:mb-0 lg:mr-6\"><svg class=\"h-7 w-7 text-white transition-transform duration-300 group-hover:-translate-y-1\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12\"></path></svg></div><div><h1 class=\"bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-3xl font-bold leading-tight tracking-tight text-transparent sm:text-4xl lg:text-5xl\">Upload</h1><p class=\"text-base text-gray-600 sm:text-lg lg:text-xl\">Add new images to your collection</p></div></div></div><!-- Upload Container --> <div class=\"overflow-hidden rounded-2xl bg-white p-6 shadow-xl ring-1 ring-gray-200/50 lg:p-8\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = uploadcomponent.BeerImagesUpload(uploadcomponent.UploadParams{ShowHint: true}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

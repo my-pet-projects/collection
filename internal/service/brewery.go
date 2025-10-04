@@ -26,11 +26,12 @@ func NewBreweryService(breweryStore *db.BreweryStore, geoStore *db.GeographyStor
 	}
 }
 
-func (s BreweryService) CreateBrewery(name string, geoId int) (*model.Brewery, error) {
+func (s BreweryService) CreateBrewery(name string, geoId int, countryCode string) (*model.Brewery, error) {
 	brewery := model.Brewery{
-		Name:       name,
-		GeoID:      geoId,
-		SearchName: util.NormalizeText(name),
+		Name:        name,
+		GeoID:       geoId,
+		SearchName:  util.NormalizeText(name),
+		CountryCca2: strings.ToUpper(strings.TrimSpace(countryCode)),
 	}
 	insertedId, insertErr := s.breweryStore.InsertBrewery(brewery)
 	if insertErr != nil {
@@ -40,12 +41,13 @@ func (s BreweryService) CreateBrewery(name string, geoId int) (*model.Brewery, e
 	return &brewery, nil
 }
 
-func (s BreweryService) UpdateBrewery(id int, name string, geoId int) error {
+func (s BreweryService) UpdateBrewery(id int, name string, geoId int, countryCode string) error {
 	brewery := model.Brewery{
-		ID:         id,
-		Name:       name,
-		GeoID:      geoId,
-		SearchName: util.NormalizeText(name),
+		ID:          id,
+		Name:        name,
+		GeoID:       geoId,
+		SearchName:  util.NormalizeText(name),
+		CountryCca2: strings.ToUpper(strings.TrimSpace(countryCode)),
 	}
 	updErr := s.breweryStore.UpdateBrewery(brewery)
 	if updErr != nil {

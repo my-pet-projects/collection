@@ -34,19 +34,14 @@ templ head(title string) {
 		<title>{ title }</title>
 		<link rel="icon" type="image/svg+xml" sizes="32x32" href="/assets/img/pint-of-beer.svg"/>
 		<link href="/assets/css/tailwind-output.gen.css" rel="stylesheet"/>
-		<script src="https://unpkg.com/htmx.org@2.0.3" crossorigin="anonymous"></script>
-		<script src="https://unpkg.com/htmx-ext-response-targets@2.0.1/response-targets.js"></script>
-		<script src="https://unpkg.com/htmx-ext-debug@2.0.0/debug.js"></script>
-		<script src="https://unpkg.com/htmx-ext-path-params@2.0.1/path-params.js"></script>
-		<!-- Alpine Plugins -->
+		<!-- HTMX & Extensions -->
+		<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.7/dist/htmx.min.js" integrity="sha384-ZBXiYtYQ6hJ2Y0ZNoYuI+Nq5MqWBr+chMrS/RkXpNzQCApHEhOt2aY8EJgqwHLkJ" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/htmx-ext-response-targets@2.0.2" integrity="sha384-T41oglUPvXLGBVyRdZsVRxNWnOOqCynaPubjUVjxhsjFTKrFJGEMm3/0KGmNQ+Pg" crossorigin="anonymous"></script>
+		<!-- Alpine Core & Plugins -->
 		<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/intersect@3.x.x/dist/cdn.min.js"></script>
 		<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
 		<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/trap@3.x.x/dist/cdn.min.js"></script>
-		<!-- Alpine Core -->
 		<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-		<!-- Uppy -->
-		<script src="/assets/js/upload.js" type="module"></script>
-		<link href="https://releases.transloadit.com/uppy/v3.27.0/uppy.min.css" rel="stylesheet"/>
 	</head>
 }
 
