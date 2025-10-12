@@ -30,9 +30,15 @@ func (h WorkspaceServer) HandleBeerImagesPage(reqResp *web.ReqRespPair) error {
 		return reqResp.RenderError(http.StatusInternalServerError, itemsErr)
 	}
 
+	nextSlot, slotErr := h.collectionService.GetNextAvailableCollectionSlot(reqResp.Request.Context(), *beer)
+	if slotErr != nil {
+		return reqResp.RenderError(http.StatusInternalServerError, slotErr)
+	}
+
 	beerPage := beerpage.BeerPageData{
 		Beer:       *beer,
 		BeerMedias: items,
+		NextSlot:   nextSlot,
 	}
 	return reqResp.Render(beerpage.Page(beerPage))
 }
