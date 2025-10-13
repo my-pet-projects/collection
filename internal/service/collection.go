@@ -33,16 +33,9 @@ func (s CollectionService) GetNextAvailableCollectionSlot(ctx context.Context, b
 
 	collectionSlots := make([]model.Slot, 0)
 	for _, item := range mediaItems {
-		if item.SlotID != nil {
-			slotParts := strings.Split(*item.SlotID, "-")
-			if len(slotParts) == 3 {
-				slot := model.Slot{
-					GeoPrefix: slotParts[0],
-					SheetID:   slotParts[1],
-					SheetSlot: slotParts[2],
-				}
-				collectionSlots = append(collectionSlots, slot)
-			}
+		slot := item.GetSlot()
+		if !slot.IsEmpty() {
+			collectionSlots = append(collectionSlots, slot)
 		}
 	}
 
@@ -50,7 +43,12 @@ func (s CollectionService) GetNextAvailableCollectionSlot(ctx context.Context, b
 		return strings.Compare(a.String(), b.String())
 	})
 
-	geoPrefix := getGeoPrefix(beer.GetCountry())
+	country := beer.GetCountry()
+	if country == nil {
+		return nil, errors.New("beer country is nil")
+	}
+	geoPrefix := getGeoPrefix(country)
+
 	filteredByGeo := make([]model.Slot, 0)
 	for _, slot := range collectionSlots {
 		if slot.GeoPrefix == geoPrefix {
@@ -74,9 +72,15 @@ func (s CollectionService) findFirstAvailableSlot(occupiedSlots []model.Slot, ge
 		occupiedMap[slot.String()] = true
 	}
 
+	const (
+		maxSheets    = 100 //nolint:mnd
+		colsPerSheet = 7   //nolint:mnd
+		rowsPerSheet = 6   //nolint:mnd
+	)
+
 	// Keep checking slots until we find an empty one
-	// Safety limit to prevent infinite loops (e.g., max 100 sheets)
-	maxIterations := 100 * 7 * 6 // 100 sheets × 7 columns × 6 rows
+	// Safety limit to prevent infinite loops
+	maxIterations := maxSheets * colsPerSheet * rowsPerSheet
 	currentSlot := model.NewFirstSlot(geoPrefix)
 	for range maxIterations {
 		if !occupiedMap[currentSlot.String()] {
@@ -103,6 +107,7 @@ func getGeoPrefix(country *model.Country) string {
 		"USA": "NA",
 		"CAN": "NA",
 		"MEX": "NA",
+		"SVN": "BAL",
 	}
 
 	regionGroupings := map[string]string{
@@ -110,11 +115,20 @@ func getGeoPrefix(country *model.Country) string {
 		"Asia":   "AS",
 	}
 
+	subRegionGroupings := map[string]string{
+		"Southeast Europe": "BAL",
+	}
+
 	if group, exists := countryGroupings[country.Cca3]; exists {
 		return group
 	}
 	if group, exists := regionGroupings[country.Region]; exists {
 		return group
+	}
+	if country.Subregion != nil {
+		if group, exists := subRegionGroupings[*country.Subregion]; exists {
+			return group
+		}
 	}
 
 	return country.Cca3

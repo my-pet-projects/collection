@@ -93,9 +93,15 @@ func (h WorkspaceServer) SubmitBeerImages(reqResp *web.ReqRespPair) error {
 		return apperr.NewInternalServerError("Failed to update beer media items", updErr)
 	}
 
+	nextSlot, slotErr := h.collectionService.GetNextAvailableCollectionSlot(reqResp.Request.Context(), *beer)
+	if slotErr != nil {
+		return reqResp.RenderError(http.StatusInternalServerError, slotErr)
+	}
+
 	beerPage := beerpage.BeerPageData{
 		Beer:       *beer,
 		BeerMedias: mediaItems,
+		NextSlot:   nextSlot,
 	}
 	return reqResp.Render(beerpage.Images(beerPage))
 }

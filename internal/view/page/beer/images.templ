@@ -137,6 +137,14 @@ templ Images(params BeerPageData) {
 									</div>
 									<!-- Cap Collection Fields -->
 									if (media.Type.IsCap()) {
+										{{ nextGeoPrefix := "" }}
+										{{ nextSheetID := "" }}
+										{{ nextSheetSlot := "" }}
+										if params.NextSlot != nil {
+											{{ nextGeoPrefix = params.NextSlot.GeoPrefix }}
+											{{ nextSheetID = params.NextSlot.SheetID }}
+											{{ nextSheetSlot = params.NextSlot.SheetSlot }}
+										}
 										<div
 											class="space-y-3 rounded-2xl border border-gray-200 bg-gradient-to-b from-white to-gray-50 p-4 shadow-sm transition-all duration-300"
 											x-cloak
@@ -152,7 +160,7 @@ templ Images(params BeerPageData) {
 													nextSlotGeoPrefix: '%s', 
 													nextSlotSheetID: '%s', 
 													nextSlotSheetSlot: '%s' 
-												}`, params.NextSlot.GeoPrefix, params.NextSlot.SheetID, params.NextSlot.SheetSlot) }
+												}`, nextGeoPrefix, nextSheetID, nextSheetSlot) }
 										>
 											<div class="flex items-center gap-2 text-sm font-semibold text-gray-800">
 												<span>Cap Location</span>

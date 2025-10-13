@@ -43,6 +43,8 @@ type Slot struct {
 	SheetSlot string
 }
 
+// NewFirstSlot creates the first slot for a given geographic prefix.
+// The first slot is always "C1-A1" where C1 is the first sheet and A1 is the first slot position.
 func NewFirstSlot(geoPrefix string) Slot {
 	return Slot{
 		GeoPrefix: geoPrefix,
@@ -63,7 +65,10 @@ func (s Slot) NextSlot() Slot {
 	if s.SheetSlot == "G6" {
 		// Move to the next sheet
 		sheetNum := 0
-		fmt.Sscanf(sheetID, "C%d", &sheetNum)
+		if _, err := fmt.Sscanf(sheetID, "C%d", &sheetNum); err != nil {
+			// If parsing fails, return empty slot to indicate error
+			return Slot{}
+		}
 		sheetID = fmt.Sprintf("C%d", sheetNum+1)
 		sheetSlot = "A1"
 	} else {
@@ -78,6 +83,11 @@ func (s Slot) NextSlot() Slot {
 }
 
 func (s Slot) incrementSheetSlot(sheetSlot string) string {
+	if len(sheetSlot) != 2 || sheetSlot[0] < 'A' || sheetSlot[0] > 'G' ||
+		sheetSlot[1] < '1' || sheetSlot[1] > '6' {
+		return ""
+	}
+
 	// Parse the current slot (e.g., "A1" -> column 'A', row 1)
 	col := sheetSlot[0]
 	row := int(sheetSlot[1] - '0')
@@ -89,6 +99,9 @@ func (s Slot) incrementSheetSlot(sheetSlot string) string {
 	if row > 6 {
 		row = 1
 		col++
+		if col > 'G' {
+			return "" // Beyond last column
+		}
 	}
 
 	return string(col) + string(rune('0'+row))

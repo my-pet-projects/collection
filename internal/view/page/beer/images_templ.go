@@ -203,7 +203,15 @@ func Images(params BeerPageData) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				if media.Type.IsCap() {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<div class=\"space-y-3 rounded-2xl border border-gray-200 bg-gradient-to-b from-white to-gray-50 p-4 shadow-sm transition-all duration-300\" x-cloak x-show=\"selected\" x-transition:enter=\"transition ease-out duration-300\" x-transition:enter-start=\"opacity-0 transform scale-95 translate-y-2\" x-transition:enter-end=\"opacity-100 transform scale-100 translate-y-0\" x-transition:leave=\"transition ease-in duration-200\" x-transition:leave-start=\"opacity-100 transform scale-100 translate-y-0\" x-transition:leave-end=\"opacity-0 transform scale-95 translate-y-2\" x-data=\"")
+					nextGeoPrefix := ""
+					nextSheetID := ""
+					nextSheetSlot := ""
+					if params.NextSlot != nil {
+						nextGeoPrefix = params.NextSlot.GeoPrefix
+						nextSheetID = params.NextSlot.SheetID
+						nextSheetSlot = params.NextSlot.SheetSlot
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, " <div class=\"space-y-3 rounded-2xl border border-gray-200 bg-gradient-to-b from-white to-gray-50 p-4 shadow-sm transition-all duration-300\" x-cloak x-show=\"selected\" x-transition:enter=\"transition ease-out duration-300\" x-transition:enter-start=\"opacity-0 transform scale-95 translate-y-2\" x-transition:enter-end=\"opacity-100 transform scale-100 translate-y-0\" x-transition:leave=\"transition ease-in duration-200\" x-transition:leave-start=\"opacity-100 transform scale-100 translate-y-0\" x-transition:leave-end=\"opacity-0 transform scale-95 translate-y-2\" x-data=\"")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -213,9 +221,9 @@ func Images(params BeerPageData) templ.Component {
 													nextSlotGeoPrefix: '%s', 
 													nextSlotSheetID: '%s', 
 													nextSlotSheetSlot: '%s' 
-												}`, params.NextSlot.GeoPrefix, params.NextSlot.SheetID, params.NextSlot.SheetSlot))
+												}`, nextGeoPrefix, nextSheetID, nextSheetSlot))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 155, Col: 94}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 163, Col: 58}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 					if templ_7745c5c3_Err != nil {
@@ -233,7 +241,7 @@ func Images(params BeerPageData) templ.Component {
 					var templ_7745c5c3_Var9 string
 					templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(slot.GeoPrefix)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 167, Col: 36}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 175, Col: 36}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 					if templ_7745c5c3_Err != nil {
@@ -246,7 +254,7 @@ func Images(params BeerPageData) templ.Component {
 					var templ_7745c5c3_Var10 string
 					templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(slot.SheetID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 178, Col: 34}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 186, Col: 34}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 					if templ_7745c5c3_Err != nil {
@@ -259,7 +267,7 @@ func Images(params BeerPageData) templ.Component {
 					var templ_7745c5c3_Var11 string
 					templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(slot.SheetSlot)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 189, Col: 36}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 197, Col: 36}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 					if templ_7745c5c3_Err != nil {
@@ -277,7 +285,7 @@ func Images(params BeerPageData) templ.Component {
 						var templ_7745c5c3_Var12 string
 						templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(params.NextSlot.String())
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 212, Col: 79}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 220, Col: 79}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 						if templ_7745c5c3_Err != nil {
@@ -364,7 +372,7 @@ func BeerMedia(beerMedia model.BeerMedia) templ.Component {
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d image", beerMedia.Type))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 270, Col: 47}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 278, Col: 47}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 		if templ_7745c5c3_Err != nil {
@@ -377,7 +385,7 @@ func BeerMedia(beerMedia model.BeerMedia) templ.Component {
 		var templ_7745c5c3_Var17 string
 		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("https://collection.seasharper.com/cdn-cgi/image/width=100,quality=25/https://beer-collection-bucket.s3.eu-central-1.amazonaws.com/original/%s", beerMedia.Media.ExternalFilename))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 273, Col: 198}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 281, Col: 198}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 		if templ_7745c5c3_Err != nil {
