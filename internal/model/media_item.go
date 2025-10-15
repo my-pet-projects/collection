@@ -88,6 +88,7 @@ func NewMediaImage(formValues UploadFormValues) (*MediaImage, error) {
 }
 
 type MediaItemsFilter struct {
-	ID     int
-	BeerID int
+	ID         int
+	BeerID     int
+	IncludeAll bool
 }

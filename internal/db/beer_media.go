@@ -42,8 +42,15 @@ func (s BeerMediaStore) UpsertBeerMediaItem(ctx context.Context, mediaItem model
 
 func (s BeerMediaStore) FetchMediaItems(ctx context.Context, filter model.MediaItemsFilter) ([]model.BeerMedia, error) {
 	var items []model.BeerMedia
+
+	query := s.db.gorm.Debug()
+
+	if filter.IncludeAll {
+		result := query.Joins("Media").Find(&items)
+		return items, result.Error
+	}
+
 	result := s.db.gorm.
-		Debug().
 		Where(model.BeerMedia{BeerID: &filter.BeerID}).
 		Or(model.BeerMedia{ID: filter.ID}).
 		Or("beer_id IS NULL").

@@ -2,6 +2,7 @@ package model
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 )
 
@@ -19,20 +20,9 @@ func (bm BeerMedia) TableName() string {
 	return "beer_medias"
 }
 
-func (p BeerMedia) ParseSlotID(beer Beer) Slot {
-	country := beer.GetCountry()
-	if country == nil {
-		return Slot{}
-	}
-
-	geoPrefix := getGeoPrefix(country)
-	sheetID := getSheetID(country)
-
+func (p BeerMedia) GetSlot() Slot {
 	if p.SlotID == nil || *p.SlotID == "" {
-		return Slot{
-			GeoPrefix: geoPrefix,
-			SheetID:   sheetID,
-		}
+		return Slot{}
 	}
 
 	parts := strings.Split(*p.SlotID, "-")
@@ -40,60 +30,85 @@ func (p BeerMedia) ParseSlotID(beer Beer) Slot {
 		return Slot{}
 	}
 
-	parsedGeoPrefix := parts[0]
-	parsedSheetSlot := parts[2]
-	parsedSheetID := parts[1]
-
 	return Slot{
-		GeoPrefix: parsedGeoPrefix,
-		SheetID:   parsedSheetID,
-		SheetSlot: parsedSheetSlot,
+		GeoPrefix: parts[0],
+		SheetID:   parts[1],
+		SheetSlot: parts[2],
 	}
-}
-
-func getGeoPrefix(country *Country) string {
-	countryGroupings := map[string]string{
-		"GBR": "GBR/IRL",
-		"IRL": "GBR/IRL",
-		"ESP": "ESP/PRT",
-		"PRT": "ESP/PRT",
-		"BOL": "BOL/PER",
-		"PER": "BOL/PER",
-		"CHL": "CHL/ARG",
-		"ARG": "CHL/ARG",
-		"BLR": "RUS",
-		"CHE": "DEU",
-		"USA": "NA",
-		"CAN": "NA",
-		"MEX": "NA",
-	}
-
-	regionGroupings := map[string]string{
-		"Africa": "AF",
-		"Asia":   "AS",
-	}
-
-	if group, exists := countryGroupings[country.Cca3]; exists {
-		return group
-	}
-	if group, exists := regionGroupings[country.Region]; exists {
-		return group
-	}
-
-	return country.Cca3
-}
-
-func getSheetID(country *Country) string {
-	if country.Cca3 == "DEU" || country.Cca3 == "RUS" {
-		return "C2"
-	}
-	return "C1"
 }
 
 type Slot struct {
 	GeoPrefix string
 	SheetID   string
 	SheetSlot string
+}
+
+// NewFirstSlot creates the first slot for a given geographic prefix.
+// The first slot is always "C1-A1" where C1 is the first sheet and A1 is the first slot position.
+func NewFirstSlot(geoPrefix string) Slot {
+	return Slot{
+		GeoPrefix: geoPrefix,
+		SheetID:   "C1",
+		SheetSlot: "A1",
+	}
+}
+
+func (s Slot) IsEmpty() bool {
+	return s.GeoPrefix == "" && s.SheetID == "" && s.SheetSlot == ""
+}
+
+func (s Slot) NextSlot() Slot {
+	sheetSlot := s.SheetSlot
+	sheetID := s.SheetID
+
+	// Check if we're at the last slot of the current sheet
+	if s.SheetSlot == "G6" {
+		// Move to the next sheet
+		sheetNum := 0
+		if _, err := fmt.Sscanf(sheetID, "C%d", &sheetNum); err != nil {
+			// If parsing fails, return empty slot to indicate error
+			return Slot{}
+		}
+		sheetID = fmt.Sprintf("C%d", sheetNum+1)
+		sheetSlot = "A1"
+	} else {
+		sheetSlot = s.incrementSheetSlot(s.SheetSlot)
+	}
+
+	return Slot{
+		GeoPrefix: s.GeoPrefix,
+		SheetID:   sheetID,
+		SheetSlot: sheetSlot,
+	}
+}
+
+func (s Slot) incrementSheetSlot(sheetSlot string) string {
+	if len(sheetSlot) != 2 || sheetSlot[0] < 'A' || sheetSlot[0] > 'G' ||
+		sheetSlot[1] < '1' || sheetSlot[1] > '6' {
+		return ""
+	}
+
+	// Parse the current slot (e.g., "A1" -> column 'A', row 1)
+	col := sheetSlot[0]
+	row := int(sheetSlot[1] - '0')
+
+	// Increment row first
+	row++
+
+	// If row exceeds 6, move to next column and reset row to 1
+	if row > 6 {
+		row = 1
+		col++
+		if col > 'G' {
+			return "" // Beyond last column
+		}
+	}
+
+	return string(col) + string(rune('0'+row))
+}
+
+func (s Slot) String() string {
+	return s.GeoPrefix + "-" + s.SheetID + "-" + s.SheetSlot
 }
 
 type BeerMediaType int
