@@ -60,6 +60,7 @@ type BeerPageData struct {
 	FormParams BeerFormParams
 	FormErrors BeerFormErrors
 	BeerMedias []model.BeerMedia
+	NextSlot   *model.Slot
 }
 
 func (p BeerPageData) IsOverviewPage() bool {
