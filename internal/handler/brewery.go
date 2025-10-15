@@ -17,12 +17,13 @@ import (
 )
 
 type WorkspaceServer struct {
-	appCfg         config.AppConfig
-	beerService    service.BeerService
-	breweryService service.BreweryService
-	geoService     service.GeographyService
-	mediaService   service.ImageService
-	logger         *slog.Logger
+	appCfg            config.AppConfig
+	beerService       service.BeerService
+	breweryService    service.BreweryService
+	geoService        service.GeographyService
+	mediaService      service.ImageService
+	collectionService service.CollectionService
+	logger            *slog.Logger
 }
 
 func NewWorkspaceServer(
@@ -31,15 +32,17 @@ func NewWorkspaceServer(
 	breweryService service.BreweryService,
 	geoService service.GeographyService,
 	mediaService service.ImageService,
+	collectionService service.CollectionService,
 	logger *slog.Logger,
 ) *WorkspaceServer {
 	return &WorkspaceServer{
-		appCfg:         appCfg,
-		beerService:    beerService,
-		breweryService: breweryService,
-		geoService:     geoService,
-		mediaService:   mediaService,
-		logger:         logger,
+		appCfg:            appCfg,
+		beerService:       beerService,
+		breweryService:    breweryService,
+		geoService:        geoService,
+		mediaService:      mediaService,
+		collectionService: collectionService,
+		logger:            logger,
 	}
 }
 

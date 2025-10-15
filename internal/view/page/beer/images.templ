@@ -137,6 +137,14 @@ templ Images(params BeerPageData) {
 									</div>
 									<!-- Cap Collection Fields -->
 									if (media.Type.IsCap()) {
+										{{ nextGeoPrefix := "" }}
+										{{ nextSheetID := "" }}
+										{{ nextSheetSlot := "" }}
+										if params.NextSlot != nil {
+											{{ nextGeoPrefix = params.NextSlot.GeoPrefix }}
+											{{ nextSheetID = params.NextSlot.SheetID }}
+											{{ nextSheetSlot = params.NextSlot.SheetSlot }}
+										}
 										<div
 											class="space-y-3 rounded-2xl border border-gray-200 bg-gradient-to-b from-white to-gray-50 p-4 shadow-sm transition-all duration-300"
 											x-cloak
@@ -147,11 +155,17 @@ templ Images(params BeerPageData) {
 											x-transition:leave="transition ease-in duration-200"
 											x-transition:leave-start="opacity-100 transform scale-100 translate-y-0"
 											x-transition:leave-end="opacity-0 transform scale-95 translate-y-2"
+											x-data={ fmt.Sprintf(`
+												{ 
+													nextSlotGeoPrefix: '%s', 
+													nextSlotSheetID: '%s', 
+													nextSlotSheetSlot: '%s' 
+												}`, nextGeoPrefix, nextSheetID, nextSheetSlot) }
 										>
 											<div class="flex items-center gap-2 text-sm font-semibold text-gray-800">
 												<span>Cap Location</span>
 											</div>
-											{{ slot := media.ParseSlotID(params.Beer) }}
+											{{ slot := media.GetSlot() }}
 											<div class="space-y-1.5">
 												<div>
 													<label class="mb-1 block text-xs font-medium text-gray-700">Geographic Prefix</label>
@@ -186,6 +200,27 @@ templ Images(params BeerPageData) {
 														class="w-full rounded-2xl border border-gray-300 bg-white px-3 py-1.5 text-xs placeholder:text-gray-400 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
 													/>
 												</div>
+												if params.NextSlot != nil && slot.IsEmpty() {
+													<button
+														type="button"
+														@click="
+															const form = $el.closest('[x-data]');
+															form.querySelector('input[name=\'media.slot.geoPrefix\']').value = nextSlotGeoPrefix;
+															form.querySelector('input[name=\'media.slot.sheetId\']').value = nextSlotSheetID;
+															form.querySelector('input[name=\'media.slot.sheetSlot\']').value = nextSlotSheetSlot;
+														"
+														class="flex w-full items-center gap-1 rounded-lg border border-blue-200 bg-blue-50 px-3 py-3 text-sm font-medium text-blue-700 transition-colors hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+													>
+														<svg class="h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+															<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+														</svg>
+														<span class="flex-1 text-left text-[10px] leading-tight">
+															Use next slot:
+															<br/>
+															<span class="font-bold text-blue-900">{ params.NextSlot.String() }</span>
+														</span>
+													</button>
+												}
 											</div>
 										</div>
 									} else {
