@@ -14,6 +14,7 @@ type BeerListData struct {
 	Query        string
 	CountryIso   string
 	CurrentPage  int
+	WithoutSlot  bool
 	TotalPages   int
 	TotalResults int
 	LimitPerPage int
@@ -39,12 +40,16 @@ func (data BeerListData) buildNextPageURL() string {
 	if data.LimitPerPage != 0 {
 		params.Set("size", strconv.Itoa(data.LimitPerPage))
 	}
+	if data.WithoutSlot {
+		params.Set("withoutSlot", "true")
+	}
 	return "/beers?" + params.Encode()
 }
 
 type BeerListSearchData struct {
-	Query      string
-	CountryIso string
+	Query       string
+	CountryIso  string
+	WithoutSlot bool
 }
 
 type BeerListPageData struct {
