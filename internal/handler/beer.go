@@ -38,13 +38,18 @@ func (h WorkspaceServer) HandleBeerListPage(reqResp *web.ReqRespPair) error {
 	if countryErr != nil {
 		return apperr.NewBadRequestError("Invalid country", countryErr)
 	}
+	withoutSlot, withoutSlotErr := reqResp.GetBoolQueryParam("withoutSlot")
+	if withoutSlotErr != nil {
+		return apperr.NewBadRequestError("Invalid withoutSlot", withoutSlotErr)
+	}
 
 	page := layout.Page{Title: fmt.Sprintf("Beer Workspace")}
 	beerPage := beerpage.BeerListPageData{
 		Page: page,
 		SearchData: beerpage.BeerListSearchData{
-			Query:      query,
-			CountryIso: country,
+			Query:       query,
+			CountryIso:  country,
+			WithoutSlot: withoutSlot,
 		},
 		LimitPerPage: 20, //nolint:mnd
 	}
@@ -181,10 +186,15 @@ func (h WorkspaceServer) ListBeers(reqResp *web.ReqRespPair) error {
 	if sizeErr != nil {
 		return apperr.NewBadRequestError("Invalid size", sizeErr)
 	}
+	withoutSlot, withoutSlotErr := reqResp.GetBoolQueryParam("withoutSlot")
+	if withoutSlotErr != nil {
+		return apperr.NewBadRequestError("Invalid withoutSlot", withoutSlotErr)
+	}
 
 	filter := model.BeerFilter{
 		Query:       query,
 		CountryCca2: country,
+		WithoutSlot: withoutSlot,
 		Page:        page,
 		Limit:       size,
 	}
@@ -197,6 +207,7 @@ func (h WorkspaceServer) ListBeers(reqResp *web.ReqRespPair) error {
 		Beers:        pagination.Results,
 		Query:        query,
 		CountryIso:   country,
+		WithoutSlot:  withoutSlot,
 		CurrentPage:  pagination.Page,
 		TotalPages:   pagination.TotalPages,
 		TotalResults: pagination.TotalResults,

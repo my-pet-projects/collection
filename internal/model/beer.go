@@ -151,6 +151,7 @@ type City struct {
 type BeerFilter struct {
 	Query       string
 	CountryCca2 string
+	WithoutSlot bool
 	Page        int
 	Limit       int
 }
