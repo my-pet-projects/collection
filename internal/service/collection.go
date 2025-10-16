@@ -108,6 +108,9 @@ func getGeoPrefix(country *model.Country) string {
 		"CAN": "NA",
 		"MEX": "NA",
 		"SVN": "BAL",
+		"AND": "FRA",
+		"LUX": "FRA",
+		"SMR": "FRA",
 	}
 
 	regionGroupings := map[string]string{
