@@ -49,32 +49,40 @@ func (s BeerStore) PaginateBeers(ctx context.Context, filter model.BeerFilter) (
 		Sort:  "beers.id DESC",
 	}
 
-	whereConditions := []string{}
-	whereArgs := map[string]interface{}{}
-
-	if filter.Query != "" {
-		whereConditions = append(whereConditions, "(beers.search_name LIKE @name OR brewery.search_name LIKE @name)")
-		whereArgs["name"] = "%" + filter.Query + "%"
-	}
-
-	if filter.CountryCca2 != "" {
-		whereConditions = append(whereConditions, "brewery.country_cca2 = @countryIso")
-		whereArgs["countryIso"] = filter.CountryCca2
-	}
-
-	if len(whereConditions) > 0 {
-		pagination.WhereQuery = strings.Join(whereConditions, " AND ")
-		pagination.WhereArgs = whereArgs
-	}
-
-	var itemsWithCount []model.ResultWithCount[model.Beer]
-	result := s.db.gorm.
+	query := s.db.gorm.
 		WithContext(ctx).
 		Debug().
 		Model(&model.Beer{}).
-		Scopes(paginate(&pagination)).
 		Joins("BeerStyle").
-		Joins("Brewery").
+		Joins("Brewery")
+
+	whereConditions := []string{}
+	whereArgs := []interface{}{}
+
+	if filter.Query != "" {
+		whereConditions = append(whereConditions, "(beers.search_name LIKE ? OR brewery.search_name LIKE ?)")
+		whereArgs = append(whereArgs, "%"+filter.Query+"%", "%"+filter.Query+"%")
+	}
+
+	if filter.CountryCca2 != "" {
+		whereConditions = append(whereConditions, "brewery.country_cca2 = ?")
+		whereArgs = append(whereArgs, filter.CountryCca2)
+	}
+
+	if filter.WithoutSlot {
+		whereConditions = append(whereConditions, "beer_medias.slot_id IS NULL AND beer_medias.type NOT IN (1,2)")
+		query = query.Joins("LEFT JOIN beer_medias ON beer_medias.beer_id = beers.id")
+		query = query.Distinct("beers.id")
+	}
+
+	if len(whereConditions) > 0 {
+		whereClause := strings.Join(whereConditions, " AND ")
+		query = query.Where(whereClause, whereArgs...) // Use ... to spread the slice
+	}
+
+	var itemsWithCount []model.ResultWithCount[model.Beer]
+	result := query.
+		Scopes(paginate(&pagination)).
 		Preload("Brewery.City", func(db *gorm.DB) *gorm.DB {
 			return db.Clauses(dbresolver.Use(GeographyDBResolverName)).
 				Joins("Country")

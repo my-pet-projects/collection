@@ -74,7 +74,7 @@ templ ListPage(page BeerListPageData) {
 					hx-get="/beers"
 					hx-swap="innerHTML"
 					hx-target="#beer-grid"
-					hx-trigger="load, keyup changed delay:500ms from:#search, country-selected from:body"
+					hx-trigger="load, keyup changed delay:500ms from:#search, country-selected from:body, change from:#without-slot"
 					hx-target-error="#beer-list-errors"
 					x-on:htmx:before-request="searching = true"
 					x-on:htmx:response-error="searching = false; hasErrors = true;"
@@ -86,6 +86,7 @@ templ ListPage(page BeerListPageData) {
 								const searchValue = document.getElementById('search')?.value ?? existingParams.query ?? '';
 								const countryValue = document.querySelector('[name=country]')?.value ?? existingParams.country ?? '';
 								const sizeValue = document.querySelector('[name=size]')?.value ?? existingParams.size ?? '';
+								const withoutSlotChecked = document.getElementById('without-slot')?.checked ?? false;
 
 								if (searchValue.trim().length > 0) {
 									params.set('query', searchValue.trim());
@@ -95,6 +96,9 @@ templ ListPage(page BeerListPageData) {
 								}
 								if (sizeValue) {
 									params.set('size', sizeValue);
+								}
+								if (withoutSlotChecked) {
+									params.set('withoutSlot', 'true');
 								}
 
 								const shouldResetPage = triggerType !== 'click';
@@ -120,50 +124,81 @@ templ ListPage(page BeerListPageData) {
 
 								history.pushState(null, '', newUrl);
 							"
-					class="flex flex-col gap-4 sm:flex-row sm:items-stretch"
+					class="flex flex-col gap-4"
 				>
-					<!-- Search Input -->
-					<div class="relative flex-1">
-						<input
-							id="search"
-							name="query"
-							type="text"
-							class="block h-12 w-full rounded-2xl border-0 bg-gray-50/50 px-4 py-3 pl-12 pr-12 text-sm shadow-inner ring-1 ring-inset ring-gray-200 transition-all duration-300 placeholder:text-gray-400 hover:bg-white hover:ring-gray-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-400"
-							placeholder="Search beers by name or brewery..."
-							x-model="searchValue"
-						/>
-						<!-- Search Icon -->
-						<div
-							x-show="!searching && countryFilterLoaded"
-							class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4"
-						>
-							<svg class="h-5 w-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-							</svg>
+					<!-- Search Input Row -->
+					<div class="flex flex-col gap-4 sm:flex-row sm:items-stretch">
+						<!-- Search Input -->
+						<div class="relative flex-1">
+							<input
+								id="search"
+								name="query"
+								type="text"
+								class="block h-12 w-full rounded-2xl border-0 bg-gray-50/50 px-4 py-3 pl-12 pr-12 text-sm shadow-inner ring-1 ring-inset ring-gray-200 transition-all duration-300 placeholder:text-gray-400 hover:bg-white hover:ring-gray-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-400"
+								placeholder="Search beers by name or brewery..."
+								value={ page.SearchData.Query }
+								x-model="searchValue"
+								x-init="searchValue = $el.value"
+							/>
+							<!-- Search Icon -->
+							<div
+								x-show="!searching && countryFilterLoaded"
+								class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4"
+							>
+								<svg class="h-5 w-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+								</svg>
+							</div>
+							<!-- Clear Search Button -->
+							<button
+								type="button"
+								x-show="searchValue.length > 0"
+								x-on:click="searchValue = ''; document.getElementById('search').value = ''; document.getElementById('search').dispatchEvent(new Event('keyup'))"
+								class="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1.5 text-gray-500 transition-all duration-200 hover:bg-gray-300 hover:text-gray-700"
+							>
+								<svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+								</svg>
+							</button>
+							<!-- Loading indicator -->
+							<div
+								x-show="searching || !countryFilterLoaded"
+								class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4"
+							>
+								<div class="h-5 w-5 animate-spin rounded-full border-2 border-amber-200 border-t-amber-500"></div>
+							</div>
 						</div>
-						<!-- Clear Search Button -->
-						<button
-							type="button"
-							x-show="searchValue.length > 0"
-							x-on:click="searchValue = ''; document.getElementById('search').value = ''; document.getElementById('search').dispatchEvent(new Event('keyup'))"
-							class="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1.5 text-gray-500 transition-all duration-200 hover:bg-gray-300 hover:text-gray-700"
-						>
-							<svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-							</svg>
-						</button>
-						<!-- Loading indicator -->
-						<div
-							x-show="searching || !countryFilterLoaded"
-							class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4"
-						>
-							<div class="h-5 w-5 animate-spin rounded-full border-2 border-amber-200 border-t-amber-500"></div>
+						<!-- Country Filter -->
+						<div class="flex w-full items-center justify-center sm:w-80" id="country-filter-container">
+							<!-- Loading indicator -->
+							<div class="h-5 w-5 animate-spin rounded-full border-2 border-gray-300 border-t-black"></div>
 						</div>
 					</div>
-					<!-- Country Filter -->
-					<div class="flex w-full items-center justify-center sm:w-80" id="country-filter-container">
-						<!-- Loading indicator -->
-						<div class="h-5 w-5 animate-spin rounded-full border-2 border-gray-300 border-t-black"></div>
+					<!-- Additional Filters Row -->
+					<div class="flex flex-wrap items-center gap-3 border-t border-gray-100 pt-4">
+						<label
+							for="without-slot"
+							class="group relative inline-flex cursor-pointer items-center gap-2.5 rounded-lg bg-gray-50/50 px-3 py-2.5 shadow-sm ring-1 ring-gray-200/50 transition-all duration-200 hover:bg-gray-100/50 hover:shadow hover:ring-amber-300 active:scale-[0.98]"
+						>
+							<input
+								type="checkbox"
+								id="without-slot"
+								name="withoutSlot"
+								value="true"
+								if page.SearchData.WithoutSlot {
+									checked
+								}
+								class="peer sr-only"
+							/>
+							<!-- The Toggle Track -->
+							<div
+								class="relative h-5 w-9 flex-shrink-0 rounded-full bg-gray-300 transition-colors duration-300 after:absolute after:left-[2px] after:top-[2px] after:h-4 after:w-4 after:rounded-full after:bg-white after:transition-transform after:duration-300 after:content-[''] peer-checked:bg-gradient-to-r peer-checked:from-amber-400 peer-checked:to-amber-500 peer-checked:after:translate-x-4 peer-focus-visible:ring-2 peer-focus-visible:ring-amber-400 peer-focus-visible:ring-offset-2"
+							></div>
+							<!-- Label Text -->
+							<span class="text-sm font-medium text-gray-700 transition-colors duration-200 group-hover:text-gray-900">
+								Crown caps without collection slot
+							</span>
+						</label>
 					</div>
 					<!-- Size Filter -->
 					<input
