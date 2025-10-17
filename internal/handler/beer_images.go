@@ -58,9 +58,17 @@ func (h WorkspaceServer) SubmitBeerImages(reqResp *web.ReqRespPair) error {
 	types, parseErr := reqResp.GetIntFormValues("media.type")           //nolint:ineffassign
 	selections, parseErr := reqResp.GetBoolFormValues("media.selected") //nolint:ineffassign
 	sources, parseErr := reqResp.GetStringFormValues("media.src")
-	slotGeoPrefixes, parseErr := reqResp.GetStringFormValues("media.slot.geoPrefix")
-	slotSheetIDs, parseErr := reqResp.GetStringFormValues("media.slot.sheetId")
-	slotSheetSlots, parseErr := reqResp.GetStringFormValues("media.slot.sheetSlot")
+	if parseErr != nil {
+		return apperr.NewBadRequestError("Invalid form parameter", parseErr)
+	}
+
+	if len(ids) != len(mediaIDs) || len(ids) != len(types) || len(ids) != len(selections) || len(ids) != len(sources) {
+		return apperr.NewBadRequestError("Mismatched lengths of fundamental media fields", nil)
+	}
+
+	allSlotGeoPrefixes, parseErr := reqResp.GetStringFormValues("media.slot.geoPrefix")
+	allSlotSheetIDs, parseErr := reqResp.GetStringFormValues("media.slot.sheetId")
+	allSlotSheetSlots, parseErr := reqResp.GetStringFormValues("media.slot.sheetSlot")
 	if parseErr != nil {
 		return apperr.NewBadRequestError("Invalid form parameter", parseErr)
 	}
@@ -81,10 +89,14 @@ func (h WorkspaceServer) SubmitBeerImages(reqResp *web.ReqRespPair) error {
 			ID:               mediaIDs[i],
 			ExternalFilename: sources[i],
 		}
-		if slotGeoPrefixes[i] != "" && slotSheetIDs[i] != "" && slotSheetSlots[i] != "" {
-			// Slot ID format: geoPrefix-sheetId-sheetSlot (e.g., "DEU-C1-A1")
-			slotID := fmt.Sprintf("%s-%s-%s", slotGeoPrefixes[i], slotSheetIDs[i], slotSheetSlots[i])
-			mediaItems[i].SlotID = &slotID
+
+		// Only process slot information if the media type is a Cap and it is selected
+		mediaItems[i].SlotID = nil
+		if mediaItems[i].Type.IsCap() && selections[i] {
+			if allSlotGeoPrefixes[i] != "" && allSlotSheetIDs[i] != "" && allSlotSheetSlots[i] != "" {
+				slotID := fmt.Sprintf("%s-%s-%s", allSlotGeoPrefixes[i], allSlotSheetIDs[i], allSlotSheetSlots[i])
+				mediaItems[i].SlotID = &slotID
+			}
 		}
 	}
 

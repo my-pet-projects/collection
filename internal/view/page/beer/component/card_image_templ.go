@@ -10,14 +10,13 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	"fmt"
-	"net/url"
 
 	"github.com/my-pet-projects/collection/internal/model"
 )
 
 const (
-	cdnBaseURL = "https://collection.seasharper.com/cdn-cgi/image"
-	s3BaseURL  = "https://beer-collection-bucket.s3.eu-central-1.amazonaws.com/original"
+	CdnBaseURL = "https://collection.seasharper.com/cdn-cgi/image"
+	S3BaseURL  = "https://beer-collection-bucket.s3.eu-central-1.amazonaws.com/original"
 )
 
 func bottleImage(media model.BeerMedia) templ.Component {
@@ -41,6 +40,8 @@ func bottleImage(media model.BeerMedia) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
+		originalImageURL := fmt.Sprintf("%s/%s", S3BaseURL, media.Media.ExternalFilename)
+		resizedImageURL := fmt.Sprintf("%s/width=100,quality=25/%s", CdnBaseURL, originalImageURL)
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div x-data=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -49,16 +50,33 @@ func bottleImage(media model.BeerMedia) templ.Component {
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf(`{
             isIntersected: false,
             imageLoaded: false,
-            imageSrc: '%s/width=100,quality=25/%s/%s'
-        }`, cdnBaseURL, s3BaseURL, url.QueryEscape(media.Media.ExternalFilename)))
+            imageSrc: '%s'
+        }`, resizedImageURL))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 21, Col: 81}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 22, Col: 28}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" x-intersect.threshold.25=\"isIntersected = true\" class=\"order-first flex flex-shrink-0 items-end justify-center\"><div class=\"flex h-20 w-12 items-center justify-center rounded-lg border border-slate-200/60 bg-white p-1.5 shadow-sm transition duration-300 ease-in-out hover:scale-105 sm:h-28 sm:w-14 sm:rounded-xl sm:p-2\"><!-- Shimmer placeholder --><div x-show=\"isIntersected && !imageLoaded\" class=\"h-full w-full animate-pulse rounded-lg bg-slate-200\"></div><!-- Actual image --><img x-bind:class=\"imageLoaded ? 'h-full w-auto object-contain opacity-100 transition-opacity duration-700 ease-out' : 'h-full w-auto object-contain opacity-0 absolute transition-opacity duration-700 ease-out'\" x-bind:src=\"isIntersected ? imageSrc : null\" @load=\"imageLoaded = true\" @error=\"imageLoaded = true\" alt=\"bottle image\" loading=\"lazy\" decoding=\"async\"></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" x-intersect.threshold.25=\"isIntersected = true\" class=\"order-first flex flex-shrink-0 items-end justify-center\"><div class=\"flex h-20 w-12 items-center justify-center rounded-lg border border-slate-200/60 bg-white p-1.5 shadow-sm transition duration-300 ease-in-out hover:scale-105 sm:h-28 sm:w-14 sm:rounded-xl sm:p-2\"><!-- Shimmer placeholder --><div x-show=\"isIntersected && !imageLoaded\" class=\"h-full w-full animate-pulse rounded-lg bg-slate-200\"></div><!-- Actual image -->")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templ.RenderScriptItems(ctx, templ_7745c5c3_Buffer, OnImageLoadError(templ.JSExpression("this"), originalImageURL))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<img x-bind:class=\"imageLoaded ? 'h-full w-auto object-contain opacity-100 transition-opacity duration-700 ease-out' : 'h-full w-auto object-contain opacity-0 absolute transition-opacity duration-700 ease-out'\" x-bind:src=\"isIntersected ? imageSrc : null\" @load=\"imageLoaded = true\" @error=\"imageLoaded = true\" alt=\"bottle image\" loading=\"lazy\" decoding=\"async\" onerror=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var3 templ.ComponentScript = OnImageLoadError(templ.JSExpression("this"), originalImageURL)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3.Call)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\"></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -82,29 +100,48 @@ func capImage(media model.BeerMedia) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var3 == nil {
-			templ_7745c5c3_Var3 = templ.NopComponent
+		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var4 == nil {
+			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div x-data=\"")
+		originalImageURL := fmt.Sprintf("%s/%s", S3BaseURL, media.Media.ExternalFilename)
+		resizedImageURL := fmt.Sprintf("%s/width=100,quality=25/%s", CdnBaseURL, originalImageURL)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div x-data=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf(`{
+		var templ_7745c5c3_Var5 string
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf(`{
             isIntersected: false,
             imageLoaded: false,
-            imageSrc: '%s/width=100,quality=25/%s/%s'
-        }`, cdnBaseURL, s3BaseURL, url.QueryEscape(media.Media.ExternalFilename)))
+            imageSrc: '%s'
+        }`, resizedImageURL))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 51, Col: 81}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 55, Col: 28}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" x-intersect.threshold.25=\"isIntersected = true\" class=\"flex flex-shrink-0 items-end justify-center\"><div class=\"flex h-20 w-20 items-center justify-center rounded-full border border-slate-200/60 bg-white p-1.5 shadow-sm transition duration-300 ease-in-out hover:scale-105 sm:h-28 sm:w-28 sm:p-2\"><!-- Shimmer placeholder --><div x-show=\"isIntersected && !imageLoaded\" class=\"h-full w-full animate-pulse rounded-full bg-slate-200\"></div><!-- Actual image --><img x-bind:class=\"imageLoaded ? 'h-full w-auto object-contain opacity-100 transition-opacity duration-700 ease-out' : 'h-full w-auto object-contain opacity-0 absolute transition-opacity duration-700 ease-out'\" x-bind:src=\"isIntersected ? imageSrc : null\" @load=\"imageLoaded = true\" @error=\"imageLoaded = true\" alt=\"cap image\" loading=\"lazy\" decoding=\"async\"></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" x-intersect.threshold.25=\"isIntersected = true\" class=\"flex flex-shrink-0 items-end justify-center\"><div class=\"flex h-20 w-20 items-center justify-center rounded-full border border-slate-200/60 bg-white p-1.5 shadow-sm transition duration-300 ease-in-out hover:scale-105 sm:h-28 sm:w-28 sm:p-2\"><!-- Shimmer placeholder --><div x-show=\"isIntersected && !imageLoaded\" class=\"h-full w-full animate-pulse rounded-full bg-slate-200\"></div><!-- Actual image -->")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templ.RenderScriptItems(ctx, templ_7745c5c3_Buffer, OnImageLoadError(templ.JSExpression("this"), originalImageURL))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<img x-bind:class=\"imageLoaded ? 'h-full w-auto object-contain opacity-100 transition-opacity duration-700 ease-out' : 'h-full w-auto object-contain opacity-0 absolute transition-opacity duration-700 ease-out'\" x-bind:src=\"isIntersected ? imageSrc : null\" @load=\"imageLoaded = true\" @error=\"imageLoaded = true\" alt=\"cap image\" loading=\"lazy\" decoding=\"async\" onerror=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var6 templ.ComponentScript = OnImageLoadError(templ.JSExpression("this"), originalImageURL)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6.Call)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\"></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -128,34 +165,64 @@ func labelImage(media model.BeerMedia) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var5 == nil {
-			templ_7745c5c3_Var5 = templ.NopComponent
+		templ_7745c5c3_Var7 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var7 == nil {
+			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div x-data=\"")
+		originalImageURL := fmt.Sprintf("%s/%s", S3BaseURL, media.Media.ExternalFilename)
+		resizedImageURL := fmt.Sprintf("%s/width=100,quality=25/%s", CdnBaseURL, originalImageURL)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div x-data=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var6 string
-		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf(`{
+		var templ_7745c5c3_Var8 string
+		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf(`{
             isIntersected: false,
             imageLoaded: false,
-            imageSrc: '%s/width=100,quality=25/%s/%s'
-        }`, cdnBaseURL, s3BaseURL, url.QueryEscape(media.Media.ExternalFilename)))
+            imageSrc: '%s'
+        }`, resizedImageURL))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 81, Col: 81}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 88, Col: 28}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" x-intersect.threshold.25=\"isIntersected = true\" class=\"order-last flex min-w-0 flex-1 items-end justify-center\"><div class=\"flex h-20 w-full items-center justify-center overflow-hidden rounded-lg border border-slate-200/60 bg-white p-1.5 shadow-sm transition duration-300 ease-in-out hover:scale-105 sm:h-28 sm:rounded-xl sm:p-2\"><!-- Shimmer placeholder --><div x-show=\"isIntersected && !imageLoaded\" class=\"h-full w-full animate-pulse rounded-lg bg-slate-200\"></div><!-- Actual image --><img x-bind:class=\"imageLoaded ? 'h-full w-auto object-contain opacity-100 transition-opacity duration-700 ease-out' : 'h-full w-auto object-contain opacity-0 absolute transition-opacity duration-700 ease-out'\" x-bind:src=\"isIntersected ? imageSrc : null\" @load=\"imageLoaded = true\" @error=\"imageLoaded = true\" alt=\"label image\" loading=\"lazy\" decoding=\"async\"></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" x-intersect.threshold.25=\"isIntersected = true\" class=\"order-last flex min-w-0 flex-1 items-end justify-center\"><div class=\"flex h-20 w-full items-center justify-center overflow-hidden rounded-lg border border-slate-200/60 bg-white p-1.5 shadow-sm transition duration-300 ease-in-out hover:scale-105 sm:h-28 sm:rounded-xl sm:p-2\"><!-- Shimmer placeholder --><div x-show=\"isIntersected && !imageLoaded\" class=\"h-full w-full animate-pulse rounded-lg bg-slate-200\"></div><!-- Actual image -->")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templ.RenderScriptItems(ctx, templ_7745c5c3_Buffer, OnImageLoadError(templ.JSExpression("this"), originalImageURL))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<img x-bind:class=\"imageLoaded ? 'h-full w-auto object-contain opacity-100 transition-opacity duration-700 ease-out' : 'h-full w-auto object-contain opacity-0 absolute transition-opacity duration-700 ease-out'\" x-bind:src=\"isIntersected ? imageSrc : null\" @load=\"imageLoaded = true\" @error=\"imageLoaded = true\" alt=\"label image\" loading=\"lazy\" decoding=\"async\" onerror=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var9 templ.ComponentScript = OnImageLoadError(templ.JSExpression("this"), originalImageURL)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9.Call)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\"></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		return nil
 	})
+}
+
+func OnImageLoadError(imgElement templ.JSExpression, fallbackUrl string) templ.ComponentScript {
+	return templ.ComponentScript{
+		Name: `__templ_OnImageLoadError_30bd`,
+		Function: `function __templ_OnImageLoadError_30bd(imgElement, fallbackUrl){imgElement.onerror = null; 
+	imgElement.src = fallbackUrl;
+}`,
+		Call:       templ.SafeScript(`__templ_OnImageLoadError_30bd`, imgElement, fallbackUrl),
+		CallInline: templ.SafeScriptInline(`__templ_OnImageLoadError_30bd`, imgElement, fallbackUrl),
+	}
 }
 
 var _ = templruntime.GeneratedTemplate
