@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/my-pet-projects/collection/internal/model"
+	beercomponent "github.com/my-pet-projects/collection/internal/view/page/beer/component"
 	uploadcomponent "github.com/my-pet-projects/collection/internal/view/page/upload/component"
 )
 
@@ -270,6 +271,8 @@ templ Images(params BeerPageData) {
 }
 
 templ BeerMedia(beerMedia model.BeerMedia) {
+	{{ originalImageURL := fmt.Sprintf("%s/%s", beercomponent.S3BaseURL, beerMedia.Media.ExternalFilename) }}
+	{{ resizedImageURL := fmt.Sprintf("%s/width=100,quality=25/%s", beercomponent.CdnBaseURL, originalImageURL) }}
 	<img
 		class={
 			templ.KV("h-[80%]", beerMedia.Type == model.BeerMediaBottle),
@@ -278,6 +281,7 @@ templ BeerMedia(beerMedia model.BeerMedia) {
 		alt={ fmt.Sprintf("%d image", beerMedia.Type) }
 		loading="lazy"
 		decoding="async"
-		src={ fmt.Sprintf("https://collection.seasharper.com/cdn-cgi/image/width=100,quality=25/https://beer-collection-bucket.s3.eu-central-1.amazonaws.com/original/%s", beerMedia.Media.ExternalFilename) }
+		src={ resizedImageURL }
+		onerror={ beercomponent.OnImageLoadError(templ.JSExpression("this"), originalImageURL) }
 	/>
 }
