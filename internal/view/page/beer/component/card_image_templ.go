@@ -15,8 +15,8 @@ import (
 )
 
 const (
-	cdnBaseURL = "https://collection.seasharper.com/cdn-cgi/image"
-	s3BaseURL  = "https://beer-collection-bucket.s3.eu-central-1.amazonaws.com/original"
+	CdnBaseURL = "https://collection.seasharper.com/cdn-cgi/image"
+	S3BaseURL  = "https://beer-collection-bucket.s3.eu-central-1.amazonaws.com/original"
 )
 
 func bottleImage(media model.BeerMedia) templ.Component {
@@ -40,8 +40,8 @@ func bottleImage(media model.BeerMedia) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		originalImageURL := fmt.Sprintf("https://beer-collection-bucket.s3.eu-central-1.amazonaws.com/original/%s", media.Media.ExternalFilename)
-		resizedImageURL := fmt.Sprintf("https://collection.seasharper.com/cdn-cgi/image/width=100,quality=25/%s", originalImageURL)
+		originalImageURL := fmt.Sprintf("%s/%s", S3BaseURL, media.Media.ExternalFilename)
+		resizedImageURL := fmt.Sprintf("%s/width=100,quality=25/%s", CdnBaseURL, originalImageURL)
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div x-data=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -63,7 +63,7 @@ func bottleImage(media model.BeerMedia) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templ.RenderScriptItems(ctx, templ_7745c5c3_Buffer, onImageLoadError(templ.JSExpression("this"), originalImageURL))
+		templ_7745c5c3_Err = templ.RenderScriptItems(ctx, templ_7745c5c3_Buffer, OnImageLoadError(templ.JSExpression("this"), originalImageURL))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -71,7 +71,7 @@ func bottleImage(media model.BeerMedia) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var3 templ.ComponentScript = onImageLoadError(templ.JSExpression("this"), originalImageURL)
+		var templ_7745c5c3_Var3 templ.ComponentScript = OnImageLoadError(templ.JSExpression("this"), originalImageURL)
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3.Call)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -105,8 +105,8 @@ func capImage(media model.BeerMedia) templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		originalImageURL := fmt.Sprintf("https://beer-collection-bucket.s3.eu-central-1.amazonaws.com/original/%s", media.Media.ExternalFilename)
-		resizedImageURL := fmt.Sprintf("https://collection.seasharper.com/cdn-cgi/image/width=100,quality=25/%s", originalImageURL)
+		originalImageURL := fmt.Sprintf("%s/%s", S3BaseURL, media.Media.ExternalFilename)
+		resizedImageURL := fmt.Sprintf("%s/width=100,quality=25/%s", CdnBaseURL, originalImageURL)
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div x-data=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -128,7 +128,7 @@ func capImage(media model.BeerMedia) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templ.RenderScriptItems(ctx, templ_7745c5c3_Buffer, onImageLoadError(templ.JSExpression("this"), originalImageURL))
+		templ_7745c5c3_Err = templ.RenderScriptItems(ctx, templ_7745c5c3_Buffer, OnImageLoadError(templ.JSExpression("this"), originalImageURL))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -136,7 +136,7 @@ func capImage(media model.BeerMedia) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var6 templ.ComponentScript = onImageLoadError(templ.JSExpression("this"), originalImageURL)
+		var templ_7745c5c3_Var6 templ.ComponentScript = OnImageLoadError(templ.JSExpression("this"), originalImageURL)
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6.Call)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -170,8 +170,8 @@ func labelImage(media model.BeerMedia) templ.Component {
 			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		originalImageURL := fmt.Sprintf("https://beer-collection-bucket.s3.eu-central-1.amazonaws.com/original/%s", media.Media.ExternalFilename)
-		resizedImageURL := fmt.Sprintf("https://collection.seasharper.com/cdn-cgi/image/width=100,quality=25/%s", originalImageURL)
+		originalImageURL := fmt.Sprintf("%s/%s", S3BaseURL, media.Media.ExternalFilename)
+		resizedImageURL := fmt.Sprintf("%s/width=100,quality=25/%s", CdnBaseURL, originalImageURL)
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div x-data=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -193,7 +193,7 @@ func labelImage(media model.BeerMedia) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templ.RenderScriptItems(ctx, templ_7745c5c3_Buffer, onImageLoadError(templ.JSExpression("this"), originalImageURL))
+		templ_7745c5c3_Err = templ.RenderScriptItems(ctx, templ_7745c5c3_Buffer, OnImageLoadError(templ.JSExpression("this"), originalImageURL))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -201,7 +201,7 @@ func labelImage(media model.BeerMedia) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var9 templ.ComponentScript = onImageLoadError(templ.JSExpression("this"), originalImageURL)
+		var templ_7745c5c3_Var9 templ.ComponentScript = OnImageLoadError(templ.JSExpression("this"), originalImageURL)
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9.Call)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -214,14 +214,14 @@ func labelImage(media model.BeerMedia) templ.Component {
 	})
 }
 
-func onImageLoadError(imgElement templ.JSExpression, fallbackUrl string) templ.ComponentScript {
+func OnImageLoadError(imgElement templ.JSExpression, fallbackUrl string) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_onImageLoadError_30bd`,
-		Function: `function __templ_onImageLoadError_30bd(imgElement, fallbackUrl){imgElement.onerror = null; 
+		Name: `__templ_OnImageLoadError_30bd`,
+		Function: `function __templ_OnImageLoadError_30bd(imgElement, fallbackUrl){imgElement.onerror = null; 
 	imgElement.src = fallbackUrl;
 }`,
-		Call:       templ.SafeScript(`__templ_onImageLoadError_30bd`, imgElement, fallbackUrl),
-		CallInline: templ.SafeScriptInline(`__templ_onImageLoadError_30bd`, imgElement, fallbackUrl),
+		Call:       templ.SafeScript(`__templ_OnImageLoadError_30bd`, imgElement, fallbackUrl),
+		CallInline: templ.SafeScriptInline(`__templ_OnImageLoadError_30bd`, imgElement, fallbackUrl),
 	}
 }
 

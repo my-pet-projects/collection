@@ -7,13 +7,13 @@ import (
 )
 
 const (
-	cdnBaseURL = "https://collection.seasharper.com/cdn-cgi/image"
-	s3BaseURL  = "https://beer-collection-bucket.s3.eu-central-1.amazonaws.com/original"
+	CdnBaseURL = "https://collection.seasharper.com/cdn-cgi/image"
+	S3BaseURL  = "https://beer-collection-bucket.s3.eu-central-1.amazonaws.com/original"
 )
 
 templ bottleImage(media model.BeerMedia) {
-	{{ originalImageURL := fmt.Sprintf("https://beer-collection-bucket.s3.eu-central-1.amazonaws.com/original/%s", media.Media.ExternalFilename) }}
-	{{ resizedImageURL := fmt.Sprintf("https://collection.seasharper.com/cdn-cgi/image/width=100,quality=25/%s", originalImageURL) }}
+	{{ originalImageURL := fmt.Sprintf("%s/%s", S3BaseURL, media.Media.ExternalFilename) }}
+	{{ resizedImageURL := fmt.Sprintf("%s/width=100,quality=25/%s", CdnBaseURL, originalImageURL) }}
 	<div
 		x-data={ fmt.Sprintf(`{
             isIntersected: false,
@@ -38,15 +38,15 @@ templ bottleImage(media model.BeerMedia) {
 				alt="bottle image"
 				loading="lazy"
 				decoding="async"
-				onerror={ onImageLoadError(templ.JSExpression("this"), originalImageURL) }
+				onerror={ OnImageLoadError(templ.JSExpression("this"), originalImageURL) }
 			/>
 		</div>
 	</div>
 }
 
 templ capImage(media model.BeerMedia) {
-	{{ originalImageURL := fmt.Sprintf("https://beer-collection-bucket.s3.eu-central-1.amazonaws.com/original/%s", media.Media.ExternalFilename) }}
-	{{ resizedImageURL := fmt.Sprintf("https://collection.seasharper.com/cdn-cgi/image/width=100,quality=25/%s", originalImageURL) }}
+	{{ originalImageURL := fmt.Sprintf("%s/%s", S3BaseURL, media.Media.ExternalFilename) }}
+	{{ resizedImageURL := fmt.Sprintf("%s/width=100,quality=25/%s", CdnBaseURL, originalImageURL) }}
 	<div
 		x-data={ fmt.Sprintf(`{
             isIntersected: false,
@@ -71,15 +71,15 @@ templ capImage(media model.BeerMedia) {
 				alt="cap image"
 				loading="lazy"
 				decoding="async"
-				onerror={ onImageLoadError(templ.JSExpression("this"), originalImageURL) }
+				onerror={ OnImageLoadError(templ.JSExpression("this"), originalImageURL) }
 			/>
 		</div>
 	</div>
 }
 
 templ labelImage(media model.BeerMedia) {
-	{{ originalImageURL := fmt.Sprintf("https://beer-collection-bucket.s3.eu-central-1.amazonaws.com/original/%s", media.Media.ExternalFilename) }}
-	{{ resizedImageURL := fmt.Sprintf("https://collection.seasharper.com/cdn-cgi/image/width=100,quality=25/%s", originalImageURL) }}
+	{{ originalImageURL := fmt.Sprintf("%s/%s", S3BaseURL, media.Media.ExternalFilename) }}
+	{{ resizedImageURL := fmt.Sprintf("%s/width=100,quality=25/%s", CdnBaseURL, originalImageURL) }}
 	<div
 		x-data={ fmt.Sprintf(`{
             isIntersected: false,
@@ -104,13 +104,13 @@ templ labelImage(media model.BeerMedia) {
 				alt="label image"
 				loading="lazy"
 				decoding="async"
-				onerror={ onImageLoadError(templ.JSExpression("this"), originalImageURL) }
+				onerror={ OnImageLoadError(templ.JSExpression("this"), originalImageURL) }
 			/>
 		</div>
 	</div>
 }
 
-script onImageLoadError(imgElement templ.JSExpression, fallbackUrl string) {
+script OnImageLoadError(imgElement templ.JSExpression, fallbackUrl string) {
 	imgElement.onerror = null; 
 	imgElement.src = fallbackUrl;
 }

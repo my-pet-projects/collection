@@ -58,6 +58,9 @@ func (h WorkspaceServer) SubmitBeerImages(reqResp *web.ReqRespPair) error {
 	types, parseErr := reqResp.GetIntFormValues("media.type")           //nolint:ineffassign
 	selections, parseErr := reqResp.GetBoolFormValues("media.selected") //nolint:ineffassign
 	sources, parseErr := reqResp.GetStringFormValues("media.src")
+	if parseErr != nil {
+		return apperr.NewBadRequestError("Invalid form parameter", parseErr)
+	}
 
 	if len(ids) != len(mediaIDs) || len(ids) != len(types) || len(ids) != len(selections) || len(ids) != len(sources) {
 		return apperr.NewBadRequestError("Mismatched lengths of fundamental media fields", nil)
@@ -86,22 +89,14 @@ func (h WorkspaceServer) SubmitBeerImages(reqResp *web.ReqRespPair) error {
 			ID:               mediaIDs[i],
 			ExternalFilename: sources[i],
 		}
-		// Only process slot information if the media type is a Cap
-		if mediaItems[i].Type.IsCap() {
-			if selections[i] {
-				if allSlotGeoPrefixes[i] != "" && allSlotSheetIDs[i] != "" && allSlotSheetSlots[i] != "" {
-					slotID := fmt.Sprintf("%s-%s-%s", allSlotGeoPrefixes[i], allSlotSheetIDs[i], allSlotSheetSlots[i])
-					mediaItems[i].SlotID = &slotID
-				} else {
-					mediaItems[i].SlotID = nil
-				}
-			} else {
-				// If not selected, clear the SlotID
-				mediaItems[i].SlotID = nil
+
+		// Only process slot information if the media type is a Cap and it is selected
+		mediaItems[i].SlotID = nil
+		if mediaItems[i].Type.IsCap() && selections[i] {
+			if allSlotGeoPrefixes[i] != "" && allSlotSheetIDs[i] != "" && allSlotSheetSlots[i] != "" {
+				slotID := fmt.Sprintf("%s-%s-%s", allSlotGeoPrefixes[i], allSlotSheetIDs[i], allSlotSheetSlots[i])
+				mediaItems[i].SlotID = &slotID
 			}
-		} else {
-			// For non-cap types, explicitly set SlotID to nil
-			mediaItems[i].SlotID = nil
 		}
 	}
 
