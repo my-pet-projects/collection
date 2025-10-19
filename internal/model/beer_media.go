@@ -3,6 +3,8 @@ package model
 import (
 	"errors"
 	"fmt"
+	"slices"
+	"strconv"
 	"strings"
 )
 
@@ -61,8 +63,11 @@ func (s Slot) NextSlot() Slot {
 	sheetSlot := s.SheetSlot
 	sheetID := s.SheetID
 
+	rowSize := RowSizeForPrefix(s.GeoPrefix)
+	lastSheetSlot := "G" + fmt.Sprintf("%d", rowSize)
+
 	// Check if we're at the last slot of the current sheet
-	if s.SheetSlot == "G6" {
+	if s.SheetSlot == lastSheetSlot {
 		// Move to the next sheet
 		sheetNum := 0
 		if _, err := fmt.Sscanf(sheetID, "C%d", &sheetNum); err != nil {
@@ -72,7 +77,7 @@ func (s Slot) NextSlot() Slot {
 		sheetID = fmt.Sprintf("C%d", sheetNum+1)
 		sheetSlot = "A1"
 	} else {
-		sheetSlot = s.incrementSheetSlot(s.SheetSlot)
+		sheetSlot = s.incrementSheetSlot(s.SheetSlot, rowSize)
 	}
 
 	return Slot{
@@ -82,21 +87,24 @@ func (s Slot) NextSlot() Slot {
 	}
 }
 
-func (s Slot) incrementSheetSlot(sheetSlot string) string {
+func (s Slot) incrementSheetSlot(sheetSlot string, rowSize int) string {
 	if len(sheetSlot) != 2 || sheetSlot[0] < 'A' || sheetSlot[0] > 'G' ||
-		sheetSlot[1] < '1' || sheetSlot[1] > '6' {
+		sheetSlot[1] < '1' || sheetSlot[1] > byte('0'+rowSize) {
 		return ""
 	}
 
 	// Parse the current slot (e.g., "A1" -> column 'A', row 1)
 	col := sheetSlot[0]
 	row := int(sheetSlot[1] - '0')
+	if row < 1 || row > rowSize {
+		return ""
+	}
 
 	// Increment row first
 	row++
 
-	// If row exceeds 6, move to next column and reset row to 1
-	if row > 6 {
+	// If row exceeds rowSize, move to next column and reset row to 1
+	if row > rowSize {
 		row = 1
 		col++
 		if col > 'G' {
@@ -104,7 +112,7 @@ func (s Slot) incrementSheetSlot(sheetSlot string) string {
 		}
 	}
 
-	return string(col) + string(rune('0'+row))
+	return string(col) + strconv.Itoa(row)
 }
 
 func (s Slot) String() string {
@@ -144,4 +152,12 @@ func (t BeerMediaType) IsLabel() bool {
 
 func (t BeerMediaType) IsCap() bool {
 	return t == BeerMediaCrownCap || t == BeerMediaTwistOffCap || t == BeerMediaPullOffCap || t == BeerMediaCeramicCap
+}
+
+func RowSizeForPrefix(geoPrefix string) int {
+	smallSheetsGeoPrefixes := []string{"CASP", "OC", "INDO", "MIDE", "EAAS", "SEAS"}
+	if slices.Contains(smallSheetsGeoPrefixes, geoPrefix) {
+		return 5
+	}
+	return 6
 }
