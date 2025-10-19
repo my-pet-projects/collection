@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"slices"
+	"strconv"
 	"strings"
 )
 
@@ -111,7 +112,7 @@ func (s Slot) incrementSheetSlot(sheetSlot string, rowSize int) string {
 		}
 	}
 
-	return string(col) + string(rune('0'+row))
+	return string(col) + strconv.Itoa(row)
 }
 
 func (s Slot) String() string {
