@@ -75,8 +75,9 @@ func (s CollectionService) findFirstAvailableSlot(occupiedSlots []model.Slot, ge
 	const (
 		maxSheets    = 100 //nolint:mnd
 		colsPerSheet = 7   //nolint:mnd
-		rowsPerSheet = 6   //nolint:mnd
 	)
+
+	rowsPerSheet := model.RowSizeForPrefix(geoPrefix)
 
 	// Keep checking slots until we find an empty one
 	// Safety limit to prevent infinite loops

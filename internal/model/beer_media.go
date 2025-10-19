@@ -62,13 +62,8 @@ func (s Slot) NextSlot() Slot {
 	sheetSlot := s.SheetSlot
 	sheetID := s.SheetID
 
-	rowSize := 6
-	lastSheetSlot := "G6"
-	smallSheetsGeoPrefixes := []string{"CAUC", "OC", "INDO", "MIDE", "EAAS"}
-	if slices.Contains(smallSheetsGeoPrefixes, s.GeoPrefix) {
-		lastSheetSlot = "G5"
-		rowSize = 5
-	}
+	rowSize := RowSizeForPrefix(s.GeoPrefix)
+	lastSheetSlot := "G" + fmt.Sprintf("%d", rowSize)
 
 	// Check if we're at the last slot of the current sheet
 	if s.SheetSlot == lastSheetSlot {
@@ -93,13 +88,16 @@ func (s Slot) NextSlot() Slot {
 
 func (s Slot) incrementSheetSlot(sheetSlot string, rowSize int) string {
 	if len(sheetSlot) != 2 || sheetSlot[0] < 'A' || sheetSlot[0] > 'G' ||
-		sheetSlot[1] < '1' || sheetSlot[1] > byte(rowSize) {
+		sheetSlot[1] < '1' || sheetSlot[1] > byte('0'+rowSize) {
 		return ""
 	}
 
 	// Parse the current slot (e.g., "A1" -> column 'A', row 1)
 	col := sheetSlot[0]
 	row := int(sheetSlot[1] - '0')
+	if row < 1 || row > rowSize {
+		return ""
+	}
 
 	// Increment row first
 	row++
@@ -153,4 +151,12 @@ func (t BeerMediaType) IsLabel() bool {
 
 func (t BeerMediaType) IsCap() bool {
 	return t == BeerMediaCrownCap || t == BeerMediaTwistOffCap || t == BeerMediaPullOffCap || t == BeerMediaCeramicCap
+}
+
+func RowSizeForPrefix(geoPrefix string) int {
+	smallSheetsGeoPrefixes := []string{"CAUC", "OC", "INDO", "MIDE", "EAAS"}
+	if slices.Contains(smallSheetsGeoPrefixes, geoPrefix) {
+		return 5
+	}
+	return 6
 }
