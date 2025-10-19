@@ -104,9 +104,6 @@ func getGeoPrefix(country *model.Country) string {
 		"ARG": "CHL/ARG",
 		"BLR": "RUS",
 		"CHE": "DEU",
-		"USA": "NA",
-		"CAN": "NA",
-		"MEX": "NA",
 		"AND": "FRA",
 		"LUX": "FRA",
 		"SMR": "FRA",
@@ -121,15 +118,22 @@ func getGeoPrefix(country *model.Country) string {
 		"FIN": "SCND",
 		"SVK": "CARP",
 		"HUN": "CARP",
+		"ARM": "CAUC",
+		"GEO": "CAUC",
+		"AZE": "CAUC",
 	}
 
 	regionGroupings := map[string]string{
-		"Africa": "AF",
-		"Asia":   "AS",
+		"Africa":  "AF",
+		"Oceania": "OC",
 	}
 
 	subRegionGroupings := map[string]string{
+		"North America":    "NA",
 		"Southeast Europe": "BALK",
+		"Southern Asia":    "INDO",
+		"Eastern Asia":     "EAAS",
+		"Western Asia":     "MIDE",
 	}
 
 	if group, exists := countryGroupings[country.Cca3]; exists {

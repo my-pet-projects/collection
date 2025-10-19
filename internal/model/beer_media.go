@@ -3,6 +3,7 @@ package model
 import (
 	"errors"
 	"fmt"
+	"slices"
 	"strings"
 )
 
@@ -61,8 +62,16 @@ func (s Slot) NextSlot() Slot {
 	sheetSlot := s.SheetSlot
 	sheetID := s.SheetID
 
+	rowSize := 6
+	lastSheetSlot := "G6"
+	smallSheetsGeoPrefixes := []string{"CAUC", "OC", "INDO", "MIDE", "EAAS"}
+	if slices.Contains(smallSheetsGeoPrefixes, s.GeoPrefix) {
+		lastSheetSlot = "G5"
+		rowSize = 5
+	}
+
 	// Check if we're at the last slot of the current sheet
-	if s.SheetSlot == "G6" {
+	if s.SheetSlot == lastSheetSlot {
 		// Move to the next sheet
 		sheetNum := 0
 		if _, err := fmt.Sscanf(sheetID, "C%d", &sheetNum); err != nil {
@@ -72,7 +81,7 @@ func (s Slot) NextSlot() Slot {
 		sheetID = fmt.Sprintf("C%d", sheetNum+1)
 		sheetSlot = "A1"
 	} else {
-		sheetSlot = s.incrementSheetSlot(s.SheetSlot)
+		sheetSlot = s.incrementSheetSlot(s.SheetSlot, rowSize)
 	}
 
 	return Slot{
@@ -82,9 +91,9 @@ func (s Slot) NextSlot() Slot {
 	}
 }
 
-func (s Slot) incrementSheetSlot(sheetSlot string) string {
+func (s Slot) incrementSheetSlot(sheetSlot string, rowSize int) string {
 	if len(sheetSlot) != 2 || sheetSlot[0] < 'A' || sheetSlot[0] > 'G' ||
-		sheetSlot[1] < '1' || sheetSlot[1] > '6' {
+		sheetSlot[1] < '1' || sheetSlot[1] > byte(rowSize) {
 		return ""
 	}
 
@@ -95,8 +104,8 @@ func (s Slot) incrementSheetSlot(sheetSlot string) string {
 	// Increment row first
 	row++
 
-	// If row exceeds 6, move to next column and reset row to 1
-	if row > 6 {
+	// If row exceeds rowSize, move to next column and reset row to 1
+	if row > rowSize {
 		row = 1
 		col++
 		if col > 'G' {
