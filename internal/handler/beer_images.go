@@ -76,6 +76,7 @@ func (h WorkspaceServer) SubmitBeerImages(reqResp *web.ReqRespPair) error {
 	// TODO: Add validation for slot component formats (e.g., geoPrefix pattern, sheetId numeric validation)
 
 	mediaItems := make([]model.BeerMedia, len(ids))
+	slotIdx := 0
 	for i := range mediaItems {
 		var mediaBeerID *int
 		if selections[i] {
@@ -93,10 +94,14 @@ func (h WorkspaceServer) SubmitBeerImages(reqResp *web.ReqRespPair) error {
 		// Only process slot information if the media type is a Cap and it is selected
 		mediaItems[i].SlotID = nil
 		if mediaItems[i].Type.IsCap() && selections[i] {
-			if allSlotGeoPrefixes[i] != "" && allSlotSheetIDs[i] != "" && allSlotSheetSlots[i] != "" {
-				slotID := fmt.Sprintf("%s-%s-%s", allSlotGeoPrefixes[i], allSlotSheetIDs[i], allSlotSheetSlots[i])
+			if allSlotGeoPrefixes[slotIdx] != "" && allSlotSheetIDs[slotIdx] != "" && allSlotSheetSlots[slotIdx] != "" {
+				slotID := fmt.Sprintf("%s-%s-%s", allSlotGeoPrefixes[slotIdx], allSlotSheetIDs[slotIdx], allSlotSheetSlots[slotIdx])
 				mediaItems[i].SlotID = &slotID
 			}
+		}
+		// Advance slotIdx for every item that contributed slot inputs (non-cap or cap-selected)
+		if !(mediaItems[i].Type.IsCap() && !selections[i]) {
+			slotIdx++
 		}
 	}
 
