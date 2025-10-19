@@ -75,8 +75,9 @@ func (s CollectionService) findFirstAvailableSlot(occupiedSlots []model.Slot, ge
 	const (
 		maxSheets    = 100 //nolint:mnd
 		colsPerSheet = 7   //nolint:mnd
-		rowsPerSheet = 6   //nolint:mnd
 	)
+
+	rowsPerSheet := model.RowSizeForPrefix(geoPrefix)
 
 	// Keep checking slots until we find an empty one
 	// Safety limit to prevent infinite loops
@@ -104,9 +105,6 @@ func getGeoPrefix(country *model.Country) string {
 		"ARG": "CHL/ARG",
 		"BLR": "RUS",
 		"CHE": "DEU",
-		"USA": "NA",
-		"CAN": "NA",
-		"MEX": "NA",
 		"AND": "FRA",
 		"LUX": "FRA",
 		"SMR": "FRA",
@@ -121,27 +119,36 @@ func getGeoPrefix(country *model.Country) string {
 		"FIN": "SCND",
 		"SVK": "CARP",
 		"HUN": "CARP",
+		"ARM": "CASP",
+		"GEO": "CASP",
+		"AZE": "CASP",
 	}
 
 	regionGroupings := map[string]string{
-		"Africa": "AF",
-		"Asia":   "AS",
+		"Africa":  "AF",
+		"Oceania": "OC",
 	}
 
 	subRegionGroupings := map[string]string{
-		"Southeast Europe": "BALK",
+		"North America":      "NA",
+		"Southeast Europe":   "BALK",
+		"Southern Asia":      "INDO",
+		"Eastern Asia":       "EAAS",
+		"Western Asia":       "MIDE",
+		"Central Asia":       "CASP",
+		"South-Eastern Asia": "SEAS",
 	}
 
-	if group, exists := countryGroupings[country.Cca3]; exists {
-		return group
-	}
-	if group, exists := regionGroupings[country.Region]; exists {
-		return group
-	}
 	if country.Subregion != nil {
 		if group, exists := subRegionGroupings[*country.Subregion]; exists {
 			return group
 		}
+	}
+	if group, exists := regionGroupings[country.Region]; exists {
+		return group
+	}
+	if group, exists := countryGroupings[country.Cca3]; exists {
+		return group
 	}
 
 	return country.Cca3
