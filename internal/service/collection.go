@@ -131,6 +131,8 @@ func getGeoPrefix(country *model.Country) string {
 
 	subRegionGroupings := map[string]string{
 		"North America":      "NA",
+		"Caribbean":          "NA",
+		"Central America":    "NA",
 		"Southeast Europe":   "BALK",
 		"Southern Asia":      "INDO",
 		"Eastern Asia":       "EAAS",
