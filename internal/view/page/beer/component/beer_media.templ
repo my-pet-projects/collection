@@ -1,0 +1,28 @@
+package component
+
+import (
+	"fmt"
+
+	"github.com/my-pet-projects/collection/internal/model"
+)
+
+templ BeerMedia(beerMedia model.BeerMedia) {
+	{{ originalImageURL := fmt.Sprintf("%s/%s", S3BaseURL, beerMedia.Media.ExternalFilename) }}
+	{{ resizedImageURL := fmt.Sprintf("%s/width=100,quality=25/%s", CdnBaseURL, originalImageURL) }}
+	<img
+		class={
+			templ.KV("h-[80%]", beerMedia.Type == model.BeerMediaBottle),
+			templ.KV("w-[80%]", beerMedia.Type != model.BeerMediaBottle),
+		}
+		alt={ fmt.Sprintf("%d image", beerMedia.Type) }
+		loading="lazy"
+		decoding="async"
+		src={ resizedImageURL }
+		onerror={ OnImageLoadError(templ.JSExpression("this"), originalImageURL) }
+	/>
+}
+
+script OnImageLoadError(imgElement templ.JSExpression, fallbackUrl string) {
+	imgElement.onerror = null; 
+	imgElement.src = fallbackUrl;
+}
