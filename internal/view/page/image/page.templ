@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/my-pet-projects/collection/internal/view/layout"
+	beercomponent "github.com/my-pet-projects/collection/internal/view/page/beer/component"
 )
 
 templ Page(page ImagePageData) {
@@ -67,7 +68,7 @@ templ Page(page ImagePageData) {
 								id={ fmt.Sprintf("image-%d", image.ID) }
 								class="group relative flex h-40 items-center justify-center overflow-hidden rounded-2xl bg-gray-50 shadow-sm ring-1 ring-gray-200 transition-all duration-200 hover:scale-105 hover:shadow-lg"
 							>
-								// @BeerMedia(image)
+								@beercomponent.BeerMedia(image)
 								<button
 									hx-delete={ fmt.Sprintf("/workspace/images/%d", image.ID) }
 									hx-confirm="Are you sure you want to delete this image?"

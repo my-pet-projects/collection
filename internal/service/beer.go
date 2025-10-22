@@ -102,6 +102,19 @@ func (s BeerService) PaginateBeers(ctx context.Context, filter model.BeerFilter)
 }
 
 func (s BeerService) DeleteBeer(id int) error {
+	beer, beerErr := s.beerStore.GetBeer(id)
+	if beerErr != nil {
+		return errors.Wrap(beerErr, "get beer")
+	}
+
+	if beer == nil {
+		return errors.New("beer not found")
+	}
+
+	if beer.HasCapSlots() {
+		return errors.New("beer has assigned collection slots")
+	}
+
 	delErr := s.beerStore.DeleteBeer(id)
 	if delErr != nil {
 		return errors.Wrap(delErr, "delete beer")
