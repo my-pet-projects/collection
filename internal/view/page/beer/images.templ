@@ -3,7 +3,6 @@ package beer
 import (
 	"fmt"
 
-	"github.com/my-pet-projects/collection/internal/model"
 	beercomponent "github.com/my-pet-projects/collection/internal/view/page/beer/component"
 	uploadcomponent "github.com/my-pet-projects/collection/internal/view/page/upload/component"
 )
@@ -86,7 +85,7 @@ templ Images(params BeerPageData) {
 									>
 										<!-- Media Content -->
 										<div class="flex h-full w-full items-center justify-center bg-gray-50">
-											@BeerMedia(media)
+											@beercomponent.BeerMedia(media)
 										</div>
 										<!-- Type Icon -->
 										<div class="absolute left-2 top-2 text-gray-300">
@@ -268,20 +267,4 @@ templ Images(params BeerPageData) {
 		}
 		<div id="beer-images-errors" class="mt-6 hidden rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 shadow-md"></div>
 	</div>
-}
-
-templ BeerMedia(beerMedia model.BeerMedia) {
-	{{ originalImageURL := fmt.Sprintf("%s/%s", beercomponent.S3BaseURL, beerMedia.Media.ExternalFilename) }}
-	{{ resizedImageURL := fmt.Sprintf("%s/width=100,quality=25/%s", beercomponent.CdnBaseURL, originalImageURL) }}
-	<img
-		class={
-			templ.KV("h-[80%]", beerMedia.Type == model.BeerMediaBottle),
-			templ.KV("w-[80%]", beerMedia.Type != model.BeerMediaBottle),
-		}
-		alt={ fmt.Sprintf("%d image", beerMedia.Type) }
-		loading="lazy"
-		decoding="async"
-		src={ resizedImageURL }
-		onerror={ beercomponent.OnImageLoadError(templ.JSExpression("this"), originalImageURL) }
-	/>
 }

@@ -109,8 +109,3 @@ templ labelImage(media model.BeerMedia) {
 		</div>
 	</div>
 }
-
-script OnImageLoadError(imgElement templ.JSExpression, fallbackUrl string) {
-	imgElement.onerror = null; 
-	imgElement.src = fallbackUrl;
-}
