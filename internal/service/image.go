@@ -143,6 +143,9 @@ func (s ImageService) DeleteBeerMedia(ctx context.Context, id int) error {
 	}
 
 	item := items[0]
+	if !item.GetSlot().IsEmpty() {
+		return errors.New("has assigned collection slot")
+	}
 
 	s3DelErr := s.s3Storage.Delete(ctx, item.Media.ExternalFilename)
 	if s3DelErr != nil {

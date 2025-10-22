@@ -12,6 +12,7 @@ import (
 	"fmt"
 
 	"github.com/my-pet-projects/collection/internal/view/layout"
+	beercomponent "github.com/my-pet-projects/collection/internal/view/page/beer/component"
 )
 
 func Page(page ImagePageData) templ.Component {
@@ -64,7 +65,7 @@ func Page(page ImagePageData) templ.Component {
 				var templ_7745c5c3_Var3 string
 				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", len(page.Images)))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/image/page.templ`, Line: 51, Col: 46}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/image/page.templ`, Line: 52, Col: 46}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {
@@ -97,49 +98,57 @@ func Page(page ImagePageData) templ.Component {
 					var templ_7745c5c3_Var4 string
 					templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("image-%d", image.ID))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/image/page.templ`, Line: 67, Col: 46}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/image/page.templ`, Line: 68, Col: 46}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" class=\"group relative flex h-40 items-center justify-center overflow-hidden rounded-2xl bg-gray-50 shadow-sm ring-1 ring-gray-200 transition-all duration-200 hover:scale-105 hover:shadow-lg\"><button hx-delete=\"")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" class=\"group relative flex h-40 items-center justify-center overflow-hidden rounded-2xl bg-gray-50 shadow-sm ring-1 ring-gray-200 transition-all duration-200 hover:scale-105 hover:shadow-lg\">")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = beercomponent.BeerMedia(image).Render(ctx, templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<button hx-delete=\"")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var5 string
 					templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/workspace/images/%d", image.ID))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/image/page.templ`, Line: 72, Col: 66}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/image/page.templ`, Line: 73, Col: 66}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" hx-confirm=\"Are you sure you want to delete this image?\" hx-target=\"")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\" hx-confirm=\"Are you sure you want to delete this image?\" hx-target=\"")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var6 string
 					templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("#image-%d", image.ID))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/image/page.templ`, Line: 74, Col: 55}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/image/page.templ`, Line: 75, Col: 55}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\" hx-swap=\"outerHTML swap:0.1s\" x-data x-on:htmx:response-error=\"$dispatch('notify', { variant: 'danger', xhrResponse: $event.detail.xhr.response })\" class=\"absolute right-2 top-2 cursor-pointer rounded-full bg-red-500 p-1.5 text-white opacity-0 shadow-lg transition-all duration-200 hover:scale-110 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 group-hover:opacity-100\" aria-label=\"Delete image\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-3.5 w-3.5 text-white\" viewBox=\"0 0 20 20\" fill=\"currentColor\"><path fillRule=\"evenodd\" d=\"M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z\"></path></svg></button></div>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\" hx-swap=\"outerHTML swap:0.1s\" x-data x-on:htmx:response-error=\"$dispatch('notify', { variant: 'danger', xhrResponse: $event.detail.xhr.response })\" class=\"absolute right-2 top-2 cursor-pointer rounded-full bg-red-500 p-1.5 text-white opacity-0 shadow-lg transition-all duration-200 hover:scale-110 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 group-hover:opacity-100\" aria-label=\"Delete image\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-3.5 w-3.5 text-white\" viewBox=\"0 0 20 20\" fill=\"currentColor\"><path fillRule=\"evenodd\" d=\"M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z\"></path></svg></button></div>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

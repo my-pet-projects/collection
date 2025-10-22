@@ -214,15 +214,4 @@ func labelImage(media model.BeerMedia) templ.Component {
 	})
 }
 
-func OnImageLoadError(imgElement templ.JSExpression, fallbackUrl string) templ.ComponentScript {
-	return templ.ComponentScript{
-		Name: `__templ_OnImageLoadError_30bd`,
-		Function: `function __templ_OnImageLoadError_30bd(imgElement, fallbackUrl){imgElement.onerror = null; 
-	imgElement.src = fallbackUrl;
-}`,
-		Call:       templ.SafeScript(`__templ_OnImageLoadError_30bd`, imgElement, fallbackUrl),
-		CallInline: templ.SafeScriptInline(`__templ_OnImageLoadError_30bd`, imgElement, fallbackUrl),
-	}
-}
-
 var _ = templruntime.GeneratedTemplate
