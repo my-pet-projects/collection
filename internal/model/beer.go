@@ -10,19 +10,18 @@ import (
 )
 
 type Beer struct {
-	ID          int `gorm:"primaryKey"`
-	Brand       string
-	Type        *string
-	BreweryID   *int
-	IsActive    bool
-	CreatedAt   time.Time `gorm:"autoCreateTime;<-:create"`
-	UpdatedAt   time.Time `gorm:"autoUpdateTime;<-:update"`
-	OldImageIds *string   `gorm:"-"`
-	Brewery     *Brewery  `gorm:"foreignKey:BreweryID"`
-	StyleID     *int
-	BeerStyle   *BeerStyle  `gorm:"foreignKey:StyleID;references:ID"`
-	BeerMedias  []BeerMedia `gorm:"foreignKey:BeerID;references:ID"`
-	SearchName  string
+	ID         int `gorm:"primaryKey"`
+	Brand      string
+	Type       *string
+	BreweryID  *int
+	IsActive   bool
+	CreatedAt  time.Time `gorm:"autoCreateTime;<-:create"`
+	UpdatedAt  time.Time `gorm:"autoUpdateTime;<-:update"`
+	Brewery    *Brewery  `gorm:"foreignKey:BreweryID"`
+	StyleID    *int
+	BeerStyle  *BeerStyle  `gorm:"foreignKey:StyleID;references:ID"`
+	BeerMedias []BeerMedia `gorm:"foreignKey:BeerID;references:ID"`
+	SearchName string
 }
 
 func (b Beer) HasBeerStyle() bool {
@@ -88,12 +87,9 @@ func NewBeerFromUploadForm(formValue UploadFormValues) Beer {
 }
 
 type Brewery struct {
-	ID      int
-	Name    string
-	Website *string
-	GeoID   int
-	OldId   *string
-	// Country *Country `gorm:"foreignKey:Cca2"`
+	ID          int
+	Name        string
+	GeoID       int
 	City        *City `gorm:"foreignKey:GeoID;references:ID"`
 	SearchName  string
 	CountryCca2 string
