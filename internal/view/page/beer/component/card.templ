@@ -9,7 +9,16 @@ import (
 )
 
 templ Card(beer model.Beer) {
-	<div class="group overflow-hidden rounded-xl bg-white shadow-md transition-all duration-300 hover:shadow-lg sm:rounded-2xl sm:hover:-translate-y-2 sm:hover:shadow-xl">
+	{{ var capMedias []model.BeerMedia }}
+	for _, media := range beer.BeerMedias {
+		if media.Type.IsCap() {
+			{{ capMedias = append(capMedias, media) }}
+		}
+	}
+	<div
+		x-data="{ currentCapIndex: 0 }"
+		class="group overflow-hidden rounded-xl bg-white shadow-md transition-all duration-300 hover:shadow-lg sm:rounded-2xl sm:hover:-translate-y-2 sm:hover:shadow-xl"
+	>
 		<div class="p-4 sm:p-6">
 			<!-- Header -->
 			<div class="mb-4 flex items-center justify-between sm:mb-6">
@@ -48,16 +57,29 @@ templ Card(beer model.Beer) {
 			</div>
 			<!-- Images Section -->
 			<div class="mb-3 flex flex-wrap items-end gap-2 rounded-lg bg-gray-50 p-2 sm:flex-nowrap">
+				{{ capIndex := 0 }}
 				for _, media := range beer.BeerMedias {
 					if media.Type.IsBottle() {
 						@bottleImage(media)
 					} else if media.Type.IsCap() {
-						@capImage(media)
+						@capImageWithIndex(media, capIndex)
+						{{ capIndex++ }}
 					} else if media.Type.IsLabel() {
 						@labelImage(media)
 					}
 				}
 			</div>
+			<!-- Cap Gallery Section -->
+			if len(capMedias) > 1 {
+				<div class="mb-4 sm:mb-6">
+					<!-- Compact thumbnail gallery -->
+					<div class="flex flex-wrap items-center justify-center gap-1">
+						for idx, capMedia := range capMedias {
+							@capThumbnail(capMedia, idx)
+						}
+					</div>
+				</div>
+			}
 			<!-- Info Section -->
 			<div class="mb-4 space-y-2 sm:mb-6 sm:space-y-3">
 				if beer.HasBrewery() {
@@ -96,12 +118,8 @@ templ Card(beer model.Beer) {
 						</div>
 						<div>
 							<div class="muted text-xs">Slot</div>
-							<div class="min-w-0 flex-1 truncate text-xs font-medium sm:text-sm">
-								<div class="flex min-w-0 flex-1 flex-wrap gap-1">
-									for _, slot := range capSlots {
-										<span class="text-xs font-semibold sm:text-sm">{ slot }</span>
-									}
-								</div>
+							<div class="text-xs font-medium text-slate-700 sm:text-sm">
+								{ strings.Join(capSlots, " • ") }
 							</div>
 						</div>
 					</div>
