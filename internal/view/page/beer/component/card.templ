@@ -9,15 +9,24 @@ import (
 )
 
 templ Card(beer model.Beer) {
-	<div class="group overflow-hidden rounded-xl bg-white shadow-md transition-all duration-300 hover:shadow-lg sm:rounded-2xl sm:hover:-translate-y-2 sm:hover:shadow-xl">
+	{{ var capMedias []model.BeerMedia }}
+	for _, media := range beer.BeerMedias {
+		if media.Type.IsCap() {
+			{{ capMedias = append(capMedias, media) }}
+		}
+	}
+	<div
+		x-data="{ currentCapIndex: 0 }"
+		class="group overflow-hidden rounded-xl bg-white shadow-md transition-all duration-300 hover:shadow-lg sm:rounded-2xl sm:hover:-translate-y-2 sm:hover:shadow-xl"
+	>
 		<div class="p-4 sm:p-6">
 			<!-- Header -->
 			<div class="mb-4 flex items-center justify-between sm:mb-6">
 				<!-- Brand and Country -->
 				<div class="flex min-w-0 flex-1 items-center space-x-3 sm:space-x-4">
 					if beer.HasCountry() {
+						{{ countryCode := beer.GetCountry().Cca2 }}
 						<div class="flex-shrink-0">
-							{{ countryCode := beer.GetCountry().Cca2 }}
 							<img
 								src={ fmt.Sprintf("https://flagcdn.com/w40/%s.png", strings.ToLower(countryCode)) }
 								alt={ fmt.Sprintf("%s flag", countryCode) }
@@ -48,16 +57,29 @@ templ Card(beer model.Beer) {
 			</div>
 			<!-- Images Section -->
 			<div class="mb-3 flex flex-wrap items-end gap-2 rounded-lg bg-gray-50 p-2 sm:flex-nowrap">
+				{{ capIndex := 0 }}
 				for _, media := range beer.BeerMedias {
 					if media.Type.IsBottle() {
 						@bottleImage(media)
 					} else if media.Type.IsCap() {
-						@capImage(media)
+						@capImageWithIndex(media, capIndex)
+						{{ capIndex++ }}
 					} else if media.Type.IsLabel() {
 						@labelImage(media)
 					}
 				}
 			</div>
+			<!-- Cap Gallery Section -->
+			if len(capMedias) > 1 {
+				<div class="mb-4 sm:mb-6">
+					<!-- Compact thumbnail gallery -->
+					<div class="flex flex-wrap items-center justify-center gap-1">
+						for idx, capMedia := range capMedias {
+							@capThumbnail(capMedia, idx)
+						}
+					</div>
+				</div>
+			}
 			<!-- Info Section -->
 			<div class="mb-4 space-y-2 sm:mb-6 sm:space-y-3">
 				if beer.HasBrewery() {
@@ -96,12 +118,8 @@ templ Card(beer model.Beer) {
 						</div>
 						<div>
 							<div class="muted text-xs">Slot</div>
-							<div class="min-w-0 flex-1 truncate text-xs font-medium sm:text-sm">
-								<div class="flex min-w-0 flex-1 flex-wrap gap-1">
-									for _, slot := range capSlots {
-										<span class="text-xs font-semibold sm:text-sm">{ slot }</span>
-									}
-								</div>
+							<div class="text-xs font-medium text-slate-700 sm:text-sm">
+								{ strings.Join(capSlots, " • ") }
 							</div>
 						</div>
 					</div>
@@ -116,57 +134,6 @@ templ Card(beer model.Beer) {
 					</div>
 				</div>
 			}
-		</div>
-	</div>
-}
-
-templ CardSkeleton() {
-	<div class="overflow-hidden rounded-xl bg-white shadow-md sm:rounded-2xl">
-		<div class="p-4 sm:p-6">
-			<!-- Header skeleton -->
-			<div class="mb-4 flex items-center justify-between sm:mb-6">
-				<div class="flex min-w-0 flex-1 items-center space-x-3 sm:space-x-4">
-					<!-- Flag skeleton -->
-					<div class="h-5 w-7 animate-pulse rounded bg-gray-200"></div>
-					<!-- Title skeleton -->
-					<div class="min-w-0 flex-1">
-						<div class="h-6 w-3/4 animate-pulse rounded bg-gray-200 sm:h-7"></div>
-					</div>
-				</div>
-				<!-- Edit button skeleton -->
-				<div class="h-8 w-8 animate-pulse rounded-full bg-gray-200"></div>
-			</div>
-			<!-- Images skeleton -->
-			<div class="mb-3 flex flex-wrap items-end gap-2 rounded-lg bg-gray-50 p-2 sm:flex-nowrap">
-				<!-- Bottle skeleton -->
-				<div class="flex h-20 w-12 animate-pulse items-center justify-center rounded-lg bg-gray-200 sm:h-28 sm:w-14"></div>
-				<!-- Cap skeleton -->
-				<div class="h-20 w-20 animate-pulse rounded-full bg-gray-200 sm:h-28 sm:w-28"></div>
-				<!-- Label skeleton -->
-				<div class="flex h-20 w-full animate-pulse items-center justify-center rounded-lg bg-gray-200 sm:h-28"></div>
-			</div>
-			<!-- Info section skeleton -->
-			<div class="mb-4 space-y-3 sm:mb-6">
-				<!-- Brewery info -->
-				<div class="flex items-center gap-2 sm:gap-3">
-					<div class="h-6 w-6 animate-pulse rounded-md bg-gray-200 sm:h-8 sm:w-8"></div>
-					<div class="h-4 w-1/2 animate-pulse rounded bg-gray-200"></div>
-				</div>
-				<!-- Location info -->
-				<div class="flex items-center gap-2 sm:gap-3">
-					<div class="h-6 w-6 animate-pulse rounded-md bg-gray-200 sm:h-8 sm:w-8"></div>
-					<div class="h-4 w-2/3 animate-pulse rounded bg-gray-200"></div>
-				</div>
-				<!-- Cap slots info -->
-				<div class="flex items-center gap-2 sm:gap-3">
-					<div class="h-6 w-6 animate-pulse rounded-md bg-gray-200 sm:h-8 sm:w-8"></div>
-					<div class="h-4 w-1/3 animate-pulse rounded bg-gray-200"></div>
-				</div>
-			</div>
-			<!-- Badge skeleton -->
-			<div class="flex items-center">
-				<div class="h-8 w-24 animate-pulse rounded-full bg-gray-200"></div>
-			</div>
 		</div>
 	</div>
 }
