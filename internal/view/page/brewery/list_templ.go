@@ -232,7 +232,7 @@ func TableContent(data BreweryListData) templ.Component {
 			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<!-- Results Count (OOB Swapped) --><div id=\"results-count\" hx-swap-oob=\"true\" class=\"flex flex-row items-center justify-between space-x-3 p-6\"><!-- Title --><div class=\"flex items-center\"><h2 class=\"text-xl font-bold text-gray-900 sm:text-2xl\">Breweries</h2></div><!-- Results Count --><div class=\"flex items-center\"><div class=\"rounded-2xl bg-gradient-to-r from-amber-100 to-orange-100 px-4 py-2 shadow-sm\"><span class=\"text-sm font-bold text-amber-900\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<!-- Results Count (OOB Swapped) --><div id=\"results-count\" hx-swap-oob=\"true\" class=\"flex flex-row items-center justify-between space-x-3 p-6\"><!-- Title --><div class=\"flex items-center\"><h2 class=\"text-xl font-bold text-gray-900 sm:text-2xl\">Breweries</h2></div><!-- Results Count --><div x-show=\"!searching\" class=\"flex items-center\"><div class=\"rounded-2xl bg-gradient-to-r from-amber-100 to-orange-100 px-4 py-2 shadow-sm\"><span class=\"text-sm font-bold text-amber-900\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

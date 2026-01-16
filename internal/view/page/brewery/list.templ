@@ -208,7 +208,7 @@ templ TableContent(data BreweryListData) {
 			<h2 class="text-xl font-bold text-gray-900 sm:text-2xl">Breweries</h2>
 		</div>
 		<!-- Results Count -->
-		<div class="flex items-center">
+		<div x-show="!searching" class="flex items-center">
 			<div class="rounded-2xl bg-gradient-to-r from-amber-100 to-orange-100 px-4 py-2 shadow-sm">
 				<span class="text-sm font-bold text-amber-900">
 					{ fmt.Sprintf("%d", data.TotalResults) }
