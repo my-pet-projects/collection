@@ -1,0 +1,32 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "packageRules": [
+    {
+      "description": "Group all minor and patch Go updates into a single PR",
+      "matchManagers": ["gomod"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "go-minor-patch-updates",
+      "prTitle": "chore: minor and patch Go updates",
+      "prBody": "This PR combines all minor and patch Go dependency updates for a streamlined maintenance workflow.\n\nAutomated merge enabled.",
+      "automerge": true,
+      "platformAutomerge": true
+    },
+    {
+      "description": "Separate PRs for major Go updates",
+      "matchManagers": ["gomod"],
+      "matchUpdateTypes": ["major"],
+      "prTitle": "chore: major update {{depName}} to v{{newMajor}}",
+      "prBody": "This PR updates `{{depName}}` to its next major version (`v{{newMajor}}`).\n\nPlease review carefully as major versions may contain breaking changes.",
+      "automerge": false
+    },
+    {
+      "description": "Offer PRs for new Go toolchain versions",
+      "matchDepNames": ["go"],
+      "matchManagers": ["gomod"],
+      "prTitle": "chore: bump Go version to {{newVersion}}",
+      "prBody": "This PR updates the Go toolchain in `go.mod` to {{newVersion}}.\n\nRun `go mod tidy` has been executed so `go.sum` is already clean.",
+      "automerge": false
+    }
+  ]
+}
