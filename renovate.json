@@ -3,12 +3,15 @@
   "extends": ["config:recommended"],
   "packageRules": [
     {
-      "description": "Group all minor and patch Go updates into a single PR",
+      "description": "Group all minor and patch Go updates (direct + indirect) into a single PR",
       "matchManagers": ["gomod"],
       "matchUpdateTypes": ["minor", "patch"],
+      "matchDepTypes": ["direct", "indirect"],
       "groupName": "go-minor-patch-updates",
-      "prTitle": "chore: minor and patch Go updates",
-      "prBody": "This PR combines all minor and patch Go dependency updates for a streamlined maintenance workflow.\n\nAutomated merge enabled.",
+      "commitMessagePrefix": "chore",
+      "commitMessageAction": "update",
+      "commitMessageTopic": "minor and patch Go dependencies",
+      "prBody": "This PR combines all minor and patch Go dependency updates (including indirect ones) for a streamlined maintenance workflow.\n\nAutomated merge enabled.",
       "automerge": true,
       "platformAutomerge": true
     },
@@ -16,7 +19,9 @@
       "description": "Separate PRs for major Go updates",
       "matchManagers": ["gomod"],
       "matchUpdateTypes": ["major"],
-      "prTitle": "chore: major update {{depName}} to v{{newMajor}}",
+      "commitMessagePrefix": "chore",
+      "commitMessageAction": "update",
+      "commitMessageTopic": "{{depName}} to v{{newMajor}}",
       "prBody": "This PR updates `{{depName}}` to its next major version (`v{{newMajor}}`).\n\nPlease review carefully as major versions may contain breaking changes.",
       "automerge": false
     },
@@ -25,7 +30,9 @@
       "matchManagers": ["gomod"],
       "matchDepNames": ["go"],
       "matchDatasources": ["golang-version"],
-      "prTitle": "chore: bump Go version to {{newVersion}}",
+      "commitMessagePrefix": "chore",
+      "commitMessageAction": "bump",
+      "commitMessageTopic": "Go version to {{newVersion}}",
       "prBody": "This PR updates the Go toolchain in `go.mod` to {{newVersion}}.",
       "automerge": false
     }
