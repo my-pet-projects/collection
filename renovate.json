@@ -25,16 +25,15 @@
       "prBody": "This PR updates `{{depName}}` to its next major version (`v{{newMajor}}`).\n\nPlease review carefully as major versions may contain breaking changes.",
       "automerge": false
     },
-    {
-      "description": "Offer PRs for new Go toolchain versions",
+{
+      "description": "Update Go version",
       "matchManagers": ["gomod"],
       "matchDepNames": ["go"],
-      "matchDatasources": ["golang-version"],
+      "matchUpdateTypes": ["patch"],
       "commitMessagePrefix": "chore",
       "commitMessageAction": "bump",
-      "commitMessageTopic": "Go version to {{newVersion}}",
-      "prBody": "This PR updates the Go toolchain in `go.mod` to {{newVersion}}.",
-      "automerge": false
+      "commitMessageTopic": "Go version to {{newVersion}}"
     }
-  ]
+  ],
+  "postUpdateOptions": ["gomodTidy"]
 }
