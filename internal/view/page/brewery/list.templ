@@ -88,7 +88,7 @@ templ listFilters(params ListPageParams) {
 								params.set('country', countryValue);
 							}
 							if (!params.has('page')) {
-							params.set('page', '1');
+								params.set('page', '1');
 							}
 
 							params.set('size', sizeValue);
@@ -184,21 +184,18 @@ templ breweryTable() {
 		<div class="border-b border-gray-200/70 bg-gradient-to-r from-white via-gray-50 to-white">
 			<div id="results-count" class="flex flex-col p-6 sm:flex-row sm:items-center sm:justify-between"></div>
 		</div>
+		<!-- Loading Skeleton  -->
+		<div
+			id="brewery-list-skeleton"
+			x-show="searching"
+			x-transition
+			class="w-full"
+		>
+			@loadingListShimmer(5)
+		</div>
 		<!-- Content Area -->
-		<div>
-			<div id="brewery-grid">
-				@TableContent(BreweryListData{Breweries: []model.Brewery{}})
-			</div>
-			<!-- Loading State -->
-			<div id="brewery-list-indicator" class="htmx-indicator flex flex-col items-center justify-center p-16">
-				<div class="h-16 w-16 animate-spin rounded-full border-4 border-gray-200 border-t-amber-500 shadow-lg"></div>
-				<div class="mt-6 flex items-center space-x-2">
-					<svg class="h-5 w-5 animate-bounce text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 11h1a3 3 0 0 1 0 6h-1M9 12v6M13 12v6"></path>
-					</svg>
-					<p class="text-lg font-medium text-gray-700">Discovering amazing breweries...</p>
-				</div>
-			</div>
+		<div id="brewery-grid">
+			@TableContent(BreweryListData{Breweries: []model.Brewery{}})
 		</div>
 	</div>
 }
@@ -224,17 +221,13 @@ templ TableContent(data BreweryListData) {
 			</div>
 		</div>
 	</div>
-	<!-- Loading Skeleton  -->
 	<div
-		id="brewery-list-skeleton"
-		x-show="searching"
+		x-show="!searching"
 		x-transition:enter="transition ease-out duration-300"
 		x-transition:enter-start="opacity-0"
 		x-transition:enter-end="opacity-100"
+		class="overflow-hidden"
 	>
-		@loadingListShimmer(data.LimitPerPage)
-	</div>
-	<div x-show="!searching" class="overflow-hidden">
 		if len(data.Breweries) == 0 {
 			<!-- Empty State -->
 			@emptyState(data)
@@ -247,12 +240,12 @@ templ TableContent(data BreweryListData) {
 	</div>
 }
 
-templ loadingListShimmer(breweriesCount ...int) {
+templ loadingListShimmer(count ...int) {
 	{{
-		shimmerCount := 5
-		if len(breweriesCount) > 0 {
-			shimmerCount = breweriesCount[0]
-		}
+	shimmerCount := 5
+	if len(count) > 0 {
+		shimmerCount = count[0]
+	}
 	}}
 	<div class="divide-y divide-gray-200/60">
 		for i := 0; i < shimmerCount; i++ {

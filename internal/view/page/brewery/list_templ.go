@@ -145,7 +145,7 @@ func listFilters(params ListPageParams) templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div class=\"mb-8 rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-200/50\"><!-- Search Section --><form id=\"search-form\" hx-get=\"/breweries\" hx-swap=\"innerHTML\" hx-target=\"#brewery-grid\" hx-trigger=\"load, keyup changed delay:500ms from:#search, country-selected from:body\" hx-target-error=\"#brewery-list-errors\" x-on:htmx:before-request=\"searching = true\" x-on:htmx:response-error=\"searching = false; hasErrors = true;\" x-on:htmx:config-request=\"\n\t\t\t\t\t\t\tconst params = new URLSearchParams();\n\t\t\t\t\t\t\tconst searchValue = document.getElementById('search')?.value ?? '';\n\t\t\t\t\t\t\tconst countryValue = document.querySelector('[name=country]')?.value ?? '';\n\t\t\t\t\t\t\tconst sizeValue = document.querySelector('[name=size]')?.value ?? '';\n\t\t\t\t\t\t\t\n\t\t\t\t\t\t\tif (searchValue) {\n\t\t\t\t\t\t\t\tparams.set('query', searchValue.trim());\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\tif (countryValue) {\n\t\t\t\t\t\t\t\tparams.set('country', countryValue);\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\tif (!params.has('page')) {\n\t\t\t\t\t\t\tparams.set('page', '1');\n\t\t\t\t\t\t\t}\n\n\t\t\t\t\t\t\tparams.set('size', sizeValue);\n\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t// Override the parameters\n\t\t\t\t\t\t\t$event.detail.parameters = Object.fromEntries(params.entries());\t\t\t\t\t\t\n\t\t\t\t\t\t\" x-on:htmx:after-request=\"\n\t\t\t\t\t\t\tsearching = false;\n\t\t\t\t\t\t\thasErrors = !$event.detail.successful;\n\t\t\t\t\t\t\tconst form = $event.target;\n\t\t\t\t\t\t\tconst formData = new FormData(form);\n\t\t\t\t\t\t\tconst params = new URLSearchParams();\n\t\t\t\t\t\t\t\n\t\t\t\t\t\t\tfor (let [key, value] of formData.entries()) {\n\t\t\t\t\t\t\t\tif (value.trim()) {\n\t\t\t\t\t\t\t\t\tparams.set(key, value.trim());\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\n\t\t\t\t\t\t\tconst newUrl = '/workspace/brewery' + (params.toString() ? '?' + params.toString() : '');\n\t\t\t\t\t\t\t\n\t\t\t\t\t\t\thistory.pushState(null, '', newUrl);\n\t\t\t\t\t\t\" class=\"flex flex-col gap-4 sm:flex-row sm:items-stretch\"><!-- Search Input --><div class=\"relative flex-1\"><input id=\"search\" name=\"query\" type=\"text\" class=\"block h-12 w-full rounded-2xl border-0 bg-gray-50/50 px-4 py-3 pl-12 pr-12 text-sm shadow-inner ring-1 ring-inset ring-gray-200 transition-all duration-300 placeholder:text-gray-400 hover:bg-white hover:ring-gray-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-400\" placeholder=\"Search breweries by name...\" x-model=\"searchValue\"><!-- Search Icon --><div x-show=\"!searching && countryFilterLoaded\" class=\"pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4\"><svg class=\"h-5 w-5 text-amber-500\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z\"></path></svg></div><!-- Clear Button --><button type=\"button\" x-show=\"searchValue.length > 0\" x-on:click=\"searchValue = ''; document.getElementById('search').value = ''; document.getElementById('search').dispatchEvent(new Event('keyup'))\" class=\"absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-gray-200 p-1.5 text-gray-500 transition-all duration-200 hover:bg-gray-300 hover:text-gray-700\"><svg class=\"h-3 w-3\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M6 18L18 6M6 6l12 12\"></path></svg></button><!-- Loading Indicator --><div x-show=\"searching || !countryFilterLoaded\" class=\"pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4\"><div class=\"h-5 w-5 animate-spin rounded-full border-2 border-amber-200 border-t-amber-500\"></div></div></div><!-- Country Filter --><div class=\"flex w-full items-center justify-center sm:w-80\" id=\"country-filter-container\"><!-- Loading indicator --><div class=\"h-5 w-5 animate-spin rounded-full border-2 border-gray-300 border-t-black\"></div></div><!-- Size Filter (hidden) --><input type=\"hidden\" id=\"size\" name=\"size\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div class=\"mb-8 rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-200/50\"><!-- Search Section --><form id=\"search-form\" hx-get=\"/breweries\" hx-swap=\"innerHTML\" hx-target=\"#brewery-grid\" hx-trigger=\"load, keyup changed delay:500ms from:#search, country-selected from:body\" hx-target-error=\"#brewery-list-errors\" x-on:htmx:before-request=\"searching = true\" x-on:htmx:response-error=\"searching = false; hasErrors = true;\" x-on:htmx:config-request=\"\n\t\t\t\t\t\t\tconst params = new URLSearchParams();\n\t\t\t\t\t\t\tconst searchValue = document.getElementById('search')?.value ?? '';\n\t\t\t\t\t\t\tconst countryValue = document.querySelector('[name=country]')?.value ?? '';\n\t\t\t\t\t\t\tconst sizeValue = document.querySelector('[name=size]')?.value ?? '';\n\t\t\t\t\t\t\t\n\t\t\t\t\t\t\tif (searchValue) {\n\t\t\t\t\t\t\t\tparams.set('query', searchValue.trim());\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\tif (countryValue) {\n\t\t\t\t\t\t\t\tparams.set('country', countryValue);\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\tif (!params.has('page')) {\n\t\t\t\t\t\t\t\tparams.set('page', '1');\n\t\t\t\t\t\t\t}\n\n\t\t\t\t\t\t\tparams.set('size', sizeValue);\n\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t// Override the parameters\n\t\t\t\t\t\t\t$event.detail.parameters = Object.fromEntries(params.entries());\t\t\t\t\t\t\n\t\t\t\t\t\t\" x-on:htmx:after-request=\"\n\t\t\t\t\t\t\tsearching = false;\n\t\t\t\t\t\t\thasErrors = !$event.detail.successful;\n\t\t\t\t\t\t\tconst form = $event.target;\n\t\t\t\t\t\t\tconst formData = new FormData(form);\n\t\t\t\t\t\t\tconst params = new URLSearchParams();\n\t\t\t\t\t\t\t\n\t\t\t\t\t\t\tfor (let [key, value] of formData.entries()) {\n\t\t\t\t\t\t\t\tif (value.trim()) {\n\t\t\t\t\t\t\t\t\tparams.set(key, value.trim());\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\n\t\t\t\t\t\t\tconst newUrl = '/workspace/brewery' + (params.toString() ? '?' + params.toString() : '');\n\t\t\t\t\t\t\t\n\t\t\t\t\t\t\thistory.pushState(null, '', newUrl);\n\t\t\t\t\t\t\" class=\"flex flex-col gap-4 sm:flex-row sm:items-stretch\"><!-- Search Input --><div class=\"relative flex-1\"><input id=\"search\" name=\"query\" type=\"text\" class=\"block h-12 w-full rounded-2xl border-0 bg-gray-50/50 px-4 py-3 pl-12 pr-12 text-sm shadow-inner ring-1 ring-inset ring-gray-200 transition-all duration-300 placeholder:text-gray-400 hover:bg-white hover:ring-gray-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-400\" placeholder=\"Search breweries by name...\" x-model=\"searchValue\"><!-- Search Icon --><div x-show=\"!searching && countryFilterLoaded\" class=\"pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4\"><svg class=\"h-5 w-5 text-amber-500\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z\"></path></svg></div><!-- Clear Button --><button type=\"button\" x-show=\"searchValue.length > 0\" x-on:click=\"searchValue = ''; document.getElementById('search').value = ''; document.getElementById('search').dispatchEvent(new Event('keyup'))\" class=\"absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-gray-200 p-1.5 text-gray-500 transition-all duration-200 hover:bg-gray-300 hover:text-gray-700\"><svg class=\"h-3 w-3\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M6 18L18 6M6 6l12 12\"></path></svg></button><!-- Loading Indicator --><div x-show=\"searching || !countryFilterLoaded\" class=\"pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4\"><div class=\"h-5 w-5 animate-spin rounded-full border-2 border-amber-200 border-t-amber-500\"></div></div></div><!-- Country Filter --><div class=\"flex w-full items-center justify-center sm:w-80\" id=\"country-filter-container\"><!-- Loading indicator --><div class=\"h-5 w-5 animate-spin rounded-full border-2 border-gray-300 border-t-black\"></div></div><!-- Size Filter (hidden) --><input type=\"hidden\" id=\"size\" name=\"size\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -187,7 +187,15 @@ func breweryTable() templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-gray-200\"><!-- Status Bar --><div class=\"border-b border-gray-200/70 bg-gradient-to-r from-white via-gray-50 to-white\"><div id=\"results-count\" class=\"flex flex-col p-6 sm:flex-row sm:items-center sm:justify-between\"></div></div><!-- Content Area --><div><div id=\"brewery-grid\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-gray-200\"><!-- Status Bar --><div class=\"border-b border-gray-200/70 bg-gradient-to-r from-white via-gray-50 to-white\"><div id=\"results-count\" class=\"flex flex-col p-6 sm:flex-row sm:items-center sm:justify-between\"></div></div><!-- Loading Skeleton  --><div id=\"brewery-list-skeleton\" x-show=\"searching\" x-transition class=\"w-full\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = loadingListShimmer(5).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div><!-- Content Area --><div id=\"brewery-grid\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -195,7 +203,7 @@ func breweryTable() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div><!-- Loading State --><div id=\"brewery-list-indicator\" class=\"htmx-indicator flex flex-col items-center justify-center p-16\"><div class=\"h-16 w-16 animate-spin rounded-full border-4 border-gray-200 border-t-amber-500 shadow-lg\"></div><div class=\"mt-6 flex items-center space-x-2\"><svg class=\"h-5 w-5 animate-bounce text-amber-500\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M17 11h1a3 3 0 0 1 0 6h-1M9 12v6M13 12v6\"></path></svg><p class=\"text-lg font-medium text-gray-700\">Discovering amazing breweries...</p></div></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -224,43 +232,35 @@ func TableContent(data BreweryListData) templ.Component {
 			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<!-- Results Count (OOB Swapped) --><div id=\"results-count\" hx-swap-oob=\"true\" class=\"flex flex-row items-center justify-between space-x-3 p-6\"><!-- Title --><div class=\"flex items-center\"><h2 class=\"text-xl font-bold text-gray-900 sm:text-2xl\">Breweries</h2></div><!-- Results Count --><div class=\"flex items-center\"><div class=\"rounded-2xl bg-gradient-to-r from-amber-100 to-orange-100 px-4 py-2 shadow-sm\"><span class=\"text-sm font-bold text-amber-900\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<!-- Results Count (OOB Swapped) --><div id=\"results-count\" hx-swap-oob=\"true\" class=\"flex flex-row items-center justify-between space-x-3 p-6\"><!-- Title --><div class=\"flex items-center\"><h2 class=\"text-xl font-bold text-gray-900 sm:text-2xl\">Breweries</h2></div><!-- Results Count --><div class=\"flex items-center\"><div class=\"rounded-2xl bg-gradient-to-r from-amber-100 to-orange-100 px-4 py-2 shadow-sm\"><span class=\"text-sm font-bold text-amber-900\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", data.TotalResults))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 217, Col: 43}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 214, Col: 43}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, " ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, " ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if data.TotalResults == 1 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "brewery found")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "brewery found")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "breweries found")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "breweries found")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</span></div></div></div><!-- Loading Skeleton  --><div id=\"brewery-list-skeleton\" x-show=\"searching\" x-transition:enter=\"transition ease-out duration-300\" x-transition:enter-start=\"opacity-0\" x-transition:enter-end=\"opacity-100\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = loadingListShimmer(data.LimitPerPage).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div><div x-show=\"!searching\" class=\"overflow-hidden\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</span></div></div></div><div x-show=\"!searching\" x-transition:enter=\"transition ease-out duration-300\" x-transition:enter-start=\"opacity-0\" x-transition:enter-end=\"opacity-100\" class=\"overflow-hidden\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -299,7 +299,7 @@ func TableContent(data BreweryListData) templ.Component {
 	})
 }
 
-func loadingListShimmer(breweriesCount ...int) templ.Component {
+func loadingListShimmer(count ...int) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -321,8 +321,8 @@ func loadingListShimmer(breweriesCount ...int) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		shimmerCount := 5
-		if len(breweriesCount) > 0 {
-			shimmerCount = breweriesCount[0]
+		if len(count) > 0 {
+			shimmerCount = count[0]
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<div class=\"divide-y divide-gray-200/60\">")
 		if templ_7745c5c3_Err != nil {
@@ -434,7 +434,7 @@ func breweryList(breweries []model.Brewery) templ.Component {
 			var templ_7745c5c3_Var12 string
 			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(string([]rune(brewery.Name)[0:1]))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 325, Col: 74}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 318, Col: 74}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {
@@ -447,7 +447,7 @@ func breweryList(breweries []model.Brewery) templ.Component {
 			var templ_7745c5c3_Var13 templ.SafeURL
 			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(fmt.Sprintf("/workspace/brewery/%d", brewery.ID)))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 333, Col: 78}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 326, Col: 78}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 			if templ_7745c5c3_Err != nil {
@@ -460,7 +460,7 @@ func breweryList(breweries []model.Brewery) templ.Component {
 			var templ_7745c5c3_Var14 string
 			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(brewery.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 335, Col: 24}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 328, Col: 24}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
@@ -473,7 +473,7 @@ func breweryList(breweries []model.Brewery) templ.Component {
 			var templ_7745c5c3_Var15 string
 			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(brewery.GetCityName())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 343, Col: 38}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 336, Col: 38}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {
@@ -486,7 +486,7 @@ func breweryList(breweries []model.Brewery) templ.Component {
 			var templ_7745c5c3_Var16 string
 			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(brewery.GetCountryName())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 343, Col: 68}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 336, Col: 68}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 			if templ_7745c5c3_Err != nil {
@@ -534,7 +534,7 @@ func pagination(data BreweryListData) templ.Component {
 			var templ_7745c5c3_Var18 string
 			templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", (data.CurrentPage-1)*data.LimitPerPage+1))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 361, Col: 67}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 354, Col: 67}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 			if templ_7745c5c3_Err != nil {
@@ -547,7 +547,7 @@ func pagination(data BreweryListData) templ.Component {
 			var templ_7745c5c3_Var19 string
 			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", min(data.CurrentPage*data.LimitPerPage, data.TotalResults)))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 361, Col: 151}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 354, Col: 151}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 			if templ_7745c5c3_Err != nil {
@@ -560,7 +560,7 @@ func pagination(data BreweryListData) templ.Component {
 			var templ_7745c5c3_Var20 string
 			templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", data.TotalResults))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 364, Col: 83}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 357, Col: 83}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 			if templ_7745c5c3_Err != nil {
@@ -578,7 +578,7 @@ func pagination(data BreweryListData) templ.Component {
 				var templ_7745c5c3_Var21 string
 				templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(templ.URL(fmt.Sprintf("/breweries?page=1&size=%d&query=%s&country=%s", data.LimitPerPage, data.Query, data.CountryIso)))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 373, Col: 135}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 366, Col: 135}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 				if templ_7745c5c3_Err != nil {
@@ -602,7 +602,7 @@ func pagination(data BreweryListData) templ.Component {
 			var templ_7745c5c3_Var22 string
 			templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(templ.URL(fmt.Sprintf("/breweries?page=%d&size=%d&query=%s&country=%s", data.CurrentPage-1, data.LimitPerPage, data.Query, data.CountryIso)))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 390, Col: 155}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 383, Col: 155}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 			if templ_7745c5c3_Err != nil {
@@ -625,7 +625,7 @@ func pagination(data BreweryListData) templ.Component {
 			var templ_7745c5c3_Var23 string
 			templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", data.CurrentPage))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 409, Col: 74}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 402, Col: 74}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 			if templ_7745c5c3_Err != nil {
@@ -638,7 +638,7 @@ func pagination(data BreweryListData) templ.Component {
 			var templ_7745c5c3_Var24 string
 			templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", data.CurrentPage))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 410, Col: 67}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 403, Col: 67}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 			if templ_7745c5c3_Err != nil {
@@ -651,7 +651,7 @@ func pagination(data BreweryListData) templ.Component {
 			var templ_7745c5c3_Var25 string
 			templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", data.TotalPages))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 410, Col: 108}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 403, Col: 108}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 			if templ_7745c5c3_Err != nil {
@@ -664,7 +664,7 @@ func pagination(data BreweryListData) templ.Component {
 			var templ_7745c5c3_Var26 string
 			templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(templ.URL(fmt.Sprintf("/breweries?page=%d&size=%d&query=%s&country=%s", data.CurrentPage+1, data.LimitPerPage, data.Query, data.CountryIso)))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 415, Col: 155}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 408, Col: 155}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 			if templ_7745c5c3_Err != nil {
@@ -698,7 +698,7 @@ func pagination(data BreweryListData) templ.Component {
 				var templ_7745c5c3_Var27 string
 				templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(templ.URL(fmt.Sprintf("/breweries?page=%d&size=%d&query=%s&country=%s", data.TotalPages, data.LimitPerPage, data.Query, data.CountryIso)))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 439, Col: 153}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 432, Col: 153}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
 				if templ_7745c5c3_Err != nil {
@@ -711,7 +711,7 @@ func pagination(data BreweryListData) templ.Component {
 				var templ_7745c5c3_Var28 string
 				templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", data.TotalPages))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 447, Col: 43}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 440, Col: 43}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 				if templ_7745c5c3_Err != nil {
@@ -735,7 +735,7 @@ func pagination(data BreweryListData) templ.Component {
 				var templ_7745c5c3_Var29 string
 				templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", len(data.Breweries)))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 456, Col: 78}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 449, Col: 78}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
 				if templ_7745c5c3_Err != nil {
@@ -748,7 +748,7 @@ func pagination(data BreweryListData) templ.Component {
 				var templ_7745c5c3_Var30 string
 				templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", data.TotalResults))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 456, Col: 122}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/brewery/list.templ`, Line: 449, Col: 122}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 				if templ_7745c5c3_Err != nil {
