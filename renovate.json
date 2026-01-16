@@ -22,10 +22,11 @@
     },
     {
       "description": "Offer PRs for new Go toolchain versions",
-      "matchDepNames": ["go"],
       "matchManagers": ["gomod"],
+      "matchDepNames": ["go"],
+      "matchDatasources": ["golang-version"],
       "prTitle": "chore: bump Go version to {{newVersion}}",
-      "prBody": "This PR updates the Go toolchain in `go.mod` to {{newVersion}}.\n\nRun `go mod tidy` has been executed so `go.sum` is already clean.",
+      "prBody": "This PR updates the Go toolchain in `go.mod` to {{newVersion}}.",
       "automerge": false
     }
   ]
