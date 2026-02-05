@@ -150,7 +150,7 @@ github.com/coder/websocket/internal/errd
 github.com/coder/websocket/internal/util
 github.com/coder/websocket/internal/wsjs
 github.com/coder/websocket/wsjson
-# github.com/go-chi/chi/v5 v5.2.4
+# github.com/go-chi/chi/v5 v5.2.5
 ## explicit; go 1.22
 github.com/go-chi/chi/v5
 # github.com/go-jose/go-jose/v3 v3.0.4
