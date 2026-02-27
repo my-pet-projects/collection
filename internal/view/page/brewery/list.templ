@@ -5,6 +5,7 @@ import (
 
 	"github.com/my-pet-projects/collection/internal/model"
 	"github.com/my-pet-projects/collection/internal/view/component/icon"
+	"github.com/my-pet-projects/collection/internal/view/component/list"
 	"github.com/my-pet-projects/collection/internal/view/component/shared"
 	"github.com/my-pet-projects/collection/internal/view/layout"
 	"github.com/my-pet-projects/collection/internal/view/page/brewery/component"
@@ -40,7 +41,7 @@ templ ListPage(params ListPageParams) {
 }
 
 templ listFilters(params ListPageParams) {
-	<div class="mb-8 rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-200/50">
+	@list.FilterContainer() {
 		<!-- Search Section -->
 		<form
 			id="search-form"
@@ -91,45 +92,14 @@ templ listFilters(params ListPageParams) {
 						"
 			class="flex flex-col gap-4 sm:flex-row sm:items-stretch"
 		>
-			<!-- Search Input -->
-			<div class="relative flex-1">
-				<input
-					id="search"
-					name="query"
-					type="text"
-					class="block h-12 w-full rounded-2xl border-0 bg-gray-50/50 px-4 py-3 pl-12 pr-12 text-sm shadow-inner ring-1 ring-inset ring-gray-200 transition-all duration-300 placeholder:text-gray-400 hover:bg-white hover:ring-gray-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-400"
-					placeholder="Search breweries by name..."
-					x-model="searchValue"
-				/>
-				<!-- Search Icon -->
-				<div
-					x-show="!searching && countryFilterLoaded"
-					class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4"
-				>
-					@icon.SearchIcon("h-5 w-5 text-amber-500")
-				</div>
-				<!-- Clear Button -->
-				<button
-					type="button"
-					x-show="searchValue.length > 0"
-					x-on:click="searchValue = ''; document.getElementById('search').value = ''; document.getElementById('search').dispatchEvent(new Event('keyup'))"
-					class="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-gray-200 p-1.5 text-gray-500 transition-all duration-200 hover:bg-gray-300 hover:text-gray-700"
-				>
-					@icon.CloseIcon("h-3 w-3")
-				</button>
-				<!-- Loading Indicator -->
-				<div
-					x-show="searching || !countryFilterLoaded"
-					class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4"
-				>
-					@icon.LoadingSpinner("h-5 w-5")
-				</div>
-			</div>
+			@list.SearchInput(list.SearchInputProps{
+				ID:           "search",
+				Name:         "query",
+				Placeholder:  "Search breweries by name...",
+				ModelBinding: "searchValue",
+			})
 			<!-- Country Filter -->
-			<div class="flex w-full items-center justify-center sm:w-80" id="country-filter-container">
-				<!-- Loading indicator -->
-				@icon.LoadingSpinner("h-5 w-5")
-			</div>
+			@list.CountryFilterContainer("country-filter-container")
 			<!-- Size Filter (hidden) -->
 			<input
 				type="hidden"
@@ -139,15 +109,8 @@ templ listFilters(params ListPageParams) {
 			/>
 		</form>
 		<!-- Separate element to load the country filter -->
-		<div
-			hx-get="/geo/countries?hasBreweries=true&showAllOption=true"
-			hx-swap="innerHTML"
-			hx-target="#country-filter-container"
-			hx-trigger="load"
-			x-on:htmx:after-request="countryFilterLoaded = true"
-			class="hidden"
-		></div>
-	</div>
+		@list.CountryFilterLoader("country-filter-container", true, true)
+	}
 }
 
 templ breweryTable() {
@@ -181,16 +144,7 @@ templ TableContent(data BreweryListData) {
 		</div>
 		<!-- Results Count -->
 		<div x-show="!searching" class="flex items-center">
-			<div class="rounded-2xl bg-linear-to-r from-amber-100 to-orange-100 px-4 py-2 shadow-sm">
-				<span class="text-sm font-bold text-amber-900">
-					{ fmt.Sprintf("%d", data.TotalResults) }
-					if data.TotalResults == 1 {
-						brewery found
-					} else {
-						breweries found
-					}
-				</span>
-			</div>
+			@list.ResultsCount(data.TotalResults, "brewery found", "breweries found")
 		</div>
 	</div>
 	<div

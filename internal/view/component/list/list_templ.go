@@ -8,7 +8,10 @@ package list
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/my-pet-projects/collection/internal/view/component/icon"
+import (
+	"github.com/my-pet-projects/collection/internal/view/component/icon"
+	"strconv"
+)
 
 // SearchInputProps contains properties for a search input.
 type SearchInputProps struct {
@@ -48,7 +51,7 @@ func SearchInput(props SearchInputProps) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(props.ID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 18, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 21, Col: 16}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -61,7 +64,7 @@ func SearchInput(props SearchInputProps) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(props.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 19, Col: 20}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 22, Col: 20}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -74,7 +77,7 @@ func SearchInput(props SearchInputProps) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(props.Placeholder)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 22, Col: 34}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 25, Col: 34}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -87,7 +90,7 @@ func SearchInput(props SearchInputProps) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(props.Value)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 23, Col: 22}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 26, Col: 22}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -105,7 +108,7 @@ func SearchInput(props SearchInputProps) templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(props.ModelBinding)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 25, Col: 32}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 28, Col: 32}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -118,7 +121,7 @@ func SearchInput(props SearchInputProps) templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(props.ModelBinding + " = $el.value")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 26, Col: 48}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 29, Col: 48}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -144,7 +147,7 @@ func SearchInput(props SearchInputProps) templ.Component {
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(props.ModelBinding + ".length > 0")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 39, Col: 46}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 42, Col: 46}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -157,7 +160,7 @@ func SearchInput(props SearchInputProps) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(props.ModelBinding + " = ''; document.getElementById('" + props.ID + "').value = ''; document.getElementById('" + props.ID + "').dispatchEvent(new Event('keyup'))")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 40, Col: 179}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 43, Col: 179}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -216,7 +219,7 @@ func SearchInputSimple(props SearchInputProps) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(props.ID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 59, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 62, Col: 16}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
@@ -229,7 +232,7 @@ func SearchInputSimple(props SearchInputProps) templ.Component {
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(props.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 60, Col: 20}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 63, Col: 20}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
@@ -242,7 +245,7 @@ func SearchInputSimple(props SearchInputProps) templ.Component {
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(props.Placeholder)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 63, Col: 34}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 66, Col: 34}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
@@ -255,7 +258,7 @@ func SearchInputSimple(props SearchInputProps) templ.Component {
 		var templ_7745c5c3_Var14 string
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(props.Value)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 64, Col: 22}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 67, Col: 22}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
@@ -273,7 +276,7 @@ func SearchInputSimple(props SearchInputProps) templ.Component {
 			var templ_7745c5c3_Var15 string
 			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(props.ModelBinding)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 66, Col: 32}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 69, Col: 32}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {
@@ -299,7 +302,7 @@ func SearchInputSimple(props SearchInputProps) templ.Component {
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(props.ModelBinding + ".length > 0")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 79, Col: 46}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 82, Col: 46}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 		if templ_7745c5c3_Err != nil {
@@ -312,7 +315,7 @@ func SearchInputSimple(props SearchInputProps) templ.Component {
 		var templ_7745c5c3_Var17 string
 		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(props.ModelBinding + " = ''; document.getElementById('" + props.ID + "').value = ''; document.getElementById('" + props.ID + "').dispatchEvent(new Event('keyup'))")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 80, Col: 179}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 83, Col: 179}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 		if templ_7745c5c3_Err != nil {
@@ -402,14 +405,14 @@ func ResultsCount(count int, singular, plural string) templ.Component {
 			templ_7745c5c3_Var19 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<div class=\"rounded-2xl bg-linear-to-r from-amber-100 to-orange-100 px-4 py-2 shadow-sm\"><span class=\"text-sm font-bold text-amber-900\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<div class=\"bg-linear-to-r rounded-2xl from-amber-100 to-orange-100 px-4 py-2 shadow-sm\"><span class=\"text-sm font-bold text-amber-900\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var20 string
 		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(formatCount(count))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 106, Col: 23}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 109, Col: 23}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 		if templ_7745c5c3_Err != nil {
@@ -423,7 +426,7 @@ func ResultsCount(count int, singular, plural string) templ.Component {
 			var templ_7745c5c3_Var21 string
 			templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(singular)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 108, Col: 14}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 111, Col: 14}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 			if templ_7745c5c3_Err != nil {
@@ -433,7 +436,7 @@ func ResultsCount(count int, singular, plural string) templ.Component {
 			var templ_7745c5c3_Var22 string
 			templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(plural)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 110, Col: 12}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 113, Col: 12}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 			if templ_7745c5c3_Err != nil {
@@ -477,7 +480,7 @@ func ResultsCountBlue(count int, singular, plural string) templ.Component {
 		var templ_7745c5c3_Var24 string
 		templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(formatCount(count))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 120, Col: 23}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 123, Col: 23}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 		if templ_7745c5c3_Err != nil {
@@ -491,7 +494,7 @@ func ResultsCountBlue(count int, singular, plural string) templ.Component {
 			var templ_7745c5c3_Var25 string
 			templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(singular)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 122, Col: 14}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 125, Col: 14}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 			if templ_7745c5c3_Err != nil {
@@ -501,7 +504,7 @@ func ResultsCountBlue(count int, singular, plural string) templ.Component {
 			var templ_7745c5c3_Var26 string
 			templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(plural)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 124, Col: 12}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 127, Col: 12}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 			if templ_7745c5c3_Err != nil {
@@ -538,14 +541,14 @@ func StatusBar(title string) templ.Component {
 			templ_7745c5c3_Var27 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<div class=\"border-b border-gray-200/70 bg-linear-to-r from-white via-gray-50 to-white\"><div class=\"flex flex-row items-center justify-between space-x-3 p-6\"><div class=\"flex items-center\"><h2 class=\"text-xl font-bold text-gray-900 sm:text-2xl\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<div class=\"bg-linear-to-r border-b border-gray-200/70 from-white via-gray-50 to-white\"><div class=\"flex flex-row items-center justify-between space-x-3 p-6\"><div class=\"flex items-center\"><h2 class=\"text-xl font-bold text-gray-900 sm:text-2xl\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var28 string
 		templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 135, Col: 67}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 138, Col: 67}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 		if templ_7745c5c3_Err != nil {
@@ -604,7 +607,7 @@ func EmptyState(title, description string) templ.Component {
 		var templ_7745c5c3_Var30 string
 		templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 148, Col: 63}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 151, Col: 63}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 		if templ_7745c5c3_Err != nil {
@@ -617,7 +620,7 @@ func EmptyState(title, description string) templ.Component {
 		var templ_7745c5c3_Var31 string
 		templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 149, Col: 50}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 152, Col: 50}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
 		if templ_7745c5c3_Err != nil {
@@ -667,7 +670,7 @@ func CountryFilterLoader(targetID string, hasBreweries, showAllOption bool) temp
 		var templ_7745c5c3_Var33 string
 		templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.JoinStringErrs(url)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 165, Col: 14}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 168, Col: 14}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var33))
 		if templ_7745c5c3_Err != nil {
@@ -680,13 +683,13 @@ func CountryFilterLoader(targetID string, hasBreweries, showAllOption bool) temp
 		var templ_7745c5c3_Var34 string
 		templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.JoinStringErrs("#" + targetID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 167, Col: 28}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 170, Col: 28}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var34))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "\" hx-trigger=\"load\" x-on:htmx:after-request=\"countryFilterLoaded = true\" class=\"hidden\"></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "\" hx-trigger=\"load\" x-on:htmx:after-request=\"countryFilterLoaded = !!$event.detail.successful\" class=\"hidden\"></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -723,7 +726,7 @@ func CountryFilterContainer(id string) templ.Component {
 		var templ_7745c5c3_Var36 string
 		templ_7745c5c3_Var36, templ_7745c5c3_Err = templ.JoinStringErrs(id)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 176, Col: 69}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/list/list.templ`, Line: 179, Col: 69}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var36))
 		if templ_7745c5c3_Err != nil {
@@ -778,29 +781,7 @@ func LoadingListShimmer(count int) templ.Component {
 }
 
 func formatCount(count int) string {
-	return templ.EscapeString(itoa(count))
-}
-
-func itoa(i int) string {
-	if i == 0 {
-		return "0"
-	}
-	var b [20]byte
-	pos := len(b)
-	neg := i < 0
-	if neg {
-		i = -i
-	}
-	for i > 0 {
-		pos--
-		b[pos] = byte('0' + i%10)
-		i = i / 10
-	}
-	if neg {
-		pos--
-		b[pos] = '-'
-	}
-	return string(b[pos:])
+	return templ.EscapeString(strconv.Itoa(count))
 }
 
 var _ = templruntime.GeneratedTemplate

@@ -1,6 +1,9 @@
 package list
 
-import "github.com/my-pet-projects/collection/internal/view/component/icon"
+import (
+	"github.com/my-pet-projects/collection/internal/view/component/icon"
+	"strconv"
+)
 
 // SearchInputProps contains properties for a search input.
 type SearchInputProps struct {
@@ -101,7 +104,7 @@ templ FilterContainer() {
 
 // ResultsCount renders a badge showing the number of results.
 templ ResultsCount(count int, singular, plural string) {
-	<div class="rounded-2xl bg-linear-to-r from-amber-100 to-orange-100 px-4 py-2 shadow-sm">
+	<div class="bg-linear-to-r rounded-2xl from-amber-100 to-orange-100 px-4 py-2 shadow-sm">
 		<span class="text-sm font-bold text-amber-900">
 			{ formatCount(count) }
 			if count == 1 {
@@ -129,7 +132,7 @@ templ ResultsCountBlue(count int, singular, plural string) {
 
 // StatusBar renders a status bar with title and optional content.
 templ StatusBar(title string) {
-	<div class="border-b border-gray-200/70 bg-linear-to-r from-white via-gray-50 to-white">
+	<div class="bg-linear-to-r border-b border-gray-200/70 from-white via-gray-50 to-white">
 		<div class="flex flex-row items-center justify-between space-x-3 p-6">
 			<div class="flex items-center">
 				<h2 class="text-xl font-bold text-gray-900 sm:text-2xl">{ title }</h2>
@@ -166,7 +169,7 @@ templ CountryFilterLoader(targetID string, hasBreweries, showAllOption bool) {
 		hx-swap="innerHTML"
 		hx-target={ "#" + targetID }
 		hx-trigger="load"
-		x-on:htmx:after-request="countryFilterLoaded = true"
+		x-on:htmx:after-request="countryFilterLoaded = !!$event.detail.successful"
 		class="hidden"
 	></div>
 }
@@ -192,27 +195,5 @@ templ LoadingListShimmer(count int) {
 }
 
 func formatCount(count int) string {
-	return templ.EscapeString(itoa(count))
-}
-
-func itoa(i int) string {
-	if i == 0 {
-		return "0"
-	}
-	var b [20]byte
-	pos := len(b)
-	neg := i < 0
-	if neg {
-		i = -i
-	}
-	for i > 0 {
-		pos--
-		b[pos] = byte('0' + i%10)
-		i = i / 10
-	}
-	if neg {
-		pos--
-		b[pos] = '-'
-	}
-	return string(b[pos:])
+	return templ.EscapeString(strconv.Itoa(count))
 }
