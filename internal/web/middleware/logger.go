@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func (m Middleware) WithInboundLog(next http.Handler) http.Handler {
+func inboundLogHandler(next http.Handler, logger *slog.Logger) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		if strings.Contains(r.URL.Path, "/assets") {
 			next.ServeHTTP(w, r)
@@ -46,7 +46,7 @@ func (m Middleware) WithInboundLog(next http.Handler) http.Handler {
 				slog.Int("size", size),
 			)
 
-			m.logger.Info(msg, requestFields, responseFields)
+			logger.Info(msg, requestFields, responseFields)
 		}()
 
 		next.ServeHTTP(&lrw, r)
