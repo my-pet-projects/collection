@@ -16,6 +16,7 @@ linters:
     - tagalign # don't want to force tag alignment
     - testpackage # don't want to use separate _test packages
     - wsl # annoying cuddle rules
+    - wsl_v5 # annoying cuddle rules
   settings:
     errcheck:
       exclude-functions:

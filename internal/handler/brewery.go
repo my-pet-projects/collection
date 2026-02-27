@@ -30,7 +30,7 @@ func NewBreweryHandler(breweryService service.BreweryService, logger *slog.Logge
 }
 
 func (h *BreweryHandler) HandleBreweryListPage(reqResp *web.ReqRespPair) error {
-	page := layout.Page{Title: fmt.Sprintf("Brewery Workspace")}
+	page := layout.Page{Title: "Brewery Workspace"}
 	pageParams := brewerypage.ListPageParams{
 		Page:         page,
 		LimitPerPage: 5, //nolint:mnd
@@ -63,7 +63,7 @@ func (h *BreweryHandler) HandleBreweryPage(reqResp *web.ReqRespPair) error {
 }
 
 func (h *BreweryHandler) HandleCreateBreweryPage(reqResp *web.ReqRespPair) error {
-	page := layout.Page{Title: fmt.Sprintf("Create Brewery")}
+	page := layout.Page{Title: "Create Brewery"}
 	breweryPage := brewerypage.PageParams{
 		Page: page,
 	}
@@ -92,7 +92,11 @@ func (h *BreweryHandler) SubmitBreweryPage(reqResp *web.ReqRespPair) error {
 			h.logger.Error("create brewery", slog.Any("error", createErr))
 			return reqResp.RenderError(http.StatusInternalServerError, createErr)
 		}
-		reqResp.Redirect(fmt.Sprintf("/workspace/brewery/%d", newBrewery.ID))
+		redirectErr := reqResp.Redirect(fmt.Sprintf("/workspace/brewery/%d", newBrewery.ID))
+		if redirectErr != nil {
+			h.logger.Error("redirect failed", slog.Any("error", redirectErr))
+			return reqResp.RenderError(http.StatusInternalServerError, redirectErr)
+		}
 		return nil
 	}
 

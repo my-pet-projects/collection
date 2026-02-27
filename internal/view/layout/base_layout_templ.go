@@ -9,8 +9,8 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	"github.com/my-pet-projects/collection/internal/view/component/feedback"
 	"github.com/my-pet-projects/collection/internal/view/component/navigation"
-	"github.com/my-pet-projects/collection/internal/view/component/shared"
 )
 
 func BaseLayout() templ.Component {
@@ -62,7 +62,7 @@ func BaseLayout() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = shared.Notification().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = feedback.Notification().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

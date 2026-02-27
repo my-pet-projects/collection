@@ -72,7 +72,10 @@ func (s *loggingResponseWriter) Header() http.Header {
 func (r *loggingResponseWriter) Write(b []byte) (int, error) {
 	size, err := r.wrapped.Write(b)
 	r.responseData.size += size
-	return size, err
+	if err != nil {
+		return size, fmt.Errorf("write response: %w", err)
+	}
+	return size, nil
 }
 
 func (r *loggingResponseWriter) WriteHeader(statusCode int) {
@@ -97,19 +100,19 @@ func statusLabel(status int) string {
 
 func headerLogField(header http.Header) []slog.Attr {
 	headerField := []slog.Attr{}
-	for k, v := range header {
-		k = strings.ToLower(k)
+	for key, values := range header {
+		key = strings.ToLower(key)
 		switch {
-		case len(v) == 0:
+		case len(values) == 0:
 			continue
-		case len(v) == 1:
-			headerField = append(headerField, slog.Attr{Key: k, Value: slog.StringValue(v[0])})
+		case len(values) == 1:
+			headerField = append(headerField, slog.Attr{Key: key, Value: slog.StringValue(values[0])})
 		default:
-			headerField = append(headerField, slog.Attr{Key: k, Value: slog.StringValue(fmt.Sprintf("[%s]", strings.Join(v, "], [")))})
+			headerField = append(headerField, slog.Attr{Key: key, Value: slog.StringValue(fmt.Sprintf("[%s]", strings.Join(values, "], [")))})
 		}
-		if k == "authorization" || k == "cookie" || k == "set-cookie" {
+		if key == "authorization" || key == "cookie" || key == "set-cookie" {
 			headerField[len(headerField)-1] = slog.Attr{
-				Key:   k,
+				Key:   key,
 				Value: slog.StringValue("***"),
 			}
 		}

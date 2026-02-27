@@ -1,12 +1,10 @@
-package shared
+package header
 
 // PageHeaderParams contains the parameters for rendering a page header.
 type PageHeaderParams struct {
-	Title       string
-	Subtitle    string
-	Icon        string // Icon type: "beer", "brewery", "images", "upload", "styles"
-	ActionURL   string // Optional: URL for the action button
-	ActionLabel string // Optional: Label for the action button
+	Title    string
+	Subtitle string
+	Icon     string // Icon type: "beer", "brewery", "images", "upload", "styles"
 }
 
 // BeerIconSVG returns the beer icon SVG path data.
@@ -42,11 +40,12 @@ templ StylesIconSVG() {
 }
 
 // PageHeader renders a consistent page header with icon, title, subtitle, and optional action button.
+// Pass children to override the default link-based action button with custom content (e.g., HTMX buttons).
 templ PageHeader(params PageHeaderParams) {
 	<div class="mb-6 flex flex-col lg:mb-8 lg:flex-row lg:items-center lg:justify-between">
 		<!-- Title Section -->
 		<div class="mb-6 flex flex-col items-center text-center lg:mb-0 lg:flex-row lg:text-left">
-			<div class="group mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-linear-to-br from-amber-400 via-orange-500 to-red-500 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl lg:mb-0 lg:mr-6">
+			<div class="bg-linear-to-br group mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl from-amber-400 via-orange-500 to-red-500 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl lg:mb-0 lg:mr-6">
 				<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" class="transition-transform duration-300 group-hover:rotate-12">
 					switch params.Icon {
 						case "beer":
@@ -71,21 +70,22 @@ templ PageHeader(params PageHeaderParams) {
 				<p class="text-base text-gray-600 sm:text-lg lg:text-xl">{ params.Subtitle }</p>
 			</div>
 		</div>
-		<!-- Action Button (optional) -->
-		if params.ActionURL != "" && params.ActionLabel != "" {
-			<div class="flex shrink-0 justify-center lg:justify-end">
-				<a
-					href={ templ.URL(params.ActionURL) }
-					class="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-2xl bg-gray-900 px-6 py-3 text-sm font-semibold text-white shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-				>
-					<svg class="h-5 w-5 transition-transform duration-300 group-hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-					</svg>
-					{ params.ActionLabel }
-				</a>
-			</div>
-		}
+		<!-- Action Section -->
+		<div class="flex shrink-0 justify-center lg:justify-end">
+			{ children... }
+		</div>
 	</div>
+}
+
+// PageHeaderLink renders the default action button as a link.
+templ PageHeaderLink(url, label string) {
+	<a
+		href={ templ.URL(url) }
+		class="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-2xl bg-gray-900 px-6 py-3 text-sm font-semibold text-white shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+	>
+		@AddIcon()
+		{ label }
+	</a>
 }
 
 // PageHeaderSimple renders a page header without an action button.
@@ -95,4 +95,22 @@ templ PageHeaderSimple(title, subtitle, icon string) {
 		Subtitle: subtitle,
 		Icon:     icon,
 	})
+}
+
+// PageHeaderButton renders the action button styling for custom buttons.
+templ PageHeaderButton(attrs templ.Attributes) {
+	<button
+		class="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-2xl bg-gray-900 px-6 py-3 text-sm font-semibold text-white shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+		{ attrs... }
+	>
+		@AddIcon()
+		{ children... }
+	</button>
+}
+
+// AddIcon renders the plus icon used in action buttons.
+templ AddIcon() {
+	<svg class="h-5 w-5 transition-transform duration-300 group-hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+		<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+	</svg>
 }

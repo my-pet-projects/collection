@@ -38,7 +38,8 @@ func (h UploadHandler) UploadImagePage(reqResp *web.ReqRespPair) error {
 }
 
 func (h UploadHandler) UploadImage(reqResp *web.ReqRespPair) error {
-	formErr := reqResp.Request.ParseMultipartForm(32 << 20) // 32 MB
+	const maxFormSize = 32 << 20 // 32 MB
+	formErr := reqResp.Request.ParseMultipartForm(maxFormSize)
 	if formErr != nil {
 		h.logger.Error("Failed to get multipart form", slog.Any("error", formErr))
 		return reqResp.RenderAppError(formErr)

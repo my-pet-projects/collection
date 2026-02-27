@@ -7,8 +7,6 @@ import (
 	"fmt"
 	"os"
 	"strings"
-
-	"github.com/pkg/errors"
 )
 
 // Config represents application configuration.
@@ -29,13 +27,13 @@ type AuthConfig struct {
 
 type AwsConfig struct {
 	Region    string
-	AccessKey string
+	AccessKey string //nolint:gosec
 	SecretKey string
 }
 
 type TursoDbConfig struct {
 	DbUrl     string
-	AuthToken string
+	AuthToken string //nolint:gosec
 }
 
 type AppConfig struct {
@@ -46,13 +44,13 @@ type AppConfig struct {
 func requireEnv(key string) (string, error) {
 	val, ok := os.LookupEnv(key)
 	if !ok || strings.TrimSpace(val) == "" {
-		return "", errors.Errorf("%s environment variable was not found or is empty", key)
+		return "", fmt.Errorf("%s environment variable was not found or is empty", key)
 	}
 	return val, nil
 }
 
 // NewConfig creates application configuration.
-func NewConfig() (*Config, error) {
+func NewConfig() (*Config, error) { //nolint:cyclop
 	env, err := requireEnv("APP_ENV")
 	if err != nil {
 		return nil, err
@@ -97,9 +95,9 @@ func NewConfig() (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
-	rsaPublicKey, err := parseRSAPublicKey([]byte(strings.Replace(clerkPemKey, `\n`, "\n", -1)))
+	rsaPublicKey, err := parseRSAPublicKey([]byte(strings.ReplaceAll(clerkPemKey, `\n`, "\n")))
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to parse Clerk public key")
+		return nil, fmt.Errorf("failed to parse Clerk public key: %w", err)
 	}
 	clerkAuthHost, err := requireEnv("CLERK_AUTH_HOST")
 	if err != nil {
@@ -149,7 +147,7 @@ func parseRSAPublicKey(pemKey []byte) (*rsa.PublicKey, error) {
 
 	pubKey, err := x509.ParsePKIXPublicKey(block.Bytes)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse public key: %v", err)
+		return nil, fmt.Errorf("failed to parse public key: %w", err)
 	}
 
 	rsaPubKey, ok := pubKey.(*rsa.PublicKey)

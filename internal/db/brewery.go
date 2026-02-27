@@ -2,10 +2,10 @@ package db
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"strings"
 
-	"github.com/pkg/errors"
 	"gorm.io/gorm"
 	"gorm.io/plugin/dbresolver"
 
@@ -62,7 +62,7 @@ func (s BreweryStore) PaginateBreweries(ctx context.Context, filter model.Brewer
 	}
 
 	whereConditions := []string{}
-	whereArgs := map[string]interface{}{}
+	whereArgs := map[string]any{}
 
 	if filter.Query != "" {
 		whereConditions = append(whereConditions, "(search_name LIKE @name)")
@@ -92,7 +92,7 @@ func (s BreweryStore) PaginateBreweries(ctx context.Context, filter model.Brewer
 		Find(&itemsWithCount)
 
 	if result.Error != nil {
-		return nil, errors.Wrap(result.Error, "fetch breweries with pagination")
+		return nil, fmt.Errorf("fetch breweries with pagination: %w", result.Error)
 	}
 
 	pagination.SetTotalResults(itemsWithCount)

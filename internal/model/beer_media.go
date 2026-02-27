@@ -27,8 +27,9 @@ func (p BeerMedia) GetSlot() Slot {
 		return Slot{}
 	}
 
+	const slotIDParts = 3
 	parts := strings.Split(*p.SlotID, "-")
-	if len(parts) != 3 {
+	if len(parts) != slotIDParts {
 		return Slot{}
 	}
 
@@ -60,7 +61,7 @@ func (s Slot) IsEmpty() bool {
 }
 
 func (s Slot) NextSlot() Slot {
-	sheetSlot := s.SheetSlot
+	var sheetSlot string
 	sheetID := s.SheetID
 
 	rowSize := RowSizeForPrefix(s.GeoPrefix)
@@ -69,8 +70,9 @@ func (s Slot) NextSlot() Slot {
 	// Check if we're at the last slot of the current sheet
 	if s.SheetSlot == lastSheetSlot {
 		// Move to the next sheet
-		sheetNum := 0
-		if _, err := fmt.Sscanf(sheetID, "C%d", &sheetNum); err != nil {
+		var sheetNum int
+		_, err := fmt.Sscanf(sheetID, "C%d", &sheetNum)
+		if err != nil {
 			// If parsing fails, return empty slot to indicate error
 			return Slot{}
 		}
@@ -87,9 +89,13 @@ func (s Slot) NextSlot() Slot {
 	}
 }
 
+func (s Slot) String() string {
+	return s.GeoPrefix + "-" + s.SheetID + "-" + s.SheetSlot
+}
+
 func (s Slot) incrementSheetSlot(sheetSlot string, rowSize int) string {
 	if len(sheetSlot) != 2 || sheetSlot[0] < 'A' || sheetSlot[0] > 'G' ||
-		sheetSlot[1] < '1' || sheetSlot[1] > byte('0'+rowSize) {
+		sheetSlot[1] < '1' || sheetSlot[1] > byte('0'+rowSize) { //nolint:gosec // rowSize is always 5 or 6
 		return ""
 	}
 
@@ -113,10 +119,6 @@ func (s Slot) incrementSheetSlot(sheetSlot string, rowSize int) string {
 	}
 
 	return string(col) + strconv.Itoa(row)
-}
-
-func (s Slot) String() string {
-	return s.GeoPrefix + "-" + s.SheetID + "-" + s.SheetSlot
 }
 
 type BeerMediaType int
@@ -155,9 +157,13 @@ func (t BeerMediaType) IsCap() bool {
 }
 
 func RowSizeForPrefix(geoPrefix string) int {
+	const (
+		smallSheetRows = 5
+		largeSheetRows = 6
+	)
 	smallSheetsGeoPrefixes := []string{"CASP", "OC", "INDO", "MIDE", "EAAS", "SEAS"}
 	if slices.Contains(smallSheetsGeoPrefixes, geoPrefix) {
-		return 5
+		return smallSheetRows
 	}
-	return 6
+	return largeSheetRows
 }

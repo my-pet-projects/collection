@@ -64,7 +64,7 @@ func (s BeerMediaStore) SimilarMediaItems(ctx context.Context, item model.BeerMe
 	var items []model.BeerMedia
 	result := s.db.gorm.
 		Debug().
-		Where("Hash = @hash", map[string]interface{}{"hash": item.Media.Hash}).
+		Where("Hash = @hash", map[string]any{"hash": item.Media.Hash}).
 		Joins("Media").
 		Find(&items)
 
@@ -83,6 +83,9 @@ func (s BeerMediaStore) DeleteBeerMedia(ctx context.Context, item model.BeerMedi
 	res := s.db.gorm.
 		Debug().
 		Delete(&model.BeerMedia{ID: item.ID})
+	if res.Error != nil {
+		return res.Error
+	}
 
 	res = s.db.gorm.
 		Debug().

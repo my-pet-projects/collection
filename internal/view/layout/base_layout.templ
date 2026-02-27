@@ -1,8 +1,8 @@
 package layout
 
 import (
+	"github.com/my-pet-projects/collection/internal/view/component/feedback"
 	"github.com/my-pet-projects/collection/internal/view/component/navigation"
-	"github.com/my-pet-projects/collection/internal/view/component/shared"
 )
 
 templ BaseLayout() {
@@ -19,7 +19,7 @@ templ BaseLayout() {
 				</div>
 			</main>
 			<div>
-				@shared.Notification()
+				@feedback.Notification()
 			</div>
 		</body>
 	</html>

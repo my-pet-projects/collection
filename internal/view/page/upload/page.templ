@@ -1,7 +1,7 @@
 package upload
 
 import (
-	"github.com/my-pet-projects/collection/internal/view/component/shared"
+	"github.com/my-pet-projects/collection/internal/view/component/header"
 	"github.com/my-pet-projects/collection/internal/view/layout"
 	uploadcomponent "github.com/my-pet-projects/collection/internal/view/page/upload/component"
 )
@@ -13,7 +13,7 @@ type UploadPage struct {
 templ Page(page UploadPage) {
 	@layout.BaseLayout() {
 		<!-- Header Section -->
-		@shared.PageHeaderSimple("Upload", "Add new images to your collection", "upload")
+		@header.PageHeaderSimple("Upload", "Add new images to your collection", "upload")
 		<!-- Upload Container -->
 		<div class="overflow-hidden rounded-2xl bg-white p-6 shadow-xl ring-1 ring-gray-200/50 lg:p-8">
 			@uploadcomponent.BeerImagesUpload(uploadcomponent.UploadParams{ShowHint: true})

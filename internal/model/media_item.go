@@ -3,11 +3,10 @@ package model
 import (
 	"bytes"
 	"crypto/md5" //nolint:gosec
+	"errors"
 	"fmt"
 	"image"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 type UploadFormValues struct {
@@ -57,7 +56,7 @@ type MediaImage struct {
 func NewMediaImage(formValues UploadFormValues) (*MediaImage, error) {
 	image, _, decodeErr := image.Decode(bytes.NewReader(formValues.Content))
 	if decodeErr != nil {
-		return nil, errors.Wrap(decodeErr, "decode image")
+		return nil, fmt.Errorf("decode image: %w", decodeErr)
 	}
 
 	imageMetadata := MediaMetadata{
@@ -70,7 +69,7 @@ func NewMediaImage(formValues UploadFormValues) (*MediaImage, error) {
 
 	beerMediaType, typeErr := NewBeerMediaType(imageMetadata)
 	if typeErr != nil {
-		return nil, errors.Wrap(typeErr, "unknown beer media type")
+		return nil, fmt.Errorf("unknown beer media type: %w", typeErr)
 	}
 
 	mediaImage := &MediaImage{

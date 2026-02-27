@@ -10,7 +10,6 @@ require (
 	github.com/clerk/clerk-sdk-go/v2 v2.5.1
 	github.com/go-chi/chi/v5 v5.2.4
 	github.com/golang-jwt/jwt/v5 v5.3.0
-	github.com/pkg/errors v0.9.1
 	github.com/tursodatabase/libsql-client-go v0.0.0-20251219100830-236aa1ff8acc
 	golang.org/x/sync v0.19.0
 	golang.org/x/text v0.33.0

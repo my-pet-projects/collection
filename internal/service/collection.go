@@ -2,11 +2,11 @@ package service
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"log/slog"
 	"slices"
 	"strings"
-
-	"github.com/pkg/errors"
 
 	"github.com/my-pet-projects/collection/internal/db"
 	"github.com/my-pet-projects/collection/internal/model"
@@ -28,7 +28,7 @@ func (s CollectionService) GetNextAvailableCollectionSlot(ctx context.Context, b
 	filter := model.MediaItemsFilter{IncludeAll: true}
 	mediaItems, mediaItemsErr := s.beerMediaStore.FetchMediaItems(ctx, filter)
 	if mediaItemsErr != nil {
-		return nil, errors.Wrap(mediaItemsErr, "fetch media items")
+		return nil, fmt.Errorf("fetch media items: %w", mediaItemsErr)
 	}
 
 	collectionSlots := make([]model.Slot, 0)
@@ -73,8 +73,8 @@ func (s CollectionService) findFirstAvailableSlot(occupiedSlots []model.Slot, ge
 	}
 
 	const (
-		maxSheets    = 100 //nolint:mnd
-		colsPerSheet = 7   //nolint:mnd
+		maxSheets    = 100
+		colsPerSheet = 7
 	)
 
 	rowsPerSheet := model.RowSizeForPrefix(geoPrefix)

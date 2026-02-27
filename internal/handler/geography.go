@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/my-pet-projects/collection/internal/service"
-	"github.com/my-pet-projects/collection/internal/view/component/shared"
+	"github.com/my-pet-projects/collection/internal/view/component/geography"
 	"github.com/my-pet-projects/collection/internal/web"
 )
 
@@ -46,14 +46,14 @@ func (h GeographyHandler) ListCountries(reqResp *web.ReqRespPair) error {
 		return reqResp.RenderError(http.StatusBadRequest, showAllOptionErr)
 	}
 
-	data := shared.CountriesData{
+	data := geography.CountriesData{
 		Countries:          countries,
 		HasBreweries:       hasBreweries,
 		PreselectedCountry: preselected,
 		ShowAllOption:      showAllOption,
 	}
 
-	return reqResp.Render(shared.CountriesAutoComplete(data))
+	return reqResp.Render(geography.CountriesAutoComplete(data))
 }
 
 func (h GeographyHandler) ListCities(reqResp *web.ReqRespPair) error {
@@ -71,10 +71,10 @@ func (h GeographyHandler) ListCities(reqResp *web.ReqRespPair) error {
 		return reqResp.RenderError(http.StatusBadRequest, showAllOptionErr)
 	}
 
-	data := shared.CitiesData{
+	data := geography.CitiesData{
 		Cities:          cities,
 		PreselectedCity: preselected,
 		ShowAllOption:   showAllOption,
 	}
-	return reqResp.Render(shared.CitiesAutoComplete(data))
+	return reqResp.Render(geography.CitiesAutoComplete(data))
 }

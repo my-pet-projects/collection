@@ -41,7 +41,7 @@ func Request(ctx context.Context) *http.Request {
 
 // getContextValue is a helper function to retrieve a value from the context.
 // It returns the value if present, otherwise returns the provided default value.
-func getContextValue[T any](ctx context.Context, key interface{}, defaultValue T) T {
+func getContextValue[T any](ctx context.Context, key any, defaultValue T) T {
 	value, ok := ctx.Value(key).(T)
 	if !ok {
 		return defaultValue

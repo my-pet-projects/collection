@@ -11,6 +11,9 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	"fmt"
 
+	"github.com/my-pet-projects/collection/internal/view/component/feedback"
+	"github.com/my-pet-projects/collection/internal/view/component/ui"
+	"github.com/my-pet-projects/collection/internal/view/layout"
 	beercomponent "github.com/my-pet-projects/collection/internal/view/page/beer/component"
 	uploadcomponent "github.com/my-pet-projects/collection/internal/view/page/upload/component"
 )
@@ -48,7 +51,7 @@ func Images(params BeerPageData) templ.Component {
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(len(params.BeerMedias)))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 22, Col: 92}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 25, Col: 92}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -90,13 +93,13 @@ func Images(params BeerPageData) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/workspace/beer/%d/images", params.Beer.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 38, Col: 70}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 41, Col: 70}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" hx-target=\"#beer-images-form\" hx-target-error=\"#beer-images-errors\" hx-trigger=\"submit\" hx-indicator=\".hx-save-indicator-toggle\" hx-disabled-elt=\"button,input:not([type='hidden'])\"><!-- Images Section --><div class=\"mb-10\"><!-- Section Header --><div class=\"mb-8 flex items-center justify-between\"><div><h3 class=\"text-xl font-semibold text-gray-900\">Available Images</h3><p class=\"mt-1 text-sm text-gray-600\">Select images to include in your beer collection</p></div><!-- Legend --><div class=\"flex items-center gap-6 text-sm\"><div class=\"flex items-center gap-2\"><div class=\"h-3 w-3 rounded-full bg-linear-to-r from-amber-500 to-orange-500\"></div><span class=\"font-medium text-gray-700\">Selected</span></div><div class=\"flex items-center gap-2\"><div class=\"h-3 w-3 rounded-full bg-gray-300\"></div><span class=\"text-gray-600\">Available</span></div></div></div><!-- Images Grid --><div class=\"mb-6 grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" hx-target=\"#beer-images-form\" hx-target-error=\"#beer-images-errors\" hx-trigger=\"submit\" hx-indicator=\".hx-save-indicator-toggle\" hx-disabled-elt=\"button,input:not([type='hidden'])\" hx-on::before-request=\"document.getElementById('beer-images-errors').innerHTML = ''\" hx-on::response-error=\"document.getElementById('beer-images-errors')?.classList.remove('hidden')\" hx-on::after-request=\"if ($event.detail.successful) document.getElementById('beer-images-errors')?.classList.add('hidden')\"><!-- Images Section --><div class=\"mb-10\"><!-- Section Header --><div class=\"mb-8 flex items-center justify-between\"><div><h3 class=\"text-xl font-semibold text-gray-900\">Available Images</h3><p class=\"mt-1 text-sm text-gray-600\">Select images to include in your beer collection</p></div><!-- Legend --><div class=\"flex items-center gap-6 text-sm\"><div class=\"flex items-center gap-2\"><div class=\"bg-linear-to-r h-3 w-3 rounded-full from-amber-500 to-orange-500\"></div><span class=\"font-medium text-gray-700\">Selected</span></div><div class=\"flex items-center gap-2\"><div class=\"h-3 w-3 rounded-full bg-gray-300\"></div><span class=\"text-gray-600\">Available</span></div></div></div><!-- Images Grid --><div class=\"mb-6 grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -153,7 +156,7 @@ func Images(params BeerPageData) templ.Component {
 				var templ_7745c5c3_Var4 string
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(media.ID))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 132, Col: 75}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 138, Col: 75}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
@@ -166,7 +169,7 @@ func Images(params BeerPageData) templ.Component {
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(media.MediaID))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 133, Col: 85}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 139, Col: 85}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -179,7 +182,7 @@ func Images(params BeerPageData) templ.Component {
 				var templ_7745c5c3_Var6 string
 				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(media.Type))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 135, Col: 79}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 141, Col: 79}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
@@ -192,7 +195,7 @@ func Images(params BeerPageData) templ.Component {
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(media.Media.ExternalFilename)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 136, Col: 84}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 142, Col: 84}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
@@ -211,7 +214,7 @@ func Images(params BeerPageData) templ.Component {
 						nextSheetID = params.NextSlot.SheetID
 						nextSheetSlot = params.NextSlot.SheetSlot
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, " <div class=\"space-y-3 rounded-2xl border border-gray-200 bg-linear-to-b from-white to-gray-50 p-4 shadow-sm transition-all duration-300\" x-cloak x-show=\"selected\" x-transition:enter=\"transition ease-out duration-300\" x-transition:enter-start=\"opacity-0 transform scale-95 translate-y-2\" x-transition:enter-end=\"opacity-100 transform scale-100 translate-y-0\" x-transition:leave=\"transition ease-in duration-200\" x-transition:leave-start=\"opacity-100 transform scale-100 translate-y-0\" x-transition:leave-end=\"opacity-0 transform scale-95 translate-y-2\" x-data=\"")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, " <div class=\"bg-linear-to-b space-y-3 rounded-2xl border border-gray-200 from-white to-gray-50 p-4 shadow-sm transition-all duration-300\" x-cloak x-show=\"selected\" x-transition:enter=\"transition ease-out duration-300\" x-transition:enter-start=\"opacity-0 transform scale-95 translate-y-2\" x-transition:enter-end=\"opacity-100 transform scale-100 translate-y-0\" x-transition:leave=\"transition ease-in duration-200\" x-transition:leave-start=\"opacity-100 transform scale-100 translate-y-0\" x-transition:leave-end=\"opacity-0 transform scale-95 translate-y-2\" x-data=\"")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -223,7 +226,7 @@ func Images(params BeerPageData) templ.Component {
 													nextSlotSheetSlot: '%s' 
 												}`, nextGeoPrefix, nextSheetID, nextSheetSlot))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 163, Col: 58}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 169, Col: 58}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 					if templ_7745c5c3_Err != nil {
@@ -241,7 +244,7 @@ func Images(params BeerPageData) templ.Component {
 					var templ_7745c5c3_Var9 string
 					templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(slot.GeoPrefix)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 175, Col: 36}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 181, Col: 36}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 					if templ_7745c5c3_Err != nil {
@@ -254,7 +257,7 @@ func Images(params BeerPageData) templ.Component {
 					var templ_7745c5c3_Var10 string
 					templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(slot.SheetID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 186, Col: 34}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 192, Col: 34}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 					if templ_7745c5c3_Err != nil {
@@ -267,7 +270,7 @@ func Images(params BeerPageData) templ.Component {
 					var templ_7745c5c3_Var11 string
 					templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(slot.SheetSlot)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 197, Col: 36}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 203, Col: 36}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 					if templ_7745c5c3_Err != nil {
@@ -285,7 +288,7 @@ func Images(params BeerPageData) templ.Component {
 						var templ_7745c5c3_Var12 string
 						templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(params.NextSlot.String())
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 220, Col: 79}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 226, Col: 79}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 						if templ_7745c5c3_Err != nil {
@@ -311,12 +314,108 @@ func Images(params BeerPageData) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</div><!-- Action Bar --><div class=\"flex flex-col gap-4 border-t border-gray-200 pt-8 sm:flex-row sm:items-center sm:justify-between\"><!-- Save Button --><button type=\"submit\" class=\"inline-flex w-40 items-center justify-center rounded-2xl bg-gray-900 px-6 py-3 text-sm font-medium text-white shadow-lg transition-all duration-300 hover:scale-105 hover:bg-gray-800 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50\"><!-- Loading State --><span class=\"hx-save-indicator-toggle htmx-indicator flex items-center\"><svg class=\"mr-2 h-4 w-4 animate-spin text-amber-300\" fill=\"none\" viewBox=\"0 0 24 24\"><circle class=\"opacity-25\" cx=\"12\" cy=\"12\" r=\"10\" stroke=\"currentColor\" stroke-width=\"4\"></circle> <path class=\"opacity-75\" fill=\"currentColor\" d=\"M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z\"></path></svg> <span>Saving...</span></span><!-- Default State --><span class=\"hx-save-indicator-toggle hide-on-hx-request flex items-center\"><svg class=\"mr-2 h-4 w-4 text-white\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" viewBox=\"0 0 24 24\"><path d=\"M5 4h11l3 3v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z\"></path> <path d=\"M7 4v4h8V4\"></path> <circle cx=\"12\" cy=\"14\" r=\"2\"></circle></svg> <span>Save</span></span></button></div></div></form>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</div><!-- Action Bar -->")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Var13 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+				if !templ_7745c5c3_IsBuffer {
+					defer func() {
+						templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+						if templ_7745c5c3_Err == nil {
+							templ_7745c5c3_Err = templ_7745c5c3_BufErr
+						}
+					}()
+				}
+				ctx = templ.InitializeContext(ctx)
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<!-- Save Button --> ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Var14 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+					templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+					templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+					if !templ_7745c5c3_IsBuffer {
+						defer func() {
+							templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+							if templ_7745c5c3_Err == nil {
+								templ_7745c5c3_Err = templ_7745c5c3_BufErr
+							}
+						}()
+					}
+					ctx = templ.InitializeContext(ctx)
+					templ_7745c5c3_Var15 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+						templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+						templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+						if !templ_7745c5c3_IsBuffer {
+							defer func() {
+								templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+								if templ_7745c5c3_Err == nil {
+									templ_7745c5c3_Err = templ_7745c5c3_BufErr
+								}
+							}()
+						}
+						ctx = templ.InitializeContext(ctx)
+						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "Saving...")
+						if templ_7745c5c3_Err != nil {
+							return templ_7745c5c3_Err
+						}
+						return nil
+					})
+					templ_7745c5c3_Err = ui.SubmitButtonLoading().Render(templ.WithChildren(ctx, templ_7745c5c3_Var15), templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, " ")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Var16 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+						templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+						templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+						if !templ_7745c5c3_IsBuffer {
+							defer func() {
+								templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+								if templ_7745c5c3_Err == nil {
+									templ_7745c5c3_Err = templ_7745c5c3_BufErr
+								}
+							}()
+						}
+						ctx = templ.InitializeContext(ctx)
+						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "Save")
+						if templ_7745c5c3_Err != nil {
+							return templ_7745c5c3_Err
+						}
+						return nil
+					})
+					templ_7745c5c3_Err = ui.SubmitButtonDefault().Render(templ.WithChildren(ctx, templ_7745c5c3_Var16), templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					return nil
+				})
+				templ_7745c5c3_Err = ui.SubmitButtonWrapper("w-40").Render(templ.WithChildren(ctx, templ_7745c5c3_Var14), templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				return nil
+			})
+			templ_7745c5c3_Err = layout.FormActions().Render(templ.WithChildren(ctx, templ_7745c5c3_Var13), templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "</div></form>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<div id=\"beer-images-errors\" class=\"mt-6 hidden rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 shadow-md\"></div></div>")
+		templ_7745c5c3_Err = feedback.FormErrorContainer("beer-images-errors").Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
