@@ -1,6 +1,8 @@
-# collection
+# Collection
 
-## Useful database scripts
+A web application for managing a beer bottle cap collection.
+
+## Database Management
 
 ### Create dump
 
