@@ -11,13 +11,17 @@
   },
   "packageRules": [
     {
+      "description": "Enable Go version updates",
+      "matchManagers": ["gomod"],
+      "matchDepNames": ["go"],
+      "rangeStrategy": "bump"
+    },
+    {
       "description": "Group Go version updates with minor/patch dependencies",
       "matchManagers": ["gomod"],
       "matchDepNames": ["go"],
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "go-minor-patch-updates",
-      "commitMessagePrefix": "chore",
-      "commitMessageTopic": "Go version to {{newVersion}}",
       "automerge": true,
       "platformAutomerge": true
     },
@@ -26,8 +30,6 @@
       "matchManagers": ["gomod"],
       "matchUpdateTypes": ["minor", "patch", "digest"],
       "groupName": "go-minor-patch-updates",
-      "commitMessagePrefix": "chore",
-      "commitMessageTopic": "Go dependencies (minor/patch)",
       "automerge": true,
       "platformAutomerge": true
     },
@@ -35,8 +37,6 @@
       "description": "Separate PRs for major Go dependency updates",
       "matchManagers": ["gomod"],
       "matchUpdateTypes": ["major"],
-      "commitMessagePrefix": "chore",
-      "commitMessageTopic": "{{depName}} to v{{newMajor}}",
       "labels": ["dependencies", "breaking"],
       "automerge": false
     }

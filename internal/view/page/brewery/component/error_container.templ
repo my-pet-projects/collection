@@ -1,5 +1,8 @@
 package component
 
+import "github.com/my-pet-projects/collection/internal/view/component/shared"
+
+// ErrorContainer renders the error container for brewery list.
 templ ErrorContainer() {
-	<div id="brewery-list-errors" x-show="hasErrors" class="mb-6 hidden rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 shadow-md"></div>
+	@shared.ErrorContainer("brewery-list-errors")
 }

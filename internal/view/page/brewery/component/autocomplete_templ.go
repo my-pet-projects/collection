@@ -8,12 +8,9 @@ package component
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import (
-	"fmt"
+import "github.com/my-pet-projects/collection/internal/view/component/ui"
 
-	"github.com/my-pet-projects/collection/internal/view/component/ui"
-)
-
+// BreweriesAutocomplete renders an autocomplete for breweries.
 func BreweriesAutocomplete(data BreweriesData) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -35,17 +32,7 @@ func BreweriesAutocomplete(data BreweriesData) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		props := ui.AutoCompleteProps{
-			ID:             "brewery",
-			Name:           "brewery",
-			Data:           data.ToAutocompleteData(),
-			EventNamespace: "brewery",
-			HasError:       data.HasError,
-		}
-		if data.SelectedBrewery != nil {
-			props.PreselectedValue = fmt.Sprint(*data.SelectedBrewery)
-		}
-		templ_7745c5c3_Err = ui.AutoComplete(props).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = ui.AutoComplete(data.ToAutocompleteProps()).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

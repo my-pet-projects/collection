@@ -8,6 +8,9 @@ package component
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
+import "github.com/my-pet-projects/collection/internal/view/component/shared"
+
+// ErrorContainer renders the error container for brewery list.
 func ErrorContainer() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -29,7 +32,7 @@ func ErrorContainer() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"brewery-list-errors\" x-show=\"hasErrors\" class=\"mb-6 hidden rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 shadow-md\"></div>")
+		templ_7745c5c3_Err = shared.ErrorContainer("brewery-list-errors").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
