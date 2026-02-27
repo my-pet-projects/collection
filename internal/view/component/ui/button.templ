@@ -167,18 +167,25 @@ templ SubmitButton(label, loadingLabel string) {
 	</button>
 }
 
+// variantClasses returns the CSS classes for a button variant.
+func variantClasses(variant ButtonVariant) string {
+	switch variant {
+	case ButtonSecondary:
+		return "border border-gray-300 bg-white text-gray-700 shadow-md hover:scale-105 hover:bg-gray-50 hover:shadow-lg focus:ring-gray-500"
+	case ButtonDanger:
+		return "border border-red-300 bg-white text-red-700 shadow-md hover:scale-105 hover:bg-red-50 hover:shadow-lg focus:ring-red-500"
+	case ButtonGhost:
+		return "text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus:ring-gray-500"
+	default: // Primary
+		return "bg-gray-900 text-white shadow-lg hover:scale-105 hover:bg-gray-800 hover:shadow-xl focus:ring-amber-500"
+	}
+}
+
 // LinkButton renders a link styled as a button.
 templ LinkButton(href string, variant ButtonVariant) {
 	{{
-		variantClass := "inline-flex items-center justify-center rounded-2xl px-6 py-3 text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2"
-		switch variant {
-		case ButtonSecondary:
-			variantClass += " border border-gray-300 bg-white text-gray-700 shadow-md hover:scale-105 hover:bg-gray-50 hover:shadow-lg focus:ring-gray-500"
-		case ButtonDanger:
-			variantClass += " border border-red-300 bg-white text-red-700 shadow-md hover:scale-105 hover:bg-red-50 hover:shadow-lg focus:ring-red-500"
-		default:
-			variantClass += " bg-gray-900 text-white shadow-lg hover:scale-105 hover:bg-gray-800 hover:shadow-xl focus:ring-amber-500"
-		}
+		baseClass := "inline-flex items-center justify-center rounded-2xl px-6 py-3 text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2"
+		variantClass := baseClass + " " + variantClasses(variant)
 	}}
 	<a href={ templ.URL(href) } class={ variantClass }>
 		{ children... }
