@@ -14,7 +14,7 @@ templ Page(data LoginData) {
 			<title>Beer Collection - Sign In</title>
 			<link rel="icon" type="image/svg+xml" sizes="32x32" href="/assets/img/pint-of-beer.svg"/>
 			<link href="/assets/css/tailwind-output.gen.css" rel="stylesheet"/>
-			<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+			<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
 			<script async crossorigin="anonymous" data-clerk-publishable-key={ data.ClerkPublishableKey } src={ fmt.Sprintf("%s/npm/@clerk/clerk-js@latest/dist/clerk.browser.js", data.ClerkAuthHost) } type="text/javascript"></script>
 			<script src="/assets/js/clerk-login.js"></script>
 		</head>
