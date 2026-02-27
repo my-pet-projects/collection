@@ -450,6 +450,20 @@ func SubmitButton(label, loadingLabel string) templ.Component {
 	})
 }
 
+// variantClasses returns the CSS classes for a button variant.
+func variantClasses(variant ButtonVariant) string {
+	switch variant {
+	case ButtonSecondary:
+		return "border border-gray-300 bg-white text-gray-700 shadow-md hover:scale-105 hover:bg-gray-50 hover:shadow-lg focus:ring-gray-500"
+	case ButtonDanger:
+		return "border border-red-300 bg-white text-red-700 shadow-md hover:scale-105 hover:bg-red-50 hover:shadow-lg focus:ring-red-500"
+	case ButtonGhost:
+		return "text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus:ring-gray-500"
+	default: // Primary
+		return "bg-gray-900 text-white shadow-lg hover:scale-105 hover:bg-gray-800 hover:shadow-xl focus:ring-amber-500"
+	}
+}
+
 // LinkButton renders a link styled as a button.
 func LinkButton(href string, variant ButtonVariant) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -472,15 +486,8 @@ func LinkButton(href string, variant ButtonVariant) templ.Component {
 			templ_7745c5c3_Var16 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		variantClass := "inline-flex items-center justify-center rounded-2xl px-6 py-3 text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2"
-		switch variant {
-		case ButtonSecondary:
-			variantClass += " border border-gray-300 bg-white text-gray-700 shadow-md hover:scale-105 hover:bg-gray-50 hover:shadow-lg focus:ring-gray-500"
-		case ButtonDanger:
-			variantClass += " border border-red-300 bg-white text-red-700 shadow-md hover:scale-105 hover:bg-red-50 hover:shadow-lg focus:ring-red-500"
-		default:
-			variantClass += " bg-gray-900 text-white shadow-lg hover:scale-105 hover:bg-gray-800 hover:shadow-xl focus:ring-amber-500"
-		}
+		baseClass := "inline-flex items-center justify-center rounded-2xl px-6 py-3 text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2"
+		variantClass := baseClass + " " + variantClasses(variant)
 		var templ_7745c5c3_Var17 = []any{variantClass}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var17...)
 		if templ_7745c5c3_Err != nil {
@@ -493,7 +500,7 @@ func LinkButton(href string, variant ButtonVariant) templ.Component {
 		var templ_7745c5c3_Var18 templ.SafeURL
 		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(href))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/ui/button.templ`, Line: 183, Col: 26}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/ui/button.templ`, Line: 190, Col: 26}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 		if templ_7745c5c3_Err != nil {
@@ -557,7 +564,7 @@ func IconButton(ariaLabel string) templ.Component {
 		var templ_7745c5c3_Var21 string
 		templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(ariaLabel)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/ui/button.templ`, Line: 192, Col: 24}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/component/ui/button.templ`, Line: 199, Col: 24}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 		if templ_7745c5c3_Err != nil {
