@@ -29,6 +29,7 @@ type Deps struct {
 // New creates and configures the HTTP router with all application routes.
 func New(deps Deps) (http.Handler, error) {
 	// Create handlers
+	homeHandler := handler.NewHomeHandler(deps.BeerService, deps.Logger)
 	geoHandler := handler.NewGeographyHandler(deps.GeoService, deps.Logger)
 	beerHandler := handler.NewBeerHandler(deps.BeerService, deps.BreweryService, deps.Logger)
 	breweryHandler := handler.NewBreweryHandler(deps.BreweryService, deps.Logger)
@@ -53,9 +54,11 @@ func New(deps Deps) (http.Handler, error) {
 	// Static assets
 	router.Handle("/assets/*", http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets"))))
 
-	// Public routes
-	router.Group(func(router chi.Router) {
+	// Public routes (with optional auth to show user-specific content)
+	router.With(middleware.WithOptionalAuthentication(deps.Cfg, deps.Logger)).Group(func(router chi.Router) {
+		router.Get("/", appHandler.Handle(homeHandler.HandleHomePage))
 		router.Get("/login", appHandler.Handle(authHandler.HandleLoginPage))
+		router.Post("/logout", appHandler.Handle(authHandler.HandleLogout))
 	})
 
 	// Authenticated routes - Geography

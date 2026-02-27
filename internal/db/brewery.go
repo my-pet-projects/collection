@@ -117,3 +117,13 @@ func (s BreweryStore) UpdateBrewery(ctx context.Context, brewery model.Brewery) 
 
 	return res.Error
 }
+
+// CountBreweries returns the total number of breweries.
+func (s BreweryStore) CountBreweries(ctx context.Context) (int64, error) {
+	var count int64
+	res := s.db.gorm.
+		WithContext(ctx).
+		Model(&model.Brewery{}).
+		Count(&count)
+	return count, res.Error
+}

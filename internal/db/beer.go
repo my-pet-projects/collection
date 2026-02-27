@@ -128,3 +128,25 @@ func (s BeerStore) DeleteBeer(ctx context.Context, id int) error {
 
 	return res.Error
 }
+
+// CountBeers returns the total number of beers.
+func (s BeerStore) CountBeers(ctx context.Context) (int64, error) {
+	var count int64
+	res := s.db.gorm.
+		WithContext(ctx).
+		Model(&model.Beer{}).
+		Count(&count)
+	return count, res.Error
+}
+
+// CountCountries returns the number of distinct countries with beers.
+func (s BeerStore) CountCountries(ctx context.Context) (int64, error) {
+	var count int64
+	res := s.db.gorm.
+		WithContext(ctx).
+		Model(&model.Beer{}).
+		Joins("JOIN breweries ON breweries.id = beers.brewery_id").
+		Distinct("breweries.country_cca2").
+		Count(&count)
+	return count, res.Error
+}

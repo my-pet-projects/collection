@@ -28,6 +28,38 @@ func NewBeerService(beerStore *db.BeerStore, styleStore *db.BeerStyleStore, brew
 	}
 }
 
+// CollectionStats holds aggregated statistics about the beer collection.
+type CollectionStats struct {
+	TotalBeers     int
+	TotalBreweries int
+	TotalCountries int
+}
+
+// GetStats returns collection statistics.
+func (s BeerService) GetStats(ctx context.Context) (CollectionStats, error) {
+	var stats CollectionStats
+
+	beerCount, err := s.beerStore.CountBeers(ctx)
+	if err != nil {
+		return stats, errors.Wrap(err, "count beers")
+	}
+	stats.TotalBeers = int(beerCount)
+
+	breweryCount, err := s.breweryStore.CountBreweries(ctx)
+	if err != nil {
+		return stats, errors.Wrap(err, "count breweries")
+	}
+	stats.TotalBreweries = int(breweryCount)
+
+	countryCount, err := s.beerStore.CountCountries(ctx)
+	if err != nil {
+		return stats, errors.Wrap(err, "count countries")
+	}
+	stats.TotalCountries = int(countryCount)
+
+	return stats, nil
+}
+
 func (s BeerService) GetBeer(ctx context.Context, id int) (*model.Beer, error) {
 	beer, beerErr := s.beerStore.GetBeer(ctx, id)
 	if beerErr != nil {
