@@ -100,7 +100,7 @@ func listHeader() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div class=\"mb-6 flex flex-col lg:mb-8 lg:flex-row lg:items-center lg:justify-between\"><!-- Title Section --><div class=\"mb-6 flex flex-col items-center text-center lg:mb-0 lg:flex-row lg:items-center lg:text-left\"><div class=\"group mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-linear-to-br from-amber-400 via-orange-500 to-red-500 shadow-xl transition-all duration-300 hover:scale-110 hover:shadow-2xl lg:mb-0 lg:mr-6\"><svg width=\"28\" height=\"28\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" xmlns=\"http://www.w3.org/2000/svg\" class=\"transition-transform duration-300 group-hover:rotate-12\"><path d=\"M8.3 10a.7.7 0 0 1-.626-1.079L11.4 3a.7.7 0 0 1 1.198-.043L16.3 8.9a.7.7 0 0 1-.572 1.1Z\"></path><rect x=\"3\" y=\"14\" width=\"7\" height=\"7\" rx=\"1\"></rect><circle cx=\"17.5\" cy=\"17.5\" r=\"3.5\"></circle></svg></div><div><h1 class=\"bg-linear-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-3xl font-bold leading-tight tracking-tight text-transparent sm:text-4xl lg:text-5xl\">Beer Styles</h1><p class=\"text-base text-gray-600 sm:text-lg lg:text-xl\">Manage beer styles of your beer collection</p></div></div><!-- Add Style Button --><div class=\"flex flex-shrink-0 justify-center lg:justify-end\"><button class=\"group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-2xl bg-gray-900 px-6 py-3 text-sm font-semibold text-white shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2\" hx-get=\"/workspace/beer-style/create\" hx-target=\"#styles-list\" hx-swap=\"afterbegin\" x-data x-on:htmx:response-error=\"$dispatch('notify', { variant: 'danger', title: 'Failed to create new style!' })\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div class=\"mb-6 flex flex-col lg:mb-8 lg:flex-row lg:items-center lg:justify-between\"><!-- Title Section --><div class=\"mb-6 flex flex-col items-center text-center lg:mb-0 lg:flex-row lg:items-center lg:text-left\"><div class=\"group mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-linear-to-br from-amber-400 via-orange-500 to-red-500 shadow-xl transition-all duration-300 hover:scale-110 hover:shadow-2xl lg:mb-0 lg:mr-6\"><svg width=\"28\" height=\"28\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" xmlns=\"http://www.w3.org/2000/svg\" class=\"transition-transform duration-300 group-hover:rotate-12\"><path d=\"M8.3 10a.7.7 0 0 1-.626-1.079L11.4 3a.7.7 0 0 1 1.198-.043L16.3 8.9a.7.7 0 0 1-.572 1.1Z\"></path><rect x=\"3\" y=\"14\" width=\"7\" height=\"7\" rx=\"1\"></rect><circle cx=\"17.5\" cy=\"17.5\" r=\"3.5\"></circle></svg></div><div><h1 class=\"bg-linear-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-3xl font-bold leading-tight tracking-tight text-transparent sm:text-4xl lg:text-5xl\">Beer Styles</h1><p class=\"text-base text-gray-600 sm:text-lg lg:text-xl\">Manage beer styles of your beer collection</p></div></div><!-- Add Style Button --><div class=\"flex shrink-0 justify-center lg:justify-end\"><button class=\"group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-2xl bg-gray-900 px-6 py-3 text-sm font-semibold text-white shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2\" hx-get=\"/workspace/beer-style/create\" hx-target=\"#styles-list\" hx-swap=\"afterbegin\" x-data x-on:htmx:response-error=\"$dispatch('notify', { variant: 'danger', title: 'Failed to create new style!' })\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -336,7 +336,7 @@ func DisplayBeerStyleRowView(style model.BeerStyle) templ.Component {
 			templ_7745c5c3_Var9 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<div class=\"beer-style-item group flex min-h-[4.5rem] items-center justify-between px-6 py-4 transition-all duration-200 hover:bg-gray-50\"><div class=\"flex-1 pr-2\"><h3 class=\"font-medium text-gray-900 transition-colors duration-200 group-hover:text-amber-600 sm:text-lg\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<div class=\"beer-style-item group flex min-h-18 items-center justify-between px-6 py-4 transition-all duration-200 hover:bg-gray-50\"><div class=\"flex-1 pr-2\"><h3 class=\"font-medium text-gray-900 transition-colors duration-200 group-hover:text-amber-600 sm:text-lg\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -420,7 +420,7 @@ func EditBeerStyleRowView(style model.BeerStyle, errs model.BeerStyleErrors) tem
 			templ_7745c5c3_Var13 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<div class=\"beer-style-item min-h-[4.5rem] border-l-4 border-blue-400 bg-linear-to-r from-blue-50 to-blue-100/50 px-6 py-4\"><form hx-put=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<div class=\"beer-style-item min-h-18 border-l-4 border-blue-400 bg-linear-to-r from-blue-50 to-blue-100/50 px-6 py-4\"><form hx-put=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -433,7 +433,7 @@ func EditBeerStyleRowView(style model.BeerStyle, errs model.BeerStyleErrors) tem
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "\" hx-target=\"closest .beer-style-item\" hx-swap=\"outerHTML\" x-data x-on:htmx:response-error=\"$dispatch('notify', { variant: 'danger', xhrResponse: $event.detail.xhr.response })\"><div class=\"flex items-center gap-2\"><div class=\"min-h-[2.25rem] flex-1\"><input type=\"text\" name=\"name\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "\" hx-target=\"closest .beer-style-item\" hx-swap=\"outerHTML\" x-data x-on:htmx:response-error=\"$dispatch('notify', { variant: 'danger', xhrResponse: $event.detail.xhr.response })\"><div class=\"flex items-center gap-2\"><div class=\"min-h-9 flex-1\"><input type=\"text\" name=\"name\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -479,7 +479,7 @@ func EditBeerStyleRowView(style model.BeerStyle, errs model.BeerStyleErrors) tem
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "</div><div class=\"flex min-h-[2.25rem] flex-shrink-0 items-center gap-1\"><button type=\"submit\" class=\"inline-flex h-9 w-9 items-center justify-center rounded-lg bg-green-500 text-white shadow-md transition-all duration-200 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-1\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "</div><div class=\"flex min-h-9 shrink-0 items-center gap-1\"><button type=\"submit\" class=\"inline-flex h-9 w-9 items-center justify-center rounded-lg bg-green-500 text-white shadow-md transition-all duration-200 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-1\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -537,7 +537,7 @@ func CreateBeerStyleRowView(style model.BeerStyle, errs model.BeerStyleErrors) t
 			templ_7745c5c3_Var18 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<div class=\"beer-style-item min-h-[4.5rem] border-l-4 border-green-400 bg-linear-to-r from-green-50 to-green-100/50 px-6 py-4\"><form hx-post=\"/workspace/beer-style\" hx-target=\"closest .beer-style-item\" hx-swap=\"outerHTML\" x-data x-on:htmx:response-error=\"$dispatch('notify', { variant: 'danger', xhrResponse: $event.detail.xhr.response })\"><div class=\"flex items-center gap-2\"><div class=\"min-h-[2.25rem] flex-1\"><input type=\"text\" name=\"name\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<div class=\"beer-style-item min-h-18 border-l-4 border-green-400 bg-linear-to-r from-green-50 to-green-100/50 px-6 py-4\"><form hx-post=\"/workspace/beer-style\" hx-target=\"closest .beer-style-item\" hx-swap=\"outerHTML\" x-data x-on:htmx:response-error=\"$dispatch('notify', { variant: 'danger', xhrResponse: $event.detail.xhr.response })\"><div class=\"flex items-center gap-2\"><div class=\"min-h-9 flex-1\"><input type=\"text\" name=\"name\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -583,7 +583,7 @@ func CreateBeerStyleRowView(style model.BeerStyle, errs model.BeerStyleErrors) t
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "</div><div class=\"flex min-h-[2.25rem] flex-shrink-0 items-center gap-1\"><button type=\"submit\" class=\"inline-flex h-9 w-9 items-center justify-center rounded-lg bg-green-600 text-white shadow-md transition-all duration-200 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-1\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "</div><div class=\"flex min-h-9 shrink-0 items-center gap-1\"><button type=\"submit\" class=\"inline-flex h-9 w-9 items-center justify-center rounded-lg bg-green-600 text-white shadow-md transition-all duration-200 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-1\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

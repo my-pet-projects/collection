@@ -117,11 +117,3 @@ func (p BeerFormParams) Validate() (BeerFormErrors, bool) {
 func (p BeerFormParams) IsNew() bool {
 	return p.ID == 0
 }
-
-// ptrToString safely dereferences a string pointer, returning empty string if nil.
-func ptrToString(s *string) string {
-	if s == nil {
-		return ""
-	}
-	return *s
-}

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/my-pet-projects/collection/internal/view/component/icon"
+	"github.com/my-pet-projects/collection/internal/view/component/shared"
 	"github.com/my-pet-projects/collection/internal/view/layout"
 	"github.com/my-pet-projects/collection/internal/view/page/beer/component"
 )
@@ -22,37 +23,13 @@ templ LoadingShimmer(cardsCount ...int) {
 
 templ ListPage(page BeerListPageData) {
 	@layout.BaseLayout() {
-		<!-- Header Section -->
-		<div class="mb-6 flex flex-col lg:mb-8 lg:flex-row lg:items-center lg:justify-between">
-			<!-- Title Section -->
-			<div class="mb-6 flex flex-col items-center text-center lg:mb-0 lg:flex-row lg:text-left">
-				<div class="bg-linear-to-br group mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl from-amber-400 via-orange-500 to-red-500 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl lg:mb-0 lg:mr-6">
-					<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" class="transition-transform duration-300 group-hover:rotate-12">
-						<path d="M17 11h1a3 3 0 0 1 0 6h-1"></path>
-						<path d="M9 12v6"></path>
-						<path d="M13 12v6"></path>
-						<path d="M14 7.5c-1 0-1.44.5-3 .5s-2-.5-3-.5-1.72.5-2.5.5a2.5 2.5 0 0 1 0-5c.78 0 1.57.5 2.5.5s2-.5 3-.5 2 .5 3 .5 1.72-.5 2.5-.5a2.5 2.5 0 0 1 0 5c-.78 0-1.5-.5-2.5-.5Z"></path>
-						<path d="M5 8v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8"></path>
-					</svg>
-				</div>
-				<div>
-					<h1 class="bg-linear-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-3xl font-bold leading-tight tracking-tight text-transparent sm:text-4xl lg:text-5xl">
-						My Collection
-					</h1>
-					<p class="text-base text-gray-600 sm:text-lg lg:text-xl">Discover and catalog your brews that you've tasted</p>
-				</div>
-			</div>
-			<!-- Add Beer Button -->
-			<div class="flex flex-shrink-0 justify-center lg:justify-end">
-				<a
-					href="/workspace/beer/create"
-					class="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-2xl bg-gray-900 px-6 py-3 text-sm font-semibold text-white shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-				>
-					@icon.PlusIcon("h-5 w-5 transition-transform duration-300 group-hover:rotate-90")
-					Add Beer
-				</a>
-			</div>
-		</div>
+		@shared.PageHeader(shared.PageHeaderParams{
+			Title:       "My Collection",
+			Subtitle:    "Discover and catalog your brews that you've tasted",
+			Icon:        "beer",
+			ActionURL:   "/workspace/beer/create",
+			ActionLabel: "Add Beer",
+		})
 		<div
 			x-data="{
 				searching: false,
@@ -187,7 +164,7 @@ templ ListPage(page BeerListPageData) {
 							/>
 							<!-- The Toggle Track -->
 							<div
-								class="peer-checked:bg-linear-to-r relative h-5 w-9 flex-shrink-0 rounded-full bg-gray-300 transition-colors duration-300 after:absolute after:left-[2px] after:top-[2px] after:h-4 after:w-4 after:rounded-full after:bg-white after:transition-transform after:duration-300 after:content-[''] peer-checked:from-amber-400 peer-checked:to-amber-500 peer-checked:after:translate-x-4 peer-focus-visible:ring-2 peer-focus-visible:ring-amber-400 peer-focus-visible:ring-offset-2"
+								class="relative h-5 w-9 shrink-0 rounded-full bg-gray-300 transition-colors duration-300 after:absolute after:left-0.5 after:top-0.5 after:h-4 after:w-4 after:rounded-full after:bg-white after:transition-transform after:duration-300 after:content-[''] peer-checked:bg-linear-to-r peer-checked:from-amber-400 peer-checked:to-amber-500 peer-checked:after:translate-x-4 peer-focus-visible:ring-2 peer-focus-visible:ring-amber-400 peer-focus-visible:ring-offset-2"
 							></div>
 							<!-- Label Text -->
 							<span class="text-sm font-medium text-gray-700 transition-colors duration-200 group-hover:text-gray-900">
@@ -331,7 +308,7 @@ templ BeerList(data BeerListData) {
 	if data.TotalResults == 0 {
 		<!-- No Results -->
 		<div class="col-span-full flex flex-col items-center justify-center px-4 py-8 text-center sm:py-24">
-			<div class="bg-linear-to-br mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-2xl from-gray-100 to-gray-200">
+			<div class="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-2xl bg-linear-to-br from-gray-100 to-gray-200">
 				<svg class="h-10 w-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 					<path d="M17 11h1a3 3 0 0 1 0 6h-1"></path>
 					<path d="M9 12v6"></path>

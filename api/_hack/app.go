@@ -12,26 +12,9 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/pkg/errors"
-
 	"github.com/my-pet-projects/collection/internal/app"
-	"github.com/my-pet-projects/collection/internal/config"
-	"github.com/my-pet-projects/collection/internal/db"
-	"github.com/my-pet-projects/collection/internal/log"
 )
 
 func InitializeRoutesForVercel() (http.Handler, error) {
-	cfg, cfgErr := config.NewConfig()
-	if cfgErr != nil {
-		return nil, errors.Wrap(cfgErr, "config")
-	}
-
-	logger := log.NewLogger(cfg)
-
-	dbClient, dbClientErr := db.NewClient(cfg)
-	if dbClientErr != nil {
-		return nil, errors.Wrap(dbClientErr, "db")
-	}
-
-	return app.InitializeRouter(context.TODO(), cfg, dbClient, logger)
+	return app.NewRouter(context.TODO())
 }

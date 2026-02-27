@@ -317,18 +317,18 @@ templ AutoComplete(props AutoCompleteProps) {
 				<!-- All option icon (when no selection and showAllOption is true) -->
 				<span
 					x-show="!selectedOption && showAllOption"
-					class="flex-shrink-0 text-base"
+					class="shrink-0 text-base"
 					x-text="allOptionIcon"
 				></span>
 				<!-- Selected item emoji -->
 				<span
 					x-show="selectedOption && selectedOption.emoji && !selectedOption.image"
-					class="flex-shrink-0 text-base"
+					class="shrink-0 text-base"
 					x-text="selectedOption ? selectedOption.emoji : ''"
 				></span>
 				<!-- Selected item image (takes priority over emoji) -->
 				<img
-					class="h-3.5 w-5 flex-shrink-0 object-contain"
+					class="h-3.5 w-5 shrink-0 object-contain"
 					x-show="selectedOption && selectedOption.image"
 					x-bind:src="selectedOption ? selectedOption.image : ''"
 					alt=""
@@ -340,7 +340,7 @@ templ AutoComplete(props AutoCompleteProps) {
 				></span>
 			</div>
 			<!-- Chevron -->
-			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 flex-shrink-0 text-gray-400">
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 shrink-0 text-gray-400">
 				<path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"></path>
 			</svg>
 		</button>
@@ -402,18 +402,18 @@ templ AutoComplete(props AutoCompleteProps) {
 							<!-- All option icon -->
 							<span
 								x-show="item.isAllOption"
-								class="flex-shrink-0 text-base"
+								class="shrink-0 text-base"
 								x-text="allOptionIcon"
 							></span>
 							<!-- Item emoji (shown when no image and emoji exists) -->
 							<span
 								x-show="!item.isAllOption && item.emoji && !item.image"
-								class="flex-shrink-0 text-base"
+								class="shrink-0 text-base"
 								x-text="item.emoji"
 							></span>
 							<!-- Item image (takes priority over emoji) -->
 							<img
-								class="h-3.5 w-5 flex-shrink-0 object-contain"
+								class="h-3.5 w-5 shrink-0 object-contain"
 								x-show="!item.isAllOption && item.image"
 								x-bind:src="item.image"
 								x-bind:alt="item.label + ' image'"
@@ -426,7 +426,7 @@ templ AutoComplete(props AutoCompleteProps) {
 							></span>
 						</div>
 						<!-- Checkmark -->
-						<svg x-cloak x-show="(selectedOption == null && item.isAllOption) || (selectedOption != null && selectedOption == item)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" class="size-4 flex-shrink-0">
+						<svg x-cloak x-show="(selectedOption == null && item.isAllOption) || (selectedOption != null && selectedOption == item)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" class="size-4 shrink-0">
 							<path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"></path>
 						</svg>
 					</li>

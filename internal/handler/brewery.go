@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/my-pet-projects/collection/internal/apperr"
-	"github.com/my-pet-projects/collection/internal/config"
 	"github.com/my-pet-projects/collection/internal/model"
 	"github.com/my-pet-projects/collection/internal/service"
 	"github.com/my-pet-projects/collection/internal/view/layout"
@@ -16,37 +15,21 @@ import (
 	"github.com/my-pet-projects/collection/internal/web"
 )
 
-type WorkspaceServer struct {
-	appCfg            config.AppConfig
-	beerService       service.BeerService
-	breweryService    service.BreweryService
-	geoService        service.GeographyService
-	mediaService      service.ImageService
-	collectionService service.CollectionService
-	logger            *slog.Logger
+// BreweryHandler handles brewery-related HTTP requests.
+type BreweryHandler struct {
+	breweryService service.BreweryService
+	logger         *slog.Logger
 }
 
-func NewWorkspaceServer(
-	appCfg config.AppConfig,
-	beerService service.BeerService,
-	breweryService service.BreweryService,
-	geoService service.GeographyService,
-	mediaService service.ImageService,
-	collectionService service.CollectionService,
-	logger *slog.Logger,
-) *WorkspaceServer {
-	return &WorkspaceServer{
-		appCfg:            appCfg,
-		beerService:       beerService,
-		breweryService:    breweryService,
-		geoService:        geoService,
-		mediaService:      mediaService,
-		collectionService: collectionService,
-		logger:            logger,
+// NewBreweryHandler creates a new BreweryHandler.
+func NewBreweryHandler(breweryService service.BreweryService, logger *slog.Logger) *BreweryHandler {
+	return &BreweryHandler{
+		breweryService: breweryService,
+		logger:         logger,
 	}
 }
 
-func (h *WorkspaceServer) HandleBreweryListPage(reqResp *web.ReqRespPair) error {
+func (h *BreweryHandler) HandleBreweryListPage(reqResp *web.ReqRespPair) error {
 	page := layout.Page{Title: fmt.Sprintf("Brewery Workspace")}
 	pageParams := brewerypage.ListPageParams{
 		Page:         page,
@@ -55,12 +38,12 @@ func (h *WorkspaceServer) HandleBreweryListPage(reqResp *web.ReqRespPair) error 
 	return reqResp.Render(brewerypage.ListPage(pageParams))
 }
 
-func (h *WorkspaceServer) HandleBreweryPage(reqResp *web.ReqRespPair) error {
+func (h *BreweryHandler) HandleBreweryPage(reqResp *web.ReqRespPair) error {
 	breweryId, parseErr := strconv.Atoi(reqResp.Request.PathValue("id"))
 	if parseErr != nil {
 		return reqResp.RenderError(http.StatusBadRequest, parseErr)
 	}
-	brewery, breweryErr := h.breweryService.GetBrewery(breweryId)
+	brewery, breweryErr := h.breweryService.GetBrewery(reqResp.Request.Context(), breweryId)
 	if breweryErr != nil {
 		return reqResp.RenderError(http.StatusInternalServerError, breweryErr)
 	}
@@ -79,7 +62,7 @@ func (h *WorkspaceServer) HandleBreweryPage(reqResp *web.ReqRespPair) error {
 	return reqResp.Render(brewerypage.BreweryPageLayout(breweryPage))
 }
 
-func (h *WorkspaceServer) HandleCreateBreweryPage(reqResp *web.ReqRespPair) error {
+func (h *BreweryHandler) HandleCreateBreweryPage(reqResp *web.ReqRespPair) error {
 	page := layout.Page{Title: fmt.Sprintf("Create Brewery")}
 	breweryPage := brewerypage.PageParams{
 		Page: page,
@@ -87,7 +70,7 @@ func (h *WorkspaceServer) HandleCreateBreweryPage(reqResp *web.ReqRespPair) erro
 	return reqResp.Render(brewerypage.BreweryPageLayout(breweryPage))
 }
 
-func (h *WorkspaceServer) SubmitBreweryPage(reqResp *web.ReqRespPair) error {
+func (h *BreweryHandler) SubmitBreweryPage(reqResp *web.ReqRespPair) error {
 	idStr := reqResp.Request.FormValue("id")
 	id, _ := strconv.Atoi(idStr)
 	geoIdStr := reqResp.Request.FormValue("city")
@@ -104,7 +87,7 @@ func (h *WorkspaceServer) SubmitBreweryPage(reqResp *web.ReqRespPair) error {
 	}
 
 	if formParams.Id == 0 {
-		newBrewery, createErr := h.breweryService.CreateBrewery(formParams.Name, formParams.CityId, formParams.CountryCode)
+		newBrewery, createErr := h.breweryService.CreateBrewery(reqResp.Request.Context(), formParams.Name, formParams.CityId, formParams.CountryCode)
 		if createErr != nil {
 			h.logger.Error("create brewery", slog.Any("error", createErr))
 			return reqResp.RenderError(http.StatusInternalServerError, createErr)
@@ -113,7 +96,7 @@ func (h *WorkspaceServer) SubmitBreweryPage(reqResp *web.ReqRespPair) error {
 		return nil
 	}
 
-	updErr := h.breweryService.UpdateBrewery(formParams.Id, formParams.Name, formParams.CityId, formParams.CountryCode)
+	updErr := h.breweryService.UpdateBrewery(reqResp.Request.Context(), formParams.Id, formParams.Name, formParams.CityId, formParams.CountryCode)
 	if updErr != nil {
 		h.logger.Error("update brewery", slog.Any("error", updErr))
 		return reqResp.RenderError(http.StatusInternalServerError, updErr)
@@ -122,7 +105,7 @@ func (h *WorkspaceServer) SubmitBreweryPage(reqResp *web.ReqRespPair) error {
 	return reqResp.Render(brewerypage.Form(formParams, brewerypage.BreweryFormErrors{}))
 }
 
-func (h *WorkspaceServer) ListBreweries(reqResp *web.ReqRespPair) error {
+func (h *BreweryHandler) ListBreweries(reqResp *web.ReqRespPair) error {
 	page, pageErr := reqResp.GetIntQueryParam("page")
 	if pageErr != nil {
 		return apperr.NewBadRequestError("Invalid page number", pageErr)

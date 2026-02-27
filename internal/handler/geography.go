@@ -23,7 +23,7 @@ func NewGeographyHandler(geoService service.GeographyService, logger *slog.Logge
 }
 
 func (h GeographyHandler) ListCountries(reqResp *web.ReqRespPair) error {
-	countries, countriesErr := h.geoService.GetCountries()
+	countries, countriesErr := h.geoService.GetCountries(reqResp.Request.Context())
 	if countriesErr != nil {
 		return reqResp.RenderError(http.StatusInternalServerError, countriesErr)
 	}
@@ -57,7 +57,7 @@ func (h GeographyHandler) ListCountries(reqResp *web.ReqRespPair) error {
 }
 
 func (h GeographyHandler) ListCities(reqResp *web.ReqRespPair) error {
-	cities, citiesErr := h.geoService.GetCities(reqResp.Request.PathValue("countryIso"))
+	cities, citiesErr := h.geoService.GetCities(reqResp.Request.Context(), reqResp.Request.PathValue("countryIso"))
 	if citiesErr != nil {
 		return reqResp.RenderError(http.StatusInternalServerError, citiesErr)
 	}

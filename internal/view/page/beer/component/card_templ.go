@@ -49,7 +49,7 @@ func Card(beer model.Beer) templ.Component {
 		}
 		if beer.HasCountry() {
 			countryCode := beer.GetCountry().Cca2
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"flex-shrink-0\"><img src=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"shrink-0\"><img src=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -93,14 +93,14 @@ func Card(beer model.Beer) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</h2><span class=\"flex-shrink-0 text-xs text-slate-400 sm:text-sm\">#")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</h2><span class=\"shrink-0 text-xs text-slate-400 sm:text-sm\">#")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(beer.ID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card.templ`, Line: 42, Col: 93}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card.templ`, Line: 42, Col: 88}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -173,7 +173,7 @@ func Card(beer model.Beer) templ.Component {
 		}
 		if beer.HasBrewery() {
 			brewery := beer.Brewery
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<div class=\"flex items-center gap-2 text-slate-600 sm:gap-3\"><div class=\"flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md bg-blue-50 text-blue-600 sm:h-8 sm:w-8 sm:rounded-lg\"><svg class=\"h-3 w-3 sm:h-4 sm:w-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-7 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4\"></path></svg></div><div><div class=\"muted text-xs\">Brewery</div><div class=\"min-w-0 flex-1 truncate text-xs font-semibold sm:text-sm\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<div class=\"flex items-center gap-2 text-slate-600 sm:gap-3\"><div class=\"flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-blue-50 text-blue-600 sm:h-8 sm:w-8 sm:rounded-lg\"><svg class=\"h-3 w-3 sm:h-4 sm:w-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-7 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4\"></path></svg></div><div><div class=\"muted text-xs\">Brewery</div><div class=\"min-w-0 flex-1 truncate text-xs font-semibold sm:text-sm\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -186,7 +186,7 @@ func Card(beer model.Beer) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</div></div></div><div class=\"flex items-center gap-2 text-slate-600 sm:gap-3\"><div class=\"flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md bg-emerald-50 text-emerald-600 sm:h-8 sm:w-8 sm:rounded-lg\"><svg class=\"h-3 w-3 sm:h-4 sm:w-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z\"></path> <path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M15 11a3 3 0 11-6 0 3 3 0 016 0z\"></path></svg></div><div><div class=\"muted text-xs\">Location</div><div class=\"min-w-0 flex-1 truncate text-xs font-semibold sm:text-sm\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</div></div></div><div class=\"flex items-center gap-2 text-slate-600 sm:gap-3\"><div class=\"flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-emerald-50 text-emerald-600 sm:h-8 sm:w-8 sm:rounded-lg\"><svg class=\"h-3 w-3 sm:h-4 sm:w-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z\"></path> <path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M15 11a3 3 0 11-6 0 3 3 0 016 0z\"></path></svg></div><div><div class=\"muted text-xs\">Location</div><div class=\"min-w-0 flex-1 truncate text-xs font-semibold sm:text-sm\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -219,7 +219,7 @@ func Card(beer model.Beer) templ.Component {
 		}
 		if beer.HasCapSlots() {
 			capSlots := beer.GetCapSlots()
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<div class=\"flex items-center gap-2 text-slate-600 sm:gap-3\"><div class=\"flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md bg-purple-50 text-purple-600 sm:h-8 sm:w-8 sm:rounded-lg\"><svg class=\"h-3 w-3 sm:h-4 sm:w-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2v2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10\"></path></svg></div><div><div class=\"muted text-xs\">Slot</div><div class=\"text-xs font-medium text-slate-700 sm:text-sm\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<div class=\"flex items-center gap-2 text-slate-600 sm:gap-3\"><div class=\"flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-purple-50 text-purple-600 sm:h-8 sm:w-8 sm:rounded-lg\"><svg class=\"h-3 w-3 sm:h-4 sm:w-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2v2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10\"></path></svg></div><div><div class=\"muted text-xs\">Slot</div><div class=\"text-xs font-medium text-slate-700 sm:text-sm\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

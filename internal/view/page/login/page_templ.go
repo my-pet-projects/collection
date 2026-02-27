@@ -60,7 +60,7 @@ func Page(data LoginData) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" type=\"text/javascript\"></script><script type=\"text/javascript\">\n  \t\t\t\twindow.__clerkReady = false;\n\t\t\t\twindow.addEventListener(\"load\", async function () {\n\t\t\t\t\ttry {\n\t\t\t\t\t\tawait Clerk.load();\n\t\t\t\t\t\tif (Clerk.session) {\n\t\t\t\t\t\t\twindow.location.replace(\"/workspace/beer\");\n\t\t\t\t\t\t\treturn;\n\t\t\t\t\t\t}\n\t\t\t\t\t\twindow.__clerkReady = true;\n\t\t\t\t\t} catch (err) {\n\t\t\t\t\t\tconsole.error(\"Failed to load Clerk\", err);\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t</script></head><body class=\"min-h-screen bg-gray-50\"><!-- Container --><div class=\"flex min-h-screen items-center justify-center px-4 py-8\"><div class=\"w-full max-w-sm sm:max-w-md\"><!-- Header Section --><div class=\"mb-8 text-center\"><div class=\"group mb-6 inline-flex h-16 w-16 items-center justify-center rounded-full shadow-xl ring-2 ring-white transition-all duration-300 hover:scale-110 hover:shadow-2xl\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" type=\"text/javascript\"></script><script src=\"/assets/js/clerk-login.js\"></script></head><body class=\"min-h-screen bg-gray-50\"><!-- Container --><div class=\"flex min-h-screen items-center justify-center px-4 py-8\"><div class=\"w-full max-w-sm sm:max-w-md\"><!-- Header Section --><div class=\"mb-8 text-center\"><div class=\"group mb-6 inline-flex h-16 w-16 items-center justify-center rounded-full shadow-xl ring-2 ring-white transition-all duration-300 hover:scale-110 hover:shadow-2xl\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
