@@ -24,6 +24,21 @@ type Beer struct {
 	SearchName string
 }
 
+func NewBeerFromUploadForm(formValue UploadFormValues) Beer {
+	brand := strings.TrimSpace(filepath.Base(formValue.Filename))
+	if ext := filepath.Ext(brand); ext != "" {
+		brand = strings.TrimSuffix(brand, ext)
+	}
+
+	brand = fmt.Sprintf("Uncategorized - %s", brand)
+
+	return Beer{
+		Brand:      brand,
+		IsActive:   false,
+		SearchName: util.NormalizeText(brand),
+	}
+}
+
 func (b Beer) HasBeerStyle() bool {
 	return b.BeerStyle != nil
 }
@@ -69,21 +84,6 @@ func (b Beer) GetCapSlots() []string {
 	}
 
 	return slots
-}
-
-func NewBeerFromUploadForm(formValue UploadFormValues) Beer {
-	brand := strings.TrimSpace(filepath.Base(formValue.Filename))
-	if ext := filepath.Ext(brand); ext != "" {
-		brand = strings.TrimSuffix(brand, ext)
-	}
-
-	brand = fmt.Sprintf("Uncategorized - %s", brand)
-
-	return Beer{
-		Brand:      brand,
-		IsActive:   false,
-		SearchName: util.NormalizeText(brand),
-	}
 }
 
 type Brewery struct {

@@ -8,7 +8,7 @@ package component
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/my-pet-projects/collection/internal/view/component/shared"
+import "github.com/my-pet-projects/collection/internal/view/component/feedback"
 
 // ErrorContainer renders the error container for brewery list.
 func ErrorContainer() templ.Component {
@@ -32,7 +32,7 @@ func ErrorContainer() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = shared.ErrorContainer("brewery-list-errors").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = feedback.ErrorContainer("brewery-list-errors").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

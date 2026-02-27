@@ -1,4 +1,4 @@
-package shared
+package feedback
 
 import "github.com/my-pet-projects/collection/internal/view/component/icon"
 
@@ -38,7 +38,7 @@ templ ErrorContainer(id string) {
 	<div id={ id } x-show="hasErrors" class="mb-6 hidden rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 shadow-md"></div>
 }
 
-// Deprecated: Use ErrorBanner instead
-templ AnotherError() {
-	@ErrorBanner("brewery-list-errors", "Something went wrong", "We couldn't load your breweries. Please try again.")
+// FormErrorContainer renders a hidden error container for form HTMX error responses.
+templ FormErrorContainer(id string) {
+	<div id={ id } class="mt-4 hidden rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 shadow-md"></div>
 }

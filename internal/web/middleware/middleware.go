@@ -30,9 +30,7 @@ func WithInboundLog(logger *slog.Logger) func(http.Handler) http.Handler {
 
 // WithRequest returns a middleware that adds the request to the context.
 func WithRequest() func(http.Handler) http.Handler {
-	return func(next http.Handler) http.Handler {
-		return requestHandler(next)
-	}
+	return requestHandler
 }
 
 // WithRecoverer returns a middleware that recovers from panics.

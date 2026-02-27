@@ -3,7 +3,7 @@ package image
 import (
 	"fmt"
 
-	"github.com/my-pet-projects/collection/internal/view/component/shared"
+	"github.com/my-pet-projects/collection/internal/view/component/header"
 	"github.com/my-pet-projects/collection/internal/view/layout"
 	beercomponent "github.com/my-pet-projects/collection/internal/view/page/beer/component"
 )
@@ -11,7 +11,7 @@ import (
 templ Page(page ImagePageData) {
 	@layout.BaseLayout() {
 		<!-- Header Section -->
-		@shared.PageHeaderSimple("Images", "Manage your collection images", "images")
+		@header.PageHeaderSimple("Images", "Manage your collection images", "images")
 		<!-- Images Container -->
 		<div class="overflow-hidden rounded-2xl bg-white shadow-xl ring-1 ring-gray-200/50">
 			if len(page.Images) == 0 {

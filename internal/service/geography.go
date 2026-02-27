@@ -2,9 +2,8 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
-
-	"github.com/pkg/errors"
 
 	"github.com/my-pet-projects/collection/internal/db"
 	"github.com/my-pet-projects/collection/internal/model"
@@ -25,7 +24,7 @@ func NewGeographyService(store *db.GeographyStore, logger *slog.Logger) Geograph
 func (s GeographyService) GetCountries(ctx context.Context) ([]model.Country, error) {
 	countries, countriesErr := s.geoStore.FetchCountries(ctx)
 	if countriesErr != nil {
-		return nil, errors.Wrap(countriesErr, "fetch countries")
+		return nil, fmt.Errorf("fetch countries: %w", countriesErr)
 	}
 	return countries, nil
 }
@@ -33,7 +32,7 @@ func (s GeographyService) GetCountries(ctx context.Context) ([]model.Country, er
 func (s GeographyService) GetCities(ctx context.Context, countryIso string) ([]model.City, error) {
 	cities, citiesErr := s.geoStore.FetchCitiesByCountry(ctx, countryIso)
 	if citiesErr != nil {
-		return nil, errors.Wrap(citiesErr, "fetch cities")
+		return nil, fmt.Errorf("fetch cities: %w", citiesErr)
 	}
 	return cities, nil
 }

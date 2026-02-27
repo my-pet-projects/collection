@@ -7,7 +7,6 @@ import (
 	"log/slog"
 
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/pkg/errors"
 
 	"github.com/my-pet-projects/collection/internal/model"
 )
@@ -37,7 +36,7 @@ func (s S3Storage) Upload(ctx context.Context, img *model.MediaImage) error {
 		ContentType: &img.ContentType,
 	})
 	if putErr != nil {
-		return errors.Wrap(putErr, "put object")
+		return fmt.Errorf("put object: %w", putErr)
 	}
 
 	return nil
@@ -53,7 +52,7 @@ func (s S3Storage) Delete(ctx context.Context, key string) error {
 	})
 
 	if delErr != nil {
-		return errors.Wrap(delErr, "delete object")
+		return fmt.Errorf("delete object: %w", delErr)
 	}
 
 	return nil

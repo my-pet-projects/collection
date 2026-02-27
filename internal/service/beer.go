@@ -2,10 +2,10 @@ package service
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"log/slog"
 	"strings"
-
-	"github.com/pkg/errors"
 
 	"github.com/my-pet-projects/collection/internal/db"
 	"github.com/my-pet-projects/collection/internal/model"
@@ -41,19 +41,19 @@ func (s BeerService) GetStats(ctx context.Context) (CollectionStats, error) {
 
 	beerCount, err := s.beerStore.CountBeers(ctx)
 	if err != nil {
-		return stats, errors.Wrap(err, "count beers")
+		return stats, fmt.Errorf("count beers: %w", err)
 	}
 	stats.TotalBeers = int(beerCount)
 
 	breweryCount, err := s.breweryStore.CountBreweries(ctx)
 	if err != nil {
-		return stats, errors.Wrap(err, "count breweries")
+		return stats, fmt.Errorf("count breweries: %w", err)
 	}
 	stats.TotalBreweries = int(breweryCount)
 
 	countryCount, err := s.beerStore.CountCountries(ctx)
 	if err != nil {
-		return stats, errors.Wrap(err, "count countries")
+		return stats, fmt.Errorf("count countries: %w", err)
 	}
 	stats.TotalCountries = int(countryCount)
 
@@ -63,7 +63,7 @@ func (s BeerService) GetStats(ctx context.Context) (CollectionStats, error) {
 func (s BeerService) GetBeer(ctx context.Context, id int) (*model.Beer, error) {
 	beer, beerErr := s.beerStore.GetBeer(ctx, id)
 	if beerErr != nil {
-		return nil, errors.Wrap(beerErr, "get beer")
+		return nil, fmt.Errorf("get beer: %w", beerErr)
 	}
 	return beer, nil
 }
@@ -87,7 +87,7 @@ func (s BeerService) CreateBeer(
 
 	insertedId, insertErr := s.beerStore.InsertBeer(ctx, beer)
 	if insertErr != nil {
-		return nil, errors.Wrap(insertErr, "insert beer")
+		return nil, fmt.Errorf("insert beer: %w", insertErr)
 	}
 	beer.ID = insertedId
 	return &beer, nil
@@ -114,7 +114,7 @@ func (s BeerService) UpdateBeer(
 
 	updErr := s.beerStore.UpdateBeer(ctx, beer)
 	if updErr != nil {
-		return errors.Wrap(updErr, "update brewery")
+		return fmt.Errorf("update beer: %w", updErr)
 	}
 	return nil
 }
@@ -128,7 +128,7 @@ func (s BeerService) PaginateBeers(ctx context.Context, filter model.BeerFilter)
 	}
 	beers, beersErr := s.beerStore.PaginateBeers(ctx, filter)
 	if beersErr != nil {
-		return nil, errors.Wrap(beersErr, "paginate beers")
+		return nil, fmt.Errorf("paginate beers: %w", beersErr)
 	}
 	return beers, nil
 }
@@ -136,7 +136,7 @@ func (s BeerService) PaginateBeers(ctx context.Context, filter model.BeerFilter)
 func (s BeerService) DeleteBeer(ctx context.Context, id int) error {
 	beer, beerErr := s.beerStore.GetBeer(ctx, id)
 	if beerErr != nil {
-		return errors.Wrap(beerErr, "get beer")
+		return fmt.Errorf("get beer: %w", beerErr)
 	}
 
 	if beer == nil {
@@ -149,7 +149,7 @@ func (s BeerService) DeleteBeer(ctx context.Context, id int) error {
 
 	delErr := s.beerStore.DeleteBeer(ctx, id)
 	if delErr != nil {
-		return errors.Wrap(delErr, "delete beer")
+		return fmt.Errorf("delete beer: %w", delErr)
 	}
 	return nil
 }
@@ -157,7 +157,7 @@ func (s BeerService) DeleteBeer(ctx context.Context, id int) error {
 func (s BeerService) ListBeerStyles(ctx context.Context) ([]model.BeerStyle, error) {
 	pagination, paginationErr := s.styleStore.PaginateBeerStyles(ctx, model.BeerStyleFilter{})
 	if paginationErr != nil {
-		return nil, errors.Wrap(paginationErr, "fetch beer styles")
+		return nil, fmt.Errorf("fetch beer styles: %w", paginationErr)
 	}
 	return pagination.Results, nil
 }
@@ -165,7 +165,7 @@ func (s BeerService) ListBeerStyles(ctx context.Context) ([]model.BeerStyle, err
 func (s BeerService) PaginateBeerStyles(ctx context.Context, filter model.BeerStyleFilter) (*model.Pagination[model.BeerStyle], error) {
 	pagination, paginationErr := s.styleStore.PaginateBeerStyles(ctx, filter)
 	if paginationErr != nil {
-		return nil, errors.Wrap(paginationErr, "paginate beer styles")
+		return nil, fmt.Errorf("paginate beer styles: %w", paginationErr)
 	}
 	return pagination, nil
 }
@@ -173,7 +173,7 @@ func (s BeerService) PaginateBeerStyles(ctx context.Context, filter model.BeerSt
 func (s BeerService) GetBeerStyle(ctx context.Context, id int) (*model.BeerStyle, error) {
 	style, styleErr := s.styleStore.GetBeerStyle(ctx, id)
 	if styleErr != nil {
-		return nil, errors.Wrap(styleErr, "get beer style")
+		return nil, fmt.Errorf("get beer style: %w", styleErr)
 	}
 	return &style, nil
 }
@@ -181,7 +181,7 @@ func (s BeerService) GetBeerStyle(ctx context.Context, id int) (*model.BeerStyle
 func (s BeerService) CreateBeerStyle(ctx context.Context, style model.BeerStyle) (*model.BeerStyle, error) {
 	id, styleErr := s.styleStore.InsertBeerStyle(ctx, style)
 	if styleErr != nil {
-		return nil, errors.Wrap(styleErr, "update beer style")
+		return nil, fmt.Errorf("create beer style: %w", styleErr)
 	}
 	style.ID = id
 	return &style, nil
@@ -190,7 +190,7 @@ func (s BeerService) CreateBeerStyle(ctx context.Context, style model.BeerStyle)
 func (s BeerService) UpdateBeerStyle(ctx context.Context, style model.BeerStyle) error {
 	updErr := s.styleStore.UpdateBeerStyle(ctx, style)
 	if updErr != nil {
-		return errors.Wrap(updErr, "update beer style")
+		return fmt.Errorf("update beer style: %w", updErr)
 	}
 	return nil
 }
@@ -198,7 +198,7 @@ func (s BeerService) UpdateBeerStyle(ctx context.Context, style model.BeerStyle)
 func (s BeerService) DeleteBeerStyle(ctx context.Context, id int) error {
 	delErr := s.styleStore.DeleteBeerStyle(ctx, id)
 	if delErr != nil {
-		return errors.Wrap(delErr, "delete beer style")
+		return fmt.Errorf("delete beer style: %w", delErr)
 	}
 	return nil
 }

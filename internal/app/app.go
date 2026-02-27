@@ -2,13 +2,13 @@ package app
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"net/http"
 
 	awscfg "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/pkg/errors"
 	"golang.org/x/sync/errgroup"
 
 	"github.com/my-pet-projects/collection/internal/config"
@@ -24,19 +24,19 @@ import (
 func Start(ctx context.Context) error {
 	cfg, cfgErr := config.NewConfig()
 	if cfgErr != nil {
-		return errors.Wrap(cfgErr, "config")
+		return fmt.Errorf("config: %w", cfgErr)
 	}
 
 	logger := log.NewLogger(cfg)
 
 	dbClient, dbClientErr := db.NewClient(cfg)
 	if dbClientErr != nil {
-		return errors.Wrap(dbClientErr, "db")
+		return fmt.Errorf("db: %w", dbClientErr)
 	}
 
 	httpRouter, routerErr := InitializeRouter(ctx, cfg, dbClient, logger)
 	if routerErr != nil {
-		return errors.Wrap(routerErr, "router")
+		return fmt.Errorf("router: %w", routerErr)
 	}
 	srv := server.NewServer(ctx, httpRouter, logger)
 
@@ -44,7 +44,7 @@ func Start(ctx context.Context) error {
 	grp.Go(func() error {
 		startErr := srv.Start(ctx)
 		if startErr != nil {
-			return errors.Wrap(startErr, "server start")
+			return fmt.Errorf("server start: %w", startErr)
 		}
 		return nil
 	})
@@ -53,13 +53,14 @@ func Start(ctx context.Context) error {
 		logger.Info("Received interruption signal")
 		shutdownErr := srv.Shutdown(ctx)
 		if shutdownErr != nil {
-			return errors.Wrap(shutdownErr, "server shutdown")
+			return fmt.Errorf("server shutdown: %w", shutdownErr)
 		}
 		return nil
 	})
 
-	if appErr := grp.Wait(); appErr != nil {
-		return errors.Wrap(appErr, "application")
+	appErr := grp.Wait()
+	if appErr != nil {
+		return fmt.Errorf("application: %w", appErr)
 	}
 
 	logger.Info("Application shutdown")
@@ -72,14 +73,14 @@ func Start(ctx context.Context) error {
 func NewRouter(ctx context.Context) (http.Handler, error) {
 	cfg, cfgErr := config.NewConfig()
 	if cfgErr != nil {
-		return nil, errors.Wrap(cfgErr, "config")
+		return nil, fmt.Errorf("config: %w", cfgErr)
 	}
 
 	logger := log.NewLogger(cfg)
 
 	dbClient, dbClientErr := db.NewClient(cfg)
 	if dbClientErr != nil {
-		return nil, errors.Wrap(dbClientErr, "db")
+		return nil, fmt.Errorf("db: %w", dbClientErr)
 	}
 
 	return InitializeRouter(ctx, cfg, dbClient, logger)
@@ -101,7 +102,7 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 		awscfg.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(cfg.AwsConfig.AccessKey, cfg.AwsConfig.SecretKey, "")),
 	)
 	if sdkConfigErr != nil {
-		return nil, errors.Wrap(sdkConfigErr, "aws config")
+		return nil, fmt.Errorf("aws config: %w", sdkConfigErr)
 	}
 	s3Client := s3.NewFromConfig(sdkConfig)
 	s3Storage := storage.NewS3Storage(s3Client, logger)
@@ -124,5 +125,9 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 		Logger:            logger,
 	}
 
-	return router.New(deps)
+	rtr, err := router.New(deps)
+	if err != nil {
+		return nil, fmt.Errorf("create router: %w", err)
+	}
+	return rtr, nil
 }
