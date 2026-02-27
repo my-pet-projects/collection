@@ -5,6 +5,7 @@ package middleware
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"log/slog"
@@ -12,8 +13,6 @@ import (
 	"os"
 	"runtime/debug"
 	"strings"
-
-	"github.com/pkg/errors"
 
 	"github.com/my-pet-projects/collection/internal/web"
 )
@@ -48,7 +47,7 @@ func recovererHandler(next http.Handler, logger *slog.Logger) http.Handler {
 				case string:
 					panicErr = errors.New(typedErr)
 				case error:
-					panicErr = errors.Wrap(typedErr, "panic")
+					panicErr = fmt.Errorf("panic: %w", typedErr)
 				default:
 					panicErr = errors.New("panic has occurred")
 				}

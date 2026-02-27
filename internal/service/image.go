@@ -2,11 +2,10 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"regexp"
-
-	"github.com/pkg/errors"
 
 	"github.com/my-pet-projects/collection/internal/db"
 	"github.com/my-pet-projects/collection/internal/model"
@@ -60,7 +59,7 @@ func (s ImageService) UploadImage(ctx context.Context, formValues []model.Upload
 		s.logger.Info("Preparing image", slog.String("originalFilename", formValue.Filename))
 		img, imgErr := model.NewMediaImage(formValue)
 		if imgErr != nil {
-			return errors.Wrap(imgErr, "create image")
+			return fmt.Errorf("create image: %w", imgErr)
 		}
 
 		beerMedia := model.BeerMedia{
@@ -70,7 +69,7 @@ func (s ImageService) UploadImage(ctx context.Context, formValues []model.Upload
 		}
 		images, imagesErr := s.beerMediaStore.SimilarMediaItems(ctx, beerMedia)
 		if imagesErr != nil {
-			return errors.Wrap(imagesErr, "fetch similar beer media items")
+			return fmt.Errorf("fetch similar beer media items: %w", imagesErr)
 		}
 
 		if len(images) != 0 {
@@ -81,13 +80,13 @@ func (s ImageService) UploadImage(ctx context.Context, formValues []model.Upload
 		s.logger.Info("Upserting media item", slog.String("originalFilename", formValue.Filename))
 		mediaItem, upsErr := s.mediaStore.UpsertMediaItem(ctx, img)
 		if upsErr != nil {
-			return errors.Wrap(upsErr, "upsert media item")
+			return fmt.Errorf("upsert media item: %w", upsErr)
 		}
 
 		s.logger.Info("Uploading image to S3", slog.String("name", img.ExternalName), slog.Int("size", img.Size))
 		uploadErr := s.s3Storage.Upload(ctx, img)
 		if uploadErr != nil {
-			return errors.Wrap(uploadErr, "s3 image upload")
+			return fmt.Errorf("s3 image upload: %w", uploadErr)
 		}
 
 		createdBeer, exists := fileBeerIDToDBIDMap[currentBeer]
@@ -96,7 +95,7 @@ func (s ImageService) UploadImage(ctx context.Context, formValues []model.Upload
 			beer := model.NewBeerFromUploadForm(formValue)
 			beerID, beerErr := s.beerStore.InsertBeer(ctx, beer)
 			if beerErr != nil {
-				return errors.Wrap(beerErr, "insert beer")
+				return fmt.Errorf("insert beer: %w", beerErr)
 			}
 			fileBeerIDToDBIDMap[currentBeer] = beerID
 			createdBeer = beerID
@@ -105,7 +104,7 @@ func (s ImageService) UploadImage(ctx context.Context, formValues []model.Upload
 		s.logger.Info("Upserting beer media item", slog.String("originalFilename", formValue.Filename), slog.Any("imageType", img.ImageType))
 		_, insErr := s.beerMediaStore.UpsertBeerMediaItem(ctx, mediaItem, img, &createdBeer)
 		if insErr != nil {
-			return errors.Wrap(insErr, "upsert beer media")
+			return fmt.Errorf("upsert beer media: %w", insErr)
 		}
 	}
 
@@ -115,7 +114,7 @@ func (s ImageService) UploadImage(ctx context.Context, formValues []model.Upload
 func (s ImageService) FetchBeerMediaItems(ctx context.Context, filter model.MediaItemsFilter) ([]model.BeerMedia, error) {
 	items, itemsErr := s.beerMediaStore.FetchMediaItems(ctx, filter)
 	if itemsErr != nil {
-		return nil, errors.Wrap(itemsErr, "fetch beer media items")
+		return nil, fmt.Errorf("fetch beer media items: %w", itemsErr)
 	}
 	return items, nil
 }
@@ -123,7 +122,7 @@ func (s ImageService) FetchBeerMediaItems(ctx context.Context, filter model.Medi
 func (s ImageService) UpdateBeerMediaItems(ctx context.Context, images []model.BeerMedia) error {
 	updErr := s.beerMediaStore.UpdateMediaItems(ctx, images)
 	if updErr != nil {
-		return errors.Wrap(updErr, "update beer media items")
+		return fmt.Errorf("update beer media items: %w", updErr)
 	}
 	return nil
 }
@@ -131,7 +130,7 @@ func (s ImageService) UpdateBeerMediaItems(ctx context.Context, images []model.B
 func (s ImageService) ListImages(ctx context.Context) ([]model.BeerMedia, error) {
 	images, imagesErr := s.beerMediaStore.FetchMediaItems(ctx, model.MediaItemsFilter{})
 	if imagesErr != nil {
-		return nil, errors.Wrap(imagesErr, "fetch media items")
+		return nil, fmt.Errorf("fetch media items: %w", imagesErr)
 	}
 	return images, nil
 }
@@ -139,7 +138,7 @@ func (s ImageService) ListImages(ctx context.Context) ([]model.BeerMedia, error)
 func (s ImageService) DeleteBeerMedia(ctx context.Context, id int) error {
 	items, itemsErr := s.beerMediaStore.FetchMediaItems(ctx, model.MediaItemsFilter{ID: id})
 	if itemsErr != nil {
-		return errors.Wrap(itemsErr, "fetch beer media items")
+		return fmt.Errorf("fetch beer media items: %w", itemsErr)
 	}
 
 	item := items[0]
@@ -149,12 +148,12 @@ func (s ImageService) DeleteBeerMedia(ctx context.Context, id int) error {
 
 	s3DelErr := s.s3Storage.Delete(ctx, item.Media.ExternalFilename)
 	if s3DelErr != nil {
-		return errors.Wrap(s3DelErr, "delete s3 image")
+		return fmt.Errorf("delete s3 image: %w", s3DelErr)
 	}
 
 	delErr := s.beerMediaStore.DeleteBeerMedia(ctx, item)
 	if delErr != nil {
-		return errors.Wrap(delErr, "delete beer media item")
+		return fmt.Errorf("delete beer media item: %w", delErr)
 	}
 
 	return nil

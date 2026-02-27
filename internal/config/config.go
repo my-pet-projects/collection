@@ -7,8 +7,6 @@ import (
 	"fmt"
 	"os"
 	"strings"
-
-	"github.com/pkg/errors"
 )
 
 // Config represents application configuration.
@@ -46,7 +44,7 @@ type AppConfig struct {
 func requireEnv(key string) (string, error) {
 	val, ok := os.LookupEnv(key)
 	if !ok || strings.TrimSpace(val) == "" {
-		return "", errors.Errorf("%s environment variable was not found or is empty", key)
+		return "", fmt.Errorf("%s environment variable was not found or is empty", key)
 	}
 	return val, nil
 }
@@ -99,7 +97,7 @@ func NewConfig() (*Config, error) {
 	}
 	rsaPublicKey, err := parseRSAPublicKey([]byte(strings.Replace(clerkPemKey, `\n`, "\n", -1)))
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to parse Clerk public key")
+		return nil, fmt.Errorf("failed to parse Clerk public key: %w", err)
 	}
 	clerkAuthHost, err := requireEnv("CLERK_AUTH_HOST")
 	if err != nil {

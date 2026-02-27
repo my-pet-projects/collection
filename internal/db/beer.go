@@ -2,10 +2,10 @@ package db
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"strings"
 
-	"github.com/pkg/errors"
 	"gorm.io/gorm"
 	"gorm.io/plugin/dbresolver"
 
@@ -94,7 +94,7 @@ func (s BeerStore) PaginateBeers(ctx context.Context, filter model.BeerFilter) (
 		Find(&itemsWithCount)
 
 	if result.Error != nil {
-		return nil, errors.Wrap(result.Error, "fetch beers with pagination")
+		return nil, fmt.Errorf("fetch beers with pagination: %w", result.Error)
 	}
 
 	pagination.SetTotalResults(itemsWithCount)

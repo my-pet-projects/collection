@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/pkg/errors"
 
 	"github.com/my-pet-projects/collection/internal/config"
 	"github.com/my-pet-projects/collection/internal/model"
@@ -65,7 +64,7 @@ func parseToken(tokenStr string, publicKey *rsa.PublicKey) (*appClaims, error) {
 
 	token, parseErr := jwt.ParseWithClaims(tokenStr, &appClaims{}, keyFunc, jwt.WithLeeway(leewayDuration))
 	if parseErr != nil {
-		return nil, errors.Wrap(parseErr, "failed to parse token")
+		return nil, fmt.Errorf("failed to parse token: %w", parseErr)
 	}
 
 	if !token.Valid {

@@ -2,13 +2,12 @@ package server
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net"
 	"net/http"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 // Server represents web server.
@@ -46,7 +45,7 @@ func NewServer(ctx context.Context, router http.Handler, logger *slog.Logger) Se
 func (s Server) Start(ctx context.Context) error {
 	s.logger.Info("Starting server")
 	if err := s.instance.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
-		return errors.Wrap(err, "start server")
+		return fmt.Errorf("start server: %w", err)
 	}
 	return nil
 }
@@ -64,7 +63,7 @@ func (s Server) Shutdown(ctx context.Context) error {
 		return nil
 	}
 	if shutdownErr != nil {
-		return errors.Wrap(shutdownErr, "server shutdown")
+		return fmt.Errorf("server shutdown: %w", shutdownErr)
 	}
 
 	s.logger.Info("Server has been gracefully shutdown")

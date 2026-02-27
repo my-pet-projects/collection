@@ -1,13 +1,14 @@
 package web
 
 import (
+	"errors"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"strconv"
 	"strings"
 
 	"github.com/a-h/templ"
-	"github.com/pkg/errors"
 
 	"github.com/my-pet-projects/collection/internal/apperr"
 	"github.com/my-pet-projects/collection/internal/view/component/feedback"
@@ -96,7 +97,7 @@ func (rrp *ReqRespPair) GetIntQueryParam(name string) (int, error) {
 	if strIntParam != "" {
 		parsedVal, parseErr := strconv.Atoi(strIntParam)
 		if parseErr != nil {
-			return 0, errors.Wrap(parseErr, "parse int query param")
+			return 0, fmt.Errorf("parse int query param: %w", parseErr)
 		}
 		param = parsedVal
 	}
@@ -119,7 +120,7 @@ func (rrp *ReqRespPair) GetBoolQueryParam(name string) (bool, error) {
 	if strBoolParam != "" {
 		parsedVal, parseErr := strconv.ParseBool(strBoolParam)
 		if parseErr != nil {
-			return false, errors.Wrap(parseErr, "parse bool query param")
+			return false, fmt.Errorf("parse bool query param: %w", parseErr)
 		}
 		param = parsedVal
 	}
@@ -136,7 +137,7 @@ func (rrp *ReqRespPair) GetIntFormValues(formKey string) ([]int, error) {
 	for _, val := range rrp.Request.PostForm[formKey] {
 		parsedVal, parseErr := strconv.Atoi(val)
 		if parseErr != nil {
-			return []int{}, errors.Wrap(parseErr, "parse int from form")
+			return []int{}, fmt.Errorf("parse int from form: %w", parseErr)
 		}
 		result = append(result, parsedVal)
 	}
@@ -154,7 +155,7 @@ func (rrp *ReqRespPair) GetBoolFormValues(formKey string) ([]bool, error) {
 	for _, val := range rrp.Request.PostForm[formKey] {
 		parsedVal, parseErr := strconv.ParseBool(val)
 		if parseErr != nil {
-			return []bool{}, errors.Wrap(parseErr, "parse bool from form")
+			return []bool{}, fmt.Errorf("parse bool from form: %w", parseErr)
 		}
 		result = append(result, parsedVal)
 	}

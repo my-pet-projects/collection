@@ -2,11 +2,11 @@ package db
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"strings"
 
 	"github.com/my-pet-projects/collection/internal/model"
-	"github.com/pkg/errors"
 )
 
 type BeerStyleStore struct {
@@ -60,7 +60,7 @@ func (s BeerStyleStore) PaginateBeerStyles(ctx context.Context, filter model.Bee
 		Find(&itemsWithCount)
 
 	if result.Error != nil {
-		return nil, errors.Wrap(result.Error, "fetch styles with pagination")
+		return nil, fmt.Errorf("fetch styles with pagination: %w", result.Error)
 	}
 
 	pagination.SetTotalResults(itemsWithCount)
