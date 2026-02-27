@@ -3,7 +3,10 @@ package beer
 import (
 	"fmt"
 
+	"github.com/my-pet-projects/collection/internal/view/component/feedback"
 	"github.com/my-pet-projects/collection/internal/view/component/icon"
+	"github.com/my-pet-projects/collection/internal/view/component/ui"
+	"github.com/my-pet-projects/collection/internal/view/layout"
 	brewerycomponent "github.com/my-pet-projects/collection/internal/view/page/brewery/component"
 	stylecomponent "github.com/my-pet-projects/collection/internal/view/page/style/component"
 )
@@ -133,11 +136,11 @@ templ Form(params BeerFormParams, errs BeerFormErrors) {
 							</p>
 						}
 					</div>
-					@stylecomponent.StylesAutocomplete(stylecomponent.StyleData{
+					@ui.AutoComplete(stylecomponent.StyleData{
 						Styles:          params.Styles,
 						SelectedStyleId: params.StyleID,
 						HasError:        errs.Style != "",
-					})
+					}.ToAutocompleteProps())
 				</div>
 				<!-- Brewery Field -->
 				<div class="space-y-2">
@@ -154,42 +157,31 @@ templ Form(params BeerFormParams, errs BeerFormErrors) {
 							</p>
 						}
 					</div>
-					@brewerycomponent.BreweriesAutocomplete(brewerycomponent.BreweriesData{
+					@ui.AutoComplete(brewerycomponent.BreweriesData{
 						Breweries:       params.Breweries,
 						SelectedBrewery: params.BreweryID,
 						HasError:        errs.Brewery != "",
-					})
+					}.ToAutocompleteProps())
 				</div>
 				<!-- Form Actions -->
-				<div class="flex flex-col gap-4 border-t border-gray-200 pt-8 sm:flex-row sm:items-center sm:justify-between">
+				@layout.FormActions() {
 					<div>
-						<button
-							type="submit"
-							class="inline-flex w-40 items-center justify-center rounded-2xl bg-gray-900 px-6 py-3 text-sm font-medium text-white shadow-lg transition-all duration-300 hover:scale-105 hover:bg-gray-800 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-						>
-							<!-- Loading Content -->
-							<span class="hx-save-indicator-toggle htmx-indicator flex items-center">
-								@icon.LoadingSpinnerAlt("mr-2 h-4 w-4 text-amber-300")
-								<span>
-									if params.IsNew() {
-										Creating...
-									} else {
-										Updating...
-									}
-								</span>
-							</span>
-							<!-- Default Content -->
-							<span class="hx-save-indicator-toggle hide-on-hx-request flex items-center">
-								@icon.SaveIcon("mr-2 h-4 w-4 text-white")
-								<span>
-									if params.IsNew() {
-										Create Beer
-									} else {
-										Update Beer
-									}
-								</span>
-							</span>
-						</button>
+						@ui.SubmitButtonWrapper("w-40") {
+							@ui.SubmitButtonLoading() {
+								if params.IsNew() {
+									Creating...
+								} else {
+									Updating...
+								}
+							}
+							@ui.SubmitButtonDefault() {
+								if params.IsNew() {
+									Create Beer
+								} else {
+									Update Beer
+								}
+							}
+						}
 					</div>
 					if !params.IsNew() {
 						<div>
@@ -210,9 +202,9 @@ templ Form(params BeerFormParams, errs BeerFormErrors) {
 							</button>
 						</div>
 					}
-				</div>
+				}
 			</form>
-			<div id="beer-errors" class="mt-6 hidden rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 shadow-md"></div>
+			@feedback.FormErrorContainer("beer-errors")
 		</div>
 	</div>
 }

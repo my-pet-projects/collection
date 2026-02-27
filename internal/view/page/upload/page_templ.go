@@ -9,7 +9,7 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"github.com/my-pet-projects/collection/internal/view/component/shared"
+	"github.com/my-pet-projects/collection/internal/view/component/header"
 	"github.com/my-pet-projects/collection/internal/view/layout"
 	uploadcomponent "github.com/my-pet-projects/collection/internal/view/page/upload/component"
 )
@@ -55,7 +55,7 @@ func Page(page UploadPage) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = shared.PageHeaderSimple("Upload", "Add new images to your collection", "upload").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = header.PageHeaderSimple("Upload", "Add new images to your collection", "upload").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

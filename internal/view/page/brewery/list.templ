@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	"github.com/my-pet-projects/collection/internal/model"
+	"github.com/my-pet-projects/collection/internal/view/component/header"
 	"github.com/my-pet-projects/collection/internal/view/component/icon"
 	"github.com/my-pet-projects/collection/internal/view/component/list"
-	"github.com/my-pet-projects/collection/internal/view/component/shared"
 	"github.com/my-pet-projects/collection/internal/view/layout"
 	"github.com/my-pet-projects/collection/internal/view/page/brewery/component"
 )
@@ -23,13 +23,13 @@ templ ListPage(params ListPageParams) {
 			hx-ext="response-targets"
 		>
 			<!-- Header Section -->
-			@shared.PageHeader(shared.PageHeaderParams{
-				Title:       "Brewery Catalog",
-				Subtitle:    "Breweries behind the beers I've tasted",
-				Icon:        "brewery",
-				ActionURL:   "/workspace/brewery/create",
-				ActionLabel: "Add Brewery",
-			})
+			@header.PageHeader(header.PageHeaderParams{
+				Title:    "Brewery Catalog",
+				Subtitle: "Breweries behind the beers I've tasted",
+				Icon:     "brewery",
+			}) {
+				@header.PageHeaderLink("/workspace/brewery/create", "Add Brewery")
+			}
 			<!-- Search and Filters Section -->
 			@listFilters(params)
 			<!-- Error Messages -->

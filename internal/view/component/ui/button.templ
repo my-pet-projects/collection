@@ -1,0 +1,197 @@
+package ui
+
+// ButtonVariant defines the visual style of a button.
+type ButtonVariant string
+
+const (
+	ButtonPrimary   ButtonVariant = "primary"
+	ButtonSecondary ButtonVariant = "secondary"
+	ButtonDanger    ButtonVariant = "danger"
+	ButtonGhost     ButtonVariant = "ghost"
+)
+
+// ButtonSize defines the size of a button.
+type ButtonSize string
+
+const (
+	ButtonSizeSM ButtonSize = "sm"
+	ButtonSizeMD ButtonSize = "md"
+	ButtonSizeLG ButtonSize = "lg"
+)
+
+// ButtonProps contains the properties for rendering a button.
+type ButtonProps struct {
+	Type    string        // "button", "submit", "reset"
+	Variant ButtonVariant // visual style
+	Size    ButtonSize    // size variant
+	Class   string        // additional CSS classes
+}
+
+// buttonClasses returns the CSS classes for a button based on props.
+func buttonClasses(props ButtonProps) string {
+	base := "inline-flex items-center justify-center font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+
+	// Size classes
+	var sizeClass string
+	switch props.Size {
+	case ButtonSizeSM:
+		sizeClass = "rounded-xl px-4 py-2 text-xs"
+	case ButtonSizeLG:
+		sizeClass = "rounded-2xl px-8 py-4 text-base"
+	default: // MD
+		sizeClass = "rounded-2xl px-6 py-3 text-sm"
+	}
+
+	// Variant classes
+	var variantClass string
+	switch props.Variant {
+	case ButtonSecondary:
+		variantClass = "border border-gray-300 bg-white text-gray-700 shadow-md hover:scale-105 hover:bg-gray-50 hover:shadow-lg focus:ring-gray-500"
+	case ButtonDanger:
+		variantClass = "border border-red-300 bg-white text-red-700 shadow-md hover:scale-105 hover:bg-red-50 hover:shadow-lg focus:ring-red-500"
+	case ButtonGhost:
+		variantClass = "text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus:ring-gray-500"
+	default: // Primary
+		variantClass = "bg-gray-900 text-white shadow-lg hover:scale-105 hover:bg-gray-800 hover:shadow-xl focus:ring-amber-500"
+	}
+
+	classes := base + " " + sizeClass + " " + variantClass
+	if props.Class != "" {
+		classes += " " + props.Class
+	}
+	return classes
+}
+
+// Button renders a styled button element.
+templ Button(props ButtonProps) {
+	{{
+		btnType := props.Type
+		if btnType == "" {
+			btnType = "button"
+		}
+	}}
+	<button type={ btnType } class={ buttonClasses(props) }>
+		{ children... }
+	</button>
+}
+
+// PrimaryButton renders a primary styled button (convenience wrapper).
+templ PrimaryButton() {
+	<button
+		type="button"
+		class="inline-flex items-center justify-center rounded-2xl bg-gray-900 px-6 py-3 text-sm font-medium text-white shadow-lg transition-all duration-300 hover:scale-105 hover:bg-gray-800 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+	>
+		{ children... }
+	</button>
+}
+
+// SecondaryButton renders a secondary styled button (convenience wrapper).
+templ SecondaryButton() {
+	<button
+		type="button"
+		class="inline-flex items-center justify-center rounded-2xl border border-gray-300 bg-white px-6 py-3 text-sm font-medium text-gray-700 shadow-md transition-all duration-300 hover:scale-105 hover:bg-gray-50 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+	>
+		{ children... }
+	</button>
+}
+
+// DangerButton renders a danger/destructive styled button (convenience wrapper).
+templ DangerButton() {
+	<button
+		type="button"
+		class="inline-flex items-center justify-center rounded-2xl border border-red-300 bg-white px-6 py-3 text-sm font-medium text-red-700 shadow-md transition-all duration-300 hover:scale-105 hover:bg-red-50 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+	>
+		{ children... }
+	</button>
+}
+
+// SubmitButtonWrapper renders a submit button wrapper with HTMX loading states.
+// Use this when you need custom conditional content inside the button.
+templ SubmitButtonWrapper(width string) {
+	{{
+		widthClass := "w-40"
+		if width != "" {
+			widthClass = width
+		}
+	}}
+	<button
+		type="submit"
+		class={ "inline-flex items-center justify-center rounded-2xl bg-gray-900 px-6 py-3 text-sm font-medium text-white shadow-lg transition-all duration-300 hover:scale-105 hover:bg-gray-800 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50", widthClass }
+	>
+		{ children... }
+	</button>
+}
+
+// SubmitButtonLoading renders the loading state content for a submit button.
+templ SubmitButtonLoading() {
+	<span class="hx-save-indicator-toggle htmx-indicator flex items-center">
+		<svg class="mr-2 h-4 w-4 animate-spin text-amber-300" fill="none" viewBox="0 0 24 24">
+			<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+			<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+		</svg>
+		{ children... }
+	</span>
+}
+
+// SubmitButtonDefault renders the default state content for a submit button.
+templ SubmitButtonDefault() {
+	<span class="hx-save-indicator-toggle hide-on-hx-request flex items-center">
+		<svg class="mr-2 h-4 w-4 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+			<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+		</svg>
+		{ children... }
+	</span>
+}
+
+// SubmitButton renders a primary submit button with loading state support.
+templ SubmitButton(label, loadingLabel string) {
+	<button
+		type="submit"
+		class="inline-flex w-40 items-center justify-center rounded-2xl bg-gray-900 px-6 py-3 text-sm font-medium text-white shadow-lg transition-all duration-300 hover:scale-105 hover:bg-gray-800 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+	>
+		<!-- Loading Content -->
+		<span class="hx-save-indicator-toggle htmx-indicator flex items-center">
+			<svg class="mr-2 h-4 w-4 animate-spin text-amber-300" fill="none" viewBox="0 0 24 24">
+				<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+				<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+			</svg>
+			<span>{ loadingLabel }</span>
+		</span>
+		<!-- Default Content -->
+		<span class="hx-save-indicator-toggle hide-on-hx-request flex items-center">
+			<svg class="mr-2 h-4 w-4 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+				<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+			</svg>
+			<span>{ label }</span>
+		</span>
+	</button>
+}
+
+// LinkButton renders a link styled as a button.
+templ LinkButton(href string, variant ButtonVariant) {
+	{{
+		variantClass := "inline-flex items-center justify-center rounded-2xl px-6 py-3 text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2"
+		switch variant {
+		case ButtonSecondary:
+			variantClass += " border border-gray-300 bg-white text-gray-700 shadow-md hover:scale-105 hover:bg-gray-50 hover:shadow-lg focus:ring-gray-500"
+		case ButtonDanger:
+			variantClass += " border border-red-300 bg-white text-red-700 shadow-md hover:scale-105 hover:bg-red-50 hover:shadow-lg focus:ring-red-500"
+		default:
+			variantClass += " bg-gray-900 text-white shadow-lg hover:scale-105 hover:bg-gray-800 hover:shadow-xl focus:ring-amber-500"
+		}
+	}}
+	<a href={ templ.URL(href) } class={ variantClass }>
+		{ children... }
+	</a>
+}
+
+// IconButton renders a button with just an icon.
+templ IconButton(ariaLabel string) {
+	<button
+		type="button"
+		aria-label={ ariaLabel }
+		class="inline-flex items-center justify-center rounded-lg p-2 text-gray-400 transition-all duration-200 hover:bg-gray-100 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
+	>
+		{ children... }
+	</button>
+}

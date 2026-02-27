@@ -3,9 +3,9 @@ package beer
 import (
 	"fmt"
 
+	"github.com/my-pet-projects/collection/internal/view/component/header"
 	"github.com/my-pet-projects/collection/internal/view/component/icon"
 	"github.com/my-pet-projects/collection/internal/view/component/list"
-	"github.com/my-pet-projects/collection/internal/view/component/shared"
 	"github.com/my-pet-projects/collection/internal/view/layout"
 	"github.com/my-pet-projects/collection/internal/view/page/beer/component"
 )
@@ -24,13 +24,13 @@ templ LoadingShimmer(cardsCount ...int) {
 
 templ ListPage(page BeerListPageData) {
 	@layout.BaseLayout() {
-		@shared.PageHeader(shared.PageHeaderParams{
-			Title:       "My Collection",
-			Subtitle:    "Discover and catalog your brews that you've tasted",
-			Icon:        "beer",
-			ActionURL:   "/workspace/beer/create",
-			ActionLabel: "Add Beer",
-		})
+		@header.PageHeader(header.PageHeaderParams{
+			Title:    "My Collection",
+			Subtitle: "Discover and catalog your brews that you've tasted",
+			Icon:     "beer",
+		}) {
+			@header.PageHeaderLink("/workspace/beer/create", "Add Beer")
+		}
 		<div
 			x-data="{
 				searching: false,

@@ -10,7 +10,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/my-pet-projects/collection/internal/apperr"
-	"github.com/my-pet-projects/collection/internal/view/component/shared"
+	"github.com/my-pet-projects/collection/internal/view/component/feedback"
 	"github.com/my-pet-projects/collection/internal/view/layout"
 )
 
@@ -207,7 +207,7 @@ func (rrp *ReqRespPair) TriggerHtmxNotifyEvent(variant NotifyEventVariant, title
 
 func (rrp *ReqRespPair) renderError(code int, msg string, err error) error {
 	rrp.Response.WriteHeader(code)
-	return shared.Error(msg, err).Render(rrp.Request.Context(), rrp.Response)
+	return feedback.Error(msg, err).Render(rrp.Request.Context(), rrp.Response)
 }
 
 func (rrp *ReqRespPair) Redirect(url string) error {

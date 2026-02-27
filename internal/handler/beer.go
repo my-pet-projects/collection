@@ -45,7 +45,7 @@ func (h *BeerHandler) HandleBeerListPage(reqResp *web.ReqRespPair) error {
 		return apperr.NewBadRequestError("Invalid withoutSlot", withoutSlotErr)
 	}
 
-	page := layout.Page{Title: fmt.Sprintf("Beer Workspace")}
+	page := layout.Page{Title: "Beer Workspace"}
 	beerPage := beerpage.BeerListPageData{
 		Page: page,
 		SearchData: beerpage.BeerListSearchData{
@@ -106,7 +106,7 @@ func (h *BeerHandler) HandleCreateBeerPage(reqResp *web.ReqRespPair) error {
 		return reqResp.RenderError(http.StatusInternalServerError, stylesErr)
 	}
 
-	page := layout.Page{Title: fmt.Sprintf("Create beer")}
+	page := layout.Page{Title: "Create beer"}
 	beerPage := beerpage.BeerPageData{
 		Page: page,
 		FormParams: beerpage.BeerFormParams{
@@ -230,5 +230,5 @@ func (h *BeerHandler) DeleteBeer(reqResp *web.ReqRespPair) error {
 		return apperr.NewInternalServerError("Failed to delete beer", delErr)
 	}
 
-	return reqResp.Redirect(fmt.Sprintf("/workspace/beer"))
+	return reqResp.Redirect("/workspace/beer")
 }

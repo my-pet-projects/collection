@@ -1,8 +1,0 @@
-package component
-
-import "github.com/my-pet-projects/collection/internal/view/component/ui"
-
-// BreweriesAutocomplete renders an autocomplete for breweries.
-templ BreweriesAutocomplete(data BreweriesData) {
-	@ui.AutoComplete(data.ToAutocompleteProps())
-}
