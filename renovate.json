@@ -28,6 +28,7 @@
     {
       "description": "Group all minor and patch Go dependency updates into a single PR",
       "matchManagers": ["gomod"],
+      "excludeDepNames": ["go"],
       "matchUpdateTypes": ["minor", "patch", "digest"],
       "groupName": "go-minor-patch-updates",
       "automerge": true,
@@ -36,6 +37,7 @@
     {
       "description": "Separate PRs for major Go dependency updates",
       "matchManagers": ["gomod"],
+      "excludeDepNames": ["go"],
       "matchUpdateTypes": ["major"],
       "labels": ["dependencies", "breaking"],
       "automerge": false
