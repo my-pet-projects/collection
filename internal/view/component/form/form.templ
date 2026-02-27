@@ -1,0 +1,84 @@
+package form
+
+import "github.com/my-pet-projects/collection/internal/view/component/icon"
+
+// FormFieldProps contains the properties for a form field wrapper.
+type FormFieldProps struct {
+	ID       string
+	Label    string
+	Error    string
+	Required bool
+}
+
+// FormField renders a form field with label and optional error message.
+templ FormField(props FormFieldProps) {
+	<div class="space-y-2">
+		<div class="flex items-center justify-between">
+			<label for={ props.ID } class="block text-sm font-medium text-gray-900">
+				{ props.Label }
+				if props.Required {
+					<span class="text-orange-500"> *</span>
+				}
+			</label>
+			if props.Error != "" {
+				@FieldError(props.Error)
+			}
+		</div>
+		{ children... }
+	</div>
+}
+
+// FieldError renders an inline error message for a form field.
+templ FieldError(message string) {
+	<p class="flex items-center text-xs text-red-600">
+		@icon.ErrorIcon("mr-1 h-3 w-3 shrink-0")
+		<span class="truncate">{ message }</span>
+	</p>
+}
+
+// FormSection renders a form section with title and description.
+templ FormSection(title, description string) {
+	<div class="mb-8">
+		<h2 class="bg-linear-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-3xl font-bold leading-tight tracking-tight text-transparent sm:text-4xl">{ title }</h2>
+		<p class="mt-2 text-base text-gray-600 sm:text-lg">{ description }</p>
+	</div>
+}
+
+// GeneralError renders a general error message block for forms.
+templ GeneralError(message string) {
+	if message != "" {
+		<div class="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 shadow-md">
+			<div class="flex items-center">
+				@icon.ErrorCircleIcon("h-5 w-5 shrink-0 text-red-400")
+				<div class="ml-3">
+					<p class="text-sm text-red-800">{ message }</p>
+				</div>
+			</div>
+		</div>
+	}
+}
+
+// TextInputClasses returns the CSS classes for a text input.
+// Set hasError to true to apply error styling.
+func TextInputClasses(hasError bool) string {
+	base := "block w-full rounded-2xl outline-none border-0 px-4 py-3 text-sm ring-1 ring-inset transition-all duration-200 focus:ring-2 focus:ring-inset focus:ring-amber-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:opacity-50"
+	if hasError {
+		return base + " bg-red-50 text-red-900 ring-red-300 placeholder:text-red-400 focus:ring-red-500 focus:ring-offset-2"
+	}
+	return base + " bg-white ring-gray-200 placeholder:text-gray-500"
+}
+
+// TextInput renders a styled text input field.
+templ TextInput(id, name, placeholder, value string, hasError bool) {
+	<input
+		type="text"
+		id={ id }
+		name={ name }
+		placeholder={ placeholder }
+		value={ value }
+		autocapitalize="none"
+		autocomplete="off"
+		autocorrect="off"
+		class={ TextInputClasses(hasError) }
+	/>
+}

@@ -1,23 +1,8 @@
 package component
 
-import (
-	"fmt"
+import "github.com/my-pet-projects/collection/internal/view/component/ui"
 
-	"github.com/my-pet-projects/collection/internal/view/component/ui"
-)
-
+// StylesAutocomplete renders an autocomplete for beer styles.
 templ StylesAutocomplete(data StyleData) {
-	{{
-		props := ui.AutoCompleteProps{
-			ID:             "style",
-			Name:           "style",
-			Data:           data.ToAutocompleteData(),
-			EventNamespace: "style",
-			HasError:       data.HasError,
-		}
-		if data.SelectedStyleId != nil {
-			props.PreselectedValue = fmt.Sprint(*data.SelectedStyleId)
-		}
-	}}
-	@ui.AutoComplete(props)
+	@ui.AutoComplete(data.ToAutocompleteProps())
 }

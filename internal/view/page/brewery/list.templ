@@ -4,6 +4,8 @@ import (
 	"fmt"
 
 	"github.com/my-pet-projects/collection/internal/model"
+	"github.com/my-pet-projects/collection/internal/view/component/icon"
+	"github.com/my-pet-projects/collection/internal/view/component/list"
 	"github.com/my-pet-projects/collection/internal/view/component/shared"
 	"github.com/my-pet-projects/collection/internal/view/layout"
 	"github.com/my-pet-projects/collection/internal/view/page/brewery/component"
@@ -39,7 +41,7 @@ templ ListPage(params ListPageParams) {
 }
 
 templ listFilters(params ListPageParams) {
-	<div class="mb-8 rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-200/50">
+	@list.FilterContainer() {
 		<!-- Search Section -->
 		<form
 			id="search-form"
@@ -90,49 +92,14 @@ templ listFilters(params ListPageParams) {
 						"
 			class="flex flex-col gap-4 sm:flex-row sm:items-stretch"
 		>
-			<!-- Search Input -->
-			<div class="relative flex-1">
-				<input
-					id="search"
-					name="query"
-					type="text"
-					class="block h-12 w-full rounded-2xl border-0 bg-gray-50/50 px-4 py-3 pl-12 pr-12 text-sm shadow-inner ring-1 ring-inset ring-gray-200 transition-all duration-300 placeholder:text-gray-400 hover:bg-white hover:ring-gray-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-400"
-					placeholder="Search breweries by name..."
-					x-model="searchValue"
-				/>
-				<!-- Search Icon -->
-				<div
-					x-show="!searching && countryFilterLoaded"
-					class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4"
-				>
-					<svg class="h-5 w-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-					</svg>
-				</div>
-				<!-- Clear Button -->
-				<button
-					type="button"
-					x-show="searchValue.length > 0"
-					x-on:click="searchValue = ''; document.getElementById('search').value = ''; document.getElementById('search').dispatchEvent(new Event('keyup'))"
-					class="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-gray-200 p-1.5 text-gray-500 transition-all duration-200 hover:bg-gray-300 hover:text-gray-700"
-				>
-					<svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-					</svg>
-				</button>
-				<!-- Loading Indicator -->
-				<div
-					x-show="searching || !countryFilterLoaded"
-					class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4"
-				>
-					<div class="h-5 w-5 animate-spin rounded-full border-2 border-amber-200 border-t-amber-500"></div>
-				</div>
-			</div>
+			@list.SearchInput(list.SearchInputProps{
+				ID:           "search",
+				Name:         "query",
+				Placeholder:  "Search breweries by name...",
+				ModelBinding: "searchValue",
+			})
 			<!-- Country Filter -->
-			<div class="flex w-full items-center justify-center sm:w-80" id="country-filter-container">
-				<!-- Loading indicator -->
-				<div class="h-5 w-5 animate-spin rounded-full border-2 border-gray-300 border-t-black"></div>
-			</div>
+			@list.CountryFilterContainer("country-filter-container")
 			<!-- Size Filter (hidden) -->
 			<input
 				type="hidden"
@@ -142,15 +109,8 @@ templ listFilters(params ListPageParams) {
 			/>
 		</form>
 		<!-- Separate element to load the country filter -->
-		<div
-			hx-get="/geo/countries?hasBreweries=true&showAllOption=true"
-			hx-swap="innerHTML"
-			hx-target="#country-filter-container"
-			hx-trigger="load"
-			x-on:htmx:after-request="countryFilterLoaded = true"
-			class="hidden"
-		></div>
-	</div>
+		@list.CountryFilterLoader("country-filter-container", true, true)
+	}
 }
 
 templ breweryTable() {
@@ -184,16 +144,7 @@ templ TableContent(data BreweryListData) {
 		</div>
 		<!-- Results Count -->
 		<div x-show="!searching" class="flex items-center">
-			<div class="rounded-2xl bg-linear-to-r from-amber-100 to-orange-100 px-4 py-2 shadow-sm">
-				<span class="text-sm font-bold text-amber-900">
-					{ fmt.Sprintf("%d", data.TotalResults) }
-					if data.TotalResults == 1 {
-						brewery found
-					} else {
-						breweries found
-					}
-				</span>
-			</div>
+			@list.ResultsCount(data.TotalResults, "brewery found", "breweries found")
 		</div>
 	</div>
 	<div
@@ -304,10 +255,7 @@ templ breweryList(breweries []model.Brewery) {
 									</a>
 								</h3>
 								<div class="mt-2 flex items-center space-x-2 text-sm text-gray-600">
-									<svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-									</svg>
+									@icon.LocationIcon("h-4 w-4 text-gray-400")
 									<span>{ brewery.GetCityName() }, { brewery.GetCountryName() }</span>
 								</div>
 							</div>
@@ -366,9 +314,7 @@ templ pagination(data BreweryListData) {
 							disabled="disabled"
 						}
 					>
-						<svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-						</svg>
+						@icon.ChevronLeftIcon("mr-2 h-4 w-4")
 						<span class="hidden sm:inline">Previous</span>
 						<span class="sm:hidden">Prev</span>
 					</button>
@@ -393,9 +339,7 @@ templ pagination(data BreweryListData) {
 					>
 						<span class="hidden sm:inline">Next</span>
 						<span class="sm:hidden">Next</span>
-						<svg class="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-						</svg>
+						@icon.ChevronRightIcon("ml-2 h-4 w-4")
 					</button>
 					<!-- Last Page (Desktop Only) -->
 					if data.CurrentPage < data.TotalPages - 1 {
