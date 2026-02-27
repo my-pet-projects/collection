@@ -94,7 +94,7 @@ func (s ImageService) UploadImage(ctx context.Context, formValues []model.Upload
 		if !exists {
 			s.logger.Info("Creating new beer for image", slog.String("beerId", currentBeer))
 			beer := model.NewBeerFromUploadForm(formValue)
-			beerID, beerErr := s.beerStore.InsertBeer(beer)
+			beerID, beerErr := s.beerStore.InsertBeer(ctx, beer)
 			if beerErr != nil {
 				return errors.Wrap(beerErr, "insert beer")
 			}

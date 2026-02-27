@@ -15,21 +15,23 @@ import (
 	"github.com/my-pet-projects/collection/internal/web"
 )
 
+// BeerHandler handles beer-related HTTP requests.
 type BeerHandler struct {
 	beerService    service.BeerService
 	breweryService service.BreweryService
 	logger         *slog.Logger
 }
 
-func NewBeerHandler(beerService service.BeerService, breweryService service.BreweryService, logger *slog.Logger) BeerHandler {
-	return BeerHandler{
+// NewBeerHandler creates a new BeerHandler.
+func NewBeerHandler(beerService service.BeerService, breweryService service.BreweryService, logger *slog.Logger) *BeerHandler {
+	return &BeerHandler{
 		beerService:    beerService,
 		breweryService: breweryService,
 		logger:         logger,
 	}
 }
 
-func (h WorkspaceServer) HandleBeerListPage(reqResp *web.ReqRespPair) error {
+func (h *BeerHandler) HandleBeerListPage(reqResp *web.ReqRespPair) error {
 	query, queryErr := reqResp.GetStringQueryParam("query")
 	if queryErr != nil {
 		return apperr.NewBadRequestError("Invalid query", queryErr)
@@ -56,16 +58,16 @@ func (h WorkspaceServer) HandleBeerListPage(reqResp *web.ReqRespPair) error {
 	return reqResp.Render(beerpage.ListPage(beerPage))
 }
 
-func (h WorkspaceServer) HandleBeerPage(reqResp *web.ReqRespPair) error {
+func (h *BeerHandler) HandleBeerPage(reqResp *web.ReqRespPair) error {
 	beerId, parseErr := strconv.Atoi(reqResp.Request.PathValue("id"))
 	if parseErr != nil {
 		return reqResp.RenderError(http.StatusInternalServerError, parseErr)
 	}
-	beer, beerErr := h.beerService.GetBeer(beerId)
+	beer, beerErr := h.beerService.GetBeer(reqResp.Request.Context(), beerId)
 	if beerErr != nil {
 		return reqResp.RenderError(http.StatusInternalServerError, beerErr)
 	}
-	breweries, breweriesErr := h.breweryService.ListBreweries()
+	breweries, breweriesErr := h.breweryService.ListBreweries(reqResp.Request.Context())
 	if breweriesErr != nil {
 		return reqResp.RenderError(http.StatusInternalServerError, breweriesErr)
 	}
@@ -94,8 +96,8 @@ func (h WorkspaceServer) HandleBeerPage(reqResp *web.ReqRespPair) error {
 	return reqResp.Render(beerpage.Page(beerPage))
 }
 
-func (h WorkspaceServer) HandleCreateBeerPage(reqResp *web.ReqRespPair) error {
-	breweries, breweriesErr := h.breweryService.ListBreweries()
+func (h *BeerHandler) HandleCreateBeerPage(reqResp *web.ReqRespPair) error {
+	breweries, breweriesErr := h.breweryService.ListBreweries(reqResp.Request.Context())
 	if breweriesErr != nil {
 		return reqResp.RenderError(http.StatusInternalServerError, breweriesErr)
 	}
@@ -115,7 +117,7 @@ func (h WorkspaceServer) HandleCreateBeerPage(reqResp *web.ReqRespPair) error {
 	return reqResp.Render(beerpage.Page(beerPage))
 }
 
-func (h WorkspaceServer) SubmitBeerPage(reqResp *web.ReqRespPair) error {
+func (h *BeerHandler) SubmitBeerPage(reqResp *web.ReqRespPair) error {
 	idStr := reqResp.Request.FormValue("id")
 	id, _ := strconv.Atoi(idStr)
 	breweryIdStr := reqResp.Request.FormValue("brewery")
@@ -136,7 +138,7 @@ func (h WorkspaceServer) SubmitBeerPage(reqResp *web.ReqRespPair) error {
 		StyleID:   &styleId,
 	}
 
-	breweries, breweriesErr := h.breweryService.ListBreweries()
+	breweries, breweriesErr := h.breweryService.ListBreweries(reqResp.Request.Context())
 	if breweriesErr != nil {
 		return reqResp.RenderError(http.StatusInternalServerError, breweriesErr)
 	}
@@ -152,7 +154,7 @@ func (h WorkspaceServer) SubmitBeerPage(reqResp *web.ReqRespPair) error {
 	}
 
 	if formParams.ID == 0 {
-		newBeer, createErr := h.beerService.CreateBeer(formParams.Brand, formParams.Type, &styleId, &breweryId, isActive)
+		newBeer, createErr := h.beerService.CreateBeer(reqResp.Request.Context(), formParams.Brand, formParams.Type, &styleId, &breweryId, isActive)
 		if createErr != nil {
 			h.logger.Error("create beer", slog.Any("error", createErr))
 			return reqResp.Render(beerpage.Form(formParams, beerpage.BeerFormErrors{Error: createErr.Error()}))
@@ -160,7 +162,7 @@ func (h WorkspaceServer) SubmitBeerPage(reqResp *web.ReqRespPair) error {
 		return reqResp.Redirect(fmt.Sprintf("/workspace/beer/%d/overview", newBeer.ID))
 	}
 
-	updErr := h.beerService.UpdateBeer(formParams.ID, formParams.Brand, formParams.Type, &styleId, &breweryId, isActive)
+	updErr := h.beerService.UpdateBeer(reqResp.Request.Context(), formParams.ID, formParams.Brand, formParams.Type, &styleId, &breweryId, isActive)
 	if updErr != nil {
 		h.logger.Error("update beer", slog.Any("error", updErr))
 		return reqResp.Render(beerpage.Form(formParams, beerpage.BeerFormErrors{Error: updErr.Error()}))
@@ -169,7 +171,7 @@ func (h WorkspaceServer) SubmitBeerPage(reqResp *web.ReqRespPair) error {
 	return reqResp.Render(beerpage.Form(formParams, beerpage.BeerFormErrors{}))
 }
 
-func (h WorkspaceServer) ListBeers(reqResp *web.ReqRespPair) error {
+func (h *BeerHandler) ListBeers(reqResp *web.ReqRespPair) error {
 	page, pageErr := reqResp.GetIntQueryParam("page")
 	if pageErr != nil {
 		return apperr.NewBadRequestError("Invalid page number", pageErr)
@@ -217,13 +219,13 @@ func (h WorkspaceServer) ListBeers(reqResp *web.ReqRespPair) error {
 	return reqResp.Render(beerpage.BeerList(pageData))
 }
 
-func (h WorkspaceServer) DeleteBeer(reqResp *web.ReqRespPair) error {
+func (h *BeerHandler) DeleteBeer(reqResp *web.ReqRespPair) error {
 	id, parseErr := reqResp.GetIntQueryParam("id")
 	if parseErr != nil {
 		return apperr.NewBadRequestError("Invalid identifier", parseErr)
 	}
 
-	delErr := h.beerService.DeleteBeer(id)
+	delErr := h.beerService.DeleteBeer(reqResp.Request.Context(), id)
 	if delErr != nil {
 		return apperr.NewInternalServerError("Failed to delete beer", delErr)
 	}

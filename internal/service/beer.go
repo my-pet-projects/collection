@@ -28,8 +28,8 @@ func NewBeerService(beerStore *db.BeerStore, styleStore *db.BeerStyleStore, brew
 	}
 }
 
-func (s BeerService) GetBeer(id int) (*model.Beer, error) {
-	beer, beerErr := s.beerStore.GetBeer(id)
+func (s BeerService) GetBeer(ctx context.Context, id int) (*model.Beer, error) {
+	beer, beerErr := s.beerStore.GetBeer(ctx, id)
 	if beerErr != nil {
 		return nil, errors.Wrap(beerErr, "get beer")
 	}
@@ -37,7 +37,7 @@ func (s BeerService) GetBeer(id int) (*model.Beer, error) {
 }
 
 func (s BeerService) CreateBeer(
-	brand string, beerType *string, styleId *int, breweryId *int, active bool,
+	ctx context.Context, brand string, beerType *string, styleId *int, breweryId *int, active bool,
 ) (*model.Beer, error) {
 	searchName := strings.TrimSpace(brand)
 	if beerType != nil {
@@ -53,7 +53,7 @@ func (s BeerService) CreateBeer(
 		SearchName: util.NormalizeText(searchName),
 	}
 
-	insertedId, insertErr := s.beerStore.InsertBeer(beer)
+	insertedId, insertErr := s.beerStore.InsertBeer(ctx, beer)
 	if insertErr != nil {
 		return nil, errors.Wrap(insertErr, "insert beer")
 	}
@@ -62,7 +62,7 @@ func (s BeerService) CreateBeer(
 }
 
 func (s BeerService) UpdateBeer(
-	id int, brand string, beerType *string, styleId *int, breweryId *int, active bool,
+	ctx context.Context, id int, brand string, beerType *string, styleId *int, breweryId *int, active bool,
 ) error {
 	// timeNow := time.Now().UTC()
 	searchName := strings.TrimSpace(brand)
@@ -80,7 +80,7 @@ func (s BeerService) UpdateBeer(
 		SearchName: util.NormalizeText(searchName),
 	}
 
-	updErr := s.beerStore.UpdateBeer(beer)
+	updErr := s.beerStore.UpdateBeer(ctx, beer)
 	if updErr != nil {
 		return errors.Wrap(updErr, "update brewery")
 	}
@@ -101,8 +101,8 @@ func (s BeerService) PaginateBeers(ctx context.Context, filter model.BeerFilter)
 	return beers, nil
 }
 
-func (s BeerService) DeleteBeer(id int) error {
-	beer, beerErr := s.beerStore.GetBeer(id)
+func (s BeerService) DeleteBeer(ctx context.Context, id int) error {
+	beer, beerErr := s.beerStore.GetBeer(ctx, id)
 	if beerErr != nil {
 		return errors.Wrap(beerErr, "get beer")
 	}
@@ -115,7 +115,7 @@ func (s BeerService) DeleteBeer(id int) error {
 		return errors.New("beer has assigned collection slots")
 	}
 
-	delErr := s.beerStore.DeleteBeer(id)
+	delErr := s.beerStore.DeleteBeer(ctx, id)
 	if delErr != nil {
 		return errors.Wrap(delErr, "delete beer")
 	}
@@ -138,16 +138,16 @@ func (s BeerService) PaginateBeerStyles(ctx context.Context, filter model.BeerSt
 	return pagination, nil
 }
 
-func (s BeerService) GetBeerStyle(id int) (*model.BeerStyle, error) {
-	style, styleErr := s.styleStore.GetBeerStyle(id)
+func (s BeerService) GetBeerStyle(ctx context.Context, id int) (*model.BeerStyle, error) {
+	style, styleErr := s.styleStore.GetBeerStyle(ctx, id)
 	if styleErr != nil {
 		return nil, errors.Wrap(styleErr, "get beer style")
 	}
 	return &style, nil
 }
 
-func (s BeerService) CreateBeerStyle(style model.BeerStyle) (*model.BeerStyle, error) {
-	id, styleErr := s.styleStore.InsertBeerStyle(style)
+func (s BeerService) CreateBeerStyle(ctx context.Context, style model.BeerStyle) (*model.BeerStyle, error) {
+	id, styleErr := s.styleStore.InsertBeerStyle(ctx, style)
 	if styleErr != nil {
 		return nil, errors.Wrap(styleErr, "update beer style")
 	}
@@ -155,16 +155,16 @@ func (s BeerService) CreateBeerStyle(style model.BeerStyle) (*model.BeerStyle, e
 	return &style, nil
 }
 
-func (s BeerService) UpdateBeerStyle(style model.BeerStyle) error {
-	updErr := s.styleStore.UpdateBeerStyle(style)
+func (s BeerService) UpdateBeerStyle(ctx context.Context, style model.BeerStyle) error {
+	updErr := s.styleStore.UpdateBeerStyle(ctx, style)
 	if updErr != nil {
 		return errors.Wrap(updErr, "update beer style")
 	}
 	return nil
 }
 
-func (s BeerService) DeleteBeerStyle(id int) error {
-	delErr := s.styleStore.DeleteBeerStyle(id)
+func (s BeerService) DeleteBeerStyle(ctx context.Context, id int) error {
+	delErr := s.styleStore.DeleteBeerStyle(ctx, id)
 	if delErr != nil {
 		return errors.Wrap(delErr, "delete beer style")
 	}

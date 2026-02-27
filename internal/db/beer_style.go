@@ -21,9 +21,10 @@ func NewBeerStyleStore(db *DbClient, logger *slog.Logger) BeerStyleStore {
 	}
 }
 
-func (s BeerStyleStore) GetBeerStyle(id int) (model.BeerStyle, error) {
+func (s BeerStyleStore) GetBeerStyle(ctx context.Context, id int) (model.BeerStyle, error) {
 	var item model.BeerStyle
 	result := s.db.gorm.
+		WithContext(ctx).
 		Debug().
 		First(&item, id)
 
@@ -67,24 +68,27 @@ func (s BeerStyleStore) PaginateBeerStyles(ctx context.Context, filter model.Bee
 	return &pagination, result.Error
 }
 
-func (s BeerStyleStore) InsertBeerStyle(style model.BeerStyle) (int, error) {
+func (s BeerStyleStore) InsertBeerStyle(ctx context.Context, style model.BeerStyle) (int, error) {
 	res := s.db.gorm.
+		WithContext(ctx).
 		Debug().
 		Save(&style)
 
 	return style.ID, res.Error
 }
 
-func (s BeerStyleStore) UpdateBeerStyle(style model.BeerStyle) error {
+func (s BeerStyleStore) UpdateBeerStyle(ctx context.Context, style model.BeerStyle) error {
 	res := s.db.gorm.
+		WithContext(ctx).
 		Debug().
 		Save(&style)
 
 	return res.Error
 }
 
-func (s BeerStyleStore) DeleteBeerStyle(id int) error {
+func (s BeerStyleStore) DeleteBeerStyle(ctx context.Context, id int) error {
 	res := s.db.gorm.
+		WithContext(ctx).
 		Debug().
 		Delete(&model.BeerStyle{ID: id})
 

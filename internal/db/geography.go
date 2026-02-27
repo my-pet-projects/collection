@@ -1,6 +1,7 @@
 package db
 
 import (
+	"context"
 	"log/slog"
 	"strings"
 
@@ -21,9 +22,10 @@ func NewGeographyStore(db *DbClient, logger *slog.Logger) GeographyStore {
 	}
 }
 
-func (s GeographyStore) FetchCountries() ([]model.Country, error) {
+func (s GeographyStore) FetchCountries(ctx context.Context) ([]model.Country, error) {
 	var items []model.Country
 	result := s.db.gorm.
+		WithContext(ctx).
 		Debug().
 		Clauses(dbresolver.Use(GeographyDBResolverName)).
 		Order("name_common").
@@ -32,9 +34,10 @@ func (s GeographyStore) FetchCountries() ([]model.Country, error) {
 	return items, result.Error
 }
 
-func (s GeographyStore) FetchCitiesByCountry(countryCode string) ([]model.City, error) {
+func (s GeographyStore) FetchCitiesByCountry(ctx context.Context, countryCode string) ([]model.City, error) {
 	var items []model.City
 	result := s.db.gorm.
+		WithContext(ctx).
 		Debug().
 		Where(&model.City{CountryCode: strings.ToUpper(countryCode)}).
 		Joins("Country").
