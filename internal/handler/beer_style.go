@@ -1,24 +1,40 @@
 package handler
 
 import (
+	"log/slog"
 	"strconv"
 	"strings"
 
 	"github.com/my-pet-projects/collection/internal/apperr"
 	"github.com/my-pet-projects/collection/internal/model"
+	"github.com/my-pet-projects/collection/internal/service"
 	"github.com/my-pet-projects/collection/internal/view/layout"
 	stylepage "github.com/my-pet-projects/collection/internal/view/page/style"
 	"github.com/my-pet-projects/collection/internal/web"
 )
 
-func (h WorkspaceServer) HandleBeerStyleListPage(reqResp *web.ReqRespPair) error {
+// BeerStyleHandler handles beer style-related HTTP requests.
+type BeerStyleHandler struct {
+	beerService service.BeerService
+	logger      *slog.Logger
+}
+
+// NewBeerStyleHandler creates a new BeerStyleHandler.
+func NewBeerStyleHandler(beerService service.BeerService, logger *slog.Logger) *BeerStyleHandler {
+	return &BeerStyleHandler{
+		beerService: beerService,
+		logger:      logger,
+	}
+}
+
+func (h *BeerStyleHandler) HandleBeerStyleListPage(reqResp *web.ReqRespPair) error {
 	beerStyleListPage := stylepage.BeerStyleListPageData{
 		PageData: layout.Page{Title: "Beer Style"},
 	}
 	return reqResp.Render(stylepage.List(beerStyleListPage))
 }
 
-func (h WorkspaceServer) ListBeerStyles(reqResp *web.ReqRespPair) error {
+func (h *BeerStyleHandler) ListBeerStyles(reqResp *web.ReqRespPair) error {
 	page, pageErr := reqResp.GetIntQueryParam("page")
 	if pageErr != nil {
 		return apperr.NewBadRequestError("Invalid page number", pageErr)
@@ -47,22 +63,22 @@ func (h WorkspaceServer) ListBeerStyles(reqResp *web.ReqRespPair) error {
 	return reqResp.Render(stylepage.BeerStylesTable(pageData))
 }
 
-func (h WorkspaceServer) HandleBeerStyleCreateView(reqResp *web.ReqRespPair) error {
+func (h *BeerStyleHandler) HandleBeerStyleCreateView(reqResp *web.ReqRespPair) error {
 	return reqResp.Render(stylepage.CreateBeerStyleRowView(model.BeerStyle{}, model.BeerStyleErrors{}))
 }
 
-func (h WorkspaceServer) HandleBeerStyleCreateCancelView(reqResp *web.ReqRespPair) error {
+func (h *BeerStyleHandler) HandleBeerStyleCreateCancelView(reqResp *web.ReqRespPair) error {
 	return reqResp.NoContent()
 }
 
-func (h WorkspaceServer) CreateBeerStyle(reqResp *web.ReqRespPair) error {
+func (h *BeerStyleHandler) CreateBeerStyle(reqResp *web.ReqRespPair) error {
 	style := model.BeerStyle{
 		Name: reqResp.Request.FormValue("name"),
 	}
 	if formErrs, hasErrs := style.Validate(); hasErrs {
 		return reqResp.Render(stylepage.CreateBeerStyleRowView(style, formErrs))
 	}
-	newStyle, styleErr := h.beerService.CreateBeerStyle(style)
+	newStyle, styleErr := h.beerService.CreateBeerStyle(reqResp.Request.Context(), style)
 	if styleErr != nil {
 		return apperr.NewInternalServerError("Failed to create beer style", styleErr)
 	}
@@ -70,7 +86,7 @@ func (h WorkspaceServer) CreateBeerStyle(reqResp *web.ReqRespPair) error {
 	return reqResp.Render(stylepage.DisplayBeerStyleRowView(*newStyle))
 }
 
-func (h WorkspaceServer) SaveBeerStyle(reqResp *web.ReqRespPair) error {
+func (h *BeerStyleHandler) SaveBeerStyle(reqResp *web.ReqRespPair) error {
 	styleId, parseErr := strconv.Atoi(reqResp.Request.PathValue("id"))
 	if parseErr != nil {
 		return apperr.NewBadRequestError("Invalid identifier", parseErr)
@@ -82,7 +98,7 @@ func (h WorkspaceServer) SaveBeerStyle(reqResp *web.ReqRespPair) error {
 	if formErrs, hasErrs := style.Validate(); hasErrs {
 		return reqResp.Render(stylepage.CreateBeerStyleRowView(style, formErrs))
 	}
-	styleErr := h.beerService.UpdateBeerStyle(style)
+	styleErr := h.beerService.UpdateBeerStyle(reqResp.Request.Context(), style)
 	if styleErr != nil {
 		return apperr.NewInternalServerError("Failed to update beer style", styleErr)
 	}
@@ -90,36 +106,36 @@ func (h WorkspaceServer) SaveBeerStyle(reqResp *web.ReqRespPair) error {
 	return reqResp.Render(stylepage.DisplayBeerStyleRowView(style))
 }
 
-func (h WorkspaceServer) HandleBeerStyleDisplayRowView(reqResp *web.ReqRespPair) error {
+func (h *BeerStyleHandler) HandleBeerStyleDisplayRowView(reqResp *web.ReqRespPair) error {
 	styleId, parseErr := strconv.Atoi(reqResp.Request.PathValue("id"))
 	if parseErr != nil {
 		return apperr.NewBadRequestError("Invalid identifier", parseErr)
 	}
-	style, styleErr := h.beerService.GetBeerStyle(styleId)
+	style, styleErr := h.beerService.GetBeerStyle(reqResp.Request.Context(), styleId)
 	if styleErr != nil {
 		return apperr.NewInternalServerError("Failed to get beer style", styleErr)
 	}
 	return reqResp.Render(stylepage.DisplayBeerStyleRowView(*style))
 }
 
-func (h WorkspaceServer) HandleBeerStyleEditRowView(reqResp *web.ReqRespPair) error {
+func (h *BeerStyleHandler) HandleBeerStyleEditRowView(reqResp *web.ReqRespPair) error {
 	styleId, parseErr := strconv.Atoi(reqResp.Request.PathValue("id"))
 	if parseErr != nil {
 		return apperr.NewBadRequestError("Invalid identifier", parseErr)
 	}
-	style, styleErr := h.beerService.GetBeerStyle(styleId)
+	style, styleErr := h.beerService.GetBeerStyle(reqResp.Request.Context(), styleId)
 	if styleErr != nil {
 		return apperr.NewInternalServerError("Failed to get beer style", styleErr)
 	}
 	return reqResp.Render(stylepage.EditBeerStyleRowView(*style, model.BeerStyleErrors{}))
 }
 
-func (h WorkspaceServer) DeleteBeerStyle(reqResp *web.ReqRespPair) error {
+func (h *BeerStyleHandler) DeleteBeerStyle(reqResp *web.ReqRespPair) error {
 	styleId, parseErr := strconv.Atoi(reqResp.Request.PathValue("id"))
 	if parseErr != nil {
 		return apperr.NewBadRequestError("Invalid identifier", parseErr)
 	}
-	delErr := h.beerService.DeleteBeerStyle(styleId)
+	delErr := h.beerService.DeleteBeerStyle(reqResp.Request.Context(), styleId)
 	if delErr != nil {
 		return apperr.NewInternalServerError("Failed to delete beer style", delErr)
 	}

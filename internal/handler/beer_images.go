@@ -2,21 +2,46 @@ package handler
 
 import (
 	"fmt"
+	"log/slog"
 	"net/http"
 	"strconv"
 
 	"github.com/my-pet-projects/collection/internal/apperr"
 	"github.com/my-pet-projects/collection/internal/model"
+	"github.com/my-pet-projects/collection/internal/service"
 	beerpage "github.com/my-pet-projects/collection/internal/view/page/beer"
 	"github.com/my-pet-projects/collection/internal/web"
 )
 
-func (h WorkspaceServer) HandleBeerImagesPage(reqResp *web.ReqRespPair) error {
+// BeerImagesHandler handles beer images-related HTTP requests.
+type BeerImagesHandler struct {
+	beerService       service.BeerService
+	mediaService      service.ImageService
+	collectionService service.CollectionService
+	logger            *slog.Logger
+}
+
+// NewBeerImagesHandler creates a new BeerImagesHandler.
+func NewBeerImagesHandler(
+	beerService service.BeerService,
+	mediaService service.ImageService,
+	collectionService service.CollectionService,
+	logger *slog.Logger,
+) *BeerImagesHandler {
+	return &BeerImagesHandler{
+		beerService:       beerService,
+		mediaService:      mediaService,
+		collectionService: collectionService,
+		logger:            logger,
+	}
+}
+
+func (h *BeerImagesHandler) HandleBeerImagesPage(reqResp *web.ReqRespPair) error {
 	beerID, parseErr := strconv.Atoi(reqResp.Request.PathValue("id"))
 	if parseErr != nil {
 		return reqResp.RenderError(http.StatusInternalServerError, parseErr)
 	}
-	beer, beerErr := h.beerService.GetBeer(beerID)
+	beer, beerErr := h.beerService.GetBeer(reqResp.Request.Context(), beerID)
 	if beerErr != nil {
 		return reqResp.RenderError(http.StatusInternalServerError, beerErr)
 	}
@@ -43,12 +68,12 @@ func (h WorkspaceServer) HandleBeerImagesPage(reqResp *web.ReqRespPair) error {
 	return reqResp.Render(beerpage.Page(beerPage))
 }
 
-func (h WorkspaceServer) SubmitBeerImages(reqResp *web.ReqRespPair) error {
+func (h *BeerImagesHandler) SubmitBeerImages(reqResp *web.ReqRespPair) error {
 	beerID, parseErr := strconv.Atoi(reqResp.Request.PathValue("id"))
 	if parseErr != nil {
 		return apperr.NewBadRequestError("Invalid identifier", parseErr)
 	}
-	beer, beerErr := h.beerService.GetBeer(beerID)
+	beer, beerErr := h.beerService.GetBeer(reqResp.Request.Context(), beerID)
 	if beerErr != nil {
 		return reqResp.RenderError(http.StatusInternalServerError, beerErr)
 	}

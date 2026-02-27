@@ -24,9 +24,10 @@ func NewBeerStore(db *DbClient, logger *slog.Logger) BeerStore {
 	}
 }
 
-func (s BeerStore) GetBeer(id int) (*model.Beer, error) {
+func (s BeerStore) GetBeer(ctx context.Context, id int) (*model.Beer, error) {
 	var beer model.Beer
 	result := s.db.gorm.
+		WithContext(ctx).
 		Debug().
 		Joins("BeerStyle").
 		Joins("Brewery").
@@ -101,24 +102,27 @@ func (s BeerStore) PaginateBeers(ctx context.Context, filter model.BeerFilter) (
 	return &pagination, nil
 }
 
-func (s BeerStore) InsertBeer(beer model.Beer) (int, error) {
+func (s BeerStore) InsertBeer(ctx context.Context, beer model.Beer) (int, error) {
 	res := s.db.gorm.
+		WithContext(ctx).
 		Debug().
 		Save(&beer)
 
 	return beer.ID, res.Error
 }
 
-func (s BeerStore) UpdateBeer(beer model.Beer) error {
+func (s BeerStore) UpdateBeer(ctx context.Context, beer model.Beer) error {
 	res := s.db.gorm.
+		WithContext(ctx).
 		Debug().
 		Save(&beer)
 
 	return res.Error
 }
 
-func (s BeerStore) DeleteBeer(id int) error {
+func (s BeerStore) DeleteBeer(ctx context.Context, id int) error {
 	res := s.db.gorm.
+		WithContext(ctx).
 		Debug().
 		Delete(&model.Beer{}, id)
 

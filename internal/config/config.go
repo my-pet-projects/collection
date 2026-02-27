@@ -42,59 +42,68 @@ type AppConfig struct {
 	AuthCfg AuthConfig
 }
 
+// requireEnv returns the value of the environment variable or an error if not set.
+func requireEnv(key string) (string, error) {
+	val, ok := os.LookupEnv(key)
+	if !ok || strings.TrimSpace(val) == "" {
+		return "", errors.Errorf("%s environment variable was not found or is empty", key)
+	}
+	return val, nil
+}
+
 // NewConfig creates application configuration.
 func NewConfig() (*Config, error) {
-	env, ok := os.LookupEnv("APP_ENV")
-	if !ok {
-		return nil, errors.New("APP_ENV environment variable was not found")
+	env, err := requireEnv("APP_ENV")
+	if err != nil {
+		return nil, err
 	}
-	awsRegion, ok := os.LookupEnv("AWS_REGION")
-	if !ok {
-		return nil, errors.New("AWS_REGION environment variable was not found")
+	awsRegion, err := requireEnv("AWS_REGION")
+	if err != nil {
+		return nil, err
 	}
-	awsAccessKey, ok := os.LookupEnv("AWS_ACCESS_KEY_ID")
-	if !ok {
-		return nil, errors.New("AWS_ACCESS_KEY_ID environment variable was not found")
+	awsAccessKey, err := requireEnv("AWS_ACCESS_KEY_ID")
+	if err != nil {
+		return nil, err
 	}
-	awsSecretKey, ok := os.LookupEnv("AWS_SECRET_ACCESS_KEY")
-	if !ok {
-		return nil, errors.New("AWS_SECRET_ACCESS_KEY environment variable was not found")
+	awsSecretKey, err := requireEnv("AWS_SECRET_ACCESS_KEY")
+	if err != nil {
+		return nil, err
 	}
-	geoDbUrl, ok := os.LookupEnv("GEO_DATABASE_URL")
-	if !ok {
-		return nil, errors.New("GEO_DATABASE_URL environment variable was not found")
+	geoDbUrl, err := requireEnv("GEO_DATABASE_URL")
+	if err != nil {
+		return nil, err
 	}
-	geoAuthToken, ok := os.LookupEnv("GEO_DATABASE_TOKEN")
-	if !ok {
-		return nil, errors.New("GEO_DATABASE_TOKEN environment variable was not found")
+	geoAuthToken, err := requireEnv("GEO_DATABASE_TOKEN")
+	if err != nil {
+		return nil, err
 	}
-	collectionDbUrl, ok := os.LookupEnv("COLLECTION_DATABASE_URL")
-	if !ok {
-		return nil, errors.New("COLLECTION_DATABASE_URL environment variable was not found")
+	collectionDbUrl, err := requireEnv("COLLECTION_DATABASE_URL")
+	if err != nil {
+		return nil, err
 	}
-	collectionAuthToken, ok := os.LookupEnv("COLLECTION_DATABASE_TOKEN")
-	if !ok {
-		return nil, errors.New("COLLECTION_DATABASE_TOKEN environment variable was not found")
+	collectionAuthToken, err := requireEnv("COLLECTION_DATABASE_TOKEN")
+	if err != nil {
+		return nil, err
 	}
-	clerkSecretKey, ok := os.LookupEnv("CLERK_SECRET_KEY")
-	if !ok {
-		return nil, errors.New("CLERK_SECRET_KEY environment variable was not found")
+	clerkSecretKey, err := requireEnv("CLERK_SECRET_KEY")
+	if err != nil {
+		return nil, err
 	}
-	clerkPublishableKey, ok := os.LookupEnv("CLERK_PUBLISHABLE_KEY")
-	if !ok {
-		return nil, errors.New("CLERK_PUBLISHABLE_KEY environment variable was not found")
+	clerkPublishableKey, err := requireEnv("CLERK_PUBLISHABLE_KEY")
+	if err != nil {
+		return nil, err
 	}
-	clerkPumKey, ok := os.LookupEnv("CLERK_PEM_PUBLIC_KEY")
-	if !ok {
-		return nil, errors.New("CLERK_PEM_PUBLIC_KEY environment variable was not found")
+	clerkPemKey, err := requireEnv("CLERK_PEM_PUBLIC_KEY")
+	if err != nil {
+		return nil, err
 	}
-	rsaPublicKey, err := parseRSAPublicKey([]byte(strings.Replace(clerkPumKey, `\n`, "\n", -1)))
+	rsaPublicKey, err := parseRSAPublicKey([]byte(strings.Replace(clerkPemKey, `\n`, "\n", -1)))
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to parse Clerk public key")
 	}
-	clerkAuthHost, ok := os.LookupEnv("CLERK_AUTH_HOST")
-	if !ok {
-		return nil, errors.New("CLERK_AUTH_HOST environment variable was not found")
+	clerkAuthHost, err := requireEnv("CLERK_AUTH_HOST")
+	if err != nil {
+		return nil, err
 	}
 
 	cfg := &Config{
