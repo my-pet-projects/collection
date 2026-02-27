@@ -68,7 +68,7 @@ func (h *BeerImagesHandler) HandleBeerImagesPage(reqResp *web.ReqRespPair) error
 	return reqResp.Render(beerpage.Page(beerPage))
 }
 
-func (h *BeerImagesHandler) SubmitBeerImages(reqResp *web.ReqRespPair) error {
+func (h *BeerImagesHandler) SubmitBeerImages(reqResp *web.ReqRespPair) error { //nolint:cyclop
 	beerID, parseErr := strconv.Atoi(reqResp.Request.PathValue("id"))
 	if parseErr != nil {
 		return apperr.NewBadRequestError("Invalid identifier", parseErr)
@@ -78,54 +78,73 @@ func (h *BeerImagesHandler) SubmitBeerImages(reqResp *web.ReqRespPair) error {
 		return reqResp.RenderError(http.StatusInternalServerError, beerErr)
 	}
 
-	ids, parseErr := reqResp.GetIntFormValues("media.id")               //nolint:ineffassign
-	mediaIDs, parseErr := reqResp.GetIntFormValues("media.mediaId")     //nolint:ineffassign
-	types, parseErr := reqResp.GetIntFormValues("media.type")           //nolint:ineffassign
-	selections, parseErr := reqResp.GetBoolFormValues("media.selected") //nolint:ineffassign
-	sources, parseErr := reqResp.GetStringFormValues("media.src")
-	if parseErr != nil {
-		return apperr.NewBadRequestError("Invalid form parameter", parseErr)
+	ids, err := reqResp.GetIntFormValues("media.id")
+	if err != nil {
+		return apperr.NewBadRequestError("Invalid form parameter", err)
+	}
+	mediaIDs, err := reqResp.GetIntFormValues("media.mediaId")
+	if err != nil {
+		return apperr.NewBadRequestError("Invalid form parameter", err)
+	}
+	types, err := reqResp.GetIntFormValues("media.type")
+	if err != nil {
+		return apperr.NewBadRequestError("Invalid form parameter", err)
+	}
+	selections, err := reqResp.GetBoolFormValues("media.selected")
+	if err != nil {
+		return apperr.NewBadRequestError("Invalid form parameter", err)
+	}
+	sources, err := reqResp.GetStringFormValues("media.src")
+	if err != nil {
+		return apperr.NewBadRequestError("Invalid form parameter", err)
 	}
 
 	if len(ids) != len(mediaIDs) || len(ids) != len(types) || len(ids) != len(selections) || len(ids) != len(sources) {
 		return apperr.NewBadRequestError("Mismatched lengths of fundamental media fields", nil)
 	}
 
-	allSlotGeoPrefixes, parseErr := reqResp.GetStringFormValues("media.slot.geoPrefix")
-	allSlotSheetIDs, parseErr := reqResp.GetStringFormValues("media.slot.sheetId")
-	allSlotSheetSlots, parseErr := reqResp.GetStringFormValues("media.slot.sheetSlot")
-	if parseErr != nil {
-		return apperr.NewBadRequestError("Invalid form parameter", parseErr)
+	allSlotGeoPrefixes, err := reqResp.GetStringFormValues("media.slot.geoPrefix")
+	if err != nil {
+		return apperr.NewBadRequestError("Invalid form parameter", err)
+	}
+	allSlotSheetIDs, err := reqResp.GetStringFormValues("media.slot.sheetId")
+	if err != nil {
+		return apperr.NewBadRequestError("Invalid form parameter", err)
+	}
+	allSlotSheetSlots, err := reqResp.GetStringFormValues("media.slot.sheetSlot")
+	if err != nil {
+		return apperr.NewBadRequestError("Invalid form parameter", err)
 	}
 
+	//nolint:godox
 	// TODO: Add validation for slot component formats (e.g., geoPrefix pattern, sheetId numeric validation)
 
 	mediaItems := make([]model.BeerMedia, len(ids))
 	slotIdx := 0
-	for i := range mediaItems {
+	for idx := range mediaItems {
 		var mediaBeerID *int
-		if selections[i] {
+		if selections[idx] {
 			mediaBeerID = &beerID
 		}
-		mediaItems[i].ID = ids[i]
-		mediaItems[i].MediaID = mediaIDs[i]
-		mediaItems[i].BeerID = mediaBeerID
-		mediaItems[i].Type = model.BeerMediaType(types[i])
-		mediaItems[i].Media = model.MediaItem{
-			ID:               mediaIDs[i],
-			ExternalFilename: sources[i],
+		mediaItems[idx].ID = ids[idx]
+		mediaItems[idx].MediaID = mediaIDs[idx]
+		mediaItems[idx].BeerID = mediaBeerID
+		mediaItems[idx].Type = model.BeerMediaType(types[idx])
+		mediaItems[idx].Media = model.MediaItem{
+			ID:               mediaIDs[idx],
+			ExternalFilename: sources[idx],
 		}
 
 		// Only process slot information if the media type is a Cap and it is selected
-		mediaItems[i].SlotID = nil
-		if mediaItems[i].Type.IsCap() && selections[i] {
+		mediaItems[idx].SlotID = nil
+		if mediaItems[idx].Type.IsCap() && selections[idx] {
 			if allSlotGeoPrefixes[slotIdx] != "" && allSlotSheetIDs[slotIdx] != "" && allSlotSheetSlots[slotIdx] != "" {
 				slotID := fmt.Sprintf("%s-%s-%s", allSlotGeoPrefixes[slotIdx], allSlotSheetIDs[slotIdx], allSlotSheetSlots[slotIdx])
-				mediaItems[i].SlotID = &slotID
+				mediaItems[idx].SlotID = &slotID
 			}
 		}
 		// Advance slotIdx for every item that contributed slot inputs (non-cap or cap-selected)
-		if !(mediaItems[i].Type.IsCap() && !selections[i]) {
+		if !mediaItems[idx].Type.IsCap() || selections[idx] {
 			slotIdx++
 		}
 	}

@@ -9,8 +9,8 @@ type Pagination[T any] struct {
 	TotalResults int
 	TotalPages   int
 	Results      []T
-	WhereQuery   interface{}
-	WhereArgs    interface{}
+	WhereQuery   any
+	WhereArgs    any
 }
 
 type ResultWithCount[T any] struct {

@@ -1,16 +1,17 @@
 package web
 
 import (
+	"errors"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"strconv"
 	"strings"
 
 	"github.com/a-h/templ"
-	"github.com/pkg/errors"
 
 	"github.com/my-pet-projects/collection/internal/apperr"
-	"github.com/my-pet-projects/collection/internal/view/component/shared"
+	"github.com/my-pet-projects/collection/internal/view/component/feedback"
 	"github.com/my-pet-projects/collection/internal/view/layout"
 )
 
@@ -30,9 +31,10 @@ func (h AppHandler) Handle(handlerFun HandlerFunc) http.HandlerFunc {
 			Response: w,
 			Request:  r,
 		}
-		if err := handlerFun(reqResp); err != nil {
-			h.logger.Error("Failed to handle request", slog.Any("error", err))
-			reqResp.RenderAppError(err) //nolint:errcheck,gosec
+		handlerErr := handlerFun(reqResp)
+		if handlerErr != nil {
+			h.logger.Error("Failed to handle request", slog.Any("error", handlerErr))
+			reqResp.RenderAppError(handlerErr) //nolint:errcheck,gosec
 			return
 		}
 	}
@@ -96,7 +98,7 @@ func (rrp *ReqRespPair) GetIntQueryParam(name string) (int, error) {
 	if strIntParam != "" {
 		parsedVal, parseErr := strconv.Atoi(strIntParam)
 		if parseErr != nil {
-			return 0, errors.Wrap(parseErr, "parse int query param")
+			return 0, fmt.Errorf("parse int query param: %w", parseErr)
 		}
 		param = parsedVal
 	}
@@ -119,7 +121,7 @@ func (rrp *ReqRespPair) GetBoolQueryParam(name string) (bool, error) {
 	if strBoolParam != "" {
 		parsedVal, parseErr := strconv.ParseBool(strBoolParam)
 		if parseErr != nil {
-			return false, errors.Wrap(parseErr, "parse bool query param")
+			return false, fmt.Errorf("parse bool query param: %w", parseErr)
 		}
 		param = parsedVal
 	}
@@ -136,7 +138,7 @@ func (rrp *ReqRespPair) GetIntFormValues(formKey string) ([]int, error) {
 	for _, val := range rrp.Request.PostForm[formKey] {
 		parsedVal, parseErr := strconv.Atoi(val)
 		if parseErr != nil {
-			return []int{}, errors.Wrap(parseErr, "parse int from form")
+			return []int{}, fmt.Errorf("parse int from form: %w", parseErr)
 		}
 		result = append(result, parsedVal)
 	}
@@ -154,7 +156,7 @@ func (rrp *ReqRespPair) GetBoolFormValues(formKey string) ([]bool, error) {
 	for _, val := range rrp.Request.PostForm[formKey] {
 		parsedVal, parseErr := strconv.ParseBool(val)
 		if parseErr != nil {
-			return []bool{}, errors.Wrap(parseErr, "parse bool from form")
+			return []bool{}, fmt.Errorf("parse bool from form: %w", parseErr)
 		}
 		result = append(result, parsedVal)
 	}
@@ -168,10 +170,8 @@ func (rrp *ReqRespPair) GetStringFormValues(formKey string) ([]string, error) {
 		return []string{}, apperr.NewBadRequestError("Failed to parse form", formErr)
 	}
 
-	result := make([]string, 0)
-	for _, val := range rrp.Request.PostForm[formKey] {
-		result = append(result, val)
-	}
+	result := make([]string, 0, len(rrp.Request.PostForm[formKey]))
+	result = append(result, rrp.Request.PostForm[formKey]...)
 
 	return result, nil
 }
@@ -205,14 +205,14 @@ func (rrp *ReqRespPair) TriggerHtmxNotifyEvent(variant NotifyEventVariant, title
 	rrp.Response.Header().Set("HX-Trigger", "{\"notify\": {\"variant\":\""+string(variant)+"\",\"title\":\""+title+"\"}}")
 }
 
-func (rrp *ReqRespPair) renderError(code int, msg string, err error) error {
-	rrp.Response.WriteHeader(code)
-	return shared.Error(msg, err).Render(rrp.Request.Context(), rrp.Response)
-}
-
 func (rrp *ReqRespPair) Redirect(url string) error {
 	rrp.Response.Header().Set("HX-Redirect", url)
 	return nil
+}
+
+func (rrp *ReqRespPair) renderError(code int, msg string, err error) error {
+	rrp.Response.WriteHeader(code)
+	return feedback.Error(msg, err).Render(rrp.Request.Context(), rrp.Response)
 }
 
 type NotifyEventVariant string

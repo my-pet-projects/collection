@@ -11,7 +11,7 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	"fmt"
 
-	"github.com/my-pet-projects/collection/internal/view/component/shared"
+	"github.com/my-pet-projects/collection/internal/view/component/header"
 	"github.com/my-pet-projects/collection/internal/view/layout"
 	beercomponent "github.com/my-pet-projects/collection/internal/view/page/beer/component"
 )
@@ -53,7 +53,7 @@ func Page(page ImagePageData) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = shared.PageHeaderSimple("Images", "Manage your collection images", "images").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = header.PageHeaderSimple("Images", "Manage your collection images", "images").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

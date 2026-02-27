@@ -53,6 +53,13 @@
       "groupName": "cdn-scripts",
       "labels": ["dependencies", "frontend"],
       "automerge": false
+    },
+    {
+      "description": "GitHub Actions updates",
+      "matchManagers": ["github-actions"],
+      "groupName": "github-actions",
+      "labels": ["dependencies", "ci"],
+      "automerge": true
     }
   ],
   "postUpdateOptions": ["gomodTidy"]

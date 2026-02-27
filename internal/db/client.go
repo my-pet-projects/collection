@@ -6,7 +6,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/pkg/errors"
 	_ "github.com/tursodatabase/libsql-client-go/libsql"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -49,7 +48,7 @@ func NewClient(cfg *config.Config) (*DbClient, error) {
 		),
 	})
 	if gormErr != nil {
-		return nil, errors.Wrap(gormErr, "gorm connection")
+		return nil, fmt.Errorf("gorm connection: %w", gormErr)
 	}
 
 	gormErr = gormDB.Use(dbresolver.
@@ -73,7 +72,7 @@ func NewClient(cfg *config.Config) (*DbClient, error) {
 		}, GeographyDBResolverName),
 	)
 	if gormErr != nil {
-		return nil, errors.Wrap(gormErr, "gorm resolver")
+		return nil, fmt.Errorf("gorm resolver: %w", gormErr)
 	}
 
 	return &DbClient{gormDB}, nil

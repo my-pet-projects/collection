@@ -5,6 +5,7 @@ package middleware
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"log/slog"
@@ -12,8 +13,6 @@ import (
 	"os"
 	"runtime/debug"
 	"strings"
-
-	"github.com/pkg/errors"
 
 	"github.com/my-pet-projects/collection/internal/web"
 )
@@ -32,8 +31,10 @@ func recovererHandler(next http.Handler, logger *slog.Logger) http.Handler {
 		}
 
 		defer func() {
-			if rvr := recover(); rvr != nil {
-				if rvr == http.ErrAbortHandler {
+			rvr := recover()
+			if rvr != nil {
+				recErr, ok := rvr.(error)
+				if ok && errors.Is(recErr, http.ErrAbortHandler) {
 					// we don't recover http.ErrAbortHandler so the response
 					// to the client is aborted, this should not be logged
 					panic(rvr)
@@ -48,7 +49,7 @@ func recovererHandler(next http.Handler, logger *slog.Logger) http.Handler {
 				case string:
 					panicErr = errors.New(typedErr)
 				case error:
-					panicErr = errors.Wrap(typedErr, "panic")
+					panicErr = fmt.Errorf("panic: %w", typedErr)
 				default:
 					panicErr = errors.New("panic has occurred")
 				}
@@ -64,31 +65,35 @@ func recovererHandler(next http.Handler, logger *slog.Logger) http.Handler {
 }
 
 // for ability to test the PrintPrettyStack function.
-var recovererErrorWriter io.Writer = os.Stderr
+var recovererErrorWriter io.Writer = os.Stderr //nolint:gochecknoglobals // test hook
 
-func printPrettyStack(rvr interface{}) {
+func printPrettyStack(rvr any) {
 	debugStack := debug.Stack()
 	s := prettyStack{}
-	out, err := s.parse(debugStack, rvr)
-	if err == nil {
-		recovererErrorWriter.Write(out)
+	out, parseErr := s.parse(debugStack, rvr)
+	if parseErr == nil {
+		_, err := recovererErrorWriter.Write(out)
+		if err != nil {
+			// Fallback to stderr if custom writer fails
+			_, _ = os.Stderr.Write(debugStack)
+		}
 	} else {
 		// print stdlib output as a fallback
-		os.Stderr.Write(debugStack)
+		_, _ = os.Stderr.Write(debugStack)
 	}
 }
 
 type prettyStack struct{}
 
-func (s prettyStack) parse(debugStack []byte, rvr interface{}) ([]byte, error) {
+func (s prettyStack) parse(debugStack []byte, rvr any) ([]byte, error) {
 	var err error
 	useColor := true
 	buf := &bytes.Buffer{}
 
-	colorWrite(buf, false, bRed, "\n")
-	colorWrite(buf, useColor, bCyan, " panic: ")
-	colorWrite(buf, useColor, bBlue, "%v", rvr)
-	colorWrite(buf, false, bWhite, "\n \n")
+	colorWritef(buf, false, bRed, "\n")
+	colorWritef(buf, useColor, bCyan, " panic: ")
+	colorWritef(buf, useColor, bBlue, "%v", rvr)
+	colorWritef(buf, false, bWhite, "\n \n")
 
 	// process debug stack info
 	stack := strings.Split(string(debugStack), "\n")
@@ -165,14 +170,14 @@ func (s prettyStack) decorateFuncCallLine(line string, useColor bool, num int) (
 	methodColor := bGreen
 
 	if num == 0 {
-		colorWrite(buf, useColor, bRed, " -> ")
+		colorWritef(buf, useColor, bRed, " -> ")
 		pkgColor = bMagenta
 		methodColor = bRed
 	} else {
-		colorWrite(buf, useColor, bWhite, "    ")
+		colorWritef(buf, useColor, bWhite, "    ")
 	}
-	colorWrite(buf, useColor, pkgColor, "%s", pkg)
-	colorWrite(buf, useColor, methodColor, "%s\n", method)
+	colorWritef(buf, useColor, pkgColor, "%s", pkg)
+	colorWritef(buf, useColor, methodColor, "%s\n", method)
 	// cW(buf, useColor, nBlack, "%s", addr)
 	return buf.String(), nil
 }
@@ -199,52 +204,42 @@ func (s prettyStack) decorateSourceLine(line string, useColor bool, num int) (st
 	lineColor := bGreen
 
 	if num == 1 {
-		colorWrite(buf, useColor, bRed, " ->   ")
+		colorWritef(buf, useColor, bRed, " ->   ")
 		fileColor = bRed
 		lineColor = bMagenta
 	} else {
-		colorWrite(buf, false, bWhite, "      ")
+		colorWritef(buf, false, bWhite, "      ")
 	}
-	colorWrite(buf, useColor, bWhite, "%s", dir)
-	colorWrite(buf, useColor, fileColor, "%s", file)
-	colorWrite(buf, useColor, lineColor, "%s", lineno)
+	colorWritef(buf, useColor, bWhite, "%s", dir)
+	colorWritef(buf, useColor, fileColor, "%s", file)
+	colorWritef(buf, useColor, lineColor, "%s", lineno)
 	if num == 1 {
-		colorWrite(buf, false, bWhite, "\n")
+		colorWritef(buf, false, bWhite, "\n")
 	}
-	colorWrite(buf, false, bWhite, "\n")
+	colorWritef(buf, false, bWhite, "\n")
 
 	return buf.String(), nil
 }
 
-func colorWrite(w io.Writer, useColor bool, color []byte, s string, args ...interface{}) {
+func colorWritef(writer io.Writer, useColor bool, color []byte, format string, args ...any) {
 	if useColor {
-		w.Write(color)
+		writer.Write(color) //nolint:errcheck,gosec
 	}
-	fmt.Fprintf(w, s, args...)
+	fmt.Fprintf(writer, format, args...) //nolint:errcheck
 	if useColor {
-		w.Write(reset)
+		writer.Write(reset) //nolint:errcheck,gosec
 	}
 }
 
 var (
-	// Normal colors.
-	nBlack   = []byte{'\033', '[', '3', '0', 'm'}
-	nRed     = []byte{'\033', '[', '3', '1', 'm'}
-	nGreen   = []byte{'\033', '[', '3', '2', 'm'}
-	nYellow  = []byte{'\033', '[', '3', '3', 'm'}
-	nBlue    = []byte{'\033', '[', '3', '4', 'm'}
-	nMagenta = []byte{'\033', '[', '3', '5', 'm'}
-	nCyan    = []byte{'\033', '[', '3', '6', 'm'}
-	nWhite   = []byte{'\033', '[', '3', '7', 'm'}
-	// Bright colors.
-	bBlack   = []byte{'\033', '[', '3', '0', ';', '1', 'm'}
-	bRed     = []byte{'\033', '[', '3', '1', ';', '1', 'm'}
-	bGreen   = []byte{'\033', '[', '3', '2', ';', '1', 'm'}
-	bYellow  = []byte{'\033', '[', '3', '3', ';', '1', 'm'}
-	bBlue    = []byte{'\033', '[', '3', '4', ';', '1', 'm'}
-	bMagenta = []byte{'\033', '[', '3', '5', ';', '1', 'm'}
-	bCyan    = []byte{'\033', '[', '3', '6', ';', '1', 'm'}
-	bWhite   = []byte{'\033', '[', '3', '7', ';', '1', 'm'}
+	// Only keep used colors.
+	nYellow  = []byte{'\033', '[', '3', '3', 'm'}           //nolint:gochecknoglobals // ANSI color constant
+	bRed     = []byte{'\033', '[', '3', '1', ';', '1', 'm'} //nolint:gochecknoglobals // ANSI color constant
+	bGreen   = []byte{'\033', '[', '3', '2', ';', '1', 'm'} //nolint:gochecknoglobals // ANSI color constant
+	bBlue    = []byte{'\033', '[', '3', '4', ';', '1', 'm'} //nolint:gochecknoglobals // ANSI color constant
+	bMagenta = []byte{'\033', '[', '3', '5', ';', '1', 'm'} //nolint:gochecknoglobals // ANSI color constant
+	bCyan    = []byte{'\033', '[', '3', '6', ';', '1', 'm'} //nolint:gochecknoglobals // ANSI color constant
+	bWhite   = []byte{'\033', '[', '3', '7', ';', '1', 'm'} //nolint:gochecknoglobals // ANSI color constant
 
-	reset = []byte{'\033', '[', '0', 'm'}
+	reset = []byte{'\033', '[', '0', 'm'} //nolint:gochecknoglobals // ANSI color constant
 )

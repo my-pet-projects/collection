@@ -13,22 +13,12 @@ import (
 const (
 	reset = "\033[0m"
 
-	black        = 30
-	red          = 31
-	green        = 32
-	yellow       = 33
-	blue         = 34
-	magenta      = 35
-	cyan         = 36
-	lightGray    = 37
-	darkGray     = 90
-	lightRed     = 91
-	lightGreen   = 92
-	lightYellow  = 93
-	lightBlue    = 94
-	lightMagenta = 95
-	lightCyan    = 96
-	white        = 97
+	cyan        = 36
+	lightGray   = 37
+	darkGray    = 90
+	lightRed    = 91
+	lightYellow = 93
+	white       = 97
 )
 
 func colorize(colorCode int, v string) string {
@@ -117,8 +107,9 @@ func (h *prettyHandler) computeAttrs(ctx context.Context, rec slog.Record) (map[
 		h.b.Reset()
 		h.m.Unlock()
 	}()
-	if err := h.h.Handle(ctx, rec); err != nil {
-		return nil, fmt.Errorf("error when calling inner handler's Handle: %w", err)
+	handleErr := h.h.Handle(ctx, rec)
+	if handleErr != nil {
+		return nil, fmt.Errorf("error when calling inner handler's Handle: %w", handleErr)
 	}
 
 	var attrs map[string]any
