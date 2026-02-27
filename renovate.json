@@ -1,85 +1,41 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:recommended"
-  ],
-  "schedule": [
-    "before 3am on sunday"
-  ],
+  "extends": ["config:recommended"],
+  "schedule": ["before 3am on sunday"],
   "timezone": "UTC",
   "prConcurrentLimit": 5,
-  "labels": [
-    "dependencies"
-  ],
+  "labels": ["dependencies"],
   "vulnerabilityAlerts": {
     "enabled": true,
-    "labels": [
-      "security"
-    ]
+    "labels": ["security"]
   },
   "packageRules": [
     {
-      "description": "Enable Go version updates",
-      "matchManagers": [
-        "gomod"
-      ],
-      "matchDepNames": [
-        "go"
-      ],
-      "rangeStrategy": "bump"
-    },
-    {
-      "description": "Group Go version updates with minor/patch dependencies",
-      "matchManagers": [
-        "gomod"
-      ],
-      "matchDepNames": [
-        "go"
-      ],
-      "matchUpdateTypes": [
-        "minor",
-        "patch"
-      ],
-      "groupName": "go-minor-patch-updates",
-      "automerge": true,
-      "platformAutomerge": true
-    },
-    {
-      "description": "Group all minor and patch Go dependency updates into a single PR",
-      "matchManagers": [
-        "gomod"
-      ],
-      "matchUpdateTypes": [
-        "minor",
-        "patch",
-        "digest"
-      ],
+      "description": "Group all minor and patch Go dependency updates",
+      "matchManagers": ["gomod"],
+      "matchUpdateTypes": ["minor", "patch", "digest"],
       "groupName": "go-minor-patch-updates",
       "automerge": true,
       "platformAutomerge": true,
-      "matchDepNames": [
-        "!go"
-      ]
+      "matchDepNames": ["!go"]
     },
     {
-      "description": "Separate PRs for major Go dependency updates",
-      "matchManagers": [
-        "gomod"
-      ],
-      "matchUpdateTypes": [
-        "major"
-      ],
-      "labels": [
-        "dependencies",
-        "breaking"
-      ],
-      "automerge": false,
-      "matchDepNames": [
-        "!go"
-      ]
+      "description": "Major Go dependency updates",
+      "matchManagers": ["gomod"],
+      "matchDepNames": ["!go"],
+      "matchUpdateTypes": ["major"],
+      "labels": ["dependencies", "breaking"],
+      "automerge": false
+    },
+    {
+      "description": "Go version updates",
+      "matchManagers": ["gomod"],
+      "matchDepNames": ["go"],
+      "rangeStrategy": "bump",
+      "groupName": "go-version",
+      "labels": ["dependencies", "go-version"],
+      "automerge": false
     }
   ],
-  "postUpdateOptions": [
-    "gomodTidy"
-  ]
+  "postUpdateOptions": ["gomodTidy"]
 }
