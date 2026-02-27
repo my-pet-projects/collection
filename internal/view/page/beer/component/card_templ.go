@@ -242,7 +242,7 @@ func Card(beer model.Beer) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if beer.HasBeerStyle() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<div class=\"flex items-center\"><!-- Beer Style Badge --><div class=\"inline-flex items-center rounded-full border border-slate-300/50 bg-gradient-to-r from-slate-100 to-slate-200 px-3 py-1.5 shadow-sm sm:px-4 sm:py-2\"><span class=\"text-xs font-medium text-slate-700 sm:text-sm\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<div class=\"flex items-center\"><!-- Beer Style Badge --><div class=\"inline-flex items-center rounded-full border border-slate-300/50 bg-linear-to-r from-slate-100 to-slate-200 px-3 py-1.5 shadow-sm sm:px-4 sm:py-2\"><span class=\"text-xs font-medium text-slate-700 sm:text-sm\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

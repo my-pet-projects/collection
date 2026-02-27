@@ -219,7 +219,7 @@ templ navigation() {
 						<div class="relative" x-data="{ open: false }">
 							<button
 								@click="open = !open"
-								class="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 via-orange-500 to-red-500 text-sm font-semibold text-white shadow-sm ring-2 ring-white transition-all duration-200 hover:scale-105 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
+								class="flex h-8 w-8 items-center justify-center rounded-full bg-linear-to-br from-amber-400 via-orange-500 to-red-500 text-sm font-semibold text-white shadow-sm ring-2 ring-white transition-all duration-200 hover:scale-105 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
 							>
 								if ok && user.IsAuthenticated() {
 									{ string([]rune(user.GetDisplayName())[0:1]) }

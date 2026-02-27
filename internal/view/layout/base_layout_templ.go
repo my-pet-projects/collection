@@ -411,7 +411,7 @@ func navigation() templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</div><!-- Avatar with Dropdown --><div class=\"relative\" x-data=\"{ open: false }\"><button @click=\"open = !open\" class=\"flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 via-orange-500 to-red-500 text-sm font-semibold text-white shadow-sm ring-2 ring-white transition-all duration-200 hover:scale-105 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</div><!-- Avatar with Dropdown --><div class=\"relative\" x-data=\"{ open: false }\"><button @click=\"open = !open\" class=\"flex h-8 w-8 items-center justify-center rounded-full bg-linear-to-br from-amber-400 via-orange-500 to-red-500 text-sm font-semibold text-white shadow-sm ring-2 ring-white transition-all duration-200 hover:scale-105 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

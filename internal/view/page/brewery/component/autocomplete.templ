@@ -1,23 +1,8 @@
 package component
 
-import (
-	"fmt"
+import "github.com/my-pet-projects/collection/internal/view/component/ui"
 
-	"github.com/my-pet-projects/collection/internal/view/component/ui"
-)
-
+// BreweriesAutocomplete renders an autocomplete for breweries.
 templ BreweriesAutocomplete(data BreweriesData) {
-	{{
-		props := ui.AutoCompleteProps{
-			ID:             "brewery",
-			Name:           "brewery",
-			Data:           data.ToAutocompleteData(),
-			EventNamespace: "brewery",
-			HasError:       data.HasError,
-		}
-		if data.SelectedBrewery != nil {
-			props.PreselectedValue = fmt.Sprint(*data.SelectedBrewery)
-		}
-	}}
-	@ui.AutoComplete(props)
+	@ui.AutoComplete(data.ToAutocompleteProps())
 }

@@ -48,12 +48,12 @@ func ErrorPageLayout(code int) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if code == http.StatusUnauthorized {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<h1 class=\"mb-4 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-6xl font-bold leading-tight tracking-tight text-transparent sm:text-7xl lg:text-8xl\">401</h1><h2 class=\"mb-2 text-xl font-bold text-gray-900 sm:text-2xl\">Access Denied</h2><p class=\"mb-8 text-sm text-gray-600 sm:text-base\">You need to be signed in to access your beer collection</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<h1 class=\"mb-4 bg-linear-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-6xl font-bold leading-tight tracking-tight text-transparent sm:text-7xl lg:text-8xl\">401</h1><h2 class=\"mb-2 text-xl font-bold text-gray-900 sm:text-2xl\">Access Denied</h2><p class=\"mb-8 text-sm text-gray-600 sm:text-base\">You need to be signed in to access your beer collection</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<h1 class=\"mb-4 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-6xl font-bold leading-tight tracking-tight text-transparent sm:text-7xl lg:text-8xl\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<h1 class=\"mb-4 bg-linear-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-6xl font-bold leading-tight tracking-tight text-transparent sm:text-7xl lg:text-8xl\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

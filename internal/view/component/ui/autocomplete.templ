@@ -366,7 +366,7 @@ templ AutoComplete(props AutoCompleteProps) {
 			x-ref="dropdown"
 		>
 			<!-- Search -->
-			<div class="relative border-b border-gray-200/70 bg-gradient-to-r from-white via-gray-50 to-white">
+			<div class="relative border-b border-gray-200/70 bg-linear-to-r from-white via-gray-50 to-white">
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.5" class="size-5 absolute left-4 top-1/2 -translate-y-1/2 text-amber-500">
 					<path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"></path>
 				</svg>
@@ -393,7 +393,7 @@ templ AutoComplete(props AutoCompleteProps) {
 					x-bind:key="item.value || 'all'"
 				>
 					<li
-						class="inline-flex cursor-pointer justify-between gap-6 bg-white px-4 py-3 text-sm text-gray-900 transition-all duration-200 hover:bg-gradient-to-r hover:from-gray-50/50 hover:to-gray-100/30 focus-visible:bg-gradient-to-r focus-visible:from-gray-50/50 focus-visible:to-gray-100/30 focus-visible:outline-none"
+						class="inline-flex cursor-pointer justify-between gap-6 bg-white px-4 py-3 text-sm text-gray-900 transition-all duration-200 hover:bg-linear-to-r hover:from-gray-50/50 hover:to-gray-100/30 focus-visible:bg-linear-to-r focus-visible:from-gray-50/50 focus-visible:to-gray-100/30 focus-visible:outline-none"
 						x-on:click="setSelectedOption(item)"
 						x-on:keydown.enter="setSelectedOption(item)"
 						tabindex="0"

@@ -36,7 +36,7 @@ func Images(params BeerPageData) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"beer-images-form\" hx-ext=\"response-targets\" class=\"mx-auto max-w-7xl\"><!-- Header Section --><div class=\"mb-10\"><div class=\"flex items-center justify-between\"><div><h2 class=\"bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-3xl font-bold leading-tight tracking-tight text-transparent sm:text-4xl\">Beer Images</h2><p class=\"mt-2 text-base text-gray-600 sm:text-lg\">Select images and add cap collection details</p></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"beer-images-form\" hx-ext=\"response-targets\" class=\"mx-auto max-w-7xl\"><!-- Header Section --><div class=\"mb-10\"><div class=\"flex items-center justify-between\"><div><h2 class=\"bg-linear-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-3xl font-bold leading-tight tracking-tight text-transparent sm:text-4xl\">Beer Images</h2><p class=\"mt-2 text-base text-gray-600 sm:text-lg\">Select images and add cap collection details</p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -96,7 +96,7 @@ func Images(params BeerPageData) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" hx-target=\"#beer-images-form\" hx-target-error=\"#beer-images-errors\" hx-trigger=\"submit\" hx-indicator=\".hx-save-indicator-toggle\" hx-disabled-elt=\"button,input:not([type='hidden'])\"><!-- Images Section --><div class=\"mb-10\"><!-- Section Header --><div class=\"mb-8 flex items-center justify-between\"><div><h3 class=\"text-xl font-semibold text-gray-900\">Available Images</h3><p class=\"mt-1 text-sm text-gray-600\">Select images to include in your beer collection</p></div><!-- Legend --><div class=\"flex items-center gap-6 text-sm\"><div class=\"flex items-center gap-2\"><div class=\"h-3 w-3 rounded-full bg-gradient-to-r from-amber-500 to-orange-500\"></div><span class=\"font-medium text-gray-700\">Selected</span></div><div class=\"flex items-center gap-2\"><div class=\"h-3 w-3 rounded-full bg-gray-300\"></div><span class=\"text-gray-600\">Available</span></div></div></div><!-- Images Grid --><div class=\"mb-6 grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" hx-target=\"#beer-images-form\" hx-target-error=\"#beer-images-errors\" hx-trigger=\"submit\" hx-indicator=\".hx-save-indicator-toggle\" hx-disabled-elt=\"button,input:not([type='hidden'])\"><!-- Images Section --><div class=\"mb-10\"><!-- Section Header --><div class=\"mb-8 flex items-center justify-between\"><div><h3 class=\"text-xl font-semibold text-gray-900\">Available Images</h3><p class=\"mt-1 text-sm text-gray-600\">Select images to include in your beer collection</p></div><!-- Legend --><div class=\"flex items-center gap-6 text-sm\"><div class=\"flex items-center gap-2\"><div class=\"h-3 w-3 rounded-full bg-linear-to-r from-amber-500 to-orange-500\"></div><span class=\"font-medium text-gray-700\">Selected</span></div><div class=\"flex items-center gap-2\"><div class=\"h-3 w-3 rounded-full bg-gray-300\"></div><span class=\"text-gray-600\">Available</span></div></div></div><!-- Images Grid --><div class=\"mb-6 grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -211,7 +211,7 @@ func Images(params BeerPageData) templ.Component {
 						nextSheetID = params.NextSlot.SheetID
 						nextSheetSlot = params.NextSlot.SheetSlot
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, " <div class=\"space-y-3 rounded-2xl border border-gray-200 bg-gradient-to-b from-white to-gray-50 p-4 shadow-sm transition-all duration-300\" x-cloak x-show=\"selected\" x-transition:enter=\"transition ease-out duration-300\" x-transition:enter-start=\"opacity-0 transform scale-95 translate-y-2\" x-transition:enter-end=\"opacity-100 transform scale-100 translate-y-0\" x-transition:leave=\"transition ease-in duration-200\" x-transition:leave-start=\"opacity-100 transform scale-100 translate-y-0\" x-transition:leave-end=\"opacity-0 transform scale-95 translate-y-2\" x-data=\"")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, " <div class=\"space-y-3 rounded-2xl border border-gray-200 bg-linear-to-b from-white to-gray-50 p-4 shadow-sm transition-all duration-300\" x-cloak x-show=\"selected\" x-transition:enter=\"transition ease-out duration-300\" x-transition:enter-start=\"opacity-0 transform scale-95 translate-y-2\" x-transition:enter-end=\"opacity-100 transform scale-100 translate-y-0\" x-transition:leave=\"transition ease-in duration-200\" x-transition:leave-start=\"opacity-100 transform scale-100 translate-y-0\" x-transition:leave-end=\"opacity-0 transform scale-95 translate-y-2\" x-data=\"")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
