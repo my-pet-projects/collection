@@ -72,7 +72,7 @@ func Page(data HomePageData) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var2 string
-			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(data.Stats.TotalBeersStr())
+			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(data.Stats.GetTotalBeers())
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/home/page.templ`, Line: 67, Col: 96}
 			}
@@ -85,7 +85,7 @@ func Page(data HomePageData) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var3 string
-			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(data.Stats.TotalBreweriesStr())
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(data.Stats.GetTotalBreweries())
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/home/page.templ`, Line: 82, Col: 100}
 			}
@@ -98,7 +98,7 @@ func Page(data HomePageData) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var4 string
-			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(data.Stats.TotalCountriesStr())
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(data.Stats.GetTotalCountries())
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/home/page.templ`, Line: 97, Col: 100}
 			}

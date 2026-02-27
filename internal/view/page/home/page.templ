@@ -64,7 +64,7 @@ templ Page(data HomePageData) {
 										</svg>
 									</div>
 									<div class="text-left sm:text-center">
-										<div class="text-2xl font-bold text-gray-900 sm:text-3xl">{ data.Stats.TotalBeersStr() }</div>
+										<div class="text-2xl font-bold text-gray-900 sm:text-3xl">{ data.Stats.GetTotalBeers() }</div>
 										<div class="text-sm text-gray-500">Beers</div>
 									</div>
 								</div>
@@ -79,7 +79,7 @@ templ Page(data HomePageData) {
 										</svg>
 									</div>
 									<div class="text-left sm:text-center">
-										<div class="text-2xl font-bold text-gray-900 sm:text-3xl">{ data.Stats.TotalBreweriesStr() }</div>
+										<div class="text-2xl font-bold text-gray-900 sm:text-3xl">{ data.Stats.GetTotalBreweries() }</div>
 										<div class="text-sm text-gray-500">Breweries</div>
 									</div>
 								</div>
@@ -94,7 +94,7 @@ templ Page(data HomePageData) {
 										</svg>
 									</div>
 									<div class="text-left sm:text-center">
-										<div class="text-2xl font-bold text-gray-900 sm:text-3xl">{ data.Stats.TotalCountriesStr() }</div>
+										<div class="text-2xl font-bold text-gray-900 sm:text-3xl">{ data.Stats.GetTotalCountries() }</div>
 										<div class="text-sm text-gray-500">Countries</div>
 									</div>
 								</div>

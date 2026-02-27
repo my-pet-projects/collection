@@ -11,5 +11,11 @@ window.addEventListener("load", async function () {
     window.__clerkReady = true;
   } catch (err) {
     console.error("Failed to load Clerk", err);
+    const errorEl = document.getElementById("clerk-error");
+    if (errorEl) {
+      errorEl.textContent =
+        "Authentication service unavailable. Please refresh the page.";
+      errorEl.classList.remove("hidden");
+    }
   }
 });

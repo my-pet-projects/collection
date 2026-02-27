@@ -15,17 +15,17 @@ type CollectionStats struct {
 	TotalCountries int
 }
 
-// TotalBeersStr returns the total beers count as a string.
-func (s CollectionStats) TotalBeersStr() string {
+// GetTotalBeers returns the total beers count as a string.
+func (s CollectionStats) GetTotalBeers() string {
 	return strconv.Itoa(s.TotalBeers)
 }
 
-// TotalBreweriesStr returns the total breweries count as a string.
-func (s CollectionStats) TotalBreweriesStr() string {
+// GetTotalBreweries returns the total breweries count as a string.
+func (s CollectionStats) GetTotalBreweries() string {
 	return strconv.Itoa(s.TotalBreweries)
 }
 
-// TotalCountriesStr returns the total countries count as a string.
-func (s CollectionStats) TotalCountriesStr() string {
+// GetTotalCountries returns the total countries count as a string.
+func (s CollectionStats) GetTotalCountries() string {
 	return strconv.Itoa(s.TotalCountries)
 }
