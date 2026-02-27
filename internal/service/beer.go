@@ -114,7 +114,7 @@ func (s BeerService) UpdateBeer(
 
 	updErr := s.beerStore.UpdateBeer(ctx, beer)
 	if updErr != nil {
-		return fmt.Errorf("update brewery: %w", updErr)
+		return fmt.Errorf("update beer: %w", updErr)
 	}
 	return nil
 }
@@ -181,7 +181,7 @@ func (s BeerService) GetBeerStyle(ctx context.Context, id int) (*model.BeerStyle
 func (s BeerService) CreateBeerStyle(ctx context.Context, style model.BeerStyle) (*model.BeerStyle, error) {
 	id, styleErr := s.styleStore.InsertBeerStyle(ctx, style)
 	if styleErr != nil {
-		return nil, fmt.Errorf("update beer style: %w", styleErr)
+		return nil, fmt.Errorf("create beer style: %w", styleErr)
 	}
 	style.ID = id
 	return &style, nil

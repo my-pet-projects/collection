@@ -8,7 +8,9 @@ import (
 func NewLoggingMiddleware(logger *slog.Logger) http.Handler {
 	//nolint:godox
 	_ = logger.WithGroup("http") // TODO: implement logging middleware
-	return nil
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// No-op placeholder until logging middleware is implemented
+	})
 	// return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	// 	res := echoCtx.Response()
 	// 	start := time.Now()
