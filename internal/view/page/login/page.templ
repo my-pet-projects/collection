@@ -16,21 +16,7 @@ templ Page(data LoginData) {
 			<link href="/assets/css/tailwind-output.gen.css" rel="stylesheet"/>
 			<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 			<script async crossorigin="anonymous" data-clerk-publishable-key={ data.ClerkPublishableKey } src={ fmt.Sprintf("%s/npm/@clerk/clerk-js@latest/dist/clerk.browser.js", data.ClerkAuthHost) } type="text/javascript"></script>
-			<script type="text/javascript">
-  				window.__clerkReady = false;
-				window.addEventListener("load", async function () {
-					try {
-						await Clerk.load();
-						if (Clerk.session) {
-							window.location.replace("/workspace/beer");
-							return;
-						}
-						window.__clerkReady = true;
-					} catch (err) {
-						console.error("Failed to load Clerk", err);
-					}
-				});
-			</script>
+			<script src="/assets/js/clerk-login.js"></script>
 		</head>
 		<body class="min-h-screen bg-gray-50">
 			<!-- Container -->
@@ -41,7 +27,7 @@ templ Page(data LoginData) {
 						<div class="group mb-6 inline-flex h-16 w-16 items-center justify-center rounded-full shadow-xl ring-2 ring-white transition-all duration-300 hover:scale-110 hover:shadow-2xl">
 							@asset.MainBeerLogo("h-full w-full transition-transform duration-300 group-hover:rotate-12")
 						</div>
-						<h1 class="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-2xl font-bold leading-tight tracking-tight text-transparent sm:text-3xl">
+						<h1 class="bg-linear-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-2xl font-bold leading-tight tracking-tight text-transparent sm:text-3xl">
 							Welcome back
 						</h1>
 						<p class="mt-2 text-sm text-gray-600 sm:text-base">Sign in to your beer collection</p>

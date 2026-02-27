@@ -1,0 +1,133 @@
+package home
+
+import "github.com/my-pet-projects/collection/internal/view/component/asset"
+
+templ Page(data HomePageData) {
+	<!DOCTYPE html>
+	<html lang="en" class="h-full">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>Beer Collection</title>
+			<link rel="icon" type="image/svg+xml" sizes="32x32" href="/assets/img/pint-of-beer.svg"/>
+			<link href="/assets/css/tailwind-output.gen.css" rel="stylesheet"/>
+		</head>
+		<body class="bg-linear-to-br flex h-full flex-col from-amber-50 via-white to-orange-50">
+			<!-- Header -->
+			<header class="px-6 py-4">
+				<div class="mx-auto flex max-w-7xl items-center justify-between">
+					<div class="flex items-center gap-3">
+						<div class="h-10 w-10">
+							@asset.MainBeerLogo("h-full w-full drop-shadow-lg")
+						</div>
+						<span class="text-xl font-bold text-gray-900">Beer Collection</span>
+					</div>
+					if data.IsAuthenticated {
+						<a
+							href="/workspace/beer"
+							class="bg-linear-to-r rounded-xl from-amber-500 to-orange-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-amber-500/25"
+						>
+							Go to Collection
+						</a>
+					} else {
+						<a
+							href="/login"
+							class="bg-linear-to-r rounded-xl from-amber-500 to-orange-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-amber-500/25"
+						>
+							Sign In
+						</a>
+					}
+				</div>
+			</header>
+			<!-- Main Content -->
+			<main class="flex flex-1 items-center justify-center px-4 sm:px-6">
+				<div class="w-full max-w-2xl text-center">
+					<!-- Logo -->
+					<div class="mb-6 inline-block">
+						<div class="h-24 w-24 transition-transform duration-500 hover:rotate-6 hover:scale-110 sm:h-32 sm:w-32">
+							@asset.MainBeerLogo("h-full w-full drop-shadow-2xl")
+						</div>
+					</div>
+					<!-- Title -->
+					<h1 class="mb-2 text-3xl font-bold text-gray-900 sm:text-4xl">Beer Collection</h1>
+					<p class="mb-8 text-base text-gray-600 sm:text-lg">Your personal beer journal</p>
+					<!-- Stats Grid (for authenticated users) -->
+					if data.IsAuthenticated && data.Stats.TotalBeers > 0 {
+						<div class="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-6">
+							<!-- Beers -->
+							<div class="group relative overflow-hidden rounded-2xl bg-white p-4 shadow-lg ring-1 ring-gray-200 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:ring-amber-500/50 sm:p-6">
+								<div class="bg-linear-to-br absolute inset-0 from-amber-500/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
+								<div class="relative flex items-center gap-4 sm:block">
+									<div class="bg-linear-to-br inline-flex h-10 w-10 items-center justify-center rounded-xl from-amber-400 to-orange-500 shadow-lg sm:mb-2 sm:h-12 sm:w-12">
+										<svg class="h-5 w-5 text-white sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+											<path stroke-linecap="round" stroke-linejoin="round" d="M17 11h1a3 3 0 0 1 0 6h-1M9 12v6M13 12v6M14 7.5c-1 0-1.44.5-3 .5s-2-.5-3-.5-1.72.5-2.5.5a2.5 2.5 0 0 1 0-5c.78 0 1.57.5 2.5.5s2-.5 3-.5 2 .5 3 .5 1.72-.5 2.5-.5a2.5 2.5 0 0 1 0 5c-.78 0-1.5-.5-2.5-.5ZM5 8v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8"></path>
+										</svg>
+									</div>
+									<div class="text-left sm:text-center">
+										<div class="text-2xl font-bold text-gray-900 sm:text-3xl">{ data.Stats.TotalBeersStr() }</div>
+										<div class="text-sm text-gray-500">Beers</div>
+									</div>
+								</div>
+							</div>
+							<!-- Breweries -->
+							<div class="group relative overflow-hidden rounded-2xl bg-white p-4 shadow-lg ring-1 ring-gray-200 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:ring-blue-500/50 sm:p-6">
+								<div class="bg-linear-to-br absolute inset-0 from-blue-500/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
+								<div class="relative flex items-center gap-4 sm:block">
+									<div class="bg-linear-to-br inline-flex h-10 w-10 items-center justify-center rounded-xl from-blue-400 to-indigo-500 shadow-lg sm:mb-2 sm:h-12 sm:w-12">
+										<svg class="h-5 w-5 text-white sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+											<path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+										</svg>
+									</div>
+									<div class="text-left sm:text-center">
+										<div class="text-2xl font-bold text-gray-900 sm:text-3xl">{ data.Stats.TotalBreweriesStr() }</div>
+										<div class="text-sm text-gray-500">Breweries</div>
+									</div>
+								</div>
+							</div>
+							<!-- Countries -->
+							<div class="group relative overflow-hidden rounded-2xl bg-white p-4 shadow-lg ring-1 ring-gray-200 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:ring-purple-500/50 sm:p-6">
+								<div class="bg-linear-to-br absolute inset-0 from-purple-500/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
+								<div class="relative flex items-center gap-4 sm:block">
+									<div class="bg-linear-to-br inline-flex h-10 w-10 items-center justify-center rounded-xl from-purple-400 to-pink-500 shadow-lg sm:mb-2 sm:h-12 sm:w-12">
+										<svg class="h-5 w-5 text-white sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+											<path stroke-linecap="round" stroke-linejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+										</svg>
+									</div>
+									<div class="text-left sm:text-center">
+										<div class="text-2xl font-bold text-gray-900 sm:text-3xl">{ data.Stats.TotalCountriesStr() }</div>
+										<div class="text-sm text-gray-500">Countries</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					}
+					<!-- CTA Button -->
+					<div class="flex justify-center">
+						if data.IsAuthenticated {
+							<a
+								href="/workspace/beer"
+								class="bg-linear-to-r inline-flex items-center gap-2 rounded-2xl from-amber-500 via-orange-500 to-red-500 px-6 py-3 text-base font-bold text-white shadow-xl shadow-orange-500/25 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-orange-500/40 sm:px-8 sm:py-4 sm:text-lg"
+							>
+								<svg class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+									<path stroke-linecap="round" stroke-linejoin="round" d="M17 11h1a3 3 0 0 1 0 6h-1M9 12v6M13 12v6M14 7.5c-1 0-1.44.5-3 .5s-2-.5-3-.5-1.72.5-2.5.5a2.5 2.5 0 0 1 0-5c.78 0 1.57.5 2.5.5s2-.5 3-.5 2 .5 3 .5 1.72-.5 2.5-.5a2.5 2.5 0 0 1 0 5c-.78 0-1.5-.5-2.5-.5ZM5 8v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8"></path>
+								</svg>
+								View Collection
+							</a>
+						} else {
+							<a
+								href="/login"
+								class="bg-linear-to-r inline-flex items-center gap-2 rounded-2xl from-amber-500 via-orange-500 to-red-500 px-6 py-3 text-base font-bold text-white shadow-xl shadow-orange-500/25 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-orange-500/40 sm:px-8 sm:py-4 sm:text-lg"
+							>
+								<svg class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+									<path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+								</svg>
+								Get Started
+							</a>
+						}
+					</div>
+				</div>
+			</main>
+			<!-- Footer -->
+		</body>
+	</html>
+}
