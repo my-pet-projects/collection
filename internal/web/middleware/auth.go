@@ -79,3 +79,35 @@ func parseToken(tokenStr string, publicKey *rsa.PublicKey) (*appClaims, error) {
 
 	return claims, nil
 }
+
+// optionalAuthenticationHandler extracts user from session if available, but doesn't block if not.
+// Use this for public pages that should show different content for authenticated users.
+func optionalAuthenticationHandler(next http.Handler, cfg config.AuthConfig, logger *slog.Logger) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		reqResp := &web.ReqRespPair{
+			Response: w,
+			Request:  r,
+		}
+
+		cookie, cookieErr := reqResp.Request.Cookie("__session")
+		if cookieErr != nil {
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		claims, validErr := parseToken(cookie.Value, cfg.RsaPublicKey)
+		if validErr != nil {
+			logger.Debug("Optional auth: invalid token", slog.Any("error", validErr))
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		usr := model.User{
+			ID:       claims.Subject,
+			Username: claims.Username,
+		}
+
+		newCtx := util.ContextWithUser(reqResp.Request.Context(), usr)
+		next.ServeHTTP(reqResp.Response, reqResp.Request.WithContext(newCtx))
+	})
+}

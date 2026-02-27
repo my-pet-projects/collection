@@ -48,3 +48,10 @@ func WithAuthentication(cfg config.AuthConfig, logger *slog.Logger) func(http.Ha
 		return authenticationHandler(next, cfg, logger)
 	}
 }
+
+// WithOptionalAuthentication returns a middleware that extracts user if available but doesn't block.
+func WithOptionalAuthentication(cfg config.AuthConfig, logger *slog.Logger) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return optionalAuthenticationHandler(next, cfg, logger)
+	}
+}

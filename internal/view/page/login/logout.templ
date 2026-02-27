@@ -1,0 +1,24 @@
+package login
+
+import "fmt"
+
+templ LogoutPage(data LoginData) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>Signing out...</title>
+			<link rel="icon" type="image/svg+xml" sizes="32x32" href="/assets/img/pint-of-beer.svg"/>
+			<link href="/assets/css/tailwind-output.gen.css" rel="stylesheet"/>
+			<script async crossorigin="anonymous" data-clerk-publishable-key={ data.ClerkPublishableKey } src={ fmt.Sprintf("%s/npm/@clerk/clerk-js@latest/dist/clerk.browser.js", data.ClerkAuthHost) } type="text/javascript"></script>
+			<script src="/assets/js/clerk-logout.js"></script>
+		</head>
+		<body class="bg-linear-to-br flex min-h-screen items-center justify-center from-amber-50 via-white to-orange-50">
+			<div class="text-center">
+				<div class="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-4 border-amber-500 border-t-transparent"></div>
+				<p class="text-gray-600">Signing out...</p>
+			</div>
+		</body>
+	</html>
+}
