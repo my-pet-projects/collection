@@ -3,6 +3,9 @@ package brewery
 import (
 	"fmt"
 	"strings"
+
+	"github.com/my-pet-projects/collection/internal/view/component/form"
+	"github.com/my-pet-projects/collection/internal/view/component/icon"
 )
 
 templ Form(params BreweryFormParams, errs BreweryFormErrors) {
@@ -40,10 +43,7 @@ templ Form(params BreweryFormParams, errs BreweryFormErrors) {
 			});
 		"
 	>
-		<div class="mb-8">
-			<h2 class="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-3xl font-bold leading-tight tracking-tight text-transparent sm:text-4xl">Brewery Information</h2>
-			<p class="mt-2 text-base text-gray-600 sm:text-lg">Fill out the details about this brewery</p>
-		</div>
+		@form.FormSection("Brewery Information", "Fill out the details about this brewery")
 		<form
 			class="space-y-6"
 			hx-post="/workspace/brewery"
@@ -58,76 +58,23 @@ templ Form(params BreweryFormParams, errs BreweryFormErrors) {
 		>
 			<input type="hidden" id="id" name="id" value={ fmt.Sprint(params.Id) }/>
 			<!-- Brewery Name -->
-			<div class="space-y-2">
-				<div class="flex items-center justify-between">
-					<label for="name" class="block text-sm font-medium text-gray-900">
-						Brewery <span class="text-orange-500">*</span>
-					</label>
-					if errs.Name != "" {
-						<p class="flex items-center text-xs text-red-600">
-							<svg class="mr-1 h-3 w-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-								<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"></path>
-							</svg>
-							<span class="truncate">{ errs.Name }</span>
-						</p>
-					}
-				</div>
-				<input
-					type="text"
-					id="name"
-					name="name"
-					placeholder="Enter brewery name"
-					value={ params.Name }
-					autocapitalize="none"
-					autocomplete="off"
-					autocorrect="off"
-					class={
-						"block w-full rounded-2xl border-0 px-4 py-3 outline-none text-sm ring-1 ring-inset transition-all duration-200 focus:ring-2 focus:ring-inset focus:ring-amber-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:opacity-50",
-						templ.KV("bg-red-50 text-red-900 ring-red-300 placeholder:text-red-400 focus:ring-red-500 focus:ring-offset-2", errs.Name != ""),
-						templ.KV("bg-white ring-gray-200 placeholder:text-gray-500", errs.Name == ""),
-					}
-				/>
-			</div>
+			@form.FormField(form.FormFieldProps{ID: "name", Label: "Brewery", Error: errs.Name, Required: true}) {
+				@form.TextInput("name", "name", "Enter brewery name", params.Name, errs.Name != "")
+			}
 			<!-- Country Selection -->
-			<div class="space-y-2">
-				<div class="flex items-center justify-between">
-					<label for="country-select" class="block text-sm font-medium text-gray-900">
-						Country <span class="text-orange-500">*</span>
-					</label>
-					if errs.Country != "" {
-						<p class="flex items-center text-xs text-red-600">
-							<svg class="mr-1 h-3 w-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-								<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"></path>
-							</svg>
-							<span class="truncate">{ errs.Country }</span>
-						</p>
-					}
-				</div>
+			@form.FormField(form.FormFieldProps{ID: "country-select", Label: "Country", Error: errs.Country, Required: true}) {
 				<div id="country-container">
 					<!-- Loading indicator -->
 					<div class="flex h-12 w-full items-center justify-center rounded-2xl border border-gray-300 bg-gray-50">
 						<div class="flex items-center space-x-2 text-gray-500">
-							<div class="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-amber-500"></div>
+							@icon.LoadingSpinner("h-4 w-4")
 							<span class="text-sm">Loading countries...</span>
 						</div>
 					</div>
 				</div>
-			</div>
+			}
 			<!-- City Selection -->
-			<div class="space-y-2">
-				<div class="flex items-center justify-between">
-					<label for="city-select" class="block text-sm font-medium text-gray-900">
-						City <span class="text-orange-500">*</span>
-					</label>
-					if errs.City != "" {
-						<p class="flex items-center text-xs text-red-600">
-							<svg class="mr-1 h-3 w-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-								<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"></path>
-							</svg>
-							<span class="truncate">{ errs.City }</span>
-						</p>
-					}
-				</div>
+			@form.FormField(form.FormFieldProps{ID: "city-select", Label: "City", Error: errs.City, Required: true}) {
 				<div class="space-y-2">
 					<!-- City Container -->
 					<div id="city-container" class="w-full">
@@ -135,9 +82,7 @@ templ Form(params BreweryFormParams, errs BreweryFormErrors) {
 						<div class="w-full">
 							<div class="flex h-12 w-full cursor-not-allowed items-center justify-between rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-medium text-gray-400">
 								<span>Select a country first</span>
-								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-5 w-5">
-									<path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"></path>
-								</svg>
+								@icon.ChevronDownIcon("h-5 w-5")
 							</div>
 						</div>
 					</div>
@@ -145,13 +90,13 @@ templ Form(params BreweryFormParams, errs BreweryFormErrors) {
 					<div id="city-loading" class="w-full" style="display: none;">
 						<div class="flex h-12 w-full items-center justify-center rounded-2xl border border-gray-300 bg-gray-50">
 							<div class="flex items-center space-x-2 text-gray-500">
-								<div class="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-amber-500"></div>
+								@icon.LoadingSpinner("h-4 w-4")
 								<span class="text-sm">Loading cities...</span>
 							</div>
 						</div>
 					</div>
 				</div>
-			</div>
+			}
 			<!-- Error Container -->
 			<div id="brewery-errors" class="mt-4 hidden rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 shadow-md"></div>
 			<!-- Submit Button -->
@@ -162,10 +107,7 @@ templ Form(params BreweryFormParams, errs BreweryFormErrors) {
 				>
 					<!-- Loading Content -->
 					<span class="hx-save-indicator-toggle htmx-indicator flex items-center">
-						<svg class="mr-2 h-4 w-4 animate-spin text-amber-300" fill="none" viewBox="0 0 24 24">
-							<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-							<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-						</svg>
+						@icon.LoadingSpinnerAlt("mr-2 h-4 w-4 text-amber-300")
 						<span>
 							if params.IsNew() {
 								Creating...
@@ -176,11 +118,7 @@ templ Form(params BreweryFormParams, errs BreweryFormErrors) {
 					</span>
 					<!-- Default Content -->
 					<span class="hx-save-indicator-toggle hide-on-hx-request flex items-center">
-						<svg class="mr-2 h-4 w-4 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-							<path d="M5 4h11l3 3v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"></path>
-							<path d="M7 4v4h8V4"></path>
-							<circle cx="12" cy="14" r="2"></circle>
-						</svg>
+						@icon.SaveIcon("mr-2 h-4 w-4 text-white")
 						<span>
 							if params.IsNew() {
 								Create Brewery

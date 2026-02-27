@@ -24,16 +24,12 @@ type CountriesData struct {
 	ShowAllOption      bool
 }
 
-func (c CountriesData) ToAutocompleteData() []ui.AutoCompleteData {
-	data := make([]ui.AutoCompleteData, len(c.Countries))
-	for i, country := range c.Countries {
-		data[i] = ui.AutoCompleteData{
-			Label: country.NameCommon,
-			Value: strings.ToLower(country.Cca2),
-			Image: fmt.Sprintf("https://flagcdn.com/%s.svg", strings.ToLower(country.Cca2)),
-		}
+func countryToAutocomplete(c model.Country) ui.AutoCompleteData {
+	return ui.AutoCompleteData{
+		Label: c.NameCommon,
+		Value: strings.ToLower(c.Cca2),
+		Image: fmt.Sprintf("https://flagcdn.com/%s.svg", strings.ToLower(c.Cca2)),
 	}
-	return data
 }
 
 func CountriesAutoComplete(countriesData CountriesData) templ.Component {
@@ -60,7 +56,7 @@ func CountriesAutoComplete(countriesData CountriesData) templ.Component {
 		templ_7745c5c3_Err = ui.AutoComplete(ui.AutoCompleteProps{
 			ID:               "country",
 			Name:             "country",
-			Data:             countriesData.ToAutocompleteData(),
+			Data:             ui.MapToAutocompleteData(countriesData.Countries, countryToAutocomplete),
 			ShowAllOption:    countriesData.ShowAllOption,
 			AllOptionLabel:   "All countries",
 			AllOptionIcon:    "🌍",
@@ -81,15 +77,11 @@ type CitiesData struct {
 	ShowAllOption   bool
 }
 
-func (c CitiesData) ToAutocompleteData() []ui.AutoCompleteData {
-	data := make([]ui.AutoCompleteData, len(c.Cities))
-	for i, city := range c.Cities {
-		data[i] = ui.AutoCompleteData{
-			Label: city.Name,
-			Value: strconv.Itoa(city.ID),
-		}
+func cityToAutocomplete(c model.City) ui.AutoCompleteData {
+	return ui.AutoCompleteData{
+		Label: c.Name,
+		Value: strconv.Itoa(c.ID),
 	}
-	return data
 }
 
 func CitiesAutoComplete(citiesData CitiesData) templ.Component {
@@ -116,7 +108,7 @@ func CitiesAutoComplete(citiesData CitiesData) templ.Component {
 		templ_7745c5c3_Err = ui.AutoComplete(ui.AutoCompleteProps{
 			ID:               "city",
 			Name:             "city",
-			Data:             citiesData.ToAutocompleteData(),
+			Data:             ui.MapToAutocompleteData(citiesData.Cities, cityToAutocomplete),
 			ShowAllOption:    citiesData.ShowAllOption,
 			AllOptionLabel:   "All cities",
 			EventNamespace:   "city",
