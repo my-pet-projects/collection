@@ -62,7 +62,7 @@ func (s BreweryStore) PaginateBreweries(ctx context.Context, filter model.Brewer
 	}
 
 	whereConditions := []string{}
-	whereArgs := map[string]interface{}{}
+	whereArgs := map[string]any{}
 
 	if filter.Query != "" {
 		whereConditions = append(whereConditions, "(search_name LIKE @name)")

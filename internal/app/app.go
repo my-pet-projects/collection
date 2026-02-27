@@ -58,7 +58,8 @@ func Start(ctx context.Context) error {
 		return nil
 	})
 
-	if appErr := grp.Wait(); appErr != nil {
+	appErr := grp.Wait()
+	if appErr != nil {
 		return fmt.Errorf("application: %w", appErr)
 	}
 
@@ -124,5 +125,9 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 		Logger:            logger,
 	}
 
-	return router.New(deps)
+	rtr, err := router.New(deps)
+	if err != nil {
+		return nil, fmt.Errorf("create router: %w", err)
+	}
+	return rtr, nil
 }

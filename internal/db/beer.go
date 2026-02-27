@@ -58,7 +58,7 @@ func (s BeerStore) PaginateBeers(ctx context.Context, filter model.BeerFilter) (
 		Joins("Brewery")
 
 	whereConditions := []string{}
-	whereArgs := []interface{}{}
+	whereArgs := []any{}
 
 	if filter.Query != "" {
 		whereConditions = append(whereConditions, "(beers.search_name LIKE ? OR brewery.search_name LIKE ?)")

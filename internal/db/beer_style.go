@@ -39,7 +39,7 @@ func (s BeerStyleStore) PaginateBeerStyles(ctx context.Context, filter model.Bee
 	}
 
 	whereConditions := []string{}
-	whereArgs := map[string]interface{}{}
+	whereArgs := map[string]any{}
 
 	if filter.Query != "" {
 		whereConditions = append(whereConditions, "(Name LIKE @name)")

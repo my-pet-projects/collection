@@ -73,8 +73,8 @@ func (s CollectionService) findFirstAvailableSlot(occupiedSlots []model.Slot, ge
 	}
 
 	const (
-		maxSheets    = 100 //nolint:mnd
-		colsPerSheet = 7   //nolint:mnd
+		maxSheets    = 100
+		colsPerSheet = 7
 	)
 
 	rowsPerSheet := model.RowSizeForPrefix(geoPrefix)

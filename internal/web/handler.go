@@ -31,9 +31,10 @@ func (h AppHandler) Handle(handlerFun HandlerFunc) http.HandlerFunc {
 			Response: w,
 			Request:  r,
 		}
-		if err := handlerFun(reqResp); err != nil {
-			h.logger.Error("Failed to handle request", slog.Any("error", err))
-			reqResp.RenderAppError(err) //nolint:errcheck,gosec
+		handlerErr := handlerFun(reqResp)
+		if handlerErr != nil {
+			h.logger.Error("Failed to handle request", slog.Any("error", handlerErr))
+			reqResp.RenderAppError(handlerErr) //nolint:errcheck,gosec
 			return
 		}
 	}
@@ -169,10 +170,8 @@ func (rrp *ReqRespPair) GetStringFormValues(formKey string) ([]string, error) {
 		return []string{}, apperr.NewBadRequestError("Failed to parse form", formErr)
 	}
 
-	result := make([]string, 0)
-	for _, val := range rrp.Request.PostForm[formKey] {
-		result = append(result, val)
-	}
+	result := make([]string, 0, len(rrp.Request.PostForm[formKey]))
+	result = append(result, rrp.Request.PostForm[formKey]...)
 
 	return result, nil
 }
@@ -206,14 +205,14 @@ func (rrp *ReqRespPair) TriggerHtmxNotifyEvent(variant NotifyEventVariant, title
 	rrp.Response.Header().Set("HX-Trigger", "{\"notify\": {\"variant\":\""+string(variant)+"\",\"title\":\""+title+"\"}}")
 }
 
-func (rrp *ReqRespPair) renderError(code int, msg string, err error) error {
-	rrp.Response.WriteHeader(code)
-	return feedback.Error(msg, err).Render(rrp.Request.Context(), rrp.Response)
-}
-
 func (rrp *ReqRespPair) Redirect(url string) error {
 	rrp.Response.Header().Set("HX-Redirect", url)
 	return nil
+}
+
+func (rrp *ReqRespPair) renderError(code int, msg string, err error) error {
+	rrp.Response.WriteHeader(code)
+	return feedback.Error(msg, err).Render(rrp.Request.Context(), rrp.Response)
 }
 
 type NotifyEventVariant string

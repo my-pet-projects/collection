@@ -117,8 +117,9 @@ func (h *prettyHandler) computeAttrs(ctx context.Context, rec slog.Record) (map[
 		h.b.Reset()
 		h.m.Unlock()
 	}()
-	if err := h.h.Handle(ctx, rec); err != nil {
-		return nil, fmt.Errorf("error when calling inner handler's Handle: %w", err)
+	handleErr := h.h.Handle(ctx, rec)
+	if handleErr != nil {
+		return nil, fmt.Errorf("error when calling inner handler's Handle: %w", handleErr)
 	}
 
 	var attrs map[string]any

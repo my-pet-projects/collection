@@ -92,7 +92,11 @@ func (h *BreweryHandler) SubmitBreweryPage(reqResp *web.ReqRespPair) error {
 			h.logger.Error("create brewery", slog.Any("error", createErr))
 			return reqResp.RenderError(http.StatusInternalServerError, createErr)
 		}
-		reqResp.Redirect(fmt.Sprintf("/workspace/brewery/%d", newBrewery.ID))
+		redirectErr := reqResp.Redirect(fmt.Sprintf("/workspace/brewery/%d", newBrewery.ID))
+		if redirectErr != nil {
+			h.logger.Error("redirect failed", slog.Any("error", redirectErr))
+			return reqResp.RenderError(http.StatusInternalServerError, redirectErr)
+		}
 		return nil
 	}
 

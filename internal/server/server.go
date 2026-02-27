@@ -44,8 +44,9 @@ func NewServer(ctx context.Context, router http.Handler, logger *slog.Logger) Se
 // Start starts web server.
 func (s Server) Start(ctx context.Context) error {
 	s.logger.Info("Starting server")
-	if err := s.instance.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
-		return fmt.Errorf("start server: %w", err)
+	listenErr := s.instance.ListenAndServe()
+	if !errors.Is(listenErr, http.ErrServerClosed) {
+		return fmt.Errorf("start server: %w", listenErr)
 	}
 	return nil
 }

@@ -27,13 +27,13 @@ type AuthConfig struct {
 
 type AwsConfig struct {
 	Region    string
-	AccessKey string
+	AccessKey string //nolint:gosec
 	SecretKey string
 }
 
 type TursoDbConfig struct {
 	DbUrl     string
-	AuthToken string
+	AuthToken string //nolint:gosec
 }
 
 type AppConfig struct {
@@ -50,7 +50,7 @@ func requireEnv(key string) (string, error) {
 }
 
 // NewConfig creates application configuration.
-func NewConfig() (*Config, error) {
+func NewConfig() (*Config, error) { //nolint:cyclop
 	env, err := requireEnv("APP_ENV")
 	if err != nil {
 		return nil, err
@@ -95,7 +95,7 @@ func NewConfig() (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
-	rsaPublicKey, err := parseRSAPublicKey([]byte(strings.Replace(clerkPemKey, `\n`, "\n", -1)))
+	rsaPublicKey, err := parseRSAPublicKey([]byte(strings.ReplaceAll(clerkPemKey, `\n`, "\n")))
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse Clerk public key: %w", err)
 	}
@@ -147,7 +147,7 @@ func parseRSAPublicKey(pemKey []byte) (*rsa.PublicKey, error) {
 
 	pubKey, err := x509.ParsePKIXPublicKey(block.Bytes)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse public key: %v", err)
+		return nil, fmt.Errorf("failed to parse public key: %w", err)
 	}
 
 	rsaPubKey, ok := pubKey.(*rsa.PublicKey)

@@ -16,8 +16,9 @@ import (
 )
 
 type appClaims struct {
-	Username *string `json:"username"`
 	jwt.RegisteredClaims
+
+	Username *string `json:"username"`
 }
 
 func authenticationHandler(next http.Handler, cfg config.AuthConfig, logger *slog.Logger) http.Handler {
@@ -52,7 +53,7 @@ func authenticationHandler(next http.Handler, cfg config.AuthConfig, logger *slo
 }
 
 func parseToken(tokenStr string, publicKey *rsa.PublicKey) (*appClaims, error) {
-	keyFunc := func(token *jwt.Token) (interface{}, error) {
+	keyFunc := func(token *jwt.Token) (any, error) {
 		return publicKey, nil
 	}
 
