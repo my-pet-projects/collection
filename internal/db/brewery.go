@@ -24,9 +24,10 @@ func NewBreweryStore(db *DbClient, logger *slog.Logger) BreweryStore {
 	}
 }
 
-func (s BreweryStore) GetBrewery(id int) (model.Brewery, error) {
+func (s BreweryStore) GetBrewery(ctx context.Context, id int) (model.Brewery, error) {
 	var item model.Brewery
 	result := s.db.gorm.
+		WithContext(ctx).
 		Debug().
 		Preload("City", func(db *gorm.DB) *gorm.DB {
 			return db.Clauses(dbresolver.Use(GeographyDBResolverName)).
@@ -37,10 +38,11 @@ func (s BreweryStore) GetBrewery(id int) (model.Brewery, error) {
 	return item, result.Error
 }
 
-func (s BreweryStore) FetchBreweries() ([]model.Brewery, error) {
+func (s BreweryStore) FetchBreweries(ctx context.Context) ([]model.Brewery, error) {
 	var items []model.Brewery
 
 	result := s.db.gorm.
+		WithContext(ctx).
 		Debug().
 		Order("name").
 		Preload("City", func(db *gorm.DB) *gorm.DB {
@@ -98,16 +100,18 @@ func (s BreweryStore) PaginateBreweries(ctx context.Context, filter model.Brewer
 	return &pagination, nil
 }
 
-func (s BreweryStore) InsertBrewery(brewery model.Brewery) (int, error) {
+func (s BreweryStore) InsertBrewery(ctx context.Context, brewery model.Brewery) (int, error) {
 	res := s.db.gorm.
+		WithContext(ctx).
 		Debug().
 		Save(&brewery)
 
 	return brewery.ID, res.Error
 }
 
-func (s BreweryStore) UpdateBrewery(brewery model.Brewery) error {
+func (s BreweryStore) UpdateBrewery(ctx context.Context, brewery model.Brewery) error {
 	res := s.db.gorm.
+		WithContext(ctx).
 		Debug().
 		Save(&brewery)
 

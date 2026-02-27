@@ -26,14 +26,14 @@ func NewBreweryService(breweryStore *db.BreweryStore, geoStore *db.GeographyStor
 	}
 }
 
-func (s BreweryService) CreateBrewery(name string, geoId int, countryCode string) (*model.Brewery, error) {
+func (s BreweryService) CreateBrewery(ctx context.Context, name string, geoId int, countryCode string) (*model.Brewery, error) {
 	brewery := model.Brewery{
 		Name:        name,
 		GeoID:       geoId,
 		SearchName:  util.NormalizeText(name),
 		CountryCca2: strings.ToUpper(strings.TrimSpace(countryCode)),
 	}
-	insertedId, insertErr := s.breweryStore.InsertBrewery(brewery)
+	insertedId, insertErr := s.breweryStore.InsertBrewery(ctx, brewery)
 	if insertErr != nil {
 		return nil, errors.Wrap(insertErr, "insert brewery")
 	}
@@ -41,7 +41,7 @@ func (s BreweryService) CreateBrewery(name string, geoId int, countryCode string
 	return &brewery, nil
 }
 
-func (s BreweryService) UpdateBrewery(id int, name string, geoId int, countryCode string) error {
+func (s BreweryService) UpdateBrewery(ctx context.Context, id int, name string, geoId int, countryCode string) error {
 	brewery := model.Brewery{
 		ID:          id,
 		Name:        name,
@@ -49,23 +49,23 @@ func (s BreweryService) UpdateBrewery(id int, name string, geoId int, countryCod
 		SearchName:  util.NormalizeText(name),
 		CountryCca2: strings.ToUpper(strings.TrimSpace(countryCode)),
 	}
-	updErr := s.breweryStore.UpdateBrewery(brewery)
+	updErr := s.breweryStore.UpdateBrewery(ctx, brewery)
 	if updErr != nil {
 		return errors.Wrap(updErr, "update brewery")
 	}
 	return nil
 }
 
-func (s BreweryService) GetBrewery(id int) (model.Brewery, error) {
-	brewery, breweryErr := s.breweryStore.GetBrewery(id)
+func (s BreweryService) GetBrewery(ctx context.Context, id int) (model.Brewery, error) {
+	brewery, breweryErr := s.breweryStore.GetBrewery(ctx, id)
 	if breweryErr != nil {
 		return model.Brewery{}, errors.Wrap(breweryErr, "get brewery")
 	}
 	return brewery, nil
 }
 
-func (s BreweryService) ListBreweries() ([]model.Brewery, error) {
-	breweries, breweriesErr := s.breweryStore.FetchBreweries()
+func (s BreweryService) ListBreweries(ctx context.Context) ([]model.Brewery, error) {
+	breweries, breweriesErr := s.breweryStore.FetchBreweries(ctx)
 	if breweriesErr != nil {
 		return nil, errors.Wrap(breweriesErr, "fetch breweries")
 	}
