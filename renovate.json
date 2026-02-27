@@ -9,6 +9,17 @@
     "enabled": true,
     "labels": ["security"]
   },
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Update CDN script versions",
+      "fileMatch": ["\\.templ$"],
+      "matchStrings": [
+        "cdn\\.jsdelivr\\.net/npm/(?<depName>[^@]+)@(?<currentValue>[\\d.]+)"
+      ],
+      "datasourceTemplate": "npm"
+    }
+  ],
   "packageRules": [
     {
       "description": "Group all minor and patch Go dependency updates",
@@ -34,6 +45,13 @@
       "rangeStrategy": "bump",
       "groupName": "go-version",
       "labels": ["dependencies", "go-version"],
+      "automerge": false
+    },
+    {
+      "description": "Group CDN script updates",
+      "matchManagers": ["regex"],
+      "groupName": "cdn-scripts",
+      "labels": ["dependencies", "frontend"],
       "automerge": false
     }
   ],
