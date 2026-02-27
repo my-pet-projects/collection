@@ -44,6 +44,9 @@ templ Images(params BeerPageData) {
 				hx-trigger="submit"
 				hx-indicator=".hx-save-indicator-toggle"
 				hx-disabled-elt="button,input:not([type='hidden'])"
+				hx-on::before-request="document.getElementById('beer-images-errors').innerHTML = ''"
+				hx-on::response-error="document.getElementById('beer-images-errors')?.classList.remove('hidden')"
+				hx-on::after-request="if ($event.detail.successful) document.getElementById('beer-images-errors')?.classList.add('hidden')"
 			>
 				<!-- Images Section -->
 				<div class="mb-10">

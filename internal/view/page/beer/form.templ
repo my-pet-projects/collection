@@ -54,6 +54,9 @@ templ Form(params BeerFormParams, errs BeerFormErrors) {
 				hx-trigger="submit"
 				hx-indicator=".hx-save-indicator-toggle"
 				hx-disabled-elt="input:not([type=hidden]),button"
+				hx-on::before-request="document.getElementById('beer-errors').innerHTML = ''"
+				hx-on::response-error="document.getElementById('beer-errors')?.classList.remove('hidden')"
+				hx-on::after-request="if ($event.detail.successful) document.getElementById('beer-errors')?.classList.add('hidden')"
 			>
 				<input type="hidden" id="id" name="id" value={ fmt.Sprint(params.ID) }/>
 				<input type="hidden" id="isActive" name="isActive" value={ fmt.Sprint(params.IsActive) }/>

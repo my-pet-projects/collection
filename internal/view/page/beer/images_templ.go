@@ -99,7 +99,7 @@ func Images(params BeerPageData) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" hx-target=\"#beer-images-form\" hx-target-error=\"#beer-images-errors\" hx-trigger=\"submit\" hx-indicator=\".hx-save-indicator-toggle\" hx-disabled-elt=\"button,input:not([type='hidden'])\"><!-- Images Section --><div class=\"mb-10\"><!-- Section Header --><div class=\"mb-8 flex items-center justify-between\"><div><h3 class=\"text-xl font-semibold text-gray-900\">Available Images</h3><p class=\"mt-1 text-sm text-gray-600\">Select images to include in your beer collection</p></div><!-- Legend --><div class=\"flex items-center gap-6 text-sm\"><div class=\"flex items-center gap-2\"><div class=\"bg-linear-to-r h-3 w-3 rounded-full from-amber-500 to-orange-500\"></div><span class=\"font-medium text-gray-700\">Selected</span></div><div class=\"flex items-center gap-2\"><div class=\"h-3 w-3 rounded-full bg-gray-300\"></div><span class=\"text-gray-600\">Available</span></div></div></div><!-- Images Grid --><div class=\"mb-6 grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" hx-target=\"#beer-images-form\" hx-target-error=\"#beer-images-errors\" hx-trigger=\"submit\" hx-indicator=\".hx-save-indicator-toggle\" hx-disabled-elt=\"button,input:not([type='hidden'])\" hx-on::before-request=\"document.getElementById('beer-images-errors').innerHTML = ''\" hx-on::response-error=\"document.getElementById('beer-images-errors')?.classList.remove('hidden')\" hx-on::after-request=\"if ($event.detail.successful) document.getElementById('beer-images-errors')?.classList.add('hidden')\"><!-- Images Section --><div class=\"mb-10\"><!-- Section Header --><div class=\"mb-8 flex items-center justify-between\"><div><h3 class=\"text-xl font-semibold text-gray-900\">Available Images</h3><p class=\"mt-1 text-sm text-gray-600\">Select images to include in your beer collection</p></div><!-- Legend --><div class=\"flex items-center gap-6 text-sm\"><div class=\"flex items-center gap-2\"><div class=\"bg-linear-to-r h-3 w-3 rounded-full from-amber-500 to-orange-500\"></div><span class=\"font-medium text-gray-700\">Selected</span></div><div class=\"flex items-center gap-2\"><div class=\"h-3 w-3 rounded-full bg-gray-300\"></div><span class=\"text-gray-600\">Available</span></div></div></div><!-- Images Grid --><div class=\"mb-6 grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -156,7 +156,7 @@ func Images(params BeerPageData) templ.Component {
 				var templ_7745c5c3_Var4 string
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(media.ID))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 135, Col: 75}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 138, Col: 75}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
@@ -169,7 +169,7 @@ func Images(params BeerPageData) templ.Component {
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(media.MediaID))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 136, Col: 85}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 139, Col: 85}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -182,7 +182,7 @@ func Images(params BeerPageData) templ.Component {
 				var templ_7745c5c3_Var6 string
 				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(media.Type))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 138, Col: 79}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 141, Col: 79}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
@@ -195,7 +195,7 @@ func Images(params BeerPageData) templ.Component {
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(media.Media.ExternalFilename)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 139, Col: 84}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 142, Col: 84}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
@@ -226,7 +226,7 @@ func Images(params BeerPageData) templ.Component {
 													nextSlotSheetSlot: '%s' 
 												}`, nextGeoPrefix, nextSheetID, nextSheetSlot))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 166, Col: 58}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 169, Col: 58}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 					if templ_7745c5c3_Err != nil {
@@ -244,7 +244,7 @@ func Images(params BeerPageData) templ.Component {
 					var templ_7745c5c3_Var9 string
 					templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(slot.GeoPrefix)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 178, Col: 36}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 181, Col: 36}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 					if templ_7745c5c3_Err != nil {
@@ -257,7 +257,7 @@ func Images(params BeerPageData) templ.Component {
 					var templ_7745c5c3_Var10 string
 					templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(slot.SheetID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 189, Col: 34}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 192, Col: 34}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 					if templ_7745c5c3_Err != nil {
@@ -270,7 +270,7 @@ func Images(params BeerPageData) templ.Component {
 					var templ_7745c5c3_Var11 string
 					templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(slot.SheetSlot)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 200, Col: 36}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 203, Col: 36}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 					if templ_7745c5c3_Err != nil {
@@ -288,7 +288,7 @@ func Images(params BeerPageData) templ.Component {
 						var templ_7745c5c3_Var12 string
 						templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(params.NextSlot.String())
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 223, Col: 79}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/images.templ`, Line: 226, Col: 79}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 						if templ_7745c5c3_Err != nil {
