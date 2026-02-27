@@ -106,7 +106,7 @@ func (h *BeerHandler) HandleCreateBeerPage(reqResp *web.ReqRespPair) error {
 		return reqResp.RenderError(http.StatusInternalServerError, stylesErr)
 	}
 
-	page := layout.Page{Title: "Create beer"}
+	page := layout.Page{Title: "Create Beer"}
 	beerPage := beerpage.BeerPageData{
 		Page: page,
 		FormParams: beerpage.BeerFormParams{
