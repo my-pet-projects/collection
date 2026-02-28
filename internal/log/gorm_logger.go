@@ -44,19 +44,19 @@ func (l *GormLogger) LogMode(level logger.LogLevel) logger.Interface {
 	}
 }
 
-func (l *GormLogger) Info(ctx context.Context, msg string, data ...interface{}) {
+func (l *GormLogger) Info(ctx context.Context, msg string, data ...any) {
 	if l.level >= logger.Info {
 		l.logger.Info(fmt.Sprintf(msg, data...))
 	}
 }
 
-func (l *GormLogger) Warn(ctx context.Context, msg string, data ...interface{}) {
+func (l *GormLogger) Warn(ctx context.Context, msg string, data ...any) {
 	if l.level >= logger.Warn {
 		l.logger.Warn(fmt.Sprintf(msg, data...))
 	}
 }
 
-func (l *GormLogger) Error(ctx context.Context, msg string, data ...interface{}) {
+func (l *GormLogger) Error(ctx context.Context, msg string, data ...any) {
 	if l.level >= logger.Error {
 		l.logger.Error(fmt.Sprintf(msg, data...))
 	}
@@ -70,7 +70,7 @@ func (l *GormLogger) Trace(ctx context.Context, begin time.Time, fc func() (sql 
 	elapsed := time.Since(begin)
 	sql, rows := fc()
 
-	if l.env == "prod" {
+	if l.env == "prod" { //nolint:nestif
 		// Verbose structured logging for production
 		attrs := []slog.Attr{
 			slog.String("sql", sql),
@@ -85,7 +85,8 @@ func (l *GormLogger) Trace(ctx context.Context, begin time.Time, fc func() (sql 
 		}
 	} else {
 		// Concise logging for development
-		truncated := truncateSQL(sql, 120)
+		const maxSQLLen = 120
+		truncated := truncateSQL(sql, maxSQLLen)
 		if err != nil {
 			l.logger.Error(fmt.Sprintf("%s %s %s",
 				gormColorize(colorPurple, truncated),

@@ -36,7 +36,7 @@ func inboundLogHandler(next http.Handler, logger *slog.Logger, env string) http.
 			elapsed := time.Since(startTime)
 			status := lrw.responseData.status
 
-			if env == "prod" {
+			if env == "prod" { //nolint:nestif
 				// Verbose structured logging for production (Vercel)
 				scheme := "http"
 				if r.TLS != nil {
@@ -60,7 +60,7 @@ func inboundLogHandler(next http.Handler, logger *slog.Logger, env string) http.
 					slog.Int("size", size),
 				)
 
-				if status >= 400 {
+				if status >= http.StatusBadRequest {
 					logger.Error("request", requestFields, responseFields)
 				} else {
 					logger.Info("request", requestFields, responseFields)
@@ -68,7 +68,7 @@ func inboundLogHandler(next http.Handler, logger *slog.Logger, env string) http.
 			} else {
 				// Concise logging for development
 				statusColor := colorGray
-				if status >= 400 {
+				if status >= http.StatusBadRequest {
 					statusColor = colorRed
 				}
 				msg := fmt.Sprintf("%s %s %s %s",
@@ -76,7 +76,7 @@ func inboundLogHandler(next http.Handler, logger *slog.Logger, env string) http.
 					r.URL.Path,
 					httpColorize(statusColor, fmt.Sprintf("%d", status)),
 					elapsed.Round(time.Millisecond))
-				if status >= 400 {
+				if status >= http.StatusBadRequest {
 					logger.Error(msg)
 				} else {
 					logger.Info(msg)
