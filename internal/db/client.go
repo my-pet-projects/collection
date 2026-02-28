@@ -2,17 +2,16 @@ package db
 
 import (
 	"fmt"
-	"log"
-	"os"
+	logslog "log/slog"
 	"time"
 
 	_ "github.com/tursodatabase/libsql-client-go/libsql"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 	"gorm.io/plugin/dbresolver"
 
 	"github.com/my-pet-projects/collection/internal/config"
+	"github.com/my-pet-projects/collection/internal/log"
 )
 
 const (
@@ -25,7 +24,7 @@ type DbClient struct {
 }
 
 // NewClient instantiates database client.
-func NewClient(cfg *config.Config) (*DbClient, error) {
+func NewClient(cfg *config.Config, logger *logslog.Logger) (*DbClient, error) {
 	geoDbUrl := fmt.Sprintf("%s?authToken=%s", cfg.GeoDbConfig.DbUrl, cfg.GeoDbConfig.AuthToken)
 	collectionDbUrl := fmt.Sprintf("%s?authToken=%s", cfg.CollectionDbConfig.DbUrl, cfg.CollectionDbConfig.AuthToken)
 
@@ -36,16 +35,7 @@ func NewClient(cfg *config.Config) (*DbClient, error) {
 		NowFunc: func() time.Time {
 			return time.Now().UTC()
 		},
-		Logger: logger.New(
-			log.New(os.Stdout, "\r\n", log.LstdFlags),
-			logger.Config{
-				SlowThreshold:             time.Second,
-				LogLevel:                  logger.Silent,
-				IgnoreRecordNotFoundError: false,
-				ParameterizedQueries:      false,
-				Colorful:                  true,
-			},
-		),
+		Logger: log.NewGormLogger(logger, cfg.Env),
 	})
 	if gormErr != nil {
 		return nil, fmt.Errorf("gorm connection: %w", gormErr)
@@ -59,7 +49,7 @@ func NewClient(cfg *config.Config) (*DbClient, error) {
 					DSN:        collectionDbUrl,
 				}),
 			},
-			TraceResolverMode: true,
+			TraceResolverMode: false,
 		}).
 		Register(dbresolver.Config{
 			Sources: []gorm.Dialector{
@@ -68,7 +58,7 @@ func NewClient(cfg *config.Config) (*DbClient, error) {
 					DSN:        geoDbUrl,
 				}),
 			},
-			TraceResolverMode: true,
+			TraceResolverMode: false,
 		}, GeographyDBResolverName),
 	)
 	if gormErr != nil {
