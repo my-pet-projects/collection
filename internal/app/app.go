@@ -29,7 +29,7 @@ func Start(ctx context.Context) error {
 
 	logger := log.NewLogger(cfg)
 
-	dbClient, dbClientErr := db.NewClient(cfg)
+	dbClient, dbClientErr := db.NewClient(cfg, logger)
 	if dbClientErr != nil {
 		return fmt.Errorf("db: %w", dbClientErr)
 	}
@@ -78,7 +78,7 @@ func NewRouter(ctx context.Context) (http.Handler, error) {
 
 	logger := log.NewLogger(cfg)
 
-	dbClient, dbClientErr := db.NewClient(cfg)
+	dbClient, dbClientErr := db.NewClient(cfg, logger)
 	if dbClientErr != nil {
 		return nil, fmt.Errorf("db: %w", dbClientErr)
 	}
@@ -116,6 +116,7 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 
 	// Initialize router with dependencies
 	deps := router.Deps{
+		Env:               cfg.Env,
 		Cfg:               cfg.AuthConfig,
 		GeoService:        geoService,
 		BreweryService:    breweryService,
