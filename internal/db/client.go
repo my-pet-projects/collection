@@ -49,7 +49,7 @@ func NewClient(cfg *config.Config, logger *logslog.Logger) (*DbClient, error) {
 					DSN:        collectionDbUrl,
 				}),
 			},
-			TraceResolverMode: false,
+			TraceResolverMode: true,
 		}).
 		Register(dbresolver.Config{
 			Sources: []gorm.Dialector{
@@ -58,7 +58,7 @@ func NewClient(cfg *config.Config, logger *logslog.Logger) (*DbClient, error) {
 					DSN:        geoDbUrl,
 				}),
 			},
-			TraceResolverMode: false,
+			TraceResolverMode: true,
 		}, GeographyDBResolverName),
 	)
 	if gormErr != nil {
