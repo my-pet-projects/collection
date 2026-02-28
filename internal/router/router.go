@@ -17,6 +17,7 @@ import (
 
 // Deps holds all dependencies needed for route initialization.
 type Deps struct {
+	Env               string
 	Cfg               config.AuthConfig
 	GeoService        service.GeographyService
 	BreweryService    service.BreweryService
@@ -42,7 +43,7 @@ func New(deps Deps) (http.Handler, error) {
 	router := chi.NewRouter()
 
 	// Global middleware
-	router.Use(middleware.WithInboundLog(deps.Logger))
+	router.Use(middleware.WithInboundLog(deps.Logger, deps.Env))
 	router.Use(middleware.WithRequest())
 	router.Use(middleware.WithRecoverer(deps.Logger))
 

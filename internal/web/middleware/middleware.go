@@ -22,9 +22,9 @@ func NewMiddlewareDeps(cfg config.AuthConfig, userClient *user.Client, logger *s
 }
 
 // WithInboundLog returns a middleware that logs incoming HTTP requests.
-func WithInboundLog(logger *slog.Logger) func(http.Handler) http.Handler {
+func WithInboundLog(logger *slog.Logger, env string) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
-		return inboundLogHandler(next, logger)
+		return inboundLogHandler(next, logger, env)
 	}
 }
 
