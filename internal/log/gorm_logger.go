@@ -46,19 +46,19 @@ func (l *GormLogger) LogMode(level logger.LogLevel) logger.Interface {
 
 func (l *GormLogger) Info(ctx context.Context, msg string, data ...any) {
 	if l.level >= logger.Info {
-		l.logger.Info(fmt.Sprintf(msg, data...))
+		l.logger.InfoContext(ctx, fmt.Sprintf(msg, data...))
 	}
 }
 
 func (l *GormLogger) Warn(ctx context.Context, msg string, data ...any) {
 	if l.level >= logger.Warn {
-		l.logger.Warn(fmt.Sprintf(msg, data...))
+		l.logger.WarnContext(ctx, fmt.Sprintf(msg, data...))
 	}
 }
 
 func (l *GormLogger) Error(ctx context.Context, msg string, data ...any) {
 	if l.level >= logger.Error {
-		l.logger.Error(fmt.Sprintf(msg, data...))
+		l.logger.ErrorContext(ctx, fmt.Sprintf(msg, data...))
 	}
 }
 
@@ -88,12 +88,13 @@ func (l *GormLogger) Trace(ctx context.Context, begin time.Time, fc func() (sql 
 		const maxSQLLen = 120
 		truncated := truncateSQL(sql, maxSQLLen)
 		if err != nil {
-			l.logger.Error(fmt.Sprintf("%s %s %s",
+			l.logger.ErrorContext(ctx, fmt.Sprintf("%s %s %s | %s",
 				gormColorize(colorPurple, truncated),
 				gormColorize(colorGray, fmt.Sprintf("[%d rows]", rows)),
-				elapsed.Round(time.Millisecond)))
+				elapsed.Round(time.Millisecond),
+				gormColorize(colorGray, err.Error())))
 		} else {
-			l.logger.Debug(fmt.Sprintf("%s %s %s",
+			l.logger.DebugContext(ctx, fmt.Sprintf("%s %s %s",
 				gormColorize(colorPurple, truncated),
 				gormColorize(colorGray, fmt.Sprintf("[%d rows]", rows)),
 				elapsed.Round(time.Millisecond)))
