@@ -44,7 +44,7 @@
         rec {
           default = templ;
 
-          templ = pkgs.buildGo124Module {
+          templ = pkgs.buildGoModule {
             name = "templ";
             subPackages = [ "cmd/templ" ];
             src = gitignore.lib.gitignoreSource ./.;
@@ -93,7 +93,6 @@
       # ];
       overlays.default = final: prev: {
         templ = self.packages.${final.stdenv.system}.templ;
-        templ-docs = self.packages.${final.stdenv.system}.templ-docs;
       };
     };
 }
