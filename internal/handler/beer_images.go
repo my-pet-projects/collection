@@ -60,10 +60,16 @@ func (h *BeerImagesHandler) HandleBeerImagesPage(reqResp *web.ReqRespPair) error
 		return reqResp.RenderError(http.StatusInternalServerError, slotErr)
 	}
 
+	sameBreweryBeers, breweryBeersErr := h.beerService.GetSameBreweryBeers(reqResp.Request.Context(), beer)
+	if breweryBeersErr != nil {
+		return reqResp.RenderError(http.StatusInternalServerError, breweryBeersErr)
+	}
+
 	beerPage := beerpage.BeerPageData{
-		Beer:       *beer,
-		BeerMedias: items,
-		NextSlot:   nextSlot,
+		Beer:         *beer,
+		BeerMedias:   items,
+		NextSlot:     nextSlot,
+		BreweryBeers: sameBreweryBeers,
 	}
 	return reqResp.Render(beerpage.Page(beerPage))
 }

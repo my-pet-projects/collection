@@ -150,3 +150,24 @@ func (s BeerStore) CountCountries(ctx context.Context) (int64, error) {
 		Count(&count)
 	return count, res.Error
 }
+
+// GetBeersByBreweryID returns all beers belonging to the given brewery.
+func (s BeerStore) GetBeersByBreweryID(ctx context.Context, breweryID int) ([]model.Beer, error) {
+	var beers []model.Beer
+	result := s.db.gorm.
+		WithContext(ctx).
+		Debug().
+		Where("beers.brewery_id = ?", breweryID).
+		Joins("BeerStyle").
+		Joins("Brewery").
+		Preload("Brewery.City", func(db *gorm.DB) *gorm.DB {
+			return db.Clauses(dbresolver.Use(GeographyDBResolverName)).
+				Joins("Country")
+		}).
+		Preload("BeerMedias", func(db *gorm.DB) *gorm.DB {
+			return db.Joins("Media")
+		}).
+		Order("beers.id DESC").
+		Find(&beers)
+	return beers, result.Error
+}
