@@ -202,3 +202,18 @@ func (s BeerService) DeleteBeerStyle(ctx context.Context, id int) error {
 	}
 	return nil
 }
+
+// GetBeersByBrewery returns all beers from the given brewery, excluding the specified beer.
+func (s BeerService) GetBeersByBrewery(ctx context.Context, breweryID int, excludeBeerID int) ([]model.Beer, error) {
+	beers, err := s.beerStore.GetBeersByBreweryID(ctx, breweryID)
+	if err != nil {
+		return nil, fmt.Errorf("get beers by brewery: %w", err)
+	}
+	filtered := make([]model.Beer, 0, len(beers))
+	for _, b := range beers {
+		if b.ID != excludeBeerID {
+			filtered = append(filtered, b)
+		}
+	}
+	return filtered, nil
+}

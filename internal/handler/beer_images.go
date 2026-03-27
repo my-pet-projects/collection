@@ -60,10 +60,20 @@ func (h *BeerImagesHandler) HandleBeerImagesPage(reqResp *web.ReqRespPair) error
 		return reqResp.RenderError(http.StatusInternalServerError, slotErr)
 	}
 
+	var breweryBeers []model.Beer
+	if beer.HasBrewery() {
+		var breweryBeersErr error
+		breweryBeers, breweryBeersErr = h.beerService.GetBeersByBrewery(reqResp.Request.Context(), *beer.BreweryID, beerID)
+		if breweryBeersErr != nil {
+			return reqResp.RenderError(http.StatusInternalServerError, breweryBeersErr)
+		}
+	}
+
 	beerPage := beerpage.BeerPageData{
-		Beer:       *beer,
-		BeerMedias: items,
-		NextSlot:   nextSlot,
+		Beer:         *beer,
+		BeerMedias:   items,
+		NextSlot:     nextSlot,
+		BreweryBeers: breweryBeers,
 	}
 	return reqResp.Render(beerpage.Page(beerPage))
 }
