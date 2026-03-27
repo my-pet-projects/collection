@@ -160,6 +160,10 @@ func (s BeerStore) GetBeersByBreweryID(ctx context.Context, breweryID int) ([]mo
 		Where("beers.brewery_id = ?", breweryID).
 		Joins("BeerStyle").
 		Joins("Brewery").
+		Preload("Brewery.City", func(db *gorm.DB) *gorm.DB {
+			return db.Clauses(dbresolver.Use(GeographyDBResolverName)).
+				Joins("Country")
+		}).
 		Preload("BeerMedias", func(db *gorm.DB) *gorm.DB {
 			return db.Joins("Media")
 		}).
