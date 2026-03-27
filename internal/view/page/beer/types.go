@@ -61,11 +61,12 @@ type BeerListPageData struct {
 type BeerPageData struct {
 	layout.Page
 
-	Beer       model.Beer
-	FormParams BeerFormParams
-	FormErrors BeerFormErrors
-	BeerMedias []model.BeerMedia
-	NextSlot   *model.Slot
+	Beer         model.Beer
+	FormParams   BeerFormParams
+	FormErrors   BeerFormErrors
+	BeerMedias   []model.BeerMedia
+	NextSlot     *model.Slot
+	BreweryBeers []model.Beer
 }
 
 func (p BeerPageData) IsOverviewPage() bool {
