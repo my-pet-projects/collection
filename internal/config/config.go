@@ -27,13 +27,13 @@ type AuthConfig struct {
 
 type AwsConfig struct {
 	Region    string
-	AccessKey string //nolint:gosec
+	AccessKey string
 	SecretKey string
 }
 
 type TursoDbConfig struct {
 	DbUrl     string
-	AuthToken string //nolint:gosec
+	AuthToken string
 }
 
 type AppConfig struct {
