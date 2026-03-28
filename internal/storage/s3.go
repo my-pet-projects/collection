@@ -4,15 +4,13 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"io"
 	"log/slog"
 
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 
 	"github.com/my-pet-projects/collection/internal/model"
 )
-
-// https://uppy.io/examples/
-// https://levelup.gitconnected.com/s3-multipart-upload-with-goroutines-92a7aebe831b
 
 type S3Storage struct {
 	client *s3.Client
@@ -29,6 +27,7 @@ func NewS3Storage(client *s3.Client, logger *slog.Logger) S3Storage {
 func (s S3Storage) Upload(ctx context.Context, img *model.MediaImage) error {
 	bucket := "beer-collection-bucket"
 	key := fmt.Sprintf("original/%s", img.ExternalName)
+
 	_, putErr := s.client.PutObject(ctx, &s3.PutObjectInput{
 		Bucket:      &bucket,
 		Key:         &key,
@@ -56,4 +55,25 @@ func (s S3Storage) Delete(ctx context.Context, key string) error {
 	}
 
 	return nil
+}
+
+func (s S3Storage) Download(ctx context.Context, key string) ([]byte, error) {
+	key = fmt.Sprintf("original/%s", key)
+	bucket := "beer-collection-bucket"
+
+	result, getErr := s.client.GetObject(ctx, &s3.GetObjectInput{
+		Bucket: &bucket,
+		Key:    &key,
+	})
+	if getErr != nil {
+		return nil, fmt.Errorf("get object: %w", getErr)
+	}
+	defer result.Body.Close() //nolint:errcheck
+
+	data, readErr := io.ReadAll(result.Body)
+	if readErr != nil {
+		return nil, fmt.Errorf("read object body: %w", readErr)
+	}
+
+	return data, nil
 }

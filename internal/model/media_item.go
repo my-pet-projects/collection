@@ -38,6 +38,7 @@ type MediaItem struct {
 	Size             int
 	Width            int
 	Height           int
+	PerceptualHash   string `gorm:"column:perceptual_hash;type:text"`
 	CreatedAt        time.Time
 	UpdatedAt        *time.Time
 }
@@ -90,4 +91,10 @@ type MediaItemsFilter struct {
 	ID         int
 	BeerID     int
 	IncludeAll bool
+}
+
+// SimilarityResult represents a cap image with its similarity score to a query image.
+type SimilarityResult struct {
+	BeerMedia  BeerMedia
+	Similarity float32
 }

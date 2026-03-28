@@ -42,6 +42,7 @@ templ desktopNavItems() {
 		@navLink("/workspace/beer-style", "Styles", stylesIcon(), util.UrlStartsWith(ctx, "/workspace/beer-style"))
 		@navLink("/workspace/images", "Images", imagesIcon(), util.UrlStartsWith(ctx, "/workspace/images") && !util.UrlStartsWith(ctx, "/workspace/images/upload"))
 		@navLink("/workspace/images/upload", "Upload", uploadIcon(), util.UrlStartsWith(ctx, "/workspace/images/upload"))
+		@navLink("/workspace/search", "Search", searchIcon(), util.UrlStartsWith(ctx, "/workspace/search"))
 	</div>
 }
 
@@ -94,6 +95,7 @@ templ mobileMenu() {
 		@mobileNavLink("/workspace/beer-style", "Styles", stylesIcon(), util.UrlStartsWith(ctx, "/workspace/beer-style"))
 		@mobileNavLink("/workspace/images", "Images", imagesIcon(), util.UrlStartsWith(ctx, "/workspace/images") && !util.UrlStartsWith(ctx, "/workspace/images/upload"))
 		@mobileNavLink("/workspace/images/upload", "Upload", uploadIcon(), util.UrlStartsWith(ctx, "/workspace/images/upload"))
+		@mobileNavLink("/workspace/search", "Search", searchIcon(), util.UrlStartsWith(ctx, "/workspace/search"))
 	</div>
 }
 
@@ -202,5 +204,11 @@ templ imagesIcon() {
 templ uploadIcon() {
 	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
 		<path d="M12 13v8"></path><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path><path d="m8 17 4-4 4 4"></path>
+	</svg>
+}
+
+templ searchIcon() {
+	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+		<circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path>
 	</svg>
 }
