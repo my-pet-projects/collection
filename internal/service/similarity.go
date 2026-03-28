@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	defaultTopN = 10
+	defaultTopN = 20
 )
 
 // SimilarityService handles image similarity search for crown caps.
