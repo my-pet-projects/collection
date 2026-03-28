@@ -57,7 +57,7 @@ func (h SimilarityHandler) HandleSearchCaps(reqResp *web.ReqRespPair) error {
 		return apperr.NewInternalServerError("Failed to read image", copyErr)
 	}
 
-	const searchResultLimit = 10
+	const searchResultLimit = 50
 	results, searchErr := h.similaritySvc.SearchSimilarCaps(reqResp.Request.Context(), buf.Bytes(), searchResultLimit)
 	if searchErr != nil {
 		h.logger.Error("Failed to search similar caps", slog.Any("error", searchErr))
