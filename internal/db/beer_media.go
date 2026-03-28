@@ -93,3 +93,43 @@ func (s BeerMediaStore) DeleteBeerMedia(ctx context.Context, item model.BeerMedi
 
 	return res.Error
 }
+
+// FetchCapMediaWithoutHash returns all crown cap BeerMedia records where the perceptual hash is empty.
+func (s BeerMediaStore) FetchCapMediaWithoutHash(ctx context.Context) ([]model.BeerMedia, error) {
+	var items []model.BeerMedia
+	result := s.db.gorm.
+		WithContext(ctx).
+		Debug().
+		Joins("Media").
+		Where("beer_medias.type = ?", model.BeerMediaCrownCap).
+		Where("Media.perceptual_hash IS NULL OR Media.perceptual_hash = ''").
+		Find(&items)
+
+	return items, result.Error
+}
+
+// FetchCapMediaWithHash returns all crown cap BeerMedia records that have perceptual hashes.
+func (s BeerMediaStore) FetchCapMediaWithHash(ctx context.Context) ([]model.BeerMedia, error) {
+	var items []model.BeerMedia
+	result := s.db.gorm.
+		WithContext(ctx).
+		Debug().
+		Joins("Media").
+		Where("beer_medias.type = ?", model.BeerMediaCrownCap).
+		Where("Media.perceptual_hash IS NOT NULL AND Media.perceptual_hash != ''").
+		Find(&items)
+
+	return items, result.Error
+}
+
+// UpdateMediaItemHash stores the perceptual hash for a media item.
+func (s BeerMediaStore) UpdateMediaItemHash(ctx context.Context, mediaItemID int, hash string) error {
+	res := s.db.gorm.
+		WithContext(ctx).
+		Debug().
+		Model(&model.MediaItem{}).
+		Where("id = ?", mediaItemID).
+		Update("perceptual_hash", hash)
+
+	return res.Error
+}

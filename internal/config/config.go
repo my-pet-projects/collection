@@ -16,6 +16,11 @@ type Config struct {
 	GeoDbConfig        TursoDbConfig
 	CollectionDbConfig TursoDbConfig
 	AuthConfig         AuthConfig
+	APIKeys            APIKeys
+}
+
+type APIKeys struct {
+	HuggingFace string
 }
 
 type AuthConfig struct {
@@ -104,6 +109,8 @@ func NewConfig() (*Config, error) { //nolint:cyclop
 		return nil, err
 	}
 
+	huggingFaceAPIKey, _ := requireEnv("HUGGINGFACE_API_KEY")
+
 	cfg := &Config{
 		Env: env,
 		AwsConfig: AwsConfig{
@@ -124,6 +131,9 @@ func NewConfig() (*Config, error) { //nolint:cyclop
 			ClerkPublishableKey: clerkPublishableKey,
 			RsaPublicKey:        rsaPublicKey,
 			ClerkAuthHost:       clerkAuthHost,
+		},
+		APIKeys: APIKeys{
+			HuggingFace: huggingFaceAPIKey,
 		},
 	}
 
