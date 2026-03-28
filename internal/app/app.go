@@ -13,7 +13,7 @@ import (
 
 	"github.com/my-pet-projects/collection/internal/config"
 	"github.com/my-pet-projects/collection/internal/db"
-	"github.com/my-pet-projects/collection/internal/imghash"
+	"github.com/my-pet-projects/collection/internal/img"
 	"github.com/my-pet-projects/collection/internal/log"
 	"github.com/my-pet-projects/collection/internal/router"
 	"github.com/my-pet-projects/collection/internal/server"
@@ -117,7 +117,7 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 	imageService := service.NewImageService(&mediaStore, &beerStore, &beerMediaStore, &s3Storage, logger)
 	collectionService := service.NewCollectionService(&beerMediaStore, logger)
 
-	hasher := imghash.NewHasher()
+	hasher := img.NewHasher()
 	similarityService := service.NewSimilarityService(&beerMediaStore, &s3Storage, hasher, logger)
 
 	// Initialize router with dependencies

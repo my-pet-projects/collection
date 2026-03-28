@@ -1,4 +1,4 @@
-package imghash
+package img
 
 import (
 	"bytes"
@@ -15,8 +15,18 @@ import (
 	"github.com/corona10/goimagehash"
 )
 
-// rotationCount is the number of 90-degree rotations to store per image.
-const rotationCount = 4
+const (
+	// rotationCount is the number of 90-degree rotations to store per image.
+	rotationCount = 4
+	// degreesPerRotation is the angle increment for each rotation step.
+	degreesPerRotation = 90
+	// hashPartsCount is the number of hash components in a serialized rotation hash.
+	hashPartsCount = 3
+	// pixelCenterOffset adjusts pixel coordinates to their center.
+	pixelCenterOffset = 0.5
+	// half is used to compute the center of a dimension.
+	half = 2.0
+)
 
 // ImageHash holds perceptual hashes at 4 rotations (0°, 90°, 180°, 270°)
 // for rotation-invariant comparison.
@@ -50,15 +60,15 @@ func (c *Hasher) GetImageHash(imageBytes []byte) (*ImageHash, error) {
 
 	var result ImageHash
 	current := masked
-	for i := range rotationCount {
-		if i > 0 {
+	for rotIdx := range rotationCount {
+		if rotIdx > 0 {
 			current = rotate90(current)
 		}
 		rh, err := computeHashes(current)
 		if err != nil {
-			return nil, fmt.Errorf("hashes at rotation %d: %w", i*90, err)
+			return nil, fmt.Errorf("hashes at rotation %d: %w", rotIdx*degreesPerRotation, err)
 		}
-		result.Rotations[i] = *rh
+		result.Rotations[rotIdx] = *rh
 	}
 
 	return &result, nil
@@ -79,7 +89,7 @@ func Similarity(a, b *ImageHash) float32 {
 }
 
 // Encode serializes all rotation hashes to a string for DB storage.
-// Format: "p0:d0:a0|p1:d1:a1|p2:d2:a2|p3:d3:a3"
+// Format: "p0:d0:a0|p1:d1:a1|p2:d2:a2|p3:d3:a3".
 func (h *ImageHash) Encode() string {
 	parts := make([]string, rotationCount)
 	for i, r := range h.Rotations {
@@ -123,16 +133,16 @@ func DecodeImageHash(data string) (*ImageHash, bool) {
 
 func decodeRotationHash(s string) (RotationHash, bool) {
 	parts := strings.Split(s, ":")
-	if len(parts) != 3 {
+	if len(parts) != hashPartsCount {
 		return RotationHash{}, false
 	}
-	p, e1 := strconv.ParseUint(parts[0], 10, 64)
-	d, e2 := strconv.ParseUint(parts[1], 10, 64)
-	a, e3 := strconv.ParseUint(parts[2], 10, 64)
-	if e1 != nil || e2 != nil || e3 != nil {
+	pHash, pErr := strconv.ParseUint(parts[0], 10, 64)
+	dHash, dErr := strconv.ParseUint(parts[1], 10, 64)
+	aHash, aErr := strconv.ParseUint(parts[2], 10, 64)
+	if pErr != nil || dErr != nil || aErr != nil {
 		return RotationHash{}, false
 	}
-	return RotationHash{PHash: p, DHash: d, AHash: a}, true
+	return RotationHash{PHash: pHash, DHash: dHash, AHash: aHash}, true
 }
 
 func computeHashes(img image.Image) (*RotationHash, error) {
@@ -158,19 +168,19 @@ func computeHashes(img image.Image) (*RotationHash, error) {
 // applyCircularMask blacks out pixels outside the inscribed circle.
 func applyCircularMask(img image.Image) *image.RGBA {
 	bounds := img.Bounds()
-	w, h := bounds.Dx(), bounds.Dy()
-	cx, cy := float64(w)/2, float64(h)/2
-	radius := math.Min(cx, cy)
+	width, height := bounds.Dx(), bounds.Dy()
+	centerX, centerY := float64(width)/half, float64(height)/half
+	radius := math.Min(centerX, centerY)
 
-	dst := image.NewRGBA(image.Rect(0, 0, w, h))
+	dst := image.NewRGBA(image.Rect(0, 0, width, height))
 	draw.Draw(dst, dst.Bounds(), img, bounds.Min, draw.Src)
 
-	for y := range h {
-		for x := range w {
-			dx := float64(x) - cx + 0.5
-			dy := float64(y) - cy + 0.5
+	for py := range height {
+		for px := range width {
+			dx := float64(px) - centerX + pixelCenterOffset
+			dy := float64(py) - centerY + pixelCenterOffset
 			if dx*dx+dy*dy > radius*radius {
-				dst.SetRGBA(x, y, color.RGBA{})
+				dst.SetRGBA(px, py, color.RGBA{})
 			}
 		}
 	}

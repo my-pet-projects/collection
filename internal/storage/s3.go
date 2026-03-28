@@ -12,6 +12,8 @@ import (
 	"github.com/my-pet-projects/collection/internal/model"
 )
 
+const s3Bucket = "beer-collection-bucket"
+
 type S3Storage struct {
 	client *s3.Client
 	logger *slog.Logger
@@ -25,7 +27,7 @@ func NewS3Storage(client *s3.Client, logger *slog.Logger) S3Storage {
 }
 
 func (s S3Storage) Upload(ctx context.Context, img *model.MediaImage) error {
-	bucket := "beer-collection-bucket"
+	bucket := s3Bucket
 	key := fmt.Sprintf("original/%s", img.ExternalName)
 
 	_, putErr := s.client.PutObject(ctx, &s3.PutObjectInput{
@@ -43,7 +45,7 @@ func (s S3Storage) Upload(ctx context.Context, img *model.MediaImage) error {
 
 func (s S3Storage) Delete(ctx context.Context, key string) error {
 	key = fmt.Sprintf("original/%s", key)
-	bucket := "beer-collection-bucket"
+	bucket := s3Bucket
 
 	_, delErr := s.client.DeleteObject(ctx, &s3.DeleteObjectInput{
 		Bucket: &bucket,
@@ -59,7 +61,7 @@ func (s S3Storage) Delete(ctx context.Context, key string) error {
 
 func (s S3Storage) Download(ctx context.Context, key string) ([]byte, error) {
 	key = fmt.Sprintf("original/%s", key)
-	bucket := "beer-collection-bucket"
+	bucket := s3Bucket
 
 	result, getErr := s.client.GetObject(ctx, &s3.GetObjectInput{
 		Bucket: &bucket,

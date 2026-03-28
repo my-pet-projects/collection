@@ -52,11 +52,13 @@ func (h SimilarityHandler) HandleSearchCaps(reqResp *web.ReqRespPair) error {
 	defer file.Close() //nolint:errcheck
 
 	var buf bytes.Buffer
-	if _, copyErr := io.Copy(&buf, file); copyErr != nil {
+	_, copyErr := io.Copy(&buf, file)
+	if copyErr != nil {
 		return apperr.NewInternalServerError("Failed to read image", copyErr)
 	}
 
-	results, searchErr := h.similaritySvc.SearchSimilarCaps(reqResp.Request.Context(), buf.Bytes(), 10)
+	const searchResultLimit = 10
+	results, searchErr := h.similaritySvc.SearchSimilarCaps(reqResp.Request.Context(), buf.Bytes(), searchResultLimit)
 	if searchErr != nil {
 		h.logger.Error("Failed to search similar caps", slog.Any("error", searchErr))
 		return apperr.NewInternalServerError("Failed to search for similar caps", searchErr)

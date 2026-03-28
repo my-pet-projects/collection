@@ -98,6 +98,7 @@ func (s BeerMediaStore) DeleteBeerMedia(ctx context.Context, item model.BeerMedi
 func (s BeerMediaStore) FetchCapMediaWithoutHash(ctx context.Context) ([]model.BeerMedia, error) {
 	var items []model.BeerMedia
 	result := s.db.gorm.
+		WithContext(ctx).
 		Debug().
 		Joins("Media").
 		Where("beer_medias.type = ?", model.BeerMediaCrownCap).
@@ -111,6 +112,7 @@ func (s BeerMediaStore) FetchCapMediaWithoutHash(ctx context.Context) ([]model.B
 func (s BeerMediaStore) FetchCapMediaWithHash(ctx context.Context) ([]model.BeerMedia, error) {
 	var items []model.BeerMedia
 	result := s.db.gorm.
+		WithContext(ctx).
 		Debug().
 		Joins("Media").
 		Where("beer_medias.type = ?", model.BeerMediaCrownCap).
@@ -123,6 +125,7 @@ func (s BeerMediaStore) FetchCapMediaWithHash(ctx context.Context) ([]model.Beer
 // UpdateMediaItemHash stores the perceptual hash for a media item.
 func (s BeerMediaStore) UpdateMediaItemHash(ctx context.Context, mediaItemID int, hash string) error {
 	res := s.db.gorm.
+		WithContext(ctx).
 		Debug().
 		Model(&model.MediaItem{}).
 		Where("id = ?", mediaItemID).

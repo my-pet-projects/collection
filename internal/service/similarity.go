@@ -7,7 +7,7 @@ import (
 	"sort"
 
 	"github.com/my-pet-projects/collection/internal/db"
-	"github.com/my-pet-projects/collection/internal/imghash"
+	"github.com/my-pet-projects/collection/internal/img"
 	"github.com/my-pet-projects/collection/internal/model"
 	"github.com/my-pet-projects/collection/internal/storage"
 )
@@ -20,7 +20,7 @@ const (
 type SimilarityService struct {
 	beerMediaStore *db.BeerMediaStore
 	s3Storage      *storage.S3Storage
-	hasher         *imghash.Hasher
+	hasher         *img.Hasher
 	logger         *slog.Logger
 }
 
@@ -28,7 +28,7 @@ type SimilarityService struct {
 func NewSimilarityService(
 	beerMediaStore *db.BeerMediaStore,
 	s3Storage *storage.S3Storage,
-	hasher *imghash.Hasher,
+	hasher *img.Hasher,
 	logger *slog.Logger,
 ) SimilarityService {
 	return SimilarityService{
@@ -63,11 +63,11 @@ func (s SimilarityService) SearchSimilarCaps(ctx context.Context, imageBytes []b
 	// Compute similarities.
 	results := make([]model.SimilarityResult, 0, len(caps))
 	for _, cap := range caps {
-		storedHash, ok := imghash.DecodeImageHash(cap.Media.PerceptualHash)
+		storedHash, ok := img.DecodeImageHash(cap.Media.PerceptualHash)
 		if !ok {
 			continue
 		}
-		sim := imghash.Similarity(queryHash, storedHash)
+		sim := img.Similarity(queryHash, storedHash)
 		results = append(results, model.SimilarityResult{
 			BeerMedia:  cap,
 			Similarity: sim,
@@ -100,7 +100,7 @@ func (s SimilarityService) BackfillHashes(ctx context.Context) (int, error) {
 		select {
 		case <-ctx.Done():
 			s.logger.Info("Backfill interrupted", slog.Int("processed", processed))
-			return processed, ctx.Err()
+			return processed, fmt.Errorf("backfill interrupted: %w", ctx.Err())
 		default:
 		}
 
@@ -112,13 +112,13 @@ func (s SimilarityService) BackfillHashes(ctx context.Context) (int, error) {
 			continue
 		}
 
-		imgHash, hashErr := s.hasher.GetImageHash(imgBytes)
+		img, hashErr := s.hasher.GetImageHash(imgBytes)
 		if hashErr != nil {
 			s.logger.Error("Failed to hash image", slog.Any("error", hashErr), slog.Int("mediaID", cap.MediaID))
 			continue
 		}
 
-		encoded := imgHash.Encode()
+		encoded := img.Encode()
 		updErr := s.beerMediaStore.UpdateMediaItemHash(ctx, cap.MediaID, encoded)
 		if updErr != nil {
 			s.logger.Error("Failed to store hash", slog.Any("error", updErr), slog.Int("mediaID", cap.MediaID))
