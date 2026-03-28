@@ -93,27 +93,41 @@ func (s SimilarityService) BackfillHashes(ctx context.Context) (int, error) {
 		return 0, fmt.Errorf("fetch caps without hashes: %w", capsErr)
 	}
 
-	s.logger.Info("Starting hash backfill", slog.Int("total", len(caps)))
+	total := len(caps)
+	s.logger.Info("Starting hash backfill", slog.Int("total", total))
 
 	processed := 0
-	for _, cap := range caps {
+	failed := 0
+	for idx, cap := range caps {
 		select {
 		case <-ctx.Done():
-			s.logger.Info("Backfill interrupted", slog.Int("processed", processed))
+			s.logger.Info("Backfill interrupted",
+				slog.Int("processed", processed), slog.Int("failed", failed), slog.Int("remaining", total-idx))
 			return processed, fmt.Errorf("backfill interrupted: %w", ctx.Err())
 		default:
 		}
 
-		s.logger.Info("Processing cap", slog.Int("mediaID", cap.MediaID), slog.String("file", cap.Media.ExternalFilename))
+		remaining := total - idx - 1
+		s.logger.Info("Processing cap",
+			slog.Int("current", idx+1),
+			slog.Int("total", total),
+			slog.Int("remaining", remaining),
+			slog.Int("processed", processed),
+			slog.Int("failed", failed),
+			slog.Int("mediaID", cap.MediaID),
+			slog.String("file", cap.Media.ExternalFilename),
+		)
 
 		imgBytes, dlErr := s.s3Storage.Download(ctx, cap.Media.ExternalFilename)
 		if dlErr != nil {
+			failed++
 			s.logger.Error("Failed to download image", slog.Any("error", dlErr), slog.Int("mediaID", cap.MediaID))
 			continue
 		}
 
 		img, hashErr := s.hasher.GetImageHash(imgBytes)
 		if hashErr != nil {
+			failed++
 			s.logger.Error("Failed to hash image", slog.Any("error", hashErr), slog.Int("mediaID", cap.MediaID))
 			continue
 		}
@@ -121,16 +135,15 @@ func (s SimilarityService) BackfillHashes(ctx context.Context) (int, error) {
 		encoded := img.Encode()
 		updErr := s.beerMediaStore.UpdateMediaItemHash(ctx, cap.MediaID, encoded)
 		if updErr != nil {
+			failed++
 			s.logger.Error("Failed to store hash", slog.Any("error", updErr), slog.Int("mediaID", cap.MediaID))
 			continue
 		}
 
 		processed++
-		if processed%100 == 0 {
-			s.logger.Info("Backfill progress", slog.Int("processed", processed), slog.Int("total", len(caps)))
-		}
 	}
 
-	s.logger.Info("Backfill completed", slog.Int("processed", processed), slog.Int("total", len(caps)))
+	s.logger.Info("Backfill completed",
+		slog.Int("processed", processed), slog.Int("failed", failed), slog.Int("total", total))
 	return processed, nil
 }

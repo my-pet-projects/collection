@@ -122,6 +122,19 @@ func (s BeerMediaStore) FetchCapMediaWithHash(ctx context.Context) ([]model.Beer
 	return items, result.Error
 }
 
+// FetchAllCapMedia returns all crown cap BeerMedia records regardless of hash status.
+func (s BeerMediaStore) FetchAllCapMedia(ctx context.Context) ([]model.BeerMedia, error) {
+	var items []model.BeerMedia
+	result := s.db.gorm.
+		WithContext(ctx).
+		Debug().
+		Joins("Media").
+		Where("beer_medias.type = ?", model.BeerMediaCrownCap).
+		Find(&items)
+
+	return items, result.Error
+}
+
 // UpdateMediaItemHash stores the perceptual hash for a media item.
 func (s BeerMediaStore) UpdateMediaItemHash(ctx context.Context, mediaItemID int, hash string) error {
 	res := s.db.gorm.
