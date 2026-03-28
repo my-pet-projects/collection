@@ -149,6 +149,11 @@ github.com/coder/websocket/internal/errd
 github.com/coder/websocket/internal/util
 github.com/coder/websocket/internal/wsjs
 github.com/coder/websocket/wsjson
+# github.com/corona10/goimagehash v1.1.0
+## explicit
+github.com/corona10/goimagehash
+github.com/corona10/goimagehash/etcs
+github.com/corona10/goimagehash/transforms
 # github.com/go-chi/chi/v5 v5.2.5
 ## explicit; go 1.22
 github.com/go-chi/chi/v5
@@ -170,6 +175,9 @@ github.com/jinzhu/now
 # github.com/mattn/go-sqlite3 v1.14.32
 ## explicit; go 1.19
 github.com/mattn/go-sqlite3
+# github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
+## explicit
+github.com/nfnt/resize
 # github.com/tursodatabase/libsql-client-go v0.0.0-20251219100830-236aa1ff8acc
 ## explicit; go 1.20
 github.com/tursodatabase/libsql-client-go/libsql

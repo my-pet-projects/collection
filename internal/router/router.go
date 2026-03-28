@@ -24,6 +24,7 @@ type Deps struct {
 	BeerService       service.BeerService
 	ImageService      service.ImageService
 	CollectionService service.CollectionService
+	SimilarityService service.SimilarityService
 	Logger            *slog.Logger
 }
 
@@ -38,6 +39,7 @@ func New(deps Deps) (http.Handler, error) {
 	beerImagesHandler := handler.NewBeerImagesHandler(deps.BeerService, deps.ImageService, deps.CollectionService, deps.Logger)
 	uploadHandler := handler.NewUploadHandler(deps.ImageService, deps.Logger)
 	authHandler := handler.NewAuthenticationHandler(deps.Cfg, deps.Logger)
+	similarityHandler := handler.NewSimilarityHandler(deps.SimilarityService, deps.Logger)
 	appHandler := web.NewAppHandler(deps.Logger)
 
 	router := chi.NewRouter()
@@ -108,6 +110,13 @@ func New(deps Deps) (http.Handler, error) {
 		router.Delete("/workspace/images/{id}", appHandler.Handle(uploadHandler.DeleteBeerMedia))
 		router.Get("/workspace/images/upload", appHandler.Handle(uploadHandler.UploadImagePage))
 		router.Post("/workspace/images/uploads", appHandler.Handle(uploadHandler.UploadImage))
+	})
+
+	// Authenticated routes - Cap Similarity Search
+	router.With(middleware.WithAuthentication(deps.Cfg, deps.Logger)).Group(func(router chi.Router) {
+		router.Get("/workspace/search", appHandler.Handle(similarityHandler.HandleSearchPage))
+		router.Post("/workspace/search/caps", appHandler.Handle(similarityHandler.HandleSearchCaps))
+		router.Post("/workspace/search/backfill", appHandler.Handle(similarityHandler.HandleBackfillHashes))
 	})
 
 	// Not found handler
