@@ -13,6 +13,7 @@ import (
 
 	"github.com/my-pet-projects/collection/internal/config"
 	"github.com/my-pet-projects/collection/internal/db"
+	"github.com/my-pet-projects/collection/internal/img"
 	"github.com/my-pet-projects/collection/internal/log"
 	"github.com/my-pet-projects/collection/internal/router"
 	"github.com/my-pet-projects/collection/internal/server"
@@ -104,7 +105,9 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 	if sdkConfigErr != nil {
 		return nil, fmt.Errorf("aws config: %w", sdkConfigErr)
 	}
-	s3Client := s3.NewFromConfig(sdkConfig)
+	s3Client := s3.NewFromConfig(sdkConfig, func(o *s3.Options) {
+		o.DisableLogOutputChecksumValidationSkipped = true
+	})
 	s3Storage := storage.NewS3Storage(s3Client, logger)
 
 	// Initialize services
@@ -113,6 +116,9 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 	beerService := service.NewBeerService(&beerStore, &styleStore, &breweryStore, logger)
 	imageService := service.NewImageService(&mediaStore, &beerStore, &beerMediaStore, &s3Storage, logger)
 	collectionService := service.NewCollectionService(&beerMediaStore, logger)
+
+	hasher := img.NewHasher()
+	similarityService := service.NewSimilarityService(&beerMediaStore, &s3Storage, hasher, logger)
 
 	// Initialize router with dependencies
 	deps := router.Deps{
@@ -123,6 +129,7 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 		BeerService:       beerService,
 		ImageService:      imageService,
 		CollectionService: collectionService,
+		SimilarityService: similarityService,
 		Logger:            logger,
 	}
 
