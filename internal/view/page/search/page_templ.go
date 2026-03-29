@@ -62,7 +62,7 @@ func Page(page SearchPageData) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, " <div class=\"space-y-6\"><!-- Search Form --><div class=\"overflow-hidden rounded-2xl bg-white p-4 shadow-xl ring-1 ring-gray-200/50 sm:p-6 lg:p-8\"><form hx-post=\"/workspace/search/caps\" hx-target=\"#search-results\" hx-swap=\"innerHTML\" hx-encoding=\"multipart/form-data\" hx-indicator=\"#search-spinner\" class=\"space-y-4\" x-data=\"{ preview: null, fileName: '' }\"><!-- Image preview --><div x-show=\"preview\" x-cloak class=\"flex justify-center\"><div class=\"relative inline-block\"><img :src=\"preview\" class=\"max-h-48 rounded-xl object-contain sm:max-h-56\"> <button type=\"button\" @click=\"preview = null; fileName = ''; $refs.fileInput.value = ''\" class=\"absolute right-1 top-1 rounded-full bg-black/60 p-1.5 text-white shadow-lg backdrop-blur-sm transition hover:bg-black/80\"><svg class=\"h-4 w-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"2.5\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M6 18L18 6M6 6l12 12\"></path></svg></button></div></div><!-- File input area --><div x-show=\"!preview\" class=\"flex flex-col items-center\"><label class=\"flex w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 px-4 py-8 transition hover:border-amber-400 hover:bg-amber-50 sm:py-10\"><svg class=\"mb-3 h-10 w-10 text-gray-400 sm:h-12 sm:w-12\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"1.5\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z\"></path> <path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0Z\"></path></svg> <span class=\"text-sm font-medium text-gray-600\">Tap to take a photo or choose an image</span> <span class=\"mt-1 text-xs text-gray-400\">PNG, JPG up to 10MB</span> <input type=\"file\" name=\"image\" accept=\"image/*\" capture=\"environment\" required x-ref=\"fileInput\" @change=\"\n\t\t\t\t\t\t\t\t\tconst file = $event.target.files[0];\n\t\t\t\t\t\t\t\t\tif (file) {\n\t\t\t\t\t\t\t\t\t\tfileName = file.name;\n\t\t\t\t\t\t\t\t\t\tconst reader = new FileReader();\n\t\t\t\t\t\t\t\t\t\treader.onload = (e) => preview = e.target.result;\n\t\t\t\t\t\t\t\t\t\treader.readAsDataURL(file);\n\t\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t\" class=\"hidden\"></label></div><!-- Search button --><button type=\"submit\" class=\"flex w-full items-center justify-center gap-2 rounded-xl bg-amber-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-amber-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-600 sm:w-auto\"><svg class=\"h-5 w-5\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z\"></path></svg> Search</button></form><!-- Loading Spinner --><div id=\"search-spinner\" class=\"htmx-indicator mt-4 flex justify-center\"><div class=\"flex items-center gap-2 text-gray-500\"><svg class=\"h-5 w-5 animate-spin\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\"><circle class=\"opacity-25\" cx=\"12\" cy=\"12\" r=\"10\" stroke=\"currentColor\" stroke-width=\"4\"></circle> <path class=\"opacity-75\" fill=\"currentColor\" d=\"M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z\"></path></svg> <span>Searching for similar caps...</span></div></div></div><!-- Backfill Section --><div class=\"overflow-hidden rounded-2xl bg-white p-4 shadow-xl ring-1 ring-gray-200/50 sm:p-6 lg:p-8\"><h3 class=\"mb-2 text-lg font-semibold text-gray-900\">Hash Management</h3><p class=\"mb-4 text-sm text-gray-500\">Generate perceptual hashes for crown cap images that don't have them yet. This is needed before similarity search can work.</p><button hx-post=\"/workspace/search/backfill\" hx-target=\"#backfill-result\" hx-swap=\"innerHTML\" hx-indicator=\"#backfill-spinner\" hx-confirm=\"This will process all caps without hashes. Continue?\" class=\"inline-flex items-center gap-2 rounded-lg bg-gray-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-500\">Generate Hashes</button><div id=\"backfill-spinner\" class=\"htmx-indicator mt-2 text-sm text-gray-500\">Processing... This may take a while.</div><div id=\"backfill-result\" class=\"mt-2\"></div></div><!-- Results --><div id=\"search-results\"></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, " <div class=\"space-y-6\"><!-- Results --><div id=\"search-results\"></div><!-- Search Form --><div class=\"overflow-hidden rounded-2xl bg-white p-4 shadow-xl ring-1 ring-gray-200/50 sm:p-6 lg:p-8\"><form hx-post=\"/workspace/search/caps\" hx-target=\"#search-results\" hx-swap=\"innerHTML\" hx-encoding=\"multipart/form-data\" hx-indicator=\"#search-spinner\" class=\"space-y-4\" x-data=\"{ preview: null, fileName: '' }\"><!-- Similarity toggles --><div class=\"flex flex-wrap gap-4\"><label class=\"flex cursor-pointer items-center gap-2 text-sm text-gray-700\"><input type=\"checkbox\" name=\"use_hash\" value=\"1\" checked class=\"h-4 w-4 rounded border-gray-300 text-amber-600 focus:ring-amber-500\"> Structural similarity</label> <label class=\"flex cursor-pointer items-center gap-2 text-sm text-gray-700\"><input type=\"checkbox\" name=\"use_color\" value=\"1\" checked class=\"h-4 w-4 rounded border-gray-300 text-amber-600 focus:ring-amber-500\"> Color similarity</label></div><!-- Image preview --><div x-show=\"preview\" x-cloak class=\"flex justify-center\"><div class=\"relative inline-block\"><img :src=\"preview\" class=\"max-h-48 rounded-xl object-contain sm:max-h-56\"> <button type=\"button\" @click=\"preview = null; fileName = ''; $refs.fileInput.value = ''\" class=\"absolute right-1 top-1 rounded-full bg-black/60 p-1.5 text-white shadow-lg backdrop-blur-sm transition hover:bg-black/80\"><svg class=\"h-4 w-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"2.5\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M6 18L18 6M6 6l12 12\"></path></svg></button></div></div><!-- File input area --><div x-show=\"!preview\" class=\"flex flex-col items-center\"><label class=\"flex w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 px-4 py-8 transition hover:border-amber-400 hover:bg-amber-50 sm:py-10\"><svg class=\"mb-3 h-10 w-10 text-gray-400 sm:h-12 sm:w-12\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"1.5\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z\"></path> <path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0Z\"></path></svg> <span class=\"text-sm font-medium text-gray-600\">Tap to take a photo or choose an image</span> <span class=\"mt-1 text-xs text-gray-400\">PNG, JPG up to 10MB</span> <input type=\"file\" name=\"image\" accept=\"image/*\" capture=\"environment\" required x-ref=\"fileInput\" @change=\"\n\t\t\t\t\t\t\t\t\tconst file = $event.target.files[0];\n\t\t\t\t\t\t\t\t\tif (file) {\n\t\t\t\t\t\t\t\t\t\tfileName = file.name;\n\t\t\t\t\t\t\t\t\t\tconst reader = new FileReader();\n\t\t\t\t\t\t\t\t\t\treader.onload = (e) => preview = e.target.result;\n\t\t\t\t\t\t\t\t\t\treader.readAsDataURL(file);\n\t\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t\" class=\"hidden\"></label></div><!-- Search button --><button type=\"submit\" class=\"flex w-full items-center justify-center gap-2 rounded-xl bg-amber-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-amber-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-600 sm:w-auto\"><svg class=\"h-5 w-5\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z\"></path></svg> Search</button></form><!-- Loading Spinner --><div id=\"search-spinner\" class=\"htmx-indicator mt-4 flex justify-center\"><div class=\"flex items-center gap-2 text-gray-500\"><svg class=\"h-5 w-5 animate-spin\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\"><circle class=\"opacity-25\" cx=\"12\" cy=\"12\" r=\"10\" stroke=\"currentColor\" stroke-width=\"4\"></circle> <path class=\"opacity-75\" fill=\"currentColor\" d=\"M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z\"></path></svg> <span>Searching for similar caps...</span></div></div></div><!-- Hash Management --><div class=\"overflow-hidden rounded-2xl bg-white p-4 shadow-xl ring-1 ring-gray-200/50 sm:p-6 lg:p-8\"><h3 class=\"mb-2 text-lg font-semibold text-gray-900\">Hash Management</h3><p class=\"mb-4 text-sm text-gray-500\">Generate perceptual hashes for crown cap images that don't have them yet. This is needed before similarity search can work.</p><div class=\"flex flex-wrap gap-3\"><button hx-post=\"/workspace/search/backfill\" hx-target=\"#backfill-result\" hx-swap=\"innerHTML\" hx-indicator=\"#backfill-spinner\" hx-confirm=\"This will process all caps without hashes. Continue?\" class=\"inline-flex items-center gap-2 rounded-lg bg-gray-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-500\">Generate Hashes</button> <button hx-post=\"/workspace/search/reset\" hx-target=\"#backfill-result\" hx-swap=\"innerHTML\" hx-indicator=\"#backfill-spinner\" hx-confirm=\"This will delete ALL perceptual hashes. You will need to regenerate them. Continue?\" class=\"inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-red-500\">Reset All Hashes</button></div><div id=\"backfill-spinner\" class=\"htmx-indicator mt-2 text-sm text-gray-500\">Processing... This may take a while.</div><div id=\"backfill-result\" class=\"mt-2\"></div></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -76,7 +76,7 @@ func Page(page SearchPageData) templ.Component {
 	})
 }
 
-func SearchResults(results []model.SimilarityResult) templ.Component {
+func SearchResults(sr model.SearchResult) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -97,87 +97,180 @@ func SearchResults(results []model.SimilarityResult) templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		if len(results) == 0 {
+		if len(sr.Results) == 0 {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"rounded-2xl bg-white p-6 text-center shadow-xl ring-1 ring-gray-200/50\"><svg class=\"mx-auto mb-3 h-12 w-12 text-gray-300\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"1.5\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z\"></path></svg><p class=\"text-gray-500\">No similar caps found. Make sure hashes have been generated.</p></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"overflow-hidden rounded-2xl bg-white p-4 shadow-xl ring-1 ring-gray-200/50 sm:p-6 lg:p-8\"><h3 class=\"mb-4 text-lg font-semibold text-gray-900\">Similar Caps (")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"overflow-hidden rounded-2xl bg-white p-4 shadow-xl ring-1 ring-gray-200/50 sm:p-6 lg:p-8\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var4 string
-			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", len(results)))
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/search/page.templ`, Line: 137, Col: 51}
+			if sr.PreviewDataURL != "" {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div class=\"mb-4\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				if sr.CircleDetected {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<h4 class=\"mb-2 text-sm font-medium text-green-600\">✓ Crown cap detected (green circle)</h4>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				} else {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<h4 class=\"mb-2 text-sm font-medium text-red-500\">⚠ No crown cap circle detected — analyzing entire image</h4>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div class=\"flex items-start justify-center gap-4\"><div class=\"text-center\"><img src=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var4 string
+				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(sr.PreviewDataURL)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/search/page.templ`, Line: 168, Col: 35}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" alt=\"Detected region\" class=\"max-h-48 rounded-xl ring-1 ring-gray-200\"><p class=\"mt-1 text-xs text-gray-400\">Detection</p></div>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				if sr.CroppedPreviewURL != "" {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"text-center\"><img src=\"")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var5 string
+					templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(sr.CroppedPreviewURL)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/search/page.templ`, Line: 173, Col: 39}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" alt=\"Normalized image\" class=\"max-h-48 rounded-xl ring-1 ring-gray-200\"><p class=\"mt-1 text-xs text-gray-400\">Hashed image</p></div>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div></div>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<h3 class=\"mb-4 text-lg font-semibold text-gray-900\">Similar Caps (")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, " results)</h3><div class=\"grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5\">")
+			var templ_7745c5c3_Var6 string
+			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", len(sr.Results)))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/search/page.templ`, Line: 181, Col: 54}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			for _, result := range results {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, " results)</h3><div class=\"grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			for _, result := range sr.Results {
 				originalImageURL := fmt.Sprintf("%s/%s", S3BaseURL, result.BeerMedia.Media.ExternalFilename)
 				resizedImageURL := fmt.Sprintf("%s/width=150,quality=80/%s", CdnBaseURL, originalImageURL)
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div class=\"group relative overflow-hidden rounded-xl bg-gray-50 ring-1 ring-gray-200/50 active:ring-amber-400\"><div class=\"aspect-square\"><img src=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<div class=\"group relative overflow-hidden rounded-xl bg-gray-50 ring-1 ring-gray-200/50 active:ring-amber-400\"><div class=\"aspect-square\"><img src=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var5 string
-				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(resizedImageURL)
+				var templ_7745c5c3_Var7 string
+				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(resizedImageURL)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/search/page.templ`, Line: 146, Col: 29}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/search/page.templ`, Line: 190, Col: 29}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" alt=\"Crown cap\" class=\"h-full w-full object-cover\" loading=\"lazy\"></div><div class=\"absolute inset-x-0 bottom-0 bg-linear-to-t from-black/60 to-transparent p-2\"><span class=\"text-xs font-semibold text-white sm:text-sm\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\" alt=\"Crown cap\" class=\"h-full w-full object-cover\" loading=\"lazy\"></div><div class=\"bg-linear-to-t absolute inset-x-0 bottom-0 from-black/60 to-transparent p-2\"><span class=\"text-xs font-semibold text-white sm:text-sm\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var6 string
-				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%.1f%%", result.Similarity*100))
+				var templ_7745c5c3_Var8 string
+				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%.1f%%", result.Similarity*100))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/search/page.templ`, Line: 154, Col: 56}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/search/page.templ`, Line: 198, Col: 56}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</span> ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</span> <span class=\"ml-1 text-xs text-white/70\">#")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var9 string
+				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%.0f%%", result.HashSimilarity*100))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/search/page.templ`, Line: 201, Col: 61}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</span> ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				if result.ColorSimilarity >= 0 {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<span class=\"ml-0.5 text-xs text-white/70\">🎨")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var10 string
+					templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%.0f%%", result.ColorSimilarity*100))
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/search/page.templ`, Line: 205, Col: 66}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</span> ")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
 				}
 				if result.BeerMedia.BeerID != nil {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<span class=\"ml-1 text-xs text-white/80\">Beer #")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<span class=\"ml-1 text-xs text-white/80\">Beer #")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var7 string
-					templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", *result.BeerMedia.BeerID))
+					var templ_7745c5c3_Var11 string
+					templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", *result.BeerMedia.BeerID))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/search/page.templ`, Line: 158, Col: 60}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/search/page.templ`, Line: 210, Col: 60}
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</span>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</span>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -202,25 +295,67 @@ func BackfillResult(processed int) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var8 == nil {
-			templ_7745c5c3_Var8 = templ.NopComponent
+		templ_7745c5c3_Var12 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var12 == nil {
+			templ_7745c5c3_Var12 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div class=\"rounded-lg bg-green-50 p-3 text-sm text-green-700\">Successfully processed ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<div class=\"rounded-lg bg-green-50 p-3 text-sm text-green-700\">Successfully processed ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var9 string
-		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", processed))
+		var templ_7745c5c3_Var13 string
+		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", processed))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/search/page.templ`, Line: 171, Col: 55}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/search/page.templ`, Line: 223, Col: 55}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, " cap images.</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, " cap images.</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func ResetResult(affected int) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var14 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var14 == nil {
+			templ_7745c5c3_Var14 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<div class=\"rounded-lg bg-amber-50 p-3 text-sm text-amber-700\">Cleared hashes for ")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var15 string
+		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", affected))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/search/page.templ`, Line: 229, Col: 50}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, " cap images.</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

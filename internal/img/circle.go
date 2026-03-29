@@ -15,18 +15,14 @@ const (
 	// the smaller image dimension.
 	minRadiusFrac = 0.12
 	maxRadiusFrac = 0.48
-)
 
-// detectAndCropCircle finds the dominant circle (crown cap) in the image
-// and returns a square crop with the background masked to black.
-// If no circle is detected, returns the original image unchanged.
-func detectAndCropCircle(src image.Image) image.Image {
-	cx, cy, r, found := detectCircle(src)
-	if !found {
-		return src
-	}
-	return circularCrop(src, cx, cy, r)
-}
+	// cropPaddingFactor controls padding around the detected circle.
+	// The crop side length is radius * 2 * cropPaddingFactor, so the cap
+	// always fills the same proportion of the crop regardless of how much
+	// of the original image the circle covers.
+	// 1.0 = no padding (cap fills 100%), 1.15 = ~15% padding.
+	cropPaddingFactor = 1.15
+)
 
 // detectCircle finds the dominant circle using a gradient-based Hough transform.
 // Two passes: (1) vote for centers along gradient direction, (2) find radius
@@ -141,11 +137,14 @@ func detectCircle(src image.Image) (int, int, int, bool) {
 
 // circularCrop extracts a square region centered on (cx, cy) with the given
 // radius, masking pixels outside the circle to opaque black.
+// A fixed padding factor is applied so the cap occupies a consistent
+// fraction of the crop regardless of the original image framing.
 func circularCrop(src image.Image, cx, cy, rad int) image.Image {
 	bounds := src.Bounds()
-	side := 2 * rad
+	paddedRad := int(float64(rad)*cropPaddingFactor + 0.5)
+	side := 2 * paddedRad
 
-	x0, y0 := cx-rad, cy-rad
+	x0, y0 := cx-paddedRad, cy-paddedRad
 	if x0 < bounds.Min.X {
 		x0 = bounds.Min.X
 	}
