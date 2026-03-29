@@ -12,9 +12,18 @@ import (
 	"github.com/my-pet-projects/collection/internal/storage"
 )
 
-const (
-	defaultTopN = 20
-)
+// SearchOptions controls which similarity signals are used for ranking.
+type SearchOptions struct {
+	UseHashSimilarity  bool
+	UseColorSimilarity bool
+	ResultsLimit       int
+}
+
+type candidate struct {
+	cap    model.BeerMedia
+	hash   *img.ImageHash
+	colorS float32
+}
 
 // SimilarityService handles image similarity search for crown caps.
 type SimilarityService struct {
@@ -40,37 +49,53 @@ func NewSimilarityService(
 }
 
 // SearchSimilarCaps takes an uploaded image, computes its perceptual hash,
-// and returns the most similar crown caps from the database.
-func (s SimilarityService) SearchSimilarCaps(ctx context.Context, imageBytes []byte, topN int) ([]model.SimilarityResult, error) {
-	if topN <= 0 {
-		topN = defaultTopN
+// and returns the most similar crown caps from the database plus a preview
+// of the detected analysis region.
+func (s SimilarityService) SearchSimilarCaps(ctx context.Context, imageBytes []byte, opts SearchOptions) (model.SearchResult, error) {
+	if opts.ResultsLimit <= 0 {
+		opts.ResultsLimit = 50
 	}
 
-	queryHash, hashErr := s.hasher.GetImageHash(imageBytes)
-	if hashErr != nil {
-		return nil, fmt.Errorf("hash query image: %w", hashErr)
+	processed, procErr := s.hasher.ProcessImage(imageBytes)
+	if procErr != nil {
+		return model.SearchResult{}, fmt.Errorf("process query image: %w", procErr)
+	}
+
+	out := model.SearchResult{
+		PreviewDataURL:    processed.PreviewDataURL,
+		CroppedPreviewURL: processed.CroppedPreviewURL,
+		CircleDetected:    processed.CircleDetected,
 	}
 
 	caps, capsErr := s.beerMediaStore.FetchCapMediaWithHash(ctx)
 	if capsErr != nil {
-		return nil, fmt.Errorf("fetch cap hashes: %w", capsErr)
+		return model.SearchResult{}, fmt.Errorf("fetch cap hashes: %w", capsErr)
 	}
 
 	if len(caps) == 0 {
-		return nil, nil
+		return out, nil
 	}
 
-	// Compute similarities.
-	results := make([]model.SimilarityResult, 0, len(caps))
-	for _, cap := range caps {
-		storedHash, ok := img.DecodeImageHash(cap.Media.PerceptualHash)
-		if !ok {
-			continue
-		}
-		sim := img.Similarity(queryHash, storedHash)
+	candidates := s.buildCandidates(processed.Hash, caps, opts)
+
+	// When color is enabled, only the top color candidates get expensive
+	// hash comparison (up to 3× topN). When color is disabled, all
+	// candidates are scored by hash similarity.
+	hashCandidateLimit := len(candidates)
+	if opts.UseColorSimilarity {
+		hashCandidateLimit = min(opts.ResultsLimit*3, len(candidates)) //nolint:mnd
+	}
+
+	results := make([]model.SimilarityResult, 0, hashCandidateLimit)
+	for _, cand := range candidates[:hashCandidateLimit] {
+		hashSim := img.Similarity(processed.Hash, cand.hash)
+		combined := combinedScore(hashSim, cand.colorS, opts)
+
 		results = append(results, model.SimilarityResult{
-			BeerMedia:  cap,
-			Similarity: sim,
+			BeerMedia:       cand.cap,
+			Similarity:      combined,
+			HashSimilarity:  hashSim,
+			ColorSimilarity: cand.colorS,
 		})
 	}
 
@@ -78,11 +103,12 @@ func (s SimilarityService) SearchSimilarCaps(ctx context.Context, imageBytes []b
 		return results[i].Similarity > results[j].Similarity
 	})
 
-	if len(results) > topN {
-		results = results[:topN]
+	if len(results) > opts.ResultsLimit {
+		results = results[:opts.ResultsLimit]
 	}
 
-	return results, nil
+	out.Results = results
+	return out, nil
 }
 
 // BackfillHashes computes perceptual hashes for all crown cap images that don't have one yet.
@@ -146,4 +172,67 @@ func (s SimilarityService) BackfillHashes(ctx context.Context) (int, error) {
 	s.logger.Info("Backfill completed",
 		slog.Int("processed", processed), slog.Int("failed", failed), slog.Int("total", total))
 	return processed, nil
+}
+
+// ResetHashes clears all perceptual hashes for crown cap images.
+func (s SimilarityService) ResetHashes(ctx context.Context) (int, error) {
+	affected, err := s.beerMediaStore.ResetAllCapHashes(ctx)
+	if err != nil {
+		return 0, fmt.Errorf("reset hashes: %w", err)
+	}
+
+	s.logger.Info("Hashes reset", slog.Int64("affected", affected))
+	return int(affected), nil
+}
+
+// buildCandidates decodes stored hashes, computes color similarity, and
+// returns candidates sorted by color similarity descending.
+// When opts.UseColorSimilarity is false, color mismatch filtering and color
+// sorting are skipped so structurally similar caps are not prematurely excluded.
+func (s SimilarityService) buildCandidates(queryHash *img.ImageHash, caps []model.BeerMedia, opts SearchOptions) []candidate {
+	const colorMismatchThreshold = 0.70 // exclude if >70% of colors mismatch in either direction
+
+	candidates := make([]candidate, 0, len(caps))
+	for _, cap := range caps {
+		storedHash, ok := img.DecodeImageHash(cap.Media.PerceptualHash)
+		if !ok {
+			continue
+		}
+
+		var colorSim float32 = -1
+		if opts.UseColorSimilarity {
+			fwd := img.ColorMismatch(queryHash, storedHash)
+			rev := img.ColorMismatch(storedHash, queryHash)
+			if fwd > colorMismatchThreshold || rev > colorMismatchThreshold {
+				continue
+			}
+			colorSim = img.ColorSimilarity(queryHash, storedHash)
+		}
+
+		candidates = append(candidates, candidate{
+			cap:    cap,
+			hash:   storedHash,
+			colorS: colorSim,
+		})
+	}
+
+	if opts.UseColorSimilarity {
+		sort.Slice(candidates, func(i, j int) bool {
+			return candidates[i].colorS > candidates[j].colorS
+		})
+	}
+
+	return candidates
+}
+
+// combinedScore blends hash and color similarity based on the enabled options.
+func combinedScore(hashSim, colorSim float32, opts SearchOptions) float32 {
+	switch {
+	case opts.UseHashSimilarity && opts.UseColorSimilarity && colorSim >= 0:
+		return hashSim*0.7 + colorSim*0.3
+	case opts.UseColorSimilarity && colorSim >= 0:
+		return colorSim
+	default:
+		return hashSim
+	}
 }

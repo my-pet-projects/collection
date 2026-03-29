@@ -32,6 +32,17 @@ templ Page(page SearchPageData) {
 					class="space-y-4"
 					x-data="{ preview: null, fileName: '' }"
 				>
+					<!-- Similarity toggles -->
+					<div class="flex flex-wrap gap-4">
+						<label class="flex cursor-pointer items-center gap-2 text-sm text-gray-700">
+							<input type="checkbox" name="use_hash" value="1" checked class="h-4 w-4 rounded border-gray-300 text-amber-600 focus:ring-amber-500"/>
+							Structural similarity
+						</label>
+						<label class="flex cursor-pointer items-center gap-2 text-sm text-gray-700">
+							<input type="checkbox" name="use_color" value="1" checked class="h-4 w-4 rounded border-gray-300 text-amber-600 focus:ring-amber-500"/>
+							Color similarity
+						</label>
+					</div>
 					<!-- Image preview -->
 					<div x-show="preview" x-cloak class="flex justify-center">
 						<div class="relative inline-block">
@@ -98,33 +109,45 @@ templ Page(page SearchPageData) {
 					</div>
 				</div>
 			</div>
-			<!-- Backfill Section -->
+			<!-- Results -->
+			<div id="search-results"></div>
+			<!-- Hash Management -->
 			<div class="overflow-hidden rounded-2xl bg-white p-4 shadow-xl ring-1 ring-gray-200/50 sm:p-6 lg:p-8">
 				<h3 class="mb-2 text-lg font-semibold text-gray-900">Hash Management</h3>
 				<p class="mb-4 text-sm text-gray-500">Generate perceptual hashes for crown cap images that don't have them yet. This is needed before similarity search can work.</p>
-				<button
-					hx-post="/workspace/search/backfill"
-					hx-target="#backfill-result"
-					hx-swap="innerHTML"
-					hx-indicator="#backfill-spinner"
-					hx-confirm="This will process all caps without hashes. Continue?"
-					class="inline-flex items-center gap-2 rounded-lg bg-gray-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-500"
-				>
-					Generate Hashes
-				</button>
+				<div class="flex flex-wrap gap-3">
+					<button
+						hx-post="/workspace/search/backfill"
+						hx-target="#backfill-result"
+						hx-swap="innerHTML"
+						hx-indicator="#backfill-spinner"
+						hx-confirm="This will process all caps without hashes. Continue?"
+						class="inline-flex items-center gap-2 rounded-lg bg-gray-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-500"
+					>
+						Generate Hashes
+					</button>
+					<button
+						hx-post="/workspace/search/reset"
+						hx-target="#backfill-result"
+						hx-swap="innerHTML"
+						hx-indicator="#backfill-spinner"
+						hx-confirm="This will delete ALL perceptual hashes. You will need to regenerate them. Continue?"
+						class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-red-500"
+					>
+						Reset All Hashes
+					</button>
+				</div>
 				<div id="backfill-spinner" class="htmx-indicator mt-2 text-sm text-gray-500">
 					Processing... This may take a while.
 				</div>
 				<div id="backfill-result" class="mt-2"></div>
 			</div>
-			<!-- Results -->
-			<div id="search-results"></div>
 		</div>
 	}
 }
 
-templ SearchResults(results []model.SimilarityResult) {
-	if len(results) == 0 {
+templ SearchResults(sr model.SearchResult) {
+	if len(sr.Results) == 0 {
 		<div class="rounded-2xl bg-white p-6 text-center shadow-xl ring-1 ring-gray-200/50">
 			<svg class="mx-auto mb-3 h-12 w-12 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
 				<path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"></path>
@@ -133,11 +156,32 @@ templ SearchResults(results []model.SimilarityResult) {
 		</div>
 	} else {
 		<div class="overflow-hidden rounded-2xl bg-white p-4 shadow-xl ring-1 ring-gray-200/50 sm:p-6 lg:p-8">
+			if sr.PreviewDataURL != "" {
+				<div class="mb-4">
+					if sr.CircleDetected {
+						<h4 class="mb-2 text-sm font-medium text-green-600">✓ Crown cap detected (green circle)</h4>
+					} else {
+						<h4 class="mb-2 text-sm font-medium text-red-500">⚠ No crown cap circle detected — analyzing entire image</h4>
+					}
+					<div class="flex items-start justify-center gap-4">
+						<div class="text-center">
+							<img src={ sr.PreviewDataURL } alt="Detected region" class="max-h-48 rounded-xl ring-1 ring-gray-200"/>
+							<p class="mt-1 text-xs text-gray-400">Detection</p>
+						</div>
+						if sr.CroppedPreviewURL != "" {
+							<div class="text-center">
+								<img src={ sr.CroppedPreviewURL } alt="Normalized image" class="max-h-48 rounded-xl ring-1 ring-gray-200"/>
+								<p class="mt-1 text-xs text-gray-400">Hashed image</p>
+							</div>
+						}
+					</div>
+				</div>
+			}
 			<h3 class="mb-4 text-lg font-semibold text-gray-900">
-				Similar Caps ({ fmt.Sprintf("%d", len(results)) } results)
+				Similar Caps ({ fmt.Sprintf("%d", len(sr.Results)) } results)
 			</h3>
 			<div class="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5">
-				for _, result := range results {
+				for _, result := range sr.Results {
 					{{ originalImageURL := fmt.Sprintf("%s/%s", S3BaseURL, result.BeerMedia.Media.ExternalFilename) }}
 					{{ resizedImageURL := fmt.Sprintf("%s/width=150,quality=80/%s", CdnBaseURL, originalImageURL) }}
 					<div class="group relative overflow-hidden rounded-xl bg-gray-50 ring-1 ring-gray-200/50 active:ring-amber-400">
@@ -149,10 +193,18 @@ templ SearchResults(results []model.SimilarityResult) {
 								loading="lazy"
 							/>
 						</div>
-						<div class="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/60 to-transparent p-2">
+						<div class="bg-linear-to-t absolute inset-x-0 bottom-0 from-black/60 to-transparent p-2">
 							<span class="text-xs font-semibold text-white sm:text-sm">
 								{ fmt.Sprintf("%.1f%%", result.Similarity * 100) }
 							</span>
+							<span class="ml-1 text-xs text-white/70">
+								#{ fmt.Sprintf("%.0f%%", result.HashSimilarity * 100) }
+							</span>
+							if result.ColorSimilarity >= 0 {
+								<span class="ml-0.5 text-xs text-white/70">
+									🎨{ fmt.Sprintf("%.0f%%", result.ColorSimilarity * 100) }
+								</span>
+							}
 							if result.BeerMedia.BeerID != nil {
 								<span class="ml-1 text-xs text-white/80">
 									Beer #{ fmt.Sprintf("%d", *result.BeerMedia.BeerID) }
@@ -169,5 +221,11 @@ templ SearchResults(results []model.SimilarityResult) {
 templ BackfillResult(processed int) {
 	<div class="rounded-lg bg-green-50 p-3 text-sm text-green-700">
 		Successfully processed { fmt.Sprintf("%d", processed) } cap images.
+	</div>
+}
+
+templ ResetResult(affected int) {
+	<div class="rounded-lg bg-amber-50 p-3 text-sm text-amber-700">
+		Cleared hashes for { fmt.Sprintf("%d", affected) } cap images.
 	</div>
 }

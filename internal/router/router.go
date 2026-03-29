@@ -117,6 +117,7 @@ func New(deps Deps) (http.Handler, error) {
 		router.Get("/workspace/search", appHandler.Handle(similarityHandler.HandleSearchPage))
 		router.Post("/workspace/search/caps", appHandler.Handle(similarityHandler.HandleSearchCaps))
 		router.Post("/workspace/search/backfill", appHandler.Handle(similarityHandler.HandleBackfillHashes))
+		router.Post("/workspace/search/reset", appHandler.Handle(similarityHandler.HandleResetHashes))
 	})
 
 	// Not found handler

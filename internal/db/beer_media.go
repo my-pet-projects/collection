@@ -146,3 +146,20 @@ func (s BeerMediaStore) UpdateMediaItemHash(ctx context.Context, mediaItemID int
 
 	return res.Error
 }
+
+// ResetAllCapHashes clears perceptual hashes for all crown cap media items.
+func (s BeerMediaStore) ResetAllCapHashes(ctx context.Context) (int64, error) {
+	subquery := s.db.gorm.
+		Model(&model.BeerMedia{}).
+		Select("media_id").
+		Where("type = ?", model.BeerMediaCrownCap)
+
+	res := s.db.gorm.
+		WithContext(ctx).
+		Debug().
+		Model(&model.MediaItem{}).
+		Where("id IN (?)", subquery).
+		Update("perceptual_hash", "")
+
+	return res.RowsAffected, res.Error
+}
