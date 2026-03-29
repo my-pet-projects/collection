@@ -150,44 +150,19 @@ type cropResult struct {
 // radius, masking pixels outside the circle to opaque black.
 // A fixed padding factor is applied so the cap occupies a consistent
 // fraction of the crop regardless of the original image framing.
+// Out-of-bounds source pixels are filled with black so the cap circle
+// is always centered in the output, even for edge-touching photos.
 // Returns the cropped image and the crop-relative circle geometry.
 func circularCrop(src image.Image, cx, cy, rad int) cropResult {
 	bounds := src.Bounds()
 	paddedRad := int(float64(rad)*cropPaddingFactor + 0.5)
 	side := 2 * paddedRad
 
-	// Start with ideal window centered on (cx, cy), then shift it
-	// back inside the source bounds to maintain size and centering.
+	// Fixed window centered on (cx, cy). Parts outside source bounds
+	// stay black — we never shift the window.
 	x0, y0 := cx-paddedRad, cy-paddedRad
-	x1, y1 := x0+side, y0+side
 
-	if x0 < bounds.Min.X {
-		x1 += bounds.Min.X - x0
-		x0 = bounds.Min.X
-	}
-	if y0 < bounds.Min.Y {
-		y1 += bounds.Min.Y - y0
-		y0 = bounds.Min.Y
-	}
-	if x1 > bounds.Max.X {
-		x0 -= x1 - bounds.Max.X
-		x1 = bounds.Max.X
-	}
-	if y1 > bounds.Max.Y {
-		y0 -= y1 - bounds.Max.Y
-		y1 = bounds.Max.Y
-	}
-
-	// Final clamp in case the source is smaller than the crop.
-	if x0 < bounds.Min.X {
-		x0 = bounds.Min.X
-	}
-	if y0 < bounds.Min.Y {
-		y0 = bounds.Min.Y
-	}
-
-	w, h := x1-x0, y1-y0
-	dst := image.NewRGBA(image.Rect(0, 0, w, h))
+	dst := image.NewRGBA(image.Rect(0, 0, side, side))
 
 	// Initialize all pixels to opaque black.
 	for i := 3; i < len(dst.Pix); i += 4 {
@@ -195,13 +170,20 @@ func circularCrop(src image.Image, cx, cy, rad int) cropResult {
 	}
 
 	radSq := rad * rad
-	for py := range h {
-		for px := range w {
-			dx := (x0 + px) - cx
-			dy := (y0 + py) - cy
+	for py := range side {
+		srcY := y0 + py
+		for px := range side {
+			srcX := x0 + px
+			// Skip out-of-bounds source pixels (stays black).
+			if srcX < bounds.Min.X || srcX >= bounds.Max.X || srcY < bounds.Min.Y || srcY >= bounds.Max.Y {
+				continue
+			}
+			// Only copy pixels inside the cap circle.
+			dx := srcX - cx
+			dy := srcY - cy
 			if dx*dx+dy*dy <= radSq {
-				sr, sg, sb, sa := src.At(x0+px, y0+py).RGBA()
-				off := (py*w + px) * 4
+				sr, sg, sb, sa := src.At(srcX, srcY).RGBA()
+				off := (py*side + px) * 4
 				dst.Pix[off] = uint8(sr >> 8)   //nolint:gosec // RGBA >> 8 fits uint8
 				dst.Pix[off+1] = uint8(sg >> 8) //nolint:gosec // RGBA >> 8 fits uint8
 				dst.Pix[off+2] = uint8(sb >> 8) //nolint:gosec // RGBA >> 8 fits uint8
@@ -209,10 +191,11 @@ func circularCrop(src image.Image, cx, cy, rad int) cropResult {
 			}
 		}
 	}
+
 	return cropResult{
 		Image:  dst,
-		RelCX:  cx - x0,
-		RelCY:  cy - y0,
+		RelCX:  paddedRad,
+		RelCY:  paddedRad,
 		Radius: rad,
 	}
 }

@@ -138,18 +138,26 @@ func computeRotationHashes(normalized image.Image) ([]RotationHash, error) {
 }
 
 // Similarity returns the best 0.0–1.0 structural similarity across all
-// rotation pairs. This is pure hash comparison without color blending.
+// rotation pairs. Each hash type finds its optimal rotation independently,
+// then the results are combined with weights. This avoids one hash type
+// dragging down the score at a rotation that happens to be optimal for
+// other hash types but not that one.
 func Similarity(a, b *ImageHash) float32 {
-	var best float32
+	var bestP, bestD, bestA float32
 	for _, ra := range a.Rotations {
 		for _, rb := range b.Rotations {
-			sim := rotationSimilarity(&ra, &rb)
-			if sim > best {
-				best = sim
+			if p := hashSimilarity(ra.PHash, rb.PHash); p > bestP {
+				bestP = p
+			}
+			if d := hashSimilarity(ra.DHash, rb.DHash); d > bestD {
+				bestD = d
+			}
+			if a := hashSimilarity(ra.AHash, rb.AHash); a > bestA {
+				bestA = a
 			}
 		}
 	}
-	return best
+	return bestP*0.4 + bestD*0.35 + bestA*0.25
 }
 
 // ColorSimilarity returns 0.0–1.0 color histogram similarity using
@@ -340,22 +348,6 @@ func computeHashes(img image.Image) (*RotationHash, error) {
 		DHash: dHash.GetHash(),
 		AHash: aHash.GetHash(),
 	}, nil
-}
-
-func rotationSimilarity(a, b *RotationHash) float32 {
-	// Compute per-hash-type similarity independently.
-	// Each hash type captures different image characteristics:
-	//   pHash — DCT-based structure (most robust for cross-domain matching)
-	//   dHash — gradient direction
-	//   aHash — average brightness pattern
-	// Taking the weighted best avoids noisy hash types dragging down
-	// the score when comparing images across different conditions.
-	pSim := hashSimilarity(a.PHash, b.PHash)
-	dSim := hashSimilarity(a.DHash, b.DHash)
-	aSim := hashSimilarity(a.AHash, b.AHash)
-
-	// pHash (DCT-based) is the most robust for cross-domain matching.
-	return pSim*0.7 + dSim*0.2 + aSim*0.1
 }
 
 // hashSimilarity returns 0.0–1.0 similarity for a single hash type.

@@ -52,6 +52,10 @@ func NewSimilarityService(
 // and returns the most similar crown caps from the database plus a preview
 // of the detected analysis region.
 func (s SimilarityService) SearchSimilarCaps(ctx context.Context, imageBytes []byte, opts SearchOptions) (model.SearchResult, error) {
+	if opts.ResultsLimit <= 0 {
+		opts.ResultsLimit = 50
+	}
+
 	processed, procErr := s.hasher.ProcessImage(imageBytes)
 	if procErr != nil {
 		return model.SearchResult{}, fmt.Errorf("process query image: %w", procErr)

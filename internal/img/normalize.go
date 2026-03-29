@@ -51,6 +51,9 @@ func normalizeImageWithColor(src image.Image) *normalizeResult {
 		cropped = cr.Image
 		// Use the actual crop-relative geometry instead of assuming
 		// the crop is perfectly centered at a fixed padding factor.
+		// We use Radius (not EffectiveRadius) so that cropped and
+		// uncropped photos of the same cap get consistent normalization
+		// circles, preserving cross-framing similarity.
 		cropW := cr.Image.Bounds().Dx()
 		cropH := cr.Image.Bounds().Dy()
 		circle = capCircle{
@@ -301,14 +304,18 @@ func rotateByAngle(src image.Image, degrees float64) image.Image {
 			sx := cosA*dx - sinA*dy + cxf
 			sy := sinA*dx + cosA*dy + cyf
 
-			// Bilinear interpolation.
+			// Bilinear interpolation with edge clamping.
 			sx0, sy0 := int(math.Floor(sx)), int(math.Floor(sy))
-			if sx0 < 0 || sx0+1 >= w || sy0 < 0 || sy0+1 >= h {
-				continue // leave as black
+			if sx0 < 0 || sx0 >= w || sy0 < 0 || sy0 >= h {
+				continue // fully outside — leave as black
 			}
+			// Clamp the +1 neighbors at the image edge instead of
+			// skipping, so border pixels are preserved.
+			sx1 := min(sx0+1, w-1)
+			sy1 := min(sy0+1, h-1)
 			fx, fy := sx-float64(sx0), sy-float64(sy0)
-			ax, bx := bounds.Min.X+sx0, bounds.Min.X+sx0+1
-			ay, by := bounds.Min.Y+sy0, bounds.Min.Y+sy0+1
+			ax, bx := bounds.Min.X+sx0, bounds.Min.X+sx1
+			ay, by := bounds.Min.Y+sy0, bounds.Min.Y+sy1
 
 			r00, g00, b00, a00 := src.At(ax, ay).RGBA()
 			r10, g10, b10, a10 := src.At(bx, ay).RGBA()
