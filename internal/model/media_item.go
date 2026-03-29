@@ -95,6 +95,16 @@ type MediaItemsFilter struct {
 
 // SimilarityResult represents a cap image with its similarity score to a query image.
 type SimilarityResult struct {
-	BeerMedia  BeerMedia
-	Similarity float32
+	BeerMedia       BeerMedia
+	Similarity      float32 // combined score (hash + color)
+	HashSimilarity  float32 // pure structural hash similarity
+	ColorSimilarity float32 // -1 if color data unavailable
+}
+
+// SearchResult holds the complete output of a similarity search.
+type SearchResult struct {
+	Results           []SimilarityResult
+	PreviewDataURL    string // original image with detection overlay
+	CroppedPreviewURL string // normalized image that gets hashed
+	CircleDetected    bool
 }

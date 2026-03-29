@@ -58,13 +58,19 @@ func (h SimilarityHandler) HandleSearchCaps(reqResp *web.ReqRespPair) error {
 	}
 
 	const searchResultLimit = 50
-	results, searchErr := h.similaritySvc.SearchSimilarCaps(reqResp.Request.Context(), buf.Bytes(), searchResultLimit)
+	opts := service.SearchOptions{
+		UseHashSimilarity:  reqResp.Request.FormValue("use_hash") == "1",
+		UseColorSimilarity: reqResp.Request.FormValue("use_color") == "1",
+		ResultsLimit:       searchResultLimit,
+	}
+
+	searchResult, searchErr := h.similaritySvc.SearchSimilarCaps(reqResp.Request.Context(), buf.Bytes(), opts)
 	if searchErr != nil {
 		h.logger.Error("Failed to search similar caps", slog.Any("error", searchErr))
 		return apperr.NewInternalServerError("Failed to search for similar caps", searchErr)
 	}
 
-	return reqResp.Render(searchpage.SearchResults(results))
+	return reqResp.Render(searchpage.SearchResults(searchResult))
 }
 
 // HandleBackfillHashes triggers the perceptual hash backfill process.
@@ -78,4 +84,17 @@ func (h SimilarityHandler) HandleBackfillHashes(reqResp *web.ReqRespPair) error 
 	h.logger.Info("Backfill completed", slog.Int("processed", processed))
 	reqResp.TriggerHtmxNotifyEvent(web.NotifySuccessVariant, "Backfill completed")
 	return reqResp.Render(searchpage.BackfillResult(processed))
+}
+
+// HandleResetHashes clears all perceptual hashes.
+func (h SimilarityHandler) HandleResetHashes(reqResp *web.ReqRespPair) error {
+	affected, resetErr := h.similaritySvc.ResetHashes(reqResp.Request.Context())
+	if resetErr != nil {
+		h.logger.Error("Failed to reset hashes", slog.Any("error", resetErr))
+		return apperr.NewInternalServerError("Failed to reset hashes", resetErr)
+	}
+
+	h.logger.Info("Hashes reset", slog.Int("affected", affected))
+	reqResp.TriggerHtmxNotifyEvent(web.NotifySuccessVariant, "Hashes reset")
+	return reqResp.Render(searchpage.ResetResult(affected))
 }

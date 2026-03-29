@@ -15,18 +15,14 @@ const (
 	// the smaller image dimension.
 	minRadiusFrac = 0.12
 	maxRadiusFrac = 0.48
-)
 
-// detectAndCropCircle finds the dominant circle (crown cap) in the image
-// and returns a square crop with the background masked to black.
-// If no circle is detected, returns the original image unchanged.
-func detectAndCropCircle(src image.Image) image.Image {
-	cx, cy, r, found := detectCircle(src)
-	if !found {
-		return src
-	}
-	return circularCrop(src, cx, cy, r)
-}
+	// cropPaddingFactor controls padding around the detected circle.
+	// The crop side length is radius * 2 * cropPaddingFactor, so the cap
+	// always fills the same proportion of the crop regardless of how much
+	// of the original image the circle covers.
+	// 1.0 = no padding (cap fills 100%), 1.15 = ~15% padding.
+	cropPaddingFactor = 1.15
+)
 
 // detectCircle finds the dominant circle using a gradient-based Hough transform.
 // Two passes: (1) vote for centers along gradient direction, (2) find radius
@@ -139,29 +135,34 @@ func detectCircle(src image.Image) (int, int, int, bool) {
 	return cx, cy, radius, true
 }
 
+// cropResult holds the output of circularCrop: the cropped image and the
+// crop-relative circle geometry so downstream stages know exactly where
+// real cap pixels are, even after the crop window was shifted or clamped.
+type cropResult struct {
+	Image image.Image
+	// RelCX, RelCY are the circle center relative to the crop origin.
+	RelCX, RelCY int
+	// Radius is the unpadded cap radius in crop pixels.
+	Radius int
+}
+
 // circularCrop extracts a square region centered on (cx, cy) with the given
 // radius, masking pixels outside the circle to opaque black.
-func circularCrop(src image.Image, cx, cy, rad int) image.Image {
+// A fixed padding factor is applied so the cap occupies a consistent
+// fraction of the crop regardless of the original image framing.
+// Out-of-bounds source pixels are filled with black so the cap circle
+// is always centered in the output, even for edge-touching photos.
+// Returns the cropped image and the crop-relative circle geometry.
+func circularCrop(src image.Image, cx, cy, rad int) cropResult {
 	bounds := src.Bounds()
-	side := 2 * rad
+	paddedRad := int(float64(rad)*cropPaddingFactor + 0.5)
+	side := 2 * paddedRad
 
-	x0, y0 := cx-rad, cy-rad
-	if x0 < bounds.Min.X {
-		x0 = bounds.Min.X
-	}
-	if y0 < bounds.Min.Y {
-		y0 = bounds.Min.Y
-	}
-	x1, y1 := x0+side, y0+side
-	if x1 > bounds.Max.X {
-		x1 = bounds.Max.X
-	}
-	if y1 > bounds.Max.Y {
-		y1 = bounds.Max.Y
-	}
+	// Fixed window centered on (cx, cy). Parts outside source bounds
+	// stay black — we never shift the window.
+	x0, y0 := cx-paddedRad, cy-paddedRad
 
-	w, h := x1-x0, y1-y0
-	dst := image.NewRGBA(image.Rect(0, 0, w, h))
+	dst := image.NewRGBA(image.Rect(0, 0, side, side))
 
 	// Initialize all pixels to opaque black.
 	for i := 3; i < len(dst.Pix); i += 4 {
@@ -169,13 +170,20 @@ func circularCrop(src image.Image, cx, cy, rad int) image.Image {
 	}
 
 	radSq := rad * rad
-	for py := range h {
-		for px := range w {
-			dx := (x0 + px) - cx
-			dy := (y0 + py) - cy
+	for py := range side {
+		srcY := y0 + py
+		for px := range side {
+			srcX := x0 + px
+			// Skip out-of-bounds source pixels (stays black).
+			if srcX < bounds.Min.X || srcX >= bounds.Max.X || srcY < bounds.Min.Y || srcY >= bounds.Max.Y {
+				continue
+			}
+			// Only copy pixels inside the cap circle.
+			dx := srcX - cx
+			dy := srcY - cy
 			if dx*dx+dy*dy <= radSq {
-				sr, sg, sb, sa := src.At(x0+px, y0+py).RGBA()
-				off := (py*w + px) * 4
+				sr, sg, sb, sa := src.At(srcX, srcY).RGBA()
+				off := (py*side + px) * 4
 				dst.Pix[off] = uint8(sr >> 8)   //nolint:gosec // RGBA >> 8 fits uint8
 				dst.Pix[off+1] = uint8(sg >> 8) //nolint:gosec // RGBA >> 8 fits uint8
 				dst.Pix[off+2] = uint8(sb >> 8) //nolint:gosec // RGBA >> 8 fits uint8
@@ -183,7 +191,13 @@ func circularCrop(src image.Image, cx, cy, rad int) image.Image {
 			}
 		}
 	}
-	return dst
+
+	return cropResult{
+		Image:  dst,
+		RelCX:  paddedRad,
+		RelCY:  paddedRad,
+		Radius: rad,
+	}
 }
 
 // --- image processing helpers ---
