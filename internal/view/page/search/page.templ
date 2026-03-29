@@ -165,12 +165,12 @@ templ SearchResults(sr model.SearchResult) {
 					}
 					<div class="flex items-start justify-center gap-4">
 						<div class="text-center">
-							<img src={ sr.PreviewDataURL } alt="Detected region" class="max-h-48 rounded-xl ring-1 ring-gray-200"/>
+							<img src={ sr.PreviewDataURL } alt="Detected region" class="h-48 w-48 rounded-xl object-contain ring-1 ring-gray-200"/>
 							<p class="mt-1 text-xs text-gray-400">Detection</p>
 						</div>
 						if sr.CroppedPreviewURL != "" {
 							<div class="text-center">
-								<img src={ sr.CroppedPreviewURL } alt="Normalized image" class="max-h-48 rounded-xl ring-1 ring-gray-200"/>
+								<img src={ sr.CroppedPreviewURL } alt="Normalized image" class="h-48 w-48 rounded-xl object-contain ring-1 ring-gray-200"/>
 								<p class="mt-1 text-xs text-gray-400">Hashed image</p>
 							</div>
 						}
@@ -184,8 +184,8 @@ templ SearchResults(sr model.SearchResult) {
 				for _, result := range sr.Results {
 					{{ originalImageURL := fmt.Sprintf("%s/%s", S3BaseURL, result.BeerMedia.Media.ExternalFilename) }}
 					{{ resizedImageURL := fmt.Sprintf("%s/width=150,quality=80/%s", CdnBaseURL, originalImageURL) }}
-					<div class="group relative overflow-hidden rounded-xl bg-gray-50 ring-1 ring-gray-200/50 active:ring-amber-400">
-						<div class="aspect-square">
+					<div class="overflow-hidden rounded-xl ring-1 ring-gray-200/50 active:ring-amber-400">
+						<div class="aspect-square bg-gray-50">
 							<img
 								src={ resizedImageURL }
 								alt="Crown cap"
@@ -193,22 +193,24 @@ templ SearchResults(sr model.SearchResult) {
 								loading="lazy"
 							/>
 						</div>
-						<div class="bg-linear-to-t absolute inset-x-0 bottom-0 from-black/60 to-transparent p-2">
-							<span class="text-xs font-semibold text-white sm:text-sm">
+						<div class="bg-gray-50 px-2 py-1.5">
+							<div class="text-sm font-bold text-gray-900">
 								{ fmt.Sprintf("%.1f%%", result.Similarity * 100) }
-							</span>
-							<span class="ml-1 text-xs text-white/70">
-								#{ fmt.Sprintf("%.0f%%", result.HashSimilarity * 100) }
-							</span>
-							if result.ColorSimilarity >= 0 {
-								<span class="ml-0.5 text-xs text-white/70">
-									🎨{ fmt.Sprintf("%.0f%%", result.ColorSimilarity * 100) }
+							</div>
+							<div class="flex items-center gap-2 text-[11px] text-gray-500 sm:text-xs">
+								<span class="inline-flex items-center gap-0.5" title="Structural (hash) similarity">
+									🧬 { fmt.Sprintf("%.0f%%", result.HashSimilarity * 100) }
 								</span>
-							}
+								if result.ColorSimilarity >= 0 {
+									<span class="inline-flex items-center gap-0.5" title="Color similarity">
+										🎨 { fmt.Sprintf("%.0f%%", result.ColorSimilarity * 100) }
+									</span>
+								}
+							</div>
 							if result.BeerMedia.BeerID != nil {
-								<span class="ml-1 text-xs text-white/80">
+								<div class="text-[10px] text-gray-400 sm:text-xs">
 									Beer #{ fmt.Sprintf("%d", *result.BeerMedia.BeerID) }
-								</span>
+								</div>
 							}
 						</div>
 					</div>
