@@ -72,11 +72,15 @@ func (s SimilarityService) SearchSimilarCaps(ctx context.Context, imageBytes []b
 		return out, nil
 	}
 
-	candidates := s.buildCandidates(processed.Hash, caps)
+	candidates := s.buildCandidates(processed.Hash, caps, opts)
 
-	// Phase 2: Compute expensive hash similarity and combine scores.
-	// Process top color candidates (up to 3× topN to have enough after ranking).
-	hashCandidateLimit := min(opts.ResultsLimit*3, len(candidates)) //nolint:mnd
+	// When color is enabled, only the top color candidates get expensive
+	// hash comparison (up to 3× topN). When color is disabled, all
+	// candidates are scored by hash similarity.
+	hashCandidateLimit := len(candidates)
+	if opts.UseColorSimilarity {
+		hashCandidateLimit = min(opts.ResultsLimit*3, len(candidates)) //nolint:mnd
+	}
 
 	results := make([]model.SimilarityResult, 0, hashCandidateLimit)
 	for _, cand := range candidates[:hashCandidateLimit] {
@@ -179,10 +183,10 @@ func (s SimilarityService) ResetHashes(ctx context.Context) (int, error) {
 
 // buildCandidates decodes stored hashes, computes color similarity, and
 // returns candidates sorted by color similarity descending.
-// Candidates whose color distribution strongly mismatches the query
-// (i.e. they contain colors the query image lacks, or vice-versa) are excluded.
-func (s SimilarityService) buildCandidates(queryHash *img.ImageHash, caps []model.BeerMedia) []candidate {
-	const colorMismatchThreshold = 0.5 // exclude if >50% of colors mismatch in either direction
+// When opts.UseColorSimilarity is false, color mismatch filtering and color
+// sorting are skipped so structurally similar caps are not prematurely excluded.
+func (s SimilarityService) buildCandidates(queryHash *img.ImageHash, caps []model.BeerMedia, opts SearchOptions) []candidate {
+	const colorMismatchThreshold = 0.70 // exclude if >70% of colors mismatch in either direction
 
 	candidates := make([]candidate, 0, len(caps))
 	for _, cap := range caps {
@@ -191,13 +195,16 @@ func (s SimilarityService) buildCandidates(queryHash *img.ImageHash, caps []mode
 			continue
 		}
 
-		fwd := img.ColorMismatch(queryHash, storedHash)
-		rev := img.ColorMismatch(storedHash, queryHash)
-		if fwd > colorMismatchThreshold || rev > colorMismatchThreshold {
-			continue
+		var colorSim float32 = -1
+		if opts.UseColorSimilarity {
+			fwd := img.ColorMismatch(queryHash, storedHash)
+			rev := img.ColorMismatch(storedHash, queryHash)
+			if fwd > colorMismatchThreshold || rev > colorMismatchThreshold {
+				continue
+			}
+			colorSim = img.ColorSimilarity(queryHash, storedHash)
 		}
 
-		colorSim := img.ColorSimilarity(queryHash, storedHash)
 		candidates = append(candidates, candidate{
 			cap:    cap,
 			hash:   storedHash,
@@ -205,9 +212,11 @@ func (s SimilarityService) buildCandidates(queryHash *img.ImageHash, caps []mode
 		})
 	}
 
-	sort.Slice(candidates, func(i, j int) bool {
-		return candidates[i].colorS > candidates[j].colorS
-	})
+	if opts.UseColorSimilarity {
+		sort.Slice(candidates, func(i, j int) bool {
+			return candidates[i].colorS > candidates[j].colorS
+		})
+	}
 
 	return candidates
 }

@@ -135,11 +135,23 @@ func detectCircle(src image.Image) (int, int, int, bool) {
 	return cx, cy, radius, true
 }
 
+// cropResult holds the output of circularCrop: the cropped image and the
+// crop-relative circle geometry so downstream stages know exactly where
+// real cap pixels are, even after the crop window was shifted or clamped.
+type cropResult struct {
+	Image image.Image
+	// RelCX, RelCY are the circle center relative to the crop origin.
+	RelCX, RelCY int
+	// Radius is the unpadded cap radius in crop pixels.
+	Radius int
+}
+
 // circularCrop extracts a square region centered on (cx, cy) with the given
 // radius, masking pixels outside the circle to opaque black.
 // A fixed padding factor is applied so the cap occupies a consistent
 // fraction of the crop regardless of the original image framing.
-func circularCrop(src image.Image, cx, cy, rad int) image.Image {
+// Returns the cropped image and the crop-relative circle geometry.
+func circularCrop(src image.Image, cx, cy, rad int) cropResult {
 	bounds := src.Bounds()
 	paddedRad := int(float64(rad)*cropPaddingFactor + 0.5)
 	side := 2 * paddedRad
@@ -197,7 +209,12 @@ func circularCrop(src image.Image, cx, cy, rad int) image.Image {
 			}
 		}
 	}
-	return dst
+	return cropResult{
+		Image:  dst,
+		RelCX:  cx - x0,
+		RelCY:  cy - y0,
+		Radius: rad,
+	}
 }
 
 // --- image processing helpers ---
