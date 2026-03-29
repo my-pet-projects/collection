@@ -171,6 +171,35 @@ func ColorSimilarity(a, b *ImageHash) float32 {
 	return float32(intersection) / float32(colorHistScale)
 }
 
+// ColorMismatch returns 0.0–1.0 indicating how much of the candidate's
+// color mass is in excess of what the query image contains.
+// For each histogram bin, the excess is max(0, candidate - query).
+// The total excess divided by the candidate's total mass gives the score.
+// A high value means the candidate contains colors the query image lacks
+// (e.g. candidate is blue/green but query is red/yellow).
+// Returns 0 if either hash lacks color data.
+func ColorMismatch(query, candidate *ImageHash) float32 {
+	if len(query.ColorHist) != colorBinCount || len(candidate.ColorHist) != colorBinCount {
+		return 0
+	}
+
+	var excessMass int
+	var totalMass int
+	for i := range candidate.ColorHist {
+		cv := int(candidate.ColorHist[i])
+		qv := int(query.ColorHist[i])
+		totalMass += cv
+		if cv > qv {
+			excessMass += cv - qv
+		}
+	}
+
+	if totalMass == 0 {
+		return 0
+	}
+	return float32(excessMass) / float32(totalMass)
+}
+
 // Encode serializes all rotation hashes and color histogram to a versioned
 // string for DB storage.
 // Format: "v7|p:d:a|p:d:a|...|c:v1,v2,...,v64".

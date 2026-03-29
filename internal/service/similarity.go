@@ -179,13 +179,24 @@ func (s SimilarityService) ResetHashes(ctx context.Context) (int, error) {
 
 // buildCandidates decodes stored hashes, computes color similarity, and
 // returns candidates sorted by color similarity descending.
+// Candidates whose color distribution strongly mismatches the query
+// (i.e. they contain colors the query image lacks, or vice-versa) are excluded.
 func (s SimilarityService) buildCandidates(queryHash *img.ImageHash, caps []model.BeerMedia) []candidate {
+	const colorMismatchThreshold = 0.5 // exclude if >50% of colors mismatch in either direction
+
 	candidates := make([]candidate, 0, len(caps))
 	for _, cap := range caps {
 		storedHash, ok := img.DecodeImageHash(cap.Media.PerceptualHash)
 		if !ok {
 			continue
 		}
+
+		fwd := img.ColorMismatch(queryHash, storedHash)
+		rev := img.ColorMismatch(storedHash, queryHash)
+		if fwd > colorMismatchThreshold || rev > colorMismatchThreshold {
+			continue
+		}
+
 		colorSim := img.ColorSimilarity(queryHash, storedHash)
 		candidates = append(candidates, candidate{
 			cap:    cap,

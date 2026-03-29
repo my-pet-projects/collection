@@ -38,13 +38,18 @@ func normalizeImageWithColor(src image.Image) *normalizeResult {
 	cx, cy, r, found := detectCircle(src)
 
 	var cropped image.Image
+	// capRadiusFrac is the fraction of the square crop occupied by the real
+	// cap circle. When a circle is detected the crop is padded, so the cap
+	// is smaller than the full square; otherwise the full image is used.
+	capRadiusFrac := 1.0
 	if found {
 		cropped = circularCrop(src, cx, cy, r)
+		capRadiusFrac = 1.0 / cropPaddingFactor
 	} else {
 		cropped = src
 	}
 
-	normalized, colorHist := normalizeAfterCrop(cropped)
+	normalized, colorHist := normalizeAfterCrop(cropped, capRadiusFrac)
 
 	return &normalizeResult{
 		Normalized:  normalized,
@@ -59,7 +64,9 @@ func normalizeImageWithColor(src image.Image) *normalizeResult {
 // normalizeAfterCrop takes an already-cropped image and performs the
 // remaining normalization: square crop, resize, color histogram, grayscale,
 // histogram equalization, circular mask, and blur.
-func normalizeAfterCrop(src image.Image) (image.Image, []uint16) {
+// capRadiusFrac (0,1] is the fraction of the inscribed circle that contains
+// real cap pixels; anything outside that radius is synthetic padding.
+func normalizeAfterCrop(src image.Image, capRadiusFrac float64) (image.Image, []uint16) {
 	bounds := src.Bounds()
 	w, h := bounds.Dx(), bounds.Dy()
 
@@ -73,17 +80,17 @@ func normalizeAfterCrop(src image.Image) (image.Image, []uint16) {
 	// Resize to standard dimensions.
 	resized := resize.Resize(normalizeSize, normalizeSize, square, resize.Lanczos3)
 
-	// Compute color histogram from the resized color image (inside circle only)
-	// before the grayscale conversion discards color information.
-	colorHist := computeColorHistogram(resized)
+	// Compute color histogram from the resized color image, restricted to
+	// the real cap area (not the padded black ring).
+	colorHist := computeColorHistogram(resized, capRadiusFrac)
 
 	// Convert to grayscale to eliminate color/lighting differences.
 	gray := image.NewGray(resized.Bounds())
 	draw.Draw(gray, gray.Bounds(), resized, resized.Bounds().Min, draw.Src)
 
-	// Histogram equalization: normalize contrast so photos taken under
-	// different lighting conditions hash more consistently.
-	equalizeHistogram(gray)
+	// Histogram equalization restricted to the real cap area so the
+	// synthetic black padding doesn't skew the contrast LUT.
+	equalizeHistogram(gray, capRadiusFrac)
 
 	// Apply circular mask so corners of the square don't affect hashing.
 	applyCircularMask(gray)
@@ -96,8 +103,10 @@ func normalizeAfterCrop(src image.Image) (image.Image, []uint16) {
 }
 
 // computeColorHistogram builds a 64-bin (4×4×4 RGB) normalized color histogram
-// from pixels inside the inscribed circle of the image.
-func computeColorHistogram(img image.Image) []uint16 {
+// from pixels inside the effective cap circle.
+// radiusFrac (0,1] controls what fraction of the inscribed circle is real
+// cap area; pixels outside that radius are excluded.
+func computeColorHistogram(img image.Image, radiusFrac float64) []uint16 {
 	bounds := img.Bounds()
 	w, h := bounds.Dx(), bounds.Dy()
 	cx, cy := float64(w)/2, float64(h)/2
@@ -105,6 +114,7 @@ func computeColorHistogram(img image.Image) []uint16 {
 	if float64(h)/2 < r {
 		r = float64(h) / 2
 	}
+	r *= radiusFrac
 	rSq := r * r
 
 	var bins [colorBinCount]int
@@ -184,19 +194,42 @@ func blurGray(gray *image.Gray) {
 }
 
 // equalizeHistogram performs histogram equalization on a grayscale image
-// in-place. This spreads pixel intensities across the full 0–255 range,
-// normalizing contrast differences caused by varying lighting conditions.
-func equalizeHistogram(gray *image.Gray) {
+// in-place, restricted to pixels inside the effective cap circle.
+// radiusFrac (0,1] controls what fraction of the inscribed circle is real
+// cap area; pixels outside that radius are excluded from the histogram
+// and left unchanged, preventing synthetic black padding from skewing the LUT.
+func equalizeHistogram(gray *image.Gray, radiusFrac float64) {
 	bounds := gray.Bounds()
-	totalPixels := bounds.Dx() * bounds.Dy()
-	if totalPixels == 0 {
+	w, h := bounds.Dx(), bounds.Dy()
+	if w == 0 || h == 0 {
 		return
 	}
 
-	// Build histogram.
+	cx, cy := float64(w)/2, float64(h)/2
+	r := cx
+	if float64(h)/2 < r {
+		r = float64(h) / 2
+	}
+	r *= radiusFrac
+	rSq := r * r
+	stride := gray.Stride
+
+	// Build histogram only from pixels inside the cap circle.
 	var hist [256]int
-	for _, v := range gray.Pix {
-		hist[v]++
+	totalPixels := 0
+	for y := range h {
+		for x := range w {
+			dx, dy := float64(x)+0.5-cx, float64(y)+0.5-cy
+			if dx*dx+dy*dy > rSq {
+				continue
+			}
+			hist[gray.Pix[y*stride+x]]++
+			totalPixels++
+		}
+	}
+
+	if totalPixels == 0 {
+		return
 	}
 
 	// Build cumulative distribution function (CDF).
@@ -224,9 +257,16 @@ func equalizeHistogram(gray *image.Gray) {
 		lut[i] = uint8((cdf[i] - cdfMin) * 255 / denom) //nolint:gosec // result is 0-255
 	}
 
-	// Apply lookup table.
-	for i, v := range gray.Pix {
-		gray.Pix[i] = lut[v]
+	// Apply lookup table only to pixels inside the cap circle.
+	for y := range h {
+		for x := range w {
+			dx, dy := float64(x)+0.5-cx, float64(y)+0.5-cy
+			if dx*dx+dy*dy > rSq {
+				continue
+			}
+			idx := y*stride + x
+			gray.Pix[idx] = lut[gray.Pix[idx]]
+		}
 	}
 }
 

@@ -21,8 +21,6 @@ templ Page(page SearchPageData) {
 	@layout.BaseLayout() {
 		@header.PageHeaderSimple("Cap Search", "Find similar crown caps by uploading a photo", "images")
 		<div class="space-y-6">
-			<!-- Results -->
-			<div id="search-results"></div>
 			<!-- Search Form -->
 			<div class="overflow-hidden rounded-2xl bg-white p-4 shadow-xl ring-1 ring-gray-200/50 sm:p-6 lg:p-8">
 				<form
@@ -111,6 +109,8 @@ templ Page(page SearchPageData) {
 					</div>
 				</div>
 			</div>
+			<!-- Results -->
+			<div id="search-results"></div>
 			<!-- Hash Management -->
 			<div class="overflow-hidden rounded-2xl bg-white p-4 shadow-xl ring-1 ring-gray-200/50 sm:p-6 lg:p-8">
 				<h3 class="mb-2 text-lg font-semibold text-gray-900">Hash Management</h3>

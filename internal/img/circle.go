@@ -144,19 +144,34 @@ func circularCrop(src image.Image, cx, cy, rad int) image.Image {
 	paddedRad := int(float64(rad)*cropPaddingFactor + 0.5)
 	side := 2 * paddedRad
 
+	// Start with ideal window centered on (cx, cy), then shift it
+	// back inside the source bounds to maintain size and centering.
 	x0, y0 := cx-paddedRad, cy-paddedRad
+	x1, y1 := x0+side, y0+side
+
+	if x0 < bounds.Min.X {
+		x1 += bounds.Min.X - x0
+		x0 = bounds.Min.X
+	}
+	if y0 < bounds.Min.Y {
+		y1 += bounds.Min.Y - y0
+		y0 = bounds.Min.Y
+	}
+	if x1 > bounds.Max.X {
+		x0 -= x1 - bounds.Max.X
+		x1 = bounds.Max.X
+	}
+	if y1 > bounds.Max.Y {
+		y0 -= y1 - bounds.Max.Y
+		y1 = bounds.Max.Y
+	}
+
+	// Final clamp in case the source is smaller than the crop.
 	if x0 < bounds.Min.X {
 		x0 = bounds.Min.X
 	}
 	if y0 < bounds.Min.Y {
 		y0 = bounds.Min.Y
-	}
-	x1, y1 := x0+side, y0+side
-	if x1 > bounds.Max.X {
-		x1 = bounds.Max.X
-	}
-	if y1 > bounds.Max.Y {
-		y1 = bounds.Max.Y
 	}
 
 	w, h := x1-x0, y1-y0

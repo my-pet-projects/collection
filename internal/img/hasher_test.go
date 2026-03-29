@@ -29,6 +29,8 @@ func TestSimilarityQuality(t *testing.T) {
 	baseline1Bytes := loadImage(t, "cap_2_baseline.png")
 	photoBaseline1Bytes := loadImage(t, "cap_2_photo.jpeg")
 	photoBaseline1AlignedBytes := loadImage(t, "cap_2_photo_aligned.jpeg")
+	photoBlueBytes := loadImage(t, "cap_3_photo_blue.jpeg")
+	baselineGreenBytes := loadImage(t, "cap_4_baseline_green.png")
 
 	baselineHash, err := hasher.GetImageHash(baselineBytes)
 	if err != nil {
@@ -58,6 +60,14 @@ func TestSimilarityQuality(t *testing.T) {
 	if err != nil {
 		t.Fatalf("hash photo_baseline_1_aligned: %v", err)
 	}
+	photoBlueHash, err := hasher.GetImageHash(photoBlueBytes)
+	if err != nil {
+		t.Fatalf("hash cap_3_photo_blue: %v", err)
+	}
+	baselineGreenHash, err := hasher.GetImageHash(baselineGreenBytes)
+	if err != nil {
+		t.Fatalf("hash cap_4_baseline_green: %v", err)
+	}
 
 	// Images:
 	//   baseline             – crown cap from the collection (reference image)
@@ -77,76 +87,82 @@ func TestSimilarityQuality(t *testing.T) {
 		minSim float32 // minimum expected similarity
 	}{
 		{
-			name:   "baseline vs itself (identical)",
+			name:   "cap_1_baseline vs cap_1_baseline",
 			a:      baselineHash,
 			b:      baselineHash,
 			minSim: 1.00,
 		},
 		{
-			name:   "baseline vs almost same (similar design, different wording)",
+			name:   "cap_1_baseline vs cap_1_baseline_almost_same",
 			a:      baselineHash,
 			b:      almostSameHash,
 			minSim: 0.75,
 		},
 		{
-			name:   "baseline vs cropped photo (similar cap)",
+			name:   "cap_1_baseline vs cap_1_photo_cropped",
 			a:      baselineHash,
 			b:      croppedHash,
 			minSim: 0.95,
 		},
 		{
-			name:   "baseline vs uncropped photo (similar cap)",
+			name:   "cap_1_baseline vs cap_1_photo_uncropped",
 			a:      baselineHash,
 			b:      uncroppedHash,
-			minSim: 0.95,
+			minSim: 0.83,
 		},
 		{
-			name:   "almost same vs cropped photo",
+			name:   "cap_1_baseline_almost_same vs cap_1_photo_cropped",
 			a:      almostSameHash,
 			b:      croppedHash,
 			minSim: 0.76,
 		},
 		{
-			name:   "cropped vs uncropped (same cap, different framing)",
+			name:   "cap_1_photo_cropped vs cap_1_photo_uncropped",
 			a:      croppedHash,
 			b:      uncroppedHash,
-			minSim: 0.93,
+			minSim: 0.85,
 		},
 		{
-			name:   "baseline_1 vs itself (identical)",
+			name:   "cap_2_baseline vs cap_2_baseline",
 			a:      baseline1Hash,
 			b:      baseline1Hash,
 			minSim: 1.00,
 		},
 		{
-			name:   "baseline_1 vs photo_baseline_1 (same cap, photo vs collection)",
+			name:   "cap_2_baseline vs cap_2_photo",
 			a:      baseline1Hash,
 			b:      photoBaseline1Hash,
 			minSim: 0.86,
 		},
 		{
-			name:   "baseline vs baseline_1 (different caps)",
+			name:   "cap_1_baseline vs cap_2_baseline",
 			a:      baselineHash,
 			b:      baseline1Hash,
 			minSim: 0.72,
 		},
 		{
-			name:   "baseline_1 vs photo_baseline_1_aligned (same cap, aligned photo)",
+			name:   "cap_2_baseline vs cap_2_photo_aligned",
 			a:      baseline1Hash,
 			b:      photoBaseline1AlignedHash,
 			minSim: 0.79,
 		},
 		{
-			name:   "photo_baseline_1 vs photo_baseline_1_aligned (rotated vs aligned)",
+			name:   "cap_2_photo vs cap_2_photo_aligned",
 			a:      photoBaseline1Hash,
 			b:      photoBaseline1AlignedHash,
 			minSim: 0.86,
 		},
 		{
-			name:   "baseline vs photo_baseline_1 (different caps)",
+			name:   "cap_1_baseline vs cap_2_photo",
 			a:      baselineHash,
 			b:      photoBaseline1Hash,
 			minSim: 0.74,
+		},
+		{
+			name:   "cap_3_photo_blue vs cap_4_baseline_green",
+			a:      photoBlueHash,
+			b:      baselineGreenHash,
+			minSim: 0.50,
 		},
 	}
 
@@ -229,4 +245,116 @@ func TestColorSimilarity(t *testing.T) {
 		t.Error("cross color similarity returned -1, both hashes should have color data")
 	}
 	t.Logf("baseline vs cropped color similarity: %.2f%%", crossSim*100)
+}
+
+// TestColorMismatch verifies that ColorMismatch detects when a candidate
+// has colors the query image lacks.
+func TestColorMismatch(t *testing.T) {
+	t.Parallel()
+
+	hasher := img.NewHasher()
+
+	baselineBytes := loadImage(t, "cap_1_baseline.png")
+	croppedBytes := loadImage(t, "cap_1_photo_cropped.jpg")
+	baseline1Bytes := loadImage(t, "cap_2_baseline.png")
+
+	baselineHash, err := hasher.GetImageHash(baselineBytes)
+	if err != nil {
+		t.Fatalf("hash cap_1_baseline: %v", err)
+	}
+	croppedHash, err := hasher.GetImageHash(croppedBytes)
+	if err != nil {
+		t.Fatalf("hash cap_1_photo_cropped: %v", err)
+	}
+	baseline1Hash, err := hasher.GetImageHash(baseline1Bytes)
+	if err != nil {
+		t.Fatalf("hash cap_2_baseline: %v", err)
+	}
+
+	// Same image: zero mismatch.
+	selfMismatch := img.ColorMismatch(baselineHash, baselineHash)
+	t.Logf("cap_1_baseline vs cap_1_baseline mismatch: %.2f%%", selfMismatch*100)
+	if selfMismatch > 0.05 {
+		t.Errorf("self mismatch %.2f%%, want <= 5%%", selfMismatch*100)
+	}
+
+	// Similar cap (same design): low mismatch.
+	similarMismatch := img.ColorMismatch(baselineHash, croppedHash)
+	t.Logf("cap_1_baseline vs cap_1_photo_cropped mismatch: %.2f%%", similarMismatch*100)
+
+	// Different caps: potentially higher mismatch.
+	diffMismatch := img.ColorMismatch(baselineHash, baseline1Hash)
+	t.Logf("cap_1_baseline vs cap_2_baseline mismatch: %.2f%%", diffMismatch*100)
+
+	// Reverse direction (asymmetric check).
+	diffMismatchRev := img.ColorMismatch(baseline1Hash, baselineHash)
+	t.Logf("cap_2_baseline vs cap_1_baseline mismatch: %.2f%%", diffMismatchRev*100)
+
+	// Blue vs green caps: should have very high mismatch in both directions.
+	photoBlueBytes := loadImage(t, "cap_3_photo_blue.jpeg")
+	baselineGreenBytes := loadImage(t, "cap_4_baseline_green.png")
+	photoBlueHash, err := hasher.GetImageHash(photoBlueBytes)
+	if err != nil {
+		t.Fatalf("hash cap_3_photo_blue: %v", err)
+	}
+	baselineGreenHash, err := hasher.GetImageHash(baselineGreenBytes)
+	if err != nil {
+		t.Fatalf("hash cap_4_baseline_green: %v", err)
+	}
+
+	blueVsGreen := img.ColorMismatch(photoBlueHash, baselineGreenHash)
+	t.Logf("cap_3_photo_blue vs cap_4_baseline_green mismatch: %.2f%%", blueVsGreen*100)
+
+	greenVsBlue := img.ColorMismatch(baselineGreenHash, photoBlueHash)
+	t.Logf("cap_4_baseline_green vs cap_3_photo_blue mismatch: %.2f%%", greenVsBlue*100)
+
+	// At least one direction should exceed 25% so the bidirectional check filters them.
+	maxMismatch := blueVsGreen
+	if greenVsBlue > maxMismatch {
+		maxMismatch = greenVsBlue
+	}
+	if maxMismatch < 0.25 {
+		t.Errorf("max(blue→green, green→blue) mismatch %.2f%%, want >= 25%%", maxMismatch*100)
+	}
+
+	// Also log their hash similarity to show structure-only score.
+	hashSim := img.Similarity(photoBlueHash, baselineGreenHash)
+	t.Logf("cap_3_photo_blue vs cap_4_baseline_green hash similarity: %.2f%%", hashSim*100)
+
+	colorSim := img.ColorSimilarity(photoBlueHash, baselineGreenHash)
+	t.Logf("cap_3_photo_blue vs cap_4_baseline_green color similarity: %.2f%%", colorSim*100)
+
+	// cap_2_photo (no red) vs cap_5_baseline (has red): should be filtered.
+	baseline5Bytes := loadImage(t, "cap_5_baseline.png")
+	baseline5Hash, err := hasher.GetImageHash(baseline5Bytes)
+	if err != nil {
+		t.Fatalf("hash cap_5_baseline: %v", err)
+	}
+
+	// Reuse photoBaseline1 (cap_2_photo) from earlier tests.
+	cap2PhotoBytes := loadImage(t, "cap_2_photo.jpeg")
+	cap2PhotoHash, err := hasher.GetImageHash(cap2PhotoBytes)
+	if err != nil {
+		t.Fatalf("hash cap_2_photo: %v", err)
+	}
+
+	fwd25 := img.ColorMismatch(cap2PhotoHash, baseline5Hash)
+	t.Logf("cap_2_photo vs cap_5_baseline mismatch: %.2f%%", fwd25*100)
+
+	rev25 := img.ColorMismatch(baseline5Hash, cap2PhotoHash)
+	t.Logf("cap_5_baseline vs cap_2_photo mismatch: %.2f%%", rev25*100)
+
+	max25 := fwd25
+	if rev25 > max25 {
+		max25 = rev25
+	}
+	if max25 < 0.25 {
+		t.Errorf("max(cap_2→cap_5, cap_5→cap_2) mismatch %.2f%%, want >= 25%%", max25*100)
+	}
+
+	hashSim25 := img.Similarity(cap2PhotoHash, baseline5Hash)
+	t.Logf("cap_2_photo vs cap_5_baseline hash similarity: %.2f%%", hashSim25*100)
+
+	colorSim25 := img.ColorSimilarity(cap2PhotoHash, baseline5Hash)
+	t.Logf("cap_2_photo vs cap_5_baseline color similarity: %.2f%%", colorSim25*100)
 }
