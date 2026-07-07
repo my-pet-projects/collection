@@ -1,6 +1,6 @@
 module github.com/my-pet-projects/collection
 
-go 1.26.1
+go 1.26.5
 
 require (
 	github.com/a-h/templ v0.3.1001
