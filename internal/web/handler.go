@@ -68,8 +68,7 @@ func (rrp *ReqRespPair) NoContent() error {
 }
 
 func (rrp *ReqRespPair) RenderAppError(err error) error {
-	var appErr *apperr.AppError
-	if errors.As(err, &appErr) {
+	if appErr, ok := errors.AsType[*apperr.AppError](err); ok {
 		return rrp.renderError(appErr.Status, appErr.Msg, appErr.Err)
 	}
 	return rrp.renderError(http.StatusInternalServerError, "Unknown error.", err)
@@ -82,8 +81,7 @@ func (rrp *ReqRespPair) RenderError(code int, err error) error {
 	case http.StatusNotFound:
 		return rrp.renderError(code, "Resource not found.", nil)
 	case http.StatusInternalServerError:
-		var appErr *apperr.AppError
-		if errors.As(err, &appErr) {
+		if appErr, ok := errors.AsType[*apperr.AppError](err); ok {
 			return rrp.renderError(code, appErr.Msg, appErr.Err)
 		}
 		fallthrough

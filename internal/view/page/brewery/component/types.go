@@ -17,7 +17,7 @@ type BreweriesData struct {
 // ToAutocompleteProps converts BreweriesData to AutoCompleteProps using the generic helper.
 func (d BreweriesData) ToAutocompleteProps() ui.AutoCompleteProps {
 	return ui.NewEntityAutocomplete(ui.EntityAutocompleteProps[model.Brewery]{
-		ID:             "brewery",
+		ID:             "brewery", //nolint:goconst
 		Name:           "brewery",
 		Items:          d.Breweries,
 		Mapper:         breweryToAutocomplete,

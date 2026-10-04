@@ -9,6 +9,7 @@ linters:
     - err113 # don't want to use static errors
     - errchkjson # don't want to check encoding error return value in tests
     - exhaustruct # don't want to initialize all struct fields
+    - exhaustruct_v5 # don't want to initialize all struct fields for v5
     - ireturn # want to return interfaces
     - nilnil # want to return nil,nil
     - nlreturn # sometimes don't want to have a blank line before return
@@ -17,6 +18,7 @@ linters:
     - testpackage # don't want to use separate _test packages
     - wsl # annoying cuddle rules
     - wsl_v5 # annoying cuddle rules
+    - gomodguard # deprecated
   settings:
     errcheck:
       exclude-functions:
