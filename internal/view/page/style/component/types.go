@@ -17,7 +17,7 @@ type StyleData struct {
 // ToAutocompleteProps converts StyleData to AutoCompleteProps using the generic helper.
 func (d StyleData) ToAutocompleteProps() ui.AutoCompleteProps {
 	return ui.NewEntityAutocomplete(ui.EntityAutocompleteProps[model.BeerStyle]{
-		ID:             "style",
+		ID:             "style", //nolint:goconst
 		Name:           "style",
 		Items:          d.Styles,
 		Mapper:         styleToAutocomplete,
