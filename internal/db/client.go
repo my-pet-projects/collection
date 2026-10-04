@@ -16,6 +16,7 @@ import (
 
 const (
 	GeographyDBResolverName = "geography"
+	libsqlDriverName        = "libsql"
 )
 
 // DbClient represents database client.
@@ -29,7 +30,7 @@ func NewClient(cfg *config.Config, logger *logslog.Logger) (*DbClient, error) {
 	collectionDbUrl := fmt.Sprintf("%s?authToken=%s", cfg.CollectionDbConfig.DbUrl, cfg.CollectionDbConfig.AuthToken)
 
 	gormDB, gormErr := gorm.Open(sqlite.New(sqlite.Config{
-		DriverName: "libsql",
+		DriverName: libsqlDriverName,
 		DSN:        collectionDbUrl,
 	}), &gorm.Config{
 		NowFunc: func() time.Time {
@@ -45,7 +46,7 @@ func NewClient(cfg *config.Config, logger *logslog.Logger) (*DbClient, error) {
 		Register(dbresolver.Config{
 			Sources: []gorm.Dialector{
 				sqlite.New(sqlite.Config{
-					DriverName: "libsql",
+					DriverName: libsqlDriverName,
 					DSN:        collectionDbUrl,
 				}),
 			},
@@ -54,7 +55,7 @@ func NewClient(cfg *config.Config, logger *logslog.Logger) (*DbClient, error) {
 		Register(dbresolver.Config{
 			Sources: []gorm.Dialector{
 				sqlite.New(sqlite.Config{
-					DriverName: "libsql",
+					DriverName: libsqlDriverName,
 					DSN:        geoDbUrl,
 				}),
 			},

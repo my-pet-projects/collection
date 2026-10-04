@@ -105,21 +105,21 @@ func getGeoPrefix(country *model.Country) string {
 		"ARG": "CHL/ARG",
 		"BLR": "RUS",
 		"CHE": "DEU",
-		"AND": "FRA",
+		"AND": "FRA", //nolint:goconst
 		"LUX": "FRA",
 		"SMR": "FRA",
 		"CYP": "GRC",
 		"SVN": "BALK",
-		"EST": "BALT",
+		"EST": "BALT", //nolint:goconst
 		"LVA": "BALT",
 		"LTU": "BALT",
-		"DNK": "SCND",
+		"DNK": "SCND", //nolint:goconst
 		"NOR": "SCND",
 		"SWE": "SCND",
 		"FIN": "SCND",
 		"SVK": "CARP",
 		"HUN": "CARP",
-		"ARM": "CASP",
+		"ARM": "CASP", //nolint:goconst
 		"GEO": "CASP",
 		"AZE": "CASP",
 	}
