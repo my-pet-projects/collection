@@ -143,13 +143,12 @@ func (s prettyStack) decorateLine(line string, useColor bool, num int) (string, 
 }
 
 func (s prettyStack) decorateFuncCallLine(line string, useColor bool, num int) (string, error) {
-	idx := strings.LastIndex(line, "(")
-	if idx < 0 {
+	pkg, _, ok := strings.CutLast(line, "(")
+	if !ok {
 		return "", errors.New("not a func call line")
 	}
 
 	buf := &bytes.Buffer{}
-	pkg := line[0:idx]
 	// addr := line[idx:]
 	method := ""
 
