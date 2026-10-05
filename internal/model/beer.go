@@ -43,6 +43,17 @@ func (b Beer) HasBeerStyle() bool {
 	return b.BeerStyle != nil
 }
 
+func (b Beer) HasType() bool {
+	return b.Type != nil && strings.TrimSpace(*b.Type) != ""
+}
+
+func (b Beer) GetType() string {
+	if b.Type == nil {
+		return ""
+	}
+	return strings.TrimSpace(*b.Type)
+}
+
 func (b Beer) HasBrewery() bool {
 	return b.Brewery != nil
 }

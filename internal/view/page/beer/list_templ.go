@@ -410,14 +410,10 @@ func BeerList(data BeerListData) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "\" hx-trigger=\"intersect once threshold:0.8\" hx-swap=\"beforeend\" hx-target=\"#beer-grid\" hx-target-error=\"#beer-list-errors\" x-on:htmx:response-error=\"hasErrors = true\" x-on:htmx:before-request=\"loadingMore = true\" x-on:htmx:after-request=\"loadingMore = false; $el.remove()\" class=\"invisible col-span-full h-20 w-full\"></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "\" hx-trigger=\"intersect once threshold:0.8\" hx-swap=\"outerHTML\" hx-target=\"this\" hx-target-error=\"#beer-list-errors\" x-on:htmx:response-error=\"loadingMore = false; hasErrors = true\" x-on:htmx:before-request=\"loadingMore = true\" x-on:htmx:after-request=\"loadingMore = false\" class=\"col-span-full flex h-20 w-full items-center justify-center\"><!-- Loading more indicator --><div x-show=\"loadingMore\" x-transition:enter=\"transition ease-out duration-300\" x-transition:enter-start=\"opacity-0 transform translate-y-2\" x-transition:enter-end=\"opacity-100 transform translate-y-0\" class=\"inline-flex items-center gap-3 rounded-xl bg-gray-50 px-4 py-3\"><div class=\"flex space-x-1\"><div class=\"h-2 w-2 animate-bounce rounded-full bg-amber-600\"></div><div class=\"h-2 w-2 animate-bounce rounded-full bg-amber-600\" style=\"animation-delay: 0.1s\"></div><div class=\"h-2 w-2 animate-bounce rounded-full bg-amber-600\" style=\"animation-delay: 0.2s\"></div></div><span class=\"font-medium text-gray-700\">Loading more beers...</span></div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, " <!-- Loading more indicator --> <div x-show=\"loadingMore\" x-transition:enter=\"transition ease-out duration-300\" x-transition:enter-start=\"opacity-0 transform translate-y-4\" x-transition:enter-end=\"opacity-100 transform translate-y-0\" class=\"col-span-full py-4 text-center\"><div class=\"inline-flex items-center gap-3 rounded-xl bg-gray-50 px-4 py-3\"><div class=\"flex space-x-1\"><div class=\"h-2 w-2 animate-bounce rounded-full bg-amber-600\"></div><div class=\"h-2 w-2 animate-bounce rounded-full bg-amber-600\" style=\"animation-delay: 0.1s\"></div><div class=\"h-2 w-2 animate-bounce rounded-full bg-amber-600\" style=\"animation-delay: 0.2s\"></div></div><span class=\"font-medium text-gray-700\">Loading more beers...</span></div></div>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
 			}
 		}
 		return nil

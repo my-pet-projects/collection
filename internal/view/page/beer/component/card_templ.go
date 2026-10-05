@@ -43,7 +43,7 @@ func Card(beer model.Beer) templ.Component {
 				capMedias = append(capMedias, media)
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div x-data=\"{ currentCapIndex: 0, lightboxOpen: false, lightboxSrc: '' }\"><div class=\"group overflow-hidden rounded-xl bg-white shadow-md transition-all duration-300 hover:shadow-lg sm:rounded-2xl sm:hover:-translate-y-2 sm:hover:shadow-xl\"><div class=\"p-4 sm:p-6\"><!-- Header --><div class=\"mb-4 flex items-center justify-between sm:mb-6\"><!-- Brand and Country --><div class=\"flex min-w-0 flex-1 items-center space-x-3 sm:space-x-4\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div x-data=\"{ currentCapIndex: 0, lightboxOpen: false, lightboxSrc: '' }\"><div class=\"bg-linear-to-br group rounded-2xl from-amber-300/70 via-slate-200 to-orange-200/60 p-px shadow-[0_8px_24px_rgba(15,23,42,0.08)] transition-all duration-300 hover:from-amber-400/80 hover:via-slate-300 hover:to-orange-300/70 hover:shadow-[0_16px_36px_rgba(15,23,42,0.14)] sm:hover:-translate-y-1\"><div class=\"overflow-hidden rounded-[15px] bg-white p-4 sm:p-6\"><!-- Header --><div class=\"mb-4 flex items-center justify-between sm:mb-6\"><!-- Brand and Country --><div class=\"flex min-w-0 flex-1 items-center space-x-3 sm:space-x-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -80,33 +80,43 @@ func Card(beer model.Beer) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div class=\"min-w-0 flex-1\"><div class=\"flex items-center gap-2\"><h2 class=\"truncate text-lg font-bold tracking-tight text-slate-800 sm:text-xl lg:text-2xl\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div class=\"min-w-0 flex-1\"><h2 class=\"wrap-anywhere text-xl font-bold leading-tight tracking-tight text-slate-800 sm:text-2xl\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(beer.Brand)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card.templ`, Line: 41, Col: 112}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card.templ`, Line: 40, Col: 119}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</h2><span class=\"shrink-0 text-xs text-slate-400 sm:text-sm\">#")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</h2>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var5 string
-		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(beer.ID))
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card.templ`, Line: 42, Col: 89}
+		if beer.HasType() {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<p class=\"wrap-anywhere -mt-0.5 text-xs font-medium leading-snug text-slate-600 sm:text-sm\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var5 string
+			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(beer.GetType())
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card.templ`, Line: 42, Col: 116}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</p>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</span></div></div></div><!-- Edit Button --><a href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div></div><!-- Edit Button --><a href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -119,7 +129,7 @@ func Card(beer model.Beer) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" class=\"flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition-all duration-200 hover:bg-gray-200 hover:text-gray-800 sm:opacity-0 sm:group-hover:opacity-100\" aria-label=\"Edit beer\"><svg class=\"h-4 w-4\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z\"></path> <path d=\"m15 5 4 4\"></path></svg></a></div><!-- Images Section --><div class=\"mb-3 flex flex-wrap items-end gap-2 rounded-lg bg-gray-50 p-2 sm:flex-nowrap\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" class=\"ml-2 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition-all duration-200 hover:bg-gray-200 hover:text-gray-800 sm:ml-3 sm:opacity-0 sm:group-hover:opacity-100\" aria-label=\"Edit beer\"><svg class=\"h-4 w-4\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z\"></path> <path d=\"m15 5 4 4\"></path></svg></a></div><!-- Images Section --><div class=\"mb-3 flex flex-wrap items-end gap-2 rounded-lg bg-gray-50 p-2 sm:flex-nowrap\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -143,12 +153,12 @@ func Card(beer model.Beer) templ.Component {
 				}
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div><!-- Cap Gallery Section -->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div><!-- Cap Gallery Section -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(capMedias) > 1 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div class=\"mb-4 sm:mb-6\"><!-- Compact thumbnail gallery --><div class=\"flex flex-wrap items-center justify-center gap-1\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div class=\"mb-4 sm:mb-6\"><!-- Compact thumbnail gallery --><div class=\"flex flex-wrap items-center justify-center gap-1\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -158,64 +168,64 @@ func Card(beer model.Beer) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<!-- Info Section --><div class=\"mb-4 space-y-2 sm:mb-6 sm:space-y-3\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<!-- Info Section --><div class=\"mb-4 space-y-2 sm:mb-6 sm:space-y-3\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if beer.HasBrewery() {
 			brewery := beer.Brewery
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<div class=\"flex items-center gap-2 text-slate-600 sm:gap-3\"><div class=\"flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-blue-50 text-blue-600 sm:h-8 sm:w-8 sm:rounded-lg\"><svg class=\"h-3 w-3 sm:h-4 sm:w-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-7 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4\"></path></svg></div><div><div class=\"muted text-xs\">Brewery</div><div class=\"min-w-0 flex-1 truncate text-xs font-semibold sm:text-sm\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<div class=\"flex items-start gap-2 text-slate-600 sm:gap-3\"><div class=\"flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-blue-50 text-blue-600 sm:h-8 sm:w-8 sm:rounded-lg\"><svg class=\"h-3 w-3 sm:h-4 sm:w-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-7 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4\"></path></svg></div><div class=\"min-w-0 flex-1\"><div class=\"muted text-xs\">Brewery</div><div class=\"wrap-anywhere text-xs font-semibold leading-snug sm:text-sm\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(brewery.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card.templ`, Line: 95, Col: 92}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card.templ`, Line: 95, Col: 95}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div></div></div><div class=\"flex items-center gap-2 text-slate-600 sm:gap-3\"><div class=\"flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-emerald-50 text-emerald-600 sm:h-8 sm:w-8 sm:rounded-lg\"><svg class=\"h-3 w-3 sm:h-4 sm:w-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z\"></path> <path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M15 11a3 3 0 11-6 0 3 3 0 016 0z\"></path></svg></div><div><div class=\"muted text-xs\">Location</div><div class=\"min-w-0 flex-1 truncate text-xs font-semibold sm:text-sm\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div></div></div><div class=\"flex items-start gap-2 text-slate-600 sm:gap-3\"><div class=\"flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-emerald-50 text-emerald-600 sm:h-8 sm:w-8 sm:rounded-lg\"><svg class=\"h-3 w-3 sm:h-4 sm:w-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z\"></path> <path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M15 11a3 3 0 11-6 0 3 3 0 016 0z\"></path></svg></div><div class=\"min-w-0 flex-1\"><div class=\"muted text-xs\">Location</div><div class=\"wrap-anywhere text-xs font-semibold leading-snug sm:text-sm\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(brewery.GetCityName())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card.templ`, Line: 107, Col: 101}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card.templ`, Line: 107, Col: 104}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, ", ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, ", ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(brewery.GetCountryName())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card.templ`, Line: 107, Col: 131}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card.templ`, Line: 107, Col: 134}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if beer.HasCapSlots() {
 			capSlots := beer.GetCapSlots()
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<div class=\"flex items-center gap-2 text-slate-600 sm:gap-3\"><div class=\"flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-purple-50 text-purple-600 sm:h-8 sm:w-8 sm:rounded-lg\"><svg class=\"h-3 w-3 sm:h-4 sm:w-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2v2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10\"></path></svg></div><div><div class=\"muted text-xs\">Slot</div><div class=\"text-xs font-medium text-slate-700 sm:text-sm\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<div class=\"flex items-center gap-2 text-slate-600 sm:gap-3\"><div class=\"flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-purple-50 text-purple-600 sm:h-8 sm:w-8 sm:rounded-lg\"><svg class=\"h-3 w-3 sm:h-4 sm:w-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2v2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10\"></path></svg></div><div><div class=\"muted text-xs\">Slot</div><div class=\"text-xs font-medium text-slate-700 sm:text-sm\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -228,35 +238,48 @@ func Card(beer model.Beer) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</div></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</div><!-- Badge section -->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</div><!-- Card footer --><div class=\"flex items-end justify-between gap-3\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if beer.HasBeerStyle() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<div class=\"flex items-center\"><!-- Beer Style Badge --><div class=\"bg-linear-to-r inline-flex items-center rounded-full border border-slate-300/50 from-slate-100 to-slate-200 px-3 py-1.5 shadow-sm sm:px-4 sm:py-2\"><span class=\"text-xs font-medium text-slate-700 sm:text-sm\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<!-- Beer Style Badge --> <div class=\"bg-linear-to-r inline-flex min-w-0 max-w-full items-center rounded-full border border-slate-300/50 from-slate-100 to-slate-200 px-3 py-1.5 shadow-sm sm:px-4 sm:py-2\"><span class=\"wrap-break-words min-w-0 whitespace-normal text-[11px] font-medium leading-snug text-slate-700 sm:text-xs\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var11 string
 			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(beer.BeerStyle.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card.templ`, Line: 133, Col: 88}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card.templ`, Line: 133, Col: 148}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</span></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</span></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</div></div><!-- Cap Image Lightbox --><div x-show=\"lightboxOpen\" x-transition:enter=\"transition ease-out duration-300\" x-transition:enter-start=\"opacity-0\" x-transition:enter-end=\"opacity-100\" x-transition:leave=\"transition ease-in duration-200\" x-transition:leave-start=\"opacity-100\" x-transition:leave-end=\"opacity-0\" @click=\"lightboxOpen = false\" @keydown.escape.window=\"lightboxOpen = false\" x-trap.noscroll=\"lightboxOpen\" class=\"fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm\" style=\"display: none;\"><div @click.stop class=\"relative\"><button @click=\"lightboxOpen = false\" class=\"absolute -right-3 -top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white text-gray-600 shadow-lg transition hover:bg-gray-100\" aria-label=\"Close lightbox\"><svg class=\"h-5 w-5\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M6 18L18 6M6 6l12 12\"></path></svg></button> <img x-bind:src=\"lightboxSrc\" alt=\"Cap image enlarged\" class=\"max-h-[85vh] max-w-[85vw] rounded-2xl object-contain shadow-2xl\"></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<span class=\"ml-auto shrink-0 pb-1 text-[11px] tabular-nums text-slate-400\">#")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var12 string
+		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(beer.ID))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card.templ`, Line: 136, Col: 105}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</span></div></div></div><!-- Cap Image Lightbox --><div x-show=\"lightboxOpen\" x-transition:enter=\"transition ease-out duration-300\" x-transition:enter-start=\"opacity-0\" x-transition:enter-end=\"opacity-100\" x-transition:leave=\"transition ease-in duration-200\" x-transition:leave-start=\"opacity-100\" x-transition:leave-end=\"opacity-0\" @click=\"lightboxOpen = false\" @keydown.escape.window=\"lightboxOpen = false\" x-trap.noscroll=\"lightboxOpen\" class=\"fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm\" style=\"display: none;\"><div @click.stop class=\"relative\"><button @click=\"lightboxOpen = false\" class=\"absolute -right-3 -top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white text-gray-600 shadow-lg transition hover:bg-gray-100\" aria-label=\"Close lightbox\"><svg class=\"h-5 w-5\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M6 18L18 6M6 6l12 12\"></path></svg></button> <img x-bind:src=\"lightboxSrc\" alt=\"Cap image enlarged\" class=\"max-h-[85vh] max-w-[85vw] rounded-2xl object-contain shadow-2xl\"></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

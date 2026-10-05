@@ -1,6 +1,8 @@
 package beer
 
 import (
+	"strconv"
+
 	"github.com/my-pet-projects/collection/internal/util"
 	"github.com/my-pet-projects/collection/internal/view/layout"
 )
@@ -22,19 +24,30 @@ templ Page(page BeerPageData) {
 						<path d="M5 8v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8"></path>
 					</svg>
 				</div>
-				<div>
-					<h1 class="bg-linear-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-3xl font-bold leading-tight tracking-tight text-transparent sm:text-4xl lg:text-5xl">
+				<div class="min-w-0">
+					if !isCreate {
+						<p class="mb-1 text-xs font-semibold uppercase tracking-[0.16em] text-amber-700">
+							Beer details <span class="mx-1 text-gray-300">·</span> #{ strconv.Itoa(page.Beer.ID) }
+						</p>
+					}
+					<h1 class={
+						"leading-tight tracking-tight",
+						templ.KV("bg-linear-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl lg:text-5xl", isCreate),
+						templ.KV("text-xl font-semibold text-gray-900 sm:text-2xl lg:text-3xl", !isCreate),
+					}>
 						if isCreate {
 							Create Beer
 						} else {
-							Beer Details
+							<span class="wrap-anywhere">{ page.Beer.Brand }</span>
 						}
 					</h1>
 					<p class="text-base text-gray-600 sm:text-lg lg:text-xl">
 						if isCreate {
 							Add a new beer to your collection
+						} else if isImagesPage {
+							Manage images and cap collection details
 						} else {
-							Manage and view your beer information
+							Manage beer information
 						}
 					</p>
 				</div>
