@@ -9,7 +9,6 @@ import (
 
 	"github.com/my-pet-projects/collection/internal/apperr"
 	"github.com/my-pet-projects/collection/internal/service"
-	"github.com/my-pet-projects/collection/internal/view/layout"
 	searchpage "github.com/my-pet-projects/collection/internal/view/page/search"
 	"github.com/my-pet-projects/collection/internal/web"
 )
@@ -31,7 +30,7 @@ func NewSimilarityHandler(similaritySvc service.SimilarityService, logger *slog.
 // HandleSearchPage renders the cap similarity search page.
 func (h SimilarityHandler) HandleSearchPage(reqResp *web.ReqRespPair) error {
 	page := searchpage.SearchPageData{
-		Page: layout.Page{Title: "Cap Search"},
+		Title: "Cap Search",
 	}
 	return reqResp.Render(searchpage.Page(page))
 }

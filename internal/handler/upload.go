@@ -11,7 +11,6 @@ import (
 	"github.com/my-pet-projects/collection/internal/apperr"
 	"github.com/my-pet-projects/collection/internal/model"
 	"github.com/my-pet-projects/collection/internal/service"
-	"github.com/my-pet-projects/collection/internal/view/layout"
 	imagepage "github.com/my-pet-projects/collection/internal/view/page/image"
 	uploadpage "github.com/my-pet-projects/collection/internal/view/page/upload"
 	uploadcomponent "github.com/my-pet-projects/collection/internal/view/page/upload/component"
@@ -32,7 +31,7 @@ func NewUploadHandler(imageSvc service.ImageService, logger *slog.Logger) Upload
 
 func (h UploadHandler) UploadImagePage(reqResp *web.ReqRespPair) error {
 	beerPage := uploadpage.UploadPage{
-		Page: layout.Page{Title: "Upload Image"},
+		Title: "Upload Image",
 	}
 	return reqResp.Render(uploadpage.Page(beerPage))
 }
