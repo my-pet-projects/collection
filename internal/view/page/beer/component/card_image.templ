@@ -14,6 +14,7 @@ const (
 templ bottleImage(media model.BeerMedia) {
 	{{ originalImageURL := fmt.Sprintf("%s/%s", S3BaseURL, media.Media.ExternalFilename) }}
 	{{ resizedImageURL := fmt.Sprintf("%s/width=100,quality=25/%s", CdnBaseURL, originalImageURL) }}
+	{{ lightboxURL := fmt.Sprintf("%s/width=800,quality=85/%s", CdnBaseURL, originalImageURL) }}
 	<div
 		x-data={ fmt.Sprintf(`{
             isIntersected: false,
@@ -21,7 +22,13 @@ templ bottleImage(media model.BeerMedia) {
             imageSrc: '%s'
         }`, resizedImageURL) }
 		x-intersect.threshold.25="isIntersected = true"
-		class="order-first flex shrink-0 items-end justify-center"
+		@click={ fmt.Sprintf("lightboxSrc = '%s'; lightboxAlt = 'Bottle image enlarged'; lightboxOpen = true", lightboxURL) }
+		@keydown.enter={ fmt.Sprintf("lightboxSrc = '%s'; lightboxAlt = 'Bottle image enlarged'; lightboxOpen = true", lightboxURL) }
+		@keydown.space.prevent={ fmt.Sprintf("lightboxSrc = '%s'; lightboxAlt = 'Bottle image enlarged'; lightboxOpen = true", lightboxURL) }
+		class="order-first flex shrink-0 cursor-pointer items-end justify-center"
+		role="button"
+		tabindex="0"
+		aria-label="Enlarge bottle image"
 	>
 		<div class="flex h-20 w-12 items-center justify-center rounded-lg border border-slate-200/60 bg-white p-1.5 shadow-sm transition duration-300 ease-in-out hover:scale-105 sm:h-28 sm:w-14 sm:rounded-xl sm:p-2">
 			<!-- Shimmer placeholder -->
@@ -55,8 +62,13 @@ templ capImage(media model.BeerMedia) {
             imageSrc: '%s'
         }`, resizedImageURL) }
 		x-intersect.threshold.25="isIntersected = true"
-		@click={ fmt.Sprintf("lightboxSrc = '%s'; lightboxOpen = true", lightboxURL) }
+		@click={ fmt.Sprintf("lightboxSrc = '%s'; lightboxAlt = 'Cap image enlarged'; lightboxOpen = true", lightboxURL) }
+		@keydown.enter={ fmt.Sprintf("lightboxSrc = '%s'; lightboxAlt = 'Cap image enlarged'; lightboxOpen = true", lightboxURL) }
+		@keydown.space.prevent={ fmt.Sprintf("lightboxSrc = '%s'; lightboxAlt = 'Cap image enlarged'; lightboxOpen = true", lightboxURL) }
 		class="flex shrink-0 cursor-pointer items-end justify-center"
+		role="button"
+		tabindex="0"
+		aria-label="Enlarge cap image"
 	>
 		<div class="flex h-20 w-20 items-center justify-center rounded-full border border-slate-200/60 bg-white p-1.5 shadow-sm transition duration-300 ease-in-out hover:scale-105 sm:h-28 sm:w-28 sm:p-2">
 			<!-- Shimmer placeholder -->
@@ -82,6 +94,7 @@ templ capImage(media model.BeerMedia) {
 templ labelImage(media model.BeerMedia) {
 	{{ originalImageURL := fmt.Sprintf("%s/%s", S3BaseURL, media.Media.ExternalFilename) }}
 	{{ resizedImageURL := fmt.Sprintf("%s/width=100,quality=25/%s", CdnBaseURL, originalImageURL) }}
+	{{ lightboxURL := fmt.Sprintf("%s/width=1200,quality=85/%s", CdnBaseURL, originalImageURL) }}
 	<div
 		x-data={ fmt.Sprintf(`{
             isIntersected: false,
@@ -89,7 +102,13 @@ templ labelImage(media model.BeerMedia) {
             imageSrc: '%s'
         }`, resizedImageURL) }
 		x-intersect.threshold.25="isIntersected = true"
-		class="order-last flex min-w-0 flex-1 items-end justify-center"
+		@click={ fmt.Sprintf("lightboxSrc = '%s'; lightboxAlt = 'Label image enlarged'; lightboxOpen = true", lightboxURL) }
+		@keydown.enter={ fmt.Sprintf("lightboxSrc = '%s'; lightboxAlt = 'Label image enlarged'; lightboxOpen = true", lightboxURL) }
+		@keydown.space.prevent={ fmt.Sprintf("lightboxSrc = '%s'; lightboxAlt = 'Label image enlarged'; lightboxOpen = true", lightboxURL) }
+		class="order-last flex min-w-0 flex-1 cursor-pointer items-end justify-center"
+		role="button"
+		tabindex="0"
+		aria-label="Enlarge label image"
 	>
 		<div class="flex h-20 w-full items-center justify-center overflow-hidden rounded-lg border border-slate-200/60 bg-white p-1.5 shadow-sm transition duration-300 ease-in-out hover:scale-105 sm:h-28 sm:rounded-xl sm:p-2">
 			<!-- Shimmer placeholder -->
@@ -125,8 +144,13 @@ templ capImageWithIndex(media model.BeerMedia, index int) {
 		x-intersect.threshold.25="isIntersected = true"
 		x-effect={ fmt.Sprintf("if (currentCapIndex === %d) isIntersected = true", index) }
 		x-show={ fmt.Sprintf("currentCapIndex === %d", index) }
-		@click={ fmt.Sprintf("lightboxSrc = '%s'; lightboxOpen = true", lightboxURL) }
+		@click={ fmt.Sprintf("lightboxSrc = '%s'; lightboxAlt = 'Cap image enlarged'; lightboxOpen = true", lightboxURL) }
+		@keydown.enter={ fmt.Sprintf("lightboxSrc = '%s'; lightboxAlt = 'Cap image enlarged'; lightboxOpen = true", lightboxURL) }
+		@keydown.space.prevent={ fmt.Sprintf("lightboxSrc = '%s'; lightboxAlt = 'Cap image enlarged'; lightboxOpen = true", lightboxURL) }
 		class="flex shrink-0 cursor-pointer items-end justify-center"
+		role="button"
+		tabindex="0"
+		aria-label="Enlarge cap image"
 	>
 		<div class="flex h-20 w-20 items-center justify-center rounded-full border border-slate-200/60 bg-white p-1.5 shadow-sm transition duration-300 ease-in-out hover:scale-105 sm:h-28 sm:w-28 sm:p-2">
 			<!-- Shimmer placeholder -->

@@ -42,6 +42,7 @@ func bottleImage(media model.BeerMedia) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		originalImageURL := fmt.Sprintf("%s/%s", S3BaseURL, media.Media.ExternalFilename)
 		resizedImageURL := fmt.Sprintf("%s/width=100,quality=25/%s", CdnBaseURL, originalImageURL)
+		lightboxURL := fmt.Sprintf("%s/width=800,quality=85/%s", CdnBaseURL, originalImageURL)
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div x-data=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -53,13 +54,52 @@ func bottleImage(media model.BeerMedia) templ.Component {
             imageSrc: '%s'
         }`, resizedImageURL))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 22, Col: 28}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 23, Col: 28}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var2)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" x-intersect.threshold.25=\"isIntersected = true\" class=\"order-first flex shrink-0 items-end justify-center\"><div class=\"flex h-20 w-12 items-center justify-center rounded-lg border border-slate-200/60 bg-white p-1.5 shadow-sm transition duration-300 ease-in-out hover:scale-105 sm:h-28 sm:w-14 sm:rounded-xl sm:p-2\"><!-- Shimmer placeholder --><div x-show=\"isIntersected && !imageLoaded\" class=\"h-full w-full animate-pulse rounded-lg bg-slate-200\"></div><!-- Actual image -->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" x-intersect.threshold.25=\"isIntersected = true\" @click=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var3 string
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("lightboxSrc = '%s'; lightboxAlt = 'Bottle image enlarged'; lightboxOpen = true", lightboxURL))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 25, Col: 117}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" @keydown.enter=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var4 string
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("lightboxSrc = '%s'; lightboxAlt = 'Bottle image enlarged'; lightboxOpen = true", lightboxURL))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 26, Col: 125}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" @keydown.space.prevent=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var5 string
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("lightboxSrc = '%s'; lightboxAlt = 'Bottle image enlarged'; lightboxOpen = true", lightboxURL))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 27, Col: 133}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" class=\"order-first flex shrink-0 cursor-pointer items-end justify-center\" role=\"button\" tabindex=\"0\" aria-label=\"Enlarge bottle image\"><div class=\"flex h-20 w-12 items-center justify-center rounded-lg border border-slate-200/60 bg-white p-1.5 shadow-sm transition duration-300 ease-in-out hover:scale-105 sm:h-28 sm:w-14 sm:rounded-xl sm:p-2\"><!-- Shimmer placeholder --><div x-show=\"isIntersected && !imageLoaded\" class=\"h-full w-full animate-pulse rounded-lg bg-slate-200\"></div><!-- Actual image -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -67,16 +107,16 @@ func bottleImage(media model.BeerMedia) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<img x-bind:class=\"imageLoaded ? 'h-full w-auto object-contain opacity-100 transition-opacity duration-700 ease-out' : 'h-full w-auto object-contain opacity-0 absolute transition-opacity duration-700 ease-out'\" x-bind:src=\"isIntersected ? imageSrc : null\" @load=\"imageLoaded = true\" @error=\"imageLoaded = true\" alt=\"bottle image\" loading=\"lazy\" decoding=\"async\" onerror=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<img x-bind:class=\"imageLoaded ? 'h-full w-auto object-contain opacity-100 transition-opacity duration-700 ease-out' : 'h-full w-auto object-contain opacity-0 absolute transition-opacity duration-700 ease-out'\" x-bind:src=\"isIntersected ? imageSrc : null\" @load=\"imageLoaded = true\" @error=\"imageLoaded = true\" alt=\"bottle image\" loading=\"lazy\" decoding=\"async\" onerror=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var3 templ.ComponentScript = OnImageLoadError(templ.JSExpression("this"), originalImageURL)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3.Call)
+		var templ_7745c5c3_Var6 templ.ComponentScript = OnImageLoadError(templ.JSExpression("this"), originalImageURL)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6.Call)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\"></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\"></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -100,45 +140,71 @@ func capImage(media model.BeerMedia) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var4 == nil {
-			templ_7745c5c3_Var4 = templ.NopComponent
+		templ_7745c5c3_Var7 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var7 == nil {
+			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		originalImageURL := fmt.Sprintf("%s/%s", S3BaseURL, media.Media.ExternalFilename)
 		resizedImageURL := fmt.Sprintf("%s/width=100,quality=25/%s", CdnBaseURL, originalImageURL)
 		lightboxURL := fmt.Sprintf("%s/width=800,quality=85/%s", CdnBaseURL, originalImageURL)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div x-data=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div x-data=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var5 string
-		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf(`{
+		var templ_7745c5c3_Var8 string
+		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf(`{
             isIntersected: false,
             imageLoaded: false,
             imageSrc: '%s'
         }`, resizedImageURL))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 56, Col: 28}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 63, Col: 28}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" x-intersect.threshold.25=\"isIntersected = true\" @click=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" x-intersect.threshold.25=\"isIntersected = true\" @click=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var6 string
-		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("lightboxSrc = '%s'; lightboxOpen = true", lightboxURL))
+		var templ_7745c5c3_Var9 string
+		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("lightboxSrc = '%s'; lightboxAlt = 'Cap image enlarged'; lightboxOpen = true", lightboxURL))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 58, Col: 78}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 65, Col: 114}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\" class=\"flex shrink-0 cursor-pointer items-end justify-center\"><div class=\"flex h-20 w-20 items-center justify-center rounded-full border border-slate-200/60 bg-white p-1.5 shadow-sm transition duration-300 ease-in-out hover:scale-105 sm:h-28 sm:w-28 sm:p-2\"><!-- Shimmer placeholder --><div x-show=\"isIntersected && !imageLoaded\" class=\"h-full w-full animate-pulse rounded-full bg-slate-200\"></div><!-- Actual image -->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" @keydown.enter=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var10 string
+		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("lightboxSrc = '%s'; lightboxAlt = 'Cap image enlarged'; lightboxOpen = true", lightboxURL))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 66, Col: 122}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var10)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\" @keydown.space.prevent=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var11 string
+		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("lightboxSrc = '%s'; lightboxAlt = 'Cap image enlarged'; lightboxOpen = true", lightboxURL))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 67, Col: 130}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var11)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\" class=\"flex shrink-0 cursor-pointer items-end justify-center\" role=\"button\" tabindex=\"0\" aria-label=\"Enlarge cap image\"><div class=\"flex h-20 w-20 items-center justify-center rounded-full border border-slate-200/60 bg-white p-1.5 shadow-sm transition duration-300 ease-in-out hover:scale-105 sm:h-28 sm:w-28 sm:p-2\"><!-- Shimmer placeholder --><div x-show=\"isIntersected && !imageLoaded\" class=\"h-full w-full animate-pulse rounded-full bg-slate-200\"></div><!-- Actual image -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -146,16 +212,16 @@ func capImage(media model.BeerMedia) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<img x-bind:class=\"imageLoaded ? 'h-full w-auto object-contain opacity-100 transition-opacity duration-700 ease-out' : 'h-full w-auto object-contain opacity-0 absolute transition-opacity duration-700 ease-out'\" x-bind:src=\"isIntersected ? imageSrc : null\" @load=\"imageLoaded = true\" @error=\"imageLoaded = true\" alt=\"cap image\" loading=\"lazy\" decoding=\"async\" onerror=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<img x-bind:class=\"imageLoaded ? 'h-full w-auto object-contain opacity-100 transition-opacity duration-700 ease-out' : 'h-full w-auto object-contain opacity-0 absolute transition-opacity duration-700 ease-out'\" x-bind:src=\"isIntersected ? imageSrc : null\" @load=\"imageLoaded = true\" @error=\"imageLoaded = true\" alt=\"cap image\" loading=\"lazy\" decoding=\"async\" onerror=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var7 templ.ComponentScript = OnImageLoadError(templ.JSExpression("this"), originalImageURL)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7.Call)
+		var templ_7745c5c3_Var12 templ.ComponentScript = OnImageLoadError(templ.JSExpression("this"), originalImageURL)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var12.Call)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\"></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "\"></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -179,31 +245,71 @@ func labelImage(media model.BeerMedia) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var8 == nil {
-			templ_7745c5c3_Var8 = templ.NopComponent
+		templ_7745c5c3_Var13 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var13 == nil {
+			templ_7745c5c3_Var13 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		originalImageURL := fmt.Sprintf("%s/%s", S3BaseURL, media.Media.ExternalFilename)
 		resizedImageURL := fmt.Sprintf("%s/width=100,quality=25/%s", CdnBaseURL, originalImageURL)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div x-data=\"")
+		lightboxURL := fmt.Sprintf("%s/width=1200,quality=85/%s", CdnBaseURL, originalImageURL)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<div x-data=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var9 string
-		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf(`{
+		var templ_7745c5c3_Var14 string
+		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf(`{
             isIntersected: false,
             imageLoaded: false,
             imageSrc: '%s'
         }`, resizedImageURL))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 90, Col: 28}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 103, Col: 28}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var14)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\" x-intersect.threshold.25=\"isIntersected = true\" class=\"order-last flex min-w-0 flex-1 items-end justify-center\"><div class=\"flex h-20 w-full items-center justify-center overflow-hidden rounded-lg border border-slate-200/60 bg-white p-1.5 shadow-sm transition duration-300 ease-in-out hover:scale-105 sm:h-28 sm:rounded-xl sm:p-2\"><!-- Shimmer placeholder --><div x-show=\"isIntersected && !imageLoaded\" class=\"h-full w-full animate-pulse rounded-lg bg-slate-200\"></div><!-- Actual image -->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\" x-intersect.threshold.25=\"isIntersected = true\" @click=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var15 string
+		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("lightboxSrc = '%s'; lightboxAlt = 'Label image enlarged'; lightboxOpen = true", lightboxURL))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 105, Col: 116}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var15)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "\" @keydown.enter=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var16 string
+		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("lightboxSrc = '%s'; lightboxAlt = 'Label image enlarged'; lightboxOpen = true", lightboxURL))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 106, Col: 124}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var16)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "\" @keydown.space.prevent=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var17 string
+		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("lightboxSrc = '%s'; lightboxAlt = 'Label image enlarged'; lightboxOpen = true", lightboxURL))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 107, Col: 132}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var17)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "\" class=\"order-last flex min-w-0 flex-1 cursor-pointer items-end justify-center\" role=\"button\" tabindex=\"0\" aria-label=\"Enlarge label image\"><div class=\"flex h-20 w-full items-center justify-center overflow-hidden rounded-lg border border-slate-200/60 bg-white p-1.5 shadow-sm transition duration-300 ease-in-out hover:scale-105 sm:h-28 sm:rounded-xl sm:p-2\"><!-- Shimmer placeholder --><div x-show=\"isIntersected && !imageLoaded\" class=\"h-full w-full animate-pulse rounded-lg bg-slate-200\"></div><!-- Actual image -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -211,16 +317,16 @@ func labelImage(media model.BeerMedia) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<img x-bind:class=\"imageLoaded ? 'h-full w-auto object-contain opacity-100 transition-opacity duration-700 ease-out' : 'h-full w-auto object-contain opacity-0 absolute transition-opacity duration-700 ease-out'\" x-bind:src=\"isIntersected ? imageSrc : null\" @load=\"imageLoaded = true\" @error=\"imageLoaded = true\" alt=\"label image\" loading=\"lazy\" decoding=\"async\" onerror=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<img x-bind:class=\"imageLoaded ? 'h-full w-auto object-contain opacity-100 transition-opacity duration-700 ease-out' : 'h-full w-auto object-contain opacity-0 absolute transition-opacity duration-700 ease-out'\" x-bind:src=\"isIntersected ? imageSrc : null\" @load=\"imageLoaded = true\" @error=\"imageLoaded = true\" alt=\"label image\" loading=\"lazy\" decoding=\"async\" onerror=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var10 templ.ComponentScript = OnImageLoadError(templ.JSExpression("this"), originalImageURL)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var10.Call)
+		var templ_7745c5c3_Var18 templ.ComponentScript = OnImageLoadError(templ.JSExpression("this"), originalImageURL)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var18.Call)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\"></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "\"></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -244,71 +350,97 @@ func capImageWithIndex(media model.BeerMedia, index int) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var11 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var11 == nil {
-			templ_7745c5c3_Var11 = templ.NopComponent
+		templ_7745c5c3_Var19 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var19 == nil {
+			templ_7745c5c3_Var19 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		originalImageURL := fmt.Sprintf("%s/%s", S3BaseURL, media.Media.ExternalFilename)
 		resizedImageURL := fmt.Sprintf("%s/width=100,quality=25/%s", CdnBaseURL, originalImageURL)
 		lightboxURL := fmt.Sprintf("%s/width=800,quality=85/%s", CdnBaseURL, originalImageURL)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<div x-data=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<div x-data=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var12 string
-		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf(`{
+		var templ_7745c5c3_Var20 string
+		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf(`{
             isIntersected: false,
             imageLoaded: false,
             imageSrc: '%s'
         }`, resizedImageURL))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 124, Col: 28}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 143, Col: 28}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var12)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var20)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\" x-intersect.threshold.25=\"isIntersected = true\" x-effect=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "\" x-intersect.threshold.25=\"isIntersected = true\" x-effect=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var13 string
-		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("if (currentCapIndex === %d) isIntersected = true", index))
+		var templ_7745c5c3_Var21 string
+		templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("if (currentCapIndex === %d) isIntersected = true", index))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 126, Col: 83}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 145, Col: 83}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var13)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\" x-show=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var21)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var14 string
-		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("currentCapIndex === %d", index))
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 127, Col: 55}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var14)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "\" x-show=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "\" @click=\"")
+		var templ_7745c5c3_Var22 string
+		templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("currentCapIndex === %d", index))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 146, Col: 55}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var22)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var15 string
-		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("lightboxSrc = '%s'; lightboxOpen = true", lightboxURL))
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 128, Col: 78}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var15)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "\" @click=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "\" class=\"flex shrink-0 cursor-pointer items-end justify-center\"><div class=\"flex h-20 w-20 items-center justify-center rounded-full border border-slate-200/60 bg-white p-1.5 shadow-sm transition duration-300 ease-in-out hover:scale-105 sm:h-28 sm:w-28 sm:p-2\"><!-- Shimmer placeholder --><div x-show=\"isIntersected && !imageLoaded\" class=\"h-full w-full animate-pulse rounded-full bg-slate-200\"></div><!-- Actual image -->")
+		var templ_7745c5c3_Var23 string
+		templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("lightboxSrc = '%s'; lightboxAlt = 'Cap image enlarged'; lightboxOpen = true", lightboxURL))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 147, Col: 114}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var23)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "\" @keydown.enter=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var24 string
+		templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("lightboxSrc = '%s'; lightboxAlt = 'Cap image enlarged'; lightboxOpen = true", lightboxURL))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 148, Col: 122}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var24)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "\" @keydown.space.prevent=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var25 string
+		templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("lightboxSrc = '%s'; lightboxAlt = 'Cap image enlarged'; lightboxOpen = true", lightboxURL))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 149, Col: 130}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var25)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "\" class=\"flex shrink-0 cursor-pointer items-end justify-center\" role=\"button\" tabindex=\"0\" aria-label=\"Enlarge cap image\"><div class=\"flex h-20 w-20 items-center justify-center rounded-full border border-slate-200/60 bg-white p-1.5 shadow-sm transition duration-300 ease-in-out hover:scale-105 sm:h-28 sm:w-28 sm:p-2\"><!-- Shimmer placeholder --><div x-show=\"isIntersected && !imageLoaded\" class=\"h-full w-full animate-pulse rounded-full bg-slate-200\"></div><!-- Actual image -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -316,16 +448,16 @@ func capImageWithIndex(media model.BeerMedia, index int) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<img x-bind:class=\"imageLoaded ? 'h-full w-auto object-contain opacity-100 transition-opacity duration-700 ease-out' : 'h-full w-auto object-contain opacity-0 absolute transition-opacity duration-700 ease-out'\" x-bind:src=\"isIntersected ? imageSrc : null\" @load=\"imageLoaded = true\" @error=\"imageLoaded = true\" alt=\"cap image\" loading=\"lazy\" decoding=\"async\" onerror=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<img x-bind:class=\"imageLoaded ? 'h-full w-auto object-contain opacity-100 transition-opacity duration-700 ease-out' : 'h-full w-auto object-contain opacity-0 absolute transition-opacity duration-700 ease-out'\" x-bind:src=\"isIntersected ? imageSrc : null\" @load=\"imageLoaded = true\" @error=\"imageLoaded = true\" alt=\"cap image\" loading=\"lazy\" decoding=\"async\" onerror=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var16 templ.ComponentScript = OnImageLoadError(templ.JSExpression("this"), originalImageURL)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var16.Call)
+		var templ_7745c5c3_Var26 templ.ComponentScript = OnImageLoadError(templ.JSExpression("this"), originalImageURL)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var26.Call)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "\"></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "\"></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -349,40 +481,40 @@ func capThumbnail(media model.BeerMedia, idx int) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var17 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var17 == nil {
-			templ_7745c5c3_Var17 = templ.NopComponent
+		templ_7745c5c3_Var27 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var27 == nil {
+			templ_7745c5c3_Var27 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		originalImageURL := fmt.Sprintf("%s/%s", S3BaseURL, media.Media.ExternalFilename)
 		resizedImageURL := fmt.Sprintf("%s/width=80,quality=25/%s", CdnBaseURL, originalImageURL)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<button x-data=\"{ isIntersectedThumb: false }\" x-intersect.threshold.25=\"isIntersectedThumb = true\" @click=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<button x-data=\"{ isIntersectedThumb: false }\" x-intersect.threshold.25=\"isIntersectedThumb = true\" @click=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var18 string
-		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("currentCapIndex = %d", idx))
+		var templ_7745c5c3_Var28 string
+		templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("currentCapIndex = %d", idx))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 158, Col: 51}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 182, Col: 51}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var18)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "\" x-bind:class=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var28)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var19 string
-		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("currentCapIndex === %d ? 'ring-2 ring-blue-500 ring-offset-1 scale-100 opacity-100' : 'ring-1 ring-slate-200 scale-90 opacity-50 hover:opacity-80 hover:scale-95'", idx))
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 159, Col: 198}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var19)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "\" x-bind:class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "\" class=\"flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-slate-200/60 bg-white p-1 shadow-sm transition-all duration-200 sm:h-14 sm:w-14\" type=\"button\"><div x-show=\"!isIntersectedThumb\" class=\"h-full w-full animate-pulse rounded-full bg-slate-200\"></div>")
+		var templ_7745c5c3_Var29 string
+		templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("currentCapIndex === %d ? 'ring-2 ring-blue-500 ring-offset-1 scale-100 opacity-100' : 'ring-1 ring-slate-200 scale-90 opacity-50 hover:opacity-80 hover:scale-95'", idx))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 183, Col: 198}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var29)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "\" class=\"flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-slate-200/60 bg-white p-1 shadow-sm transition-all duration-200 sm:h-14 sm:w-14\" type=\"button\"><div x-show=\"!isIntersectedThumb\" class=\"h-full w-full animate-pulse rounded-full bg-slate-200\"></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -390,42 +522,42 @@ func capThumbnail(media model.BeerMedia, idx int) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<img x-bind:src=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<img x-bind:src=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var20 string
-		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("isIntersectedThumb ? '%s' : null", resizedImageURL))
+		var templ_7745c5c3_Var30 string
+		templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("isIntersectedThumb ? '%s' : null", resizedImageURL))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 165, Col: 80}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 189, Col: 80}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var20)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "\" alt=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var30)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var21 string
-		templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("cap %d", idx+1))
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 166, Col: 37}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var21)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "\" alt=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "\" class=\"h-full w-full rounded-full object-contain\" loading=\"lazy\" decoding=\"async\" onerror=\"")
+		var templ_7745c5c3_Var31 string
+		templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("cap %d", idx+1))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/page/beer/component/card_image.templ`, Line: 190, Col: 37}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var31)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var22 templ.ComponentScript = OnImageLoadError(templ.JSExpression("this"), originalImageURL)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var22.Call)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "\" class=\"h-full w-full rounded-full object-contain\" loading=\"lazy\" decoding=\"async\" onerror=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "\"></button>")
+		var templ_7745c5c3_Var32 templ.ComponentScript = OnImageLoadError(templ.JSExpression("this"), originalImageURL)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var32.Call)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "\"></button>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

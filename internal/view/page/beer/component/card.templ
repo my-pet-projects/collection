@@ -15,7 +15,7 @@ templ Card(beer model.Beer) {
 			{{ capMedias = append(capMedias, media) }}
 		}
 	}
-	<div x-data="{ currentCapIndex: 0, lightboxOpen: false, lightboxSrc: '' }">
+	<div x-data="{ currentCapIndex: 0, lightboxOpen: false, lightboxSrc: '', lightboxAlt: 'Beer image enlarged' }">
 		<div
 			class="bg-linear-to-br group rounded-2xl from-amber-300/70 via-slate-200 to-orange-200/60 p-px shadow-[0_8px_24px_rgba(15,23,42,0.08)] transition-all duration-300 hover:from-amber-400/80 hover:via-slate-300 hover:to-orange-300/70 hover:shadow-[0_16px_36px_rgba(15,23,42,0.14)] sm:hover:-translate-y-1"
 		>
@@ -137,7 +137,7 @@ templ Card(beer model.Beer) {
 				</div>
 			</div>
 		</div>
-		<!-- Cap Image Lightbox -->
+		<!-- Beer Image Lightbox -->
 		<div
 			x-show="lightboxOpen"
 			x-transition:enter="transition ease-out duration-300"
@@ -164,7 +164,7 @@ templ Card(beer model.Beer) {
 				</button>
 				<img
 					x-bind:src="lightboxSrc"
-					alt="Cap image enlarged"
+					x-bind:alt="lightboxAlt"
 					class="max-h-[85vh] max-w-[85vw] rounded-2xl object-contain shadow-2xl"
 				/>
 			</div>
