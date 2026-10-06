@@ -10,6 +10,7 @@ import (
 	"github.com/my-pet-projects/collection/internal/apperr"
 	"github.com/my-pet-projects/collection/internal/config"
 	"github.com/my-pet-projects/collection/internal/handler"
+	"github.com/my-pet-projects/collection/internal/recognition"
 	"github.com/my-pet-projects/collection/internal/service"
 	"github.com/my-pet-projects/collection/internal/web"
 	"github.com/my-pet-projects/collection/internal/web/middleware"
@@ -25,6 +26,7 @@ type Deps struct {
 	ImageService      service.ImageService
 	CollectionService service.CollectionService
 	SimilarityService service.SimilarityService
+	BeerRecognizer    recognition.Recognizer
 	Logger            *slog.Logger
 }
 
@@ -40,6 +42,7 @@ func New(deps Deps) (http.Handler, error) {
 	uploadHandler := handler.NewUploadHandler(deps.ImageService, deps.Logger)
 	authHandler := handler.NewAuthenticationHandler(deps.Cfg, deps.Logger)
 	similarityHandler := handler.NewSimilarityHandler(deps.SimilarityService, deps.Logger)
+	recognitionHandler := handler.NewRecognitionHandler(deps.BeerRecognizer, deps.Logger)
 	appHandler := web.NewAppHandler(deps.Logger)
 
 	router := chi.NewRouter()
@@ -118,6 +121,12 @@ func New(deps Deps) (http.Handler, error) {
 		router.Post("/workspace/search/caps", appHandler.Handle(similarityHandler.HandleSearchCaps))
 		router.Post("/workspace/search/backfill", appHandler.Handle(similarityHandler.HandleBackfillHashes))
 		router.Post("/workspace/search/reset", appHandler.Handle(similarityHandler.HandleResetHashes))
+	})
+
+	// Authenticated routes - AI Beer Recognition
+	router.With(middleware.WithAuthentication(deps.Cfg, deps.Logger)).Group(func(router chi.Router) {
+		router.Get("/workspace/recognition/beer", appHandler.Handle(recognitionHandler.HandlePage))
+		router.Post("/workspace/recognition/beer", appHandler.Handle(recognitionHandler.RecognizeBeer))
 	})
 
 	// Not found handler
