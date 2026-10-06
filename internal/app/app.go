@@ -15,6 +15,8 @@ import (
 	"github.com/my-pet-projects/collection/internal/db"
 	"github.com/my-pet-projects/collection/internal/img"
 	"github.com/my-pet-projects/collection/internal/log"
+	"github.com/my-pet-projects/collection/internal/recognition"
+	geminirecognition "github.com/my-pet-projects/collection/internal/recognition/gemini"
 	"github.com/my-pet-projects/collection/internal/router"
 	"github.com/my-pet-projects/collection/internal/server"
 	"github.com/my-pet-projects/collection/internal/service"
@@ -119,6 +121,10 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 
 	hasher := img.NewHasher()
 	similarityService := service.NewSimilarityService(&beerMediaStore, &s3Storage, hasher, logger)
+	beerRecognizer, recognizerErr := newBeerRecognizer(ctx, cfg)
+	if recognizerErr != nil {
+		return nil, fmt.Errorf("recognition provider: %w", recognizerErr)
+	}
 
 	// Initialize router with dependencies
 	deps := router.Deps{
@@ -130,6 +136,7 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 		ImageService:      imageService,
 		CollectionService: collectionService,
 		SimilarityService: similarityService,
+		BeerRecognizer:    beerRecognizer,
 		Logger:            logger,
 	}
 
@@ -138,4 +145,21 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 		return nil, fmt.Errorf("create router: %w", err)
 	}
 	return rtr, nil
+}
+
+func newBeerRecognizer(ctx context.Context, cfg *config.Config) (recognition.Recognizer, error) {
+	switch cfg.RecognitionConfig.Provider {
+	case "gemini":
+		recognizer, err := geminirecognition.New(
+			ctx,
+			cfg.RecognitionConfig.GeminiAPIKey,
+			cfg.RecognitionConfig.Model,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("initialize gemini: %w", err)
+		}
+		return recognizer, nil
+	default:
+		return nil, fmt.Errorf("unsupported provider %q", cfg.RecognitionConfig.Provider)
+	}
 }

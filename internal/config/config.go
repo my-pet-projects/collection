@@ -17,10 +17,17 @@ type Config struct {
 	CollectionDbConfig TursoDbConfig
 	AuthConfig         AuthConfig
 	APIKeys            APIKeys
+	RecognitionConfig  RecognitionConfig
 }
 
 type APIKeys struct {
 	HuggingFace string
+}
+
+type RecognitionConfig struct {
+	Provider     string
+	Model        string
+	GeminiAPIKey string
 }
 
 type AuthConfig struct {
@@ -110,6 +117,18 @@ func NewConfig() (*Config, error) { //nolint:cyclop
 	}
 
 	huggingFaceAPIKey, _ := requireEnv("HUGGINGFACE_API_KEY")
+	aiProvider, err := requireEnv("AI_PROVIDER")
+	if err != nil {
+		return nil, err
+	}
+	aiModel, err := requireEnv("AI_MODEL")
+	if err != nil {
+		return nil, err
+	}
+	geminiAPIKey, err := requireEnv("GEMINI_API_KEY")
+	if err != nil {
+		return nil, err
+	}
 
 	cfg := &Config{
 		Env: env,
@@ -134,6 +153,11 @@ func NewConfig() (*Config, error) { //nolint:cyclop
 		},
 		APIKeys: APIKeys{
 			HuggingFace: huggingFaceAPIKey,
+		},
+		RecognitionConfig: RecognitionConfig{
+			Provider:     strings.ToLower(strings.TrimSpace(aiProvider)),
+			Model:        strings.TrimSpace(aiModel),
+			GeminiAPIKey: geminiAPIKey,
 		},
 	}
 
