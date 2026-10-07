@@ -239,7 +239,10 @@ templ RecognitionPanel(params BeerFormParams) {
 								<p class="text-sm font-medium text-gray-900">{ match.Brewery.Name }</p>
 								<p class="text-xs text-gray-500">{ match.Brewery.GetCityName() }, { match.Brewery.GetCountryName() } · { fmt.Sprintf("%.0f%%", match.Score * 100) }</p>
 							</div>
-							<form method="post" action={ templ.URL(fmt.Sprintf("/workspace/beer/%d/brewery/%d", params.ID, match.Brewery.ID)) }>
+							<form
+								hx-post={ fmt.Sprintf("/workspace/beer/%d/brewery/%d", params.ID, match.Brewery.ID) }
+								hx-disabled-elt="button"
+							>
 								<button type="submit" class="rounded-lg bg-amber-600 px-3 py-2 text-xs font-semibold text-white hover:bg-amber-500">
 									Use brewery
 								</button>

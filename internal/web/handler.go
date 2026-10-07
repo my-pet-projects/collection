@@ -39,7 +39,10 @@ func (h AppHandler) Handle(handlerFun HandlerFunc) http.HandlerFunc {
 		}
 		handlerErr := handlerFun(reqResp)
 		if handlerErr != nil {
-			if errors.Is(handlerErr, context.Canceled) || errors.Is(handlerErr, context.DeadlineExceeded) {
+			requestErr := r.Context().Err()
+			requestEnded := errors.Is(requestErr, context.Canceled) || errors.Is(requestErr, context.DeadlineExceeded)
+			handlerEnded := errors.Is(handlerErr, context.Canceled) || errors.Is(handlerErr, context.DeadlineExceeded)
+			if requestEnded && handlerEnded {
 				return
 			}
 			committer, responseWasCommitted := w.(responseCommitter)

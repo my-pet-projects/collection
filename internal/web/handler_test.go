@@ -42,6 +42,25 @@ func TestAppHandlerDoesNotRenderErrorAfterRequestCancellation(t *testing.T) {
 	}
 }
 
+func TestAppHandlerRendersDeadlineErrorWhileRequestIsActive(t *testing.T) {
+	t.Parallel()
+
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	recorder := httptest.NewRecorder()
+	handler := NewAppHandler(slog.New(slog.DiscardHandler))
+
+	handler.Handle(func(_ *ReqRespPair) error {
+		return context.DeadlineExceeded
+	})(recorder, req)
+
+	if recorder.Code != http.StatusInternalServerError {
+		t.Fatalf("response status = %d, want %d", recorder.Code, http.StatusInternalServerError)
+	}
+	if recorder.Body.Len() == 0 {
+		t.Fatal("expected an error response body")
+	}
+}
+
 func TestAppHandlerDoesNotRenderSecondErrorAfterResponseStarted(t *testing.T) {
 	t.Parallel()
 

@@ -137,6 +137,9 @@ func (s BeerStore) UpdateBrewery(ctx context.Context, beerID, breweryID int) err
 		Where("id = ?", beerID).
 		Update("brewery_id", breweryID)
 
+	if res.Error == nil && res.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
 	return res.Error
 }
 
