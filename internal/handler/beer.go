@@ -146,7 +146,7 @@ func (h *BeerHandler) HandleCreateBeerPage(reqResp *web.ReqRespPair) error {
 	return reqResp.Render(beerpage.Page(beerPage))
 }
 
-func (h *BeerHandler) SubmitBeerPage(reqResp *web.ReqRespPair) error {
+func (h *BeerHandler) SubmitBeerPage(reqResp *web.ReqRespPair) error { //nolint:cyclop
 	id, breweryID, styleID, identifierErr := beerFormIdentifiers(reqResp)
 	if identifierErr != nil {
 		return identifierErr
@@ -177,6 +177,14 @@ func (h *BeerHandler) SubmitBeerPage(reqResp *web.ReqRespPair) error {
 	}
 	formParams.Breweries = breweries
 	formParams.Styles = styles
+	if formParams.BreweryID != nil {
+		for index := range breweries {
+			if breweries[index].ID == *formParams.BreweryID {
+				formParams.Brewery = &breweries[index]
+				break
+			}
+		}
+	}
 
 	if formErrs, hasErrs := formParams.Validate(); hasErrs {
 		return reqResp.Render(beerpage.Form(formParams, formErrs))

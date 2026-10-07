@@ -170,14 +170,29 @@ templ Form(params BeerFormParams, errs BeerFormErrors) {
 						<label for="brewery" class="block text-sm font-medium text-gray-900">
 							Brewery
 						</label>
-						if errs.Brewery != "" {
-							<p class="flex items-center text-xs text-red-600">
-								<svg class="mr-1 h-3 w-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-									<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"></path>
-								</svg>
-								<span class="truncate">{ errs.Brewery }</span>
-							</p>
-						}
+						<div class="flex items-center gap-3">
+							if errs.Brewery != "" {
+								<p class="flex items-center text-xs text-red-600">
+									<svg class="mr-1 h-3 w-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+										<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"></path>
+									</svg>
+									<span class="truncate">{ errs.Brewery }</span>
+								</p>
+							}
+							if params.Brewery != nil && params.Brewery.GetUntappdURL() != "" {
+								<a
+									href={ templ.URL(params.Brewery.GetUntappdURL()) }
+									target="_blank"
+									rel="noopener noreferrer"
+									class="inline-flex items-center gap-1 text-sm font-semibold text-amber-700 transition-colors hover:text-amber-900"
+								>
+									Untappd
+									<svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+										<path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5H19.5V10.5M19 5L10 14M6.75 6.75H5.625C5.004 6.75 4.5 7.254 4.5 7.875V18.375C4.5 18.996 5.004 19.5 5.625 19.5H16.125C16.746 19.5 17.25 18.996 17.25 18.375V17.25"></path>
+									</svg>
+								</a>
+							}
+						</div>
 					</div>
 					@ui.AutoComplete(brewerycomponent.BreweriesData{
 						Breweries:       params.Breweries,
