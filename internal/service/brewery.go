@@ -25,12 +25,19 @@ func NewBreweryService(breweryStore *db.BreweryStore, geoStore *db.GeographyStor
 	}
 }
 
-func (s BreweryService) CreateBrewery(ctx context.Context, name string, geoId int, countryCode string) (*model.Brewery, error) {
+func (s BreweryService) CreateBrewery(
+	ctx context.Context,
+	name string,
+	geoId int,
+	countryCode string,
+	untappdURL string,
+) (*model.Brewery, error) {
 	brewery := model.Brewery{
 		Name:        name,
 		GeoID:       geoId,
 		SearchName:  util.NormalizeText(name),
 		CountryCca2: strings.ToUpper(strings.TrimSpace(countryCode)),
+		UntappdURL:  optionalString(untappdURL),
 	}
 	insertedId, insertErr := s.breweryStore.InsertBrewery(ctx, brewery)
 	if insertErr != nil {
@@ -40,13 +47,21 @@ func (s BreweryService) CreateBrewery(ctx context.Context, name string, geoId in
 	return &brewery, nil
 }
 
-func (s BreweryService) UpdateBrewery(ctx context.Context, id int, name string, geoId int, countryCode string) error {
+func (s BreweryService) UpdateBrewery(
+	ctx context.Context,
+	id int,
+	name string,
+	geoId int,
+	countryCode string,
+	untappdURL string,
+) error {
 	brewery := model.Brewery{
 		ID:          id,
 		Name:        name,
 		GeoID:       geoId,
 		SearchName:  util.NormalizeText(name),
 		CountryCca2: strings.ToUpper(strings.TrimSpace(countryCode)),
+		UntappdURL:  optionalString(untappdURL),
 	}
 	updErr := s.breweryStore.UpdateBrewery(ctx, brewery)
 	if updErr != nil {
@@ -69,6 +84,14 @@ func (s BreweryService) ListBreweries(ctx context.Context) ([]model.Brewery, err
 		return nil, fmt.Errorf("fetch breweries: %w", breweriesErr)
 	}
 	return breweries, nil
+}
+
+func optionalString(value string) *string {
+	trimmed := strings.TrimSpace(value)
+	if trimmed == "" {
+		return nil
+	}
+	return &trimmed
 }
 
 func (s BreweryService) PaginateBreweries(ctx context.Context, filter model.BreweryFilter) (*model.Pagination[model.Brewery], error) {

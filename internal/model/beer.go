@@ -119,6 +119,14 @@ type Brewery struct {
 	City        *City `gorm:"foreignKey:GeoID;references:ID"`
 	SearchName  string
 	CountryCca2 string
+	UntappdURL  *string
+}
+
+func (b Brewery) GetUntappdURL() string {
+	if b.UntappdURL == nil {
+		return ""
+	}
+	return strings.TrimSpace(*b.UntappdURL)
 }
 
 func (b Brewery) GetCountryName() string {

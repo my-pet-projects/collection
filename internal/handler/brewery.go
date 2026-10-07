@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/my-pet-projects/collection/internal/apperr"
+	"github.com/my-pet-projects/collection/internal/finder"
 	"github.com/my-pet-projects/collection/internal/model"
 	"github.com/my-pet-projects/collection/internal/service"
 	"github.com/my-pet-projects/collection/internal/view/layout"
@@ -18,13 +19,19 @@ import (
 // BreweryHandler handles brewery-related HTTP requests.
 type BreweryHandler struct {
 	breweryService service.BreweryService
+	finder         finder.Finder
 	logger         *slog.Logger
 }
 
 // NewBreweryHandler creates a new BreweryHandler.
-func NewBreweryHandler(breweryService service.BreweryService, logger *slog.Logger) *BreweryHandler {
+func NewBreweryHandler(
+	breweryService service.BreweryService,
+	externalFinder finder.Finder,
+	logger *slog.Logger,
+) *BreweryHandler {
 	return &BreweryHandler{
 		breweryService: breweryService,
+		finder:         externalFinder,
 		logger:         logger,
 	}
 }
@@ -48,14 +55,25 @@ func (h *BreweryHandler) HandleBreweryPage(reqResp *web.ReqRespPair) error {
 		return reqResp.RenderError(http.StatusInternalServerError, breweryErr)
 	}
 
+	storedUntappdURL := brewery.GetUntappdURL()
+	untappdURL := storedUntappdURL
+	if untappdURL == "" {
+		untappdURL, breweryErr = h.finder.FindBreweryURL(reqResp.Request.Context(), brewery.Name)
+		if breweryErr != nil {
+			h.logger.Warn("find brewery on Untappd", slog.Int("brewery_id", brewery.ID), slog.Any("error", breweryErr))
+		}
+	}
+
 	page := layout.Page{Title: fmt.Sprintf("Edit Brewery - %s", brewery.Name)}
 	breweryPage := brewerypage.PageParams{
 		Page: page,
 		FormParams: brewerypage.BreweryFormParams{
-			Id:          brewery.ID,
-			Name:        brewery.Name,
-			CountryCode: brewery.City.CountryCode,
-			CityId:      brewery.GeoID,
+			Id:                 brewery.ID,
+			Name:               brewery.Name,
+			CountryCode:        brewery.City.CountryCode,
+			CityId:             brewery.GeoID,
+			UntappdURL:         storedUntappdURL,
+			ResolvedUntappdURL: untappdURL,
 		},
 	}
 
@@ -80,14 +98,22 @@ func (h *BreweryHandler) SubmitBreweryPage(reqResp *web.ReqRespPair) error {
 		Name:        strings.TrimSpace(reqResp.Request.FormValue("name")),
 		CountryCode: reqResp.Request.FormValue("country"),
 		CityId:      geoId,
+		UntappdURL:  strings.TrimSpace(reqResp.Request.FormValue("untappdUrl")),
 	}
+	formParams.ResolvedUntappdURL = formParams.UntappdURL
 
 	if formErrs, hasErrs := formParams.Validate(); hasErrs {
 		return reqResp.Render(brewerypage.Form(formParams, formErrs))
 	}
 
 	if formParams.Id == 0 {
-		newBrewery, createErr := h.breweryService.CreateBrewery(reqResp.Request.Context(), formParams.Name, formParams.CityId, formParams.CountryCode)
+		newBrewery, createErr := h.breweryService.CreateBrewery(
+			reqResp.Request.Context(),
+			formParams.Name,
+			formParams.CityId,
+			formParams.CountryCode,
+			formParams.UntappdURL,
+		)
 		if createErr != nil {
 			h.logger.Error("create brewery", slog.Any("error", createErr))
 			return reqResp.RenderError(http.StatusInternalServerError, createErr)
@@ -100,7 +126,14 @@ func (h *BreweryHandler) SubmitBreweryPage(reqResp *web.ReqRespPair) error {
 		return nil
 	}
 
-	updErr := h.breweryService.UpdateBrewery(reqResp.Request.Context(), formParams.Id, formParams.Name, formParams.CityId, formParams.CountryCode)
+	updErr := h.breweryService.UpdateBrewery(
+		reqResp.Request.Context(),
+		formParams.Id,
+		formParams.Name,
+		formParams.CityId,
+		formParams.CountryCode,
+		formParams.UntappdURL,
+	)
 	if updErr != nil {
 		h.logger.Error("update brewery", slog.Any("error", updErr))
 		return reqResp.RenderError(http.StatusInternalServerError, updErr)

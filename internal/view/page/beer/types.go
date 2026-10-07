@@ -94,6 +94,7 @@ type BeerFormParams struct {
 	Brewery         *model.Brewery
 	RecognitionData *model.BeerRecognitionSnapshot
 	BreweryMatches  []recognition.BreweryMatch
+	UntappdURL      string
 }
 
 type BeerFormErrors struct {
