@@ -112,6 +112,31 @@ func (s ImageService) UploadImage(ctx context.Context, formValues []model.Upload
 	return nil
 }
 
+// SaveBeerBottle stores an uploaded image as bottle media for a beer.
+func (s ImageService) SaveBeerBottle(ctx context.Context, beerID int, formValue model.UploadFormValues) error {
+	image, imageErr := model.NewMediaImageOfType(formValue, model.BeerMediaBottle)
+	if imageErr != nil {
+		return fmt.Errorf("create bottle image: %w", imageErr)
+	}
+
+	mediaItem, mediaErr := s.mediaStore.UpsertMediaItem(ctx, image)
+	if mediaErr != nil {
+		return fmt.Errorf("upsert bottle media: %w", mediaErr)
+	}
+
+	uploadErr := s.s3Storage.Upload(ctx, image)
+	if uploadErr != nil {
+		return fmt.Errorf("upload bottle image: %w", uploadErr)
+	}
+
+	_, linkErr := s.beerMediaStore.UpsertBeerMediaItem(ctx, mediaItem, image, &beerID)
+	if linkErr != nil {
+		return fmt.Errorf("link bottle image: %w", linkErr)
+	}
+
+	return nil
+}
+
 func (s ImageService) FetchBeerMediaItems(ctx context.Context, filter model.MediaItemsFilter) ([]model.BeerMedia, error) {
 	items, itemsErr := s.beerMediaStore.FetchMediaItems(ctx, filter)
 	if itemsErr != nil {

@@ -10,18 +10,33 @@ import (
 )
 
 type Beer struct {
-	ID         int `gorm:"primaryKey"`
-	Brand      string
-	Type       *string
-	BreweryID  *int
-	IsActive   bool
-	CreatedAt  time.Time `gorm:"autoCreateTime;<-:create"`
-	UpdatedAt  time.Time `gorm:"autoUpdateTime;<-:update"`
-	Brewery    *Brewery  `gorm:"foreignKey:BreweryID"`
-	StyleID    *int
-	BeerStyle  *BeerStyle  `gorm:"foreignKey:StyleID;references:ID"`
-	BeerMedias []BeerMedia `gorm:"foreignKey:BeerID;references:ID"`
-	SearchName string
+	ID              int `gorm:"primaryKey"`
+	Brand           string
+	Type            *string
+	BreweryID       *int
+	IsActive        bool
+	CreatedAt       time.Time `gorm:"autoCreateTime;<-:create"`
+	UpdatedAt       time.Time `gorm:"autoUpdateTime;<-:update"`
+	Brewery         *Brewery  `gorm:"foreignKey:BreweryID"`
+	StyleID         *int
+	BeerStyle       *BeerStyle  `gorm:"foreignKey:StyleID;references:ID"`
+	BeerMedias      []BeerMedia `gorm:"foreignKey:BeerID;references:ID"`
+	SearchName      string
+	RecognitionData *BeerRecognitionSnapshot `gorm:"serializer:json;type:text"`
+}
+
+// BeerRecognitionSnapshot stores the original AI output for a recognized beer.
+type BeerRecognitionSnapshot struct {
+	BeerName     string    `json:"beerName"`
+	BeerType     string    `json:"beerType"`
+	Style        string    `json:"style"`
+	Brewery      string    `json:"brewery"`
+	Country      string    `json:"country"`
+	CountryCode  string    `json:"countryCode"`
+	Confidence   float64   `json:"confidence"`
+	Model        string    `json:"model"`
+	Notes        string    `json:"notes"`
+	RecognizedAt time.Time `json:"recognizedAt"`
 }
 
 func NewBeerFromUploadForm(formValue UploadFormValues) Beer {

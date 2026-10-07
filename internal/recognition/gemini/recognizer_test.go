@@ -17,6 +17,8 @@ func TestParseResult(t *testing.T) {
 		"beerType": "IPA",
 		"style": "India Pale Ale",
 		"brewery": "BrewDog",
+		"country": "Scotland",
+		"countryCode": " gb ",
 		"confidence": 0.94,
 		"notes": ""
 	}`)
@@ -28,6 +30,9 @@ func TestParseResult(t *testing.T) {
 	}
 	if result.Confidence != 0.94 {
 		t.Fatalf("Confidence = %v, want 0.94", result.Confidence)
+	}
+	if result.Country != "Scotland" || result.CountryCode != "GB" {
+		t.Fatalf("country = %q/%q, want Scotland/GB", result.Country, result.CountryCode)
 	}
 }
 

@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/my-pet-projects/collection/internal/model"
+	"github.com/my-pet-projects/collection/internal/recognition"
 	"github.com/my-pet-projects/collection/internal/view/layout"
 )
 
@@ -82,15 +83,17 @@ func (p BeerPageData) GetImagesPageUrl() string {
 }
 
 type BeerFormParams struct {
-	ID        int
-	Brand     string
-	Type      *string
-	StyleID   *int
-	BreweryID *int
-	Breweries []model.Brewery
-	Styles    []model.BeerStyle
-	IsActive  bool
-	Brewery   *model.Brewery
+	ID              int
+	Brand           string
+	Type            *string
+	StyleID         *int
+	BreweryID       *int
+	Breweries       []model.Brewery
+	Styles          []model.BeerStyle
+	IsActive        bool
+	Brewery         *model.Brewery
+	RecognitionData *model.BeerRecognitionSnapshot
+	BreweryMatches  []recognition.BreweryMatch
 }
 
 type BeerFormErrors struct {
@@ -108,7 +111,7 @@ func (p BeerFormParams) Validate() (BeerFormErrors, bool) {
 		errs.Brand = "Brand is required"
 		hasErrs = true
 	}
-	if *p.BreweryID == 0 {
+	if (p.BreweryID == nil || *p.BreweryID == 0) && p.RecognitionData == nil {
 		errs.Brewery = "Brewery is required"
 		hasErrs = true
 	}

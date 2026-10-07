@@ -115,7 +115,27 @@ func (s BeerStore) UpdateBeer(ctx context.Context, beer model.Beer) error {
 	res := s.db.gorm.
 		WithContext(ctx).
 		Debug().
-		Save(&beer)
+		Model(&model.Beer{}).
+		Where("id = ?", beer.ID).
+		Updates(map[string]any{
+			"brand":       beer.Brand,
+			"type":        beer.Type,
+			"style_id":    beer.StyleID,
+			"brewery_id":  beer.BreweryID,
+			"is_active":   beer.IsActive,
+			"search_name": beer.SearchName,
+		})
+
+	return res.Error
+}
+
+// UpdateBrewery assigns a brewery to a beer.
+func (s BeerStore) UpdateBrewery(ctx context.Context, beerID, breweryID int) error {
+	res := s.db.gorm.
+		WithContext(ctx).
+		Model(&model.Beer{}).
+		Where("id = ?", beerID).
+		Update("brewery_id", breweryID)
 
 	return res.Error
 }

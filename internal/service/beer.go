@@ -93,6 +93,28 @@ func (s BeerService) CreateBeer(
 	return &beer, nil
 }
 
+// CreateRecognizedBeer creates an inactive beer from recognition output.
+func (s BeerService) CreateRecognizedBeer(ctx context.Context, snapshot model.BeerRecognitionSnapshot) (*model.Beer, error) {
+	brand := strings.TrimSpace(snapshot.BeerName)
+	beerType := strings.TrimSpace(snapshot.BeerType)
+	beer := model.Beer{
+		Brand:           brand,
+		IsActive:        false,
+		SearchName:      util.NormalizeText(strings.TrimSpace(brand + " " + beerType)),
+		RecognitionData: &snapshot,
+	}
+	if beerType != "" {
+		beer.Type = &beerType
+	}
+
+	insertedID, insertErr := s.beerStore.InsertBeer(ctx, beer)
+	if insertErr != nil {
+		return nil, fmt.Errorf("insert recognized beer: %w", insertErr)
+	}
+	beer.ID = insertedID
+	return &beer, nil
+}
+
 func (s BeerService) UpdateBeer(
 	ctx context.Context, id int, brand string, beerType *string, styleId *int, breweryId *int, active bool,
 ) error {
@@ -115,6 +137,15 @@ func (s BeerService) UpdateBeer(
 	updErr := s.beerStore.UpdateBeer(ctx, beer)
 	if updErr != nil {
 		return fmt.Errorf("update beer: %w", updErr)
+	}
+	return nil
+}
+
+// AssignBrewery assigns a confirmed brewery to a beer.
+func (s BeerService) AssignBrewery(ctx context.Context, beerID, breweryID int) error {
+	err := s.beerStore.UpdateBrewery(ctx, beerID, breweryID)
+	if err != nil {
+		return fmt.Errorf("assign brewery: %w", err)
 	}
 	return nil
 }

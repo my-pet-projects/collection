@@ -15,22 +15,28 @@ import (
 )
 
 const (
-	fieldRecognized = "recognized"
-	fieldBeerName   = "beerName"
-	fieldBeerType   = "beerType"
-	fieldStyle      = "style"
-	fieldBrewery    = "brewery"
-	fieldConfidence = "confidence"
-	fieldNotes      = "notes"
+	fieldRecognized  = "recognized"
+	fieldBeerName    = "beerName"
+	fieldBeerType    = "beerType"
+	fieldStyle       = "style"
+	fieldBrewery     = "brewery"
+	fieldCountry     = "country"
+	fieldCountryCode = "countryCode"
+	fieldConfidence  = "confidence"
+	fieldNotes       = "notes"
 
-	modelTemperature = 0.1
+	modelTemperature  = 0.1
+	countryCodeLength = 2
+	requestTimeout    = 25 * time.Second
 
 	prompt = `Analyze this beer bottle or can label.
 Return only information that is visible or can be inferred with high confidence.
 Do not invent missing details. The beerName should be the product name, not the
 brewery name. Set recognized to false when this is not a beer label or the label
 cannot be read. Confidence must be between 0 and 1. Add a short note when a field
-is uncertain or unreadable.`
+is uncertain or unreadable. Country is the brewery's country of origin, not an
+importer or distributor address. Return its uppercase ISO 3166-1 alpha-2 code in
+countryCode, or an empty value when uncertain.`
 )
 
 // Recognizer recognizes beer labels with Gemini.
@@ -51,6 +57,9 @@ func New(ctx context.Context, apiKey, model string) (*Recognizer, error) {
 	cfg := &genai.ClientConfig{
 		APIKey:  apiKey,
 		Backend: genai.BackendGeminiAPI,
+		HTTPOptions: genai.HTTPOptions{
+			Timeout: new(requestTimeout),
+		},
 	}
 	client, clientErr := genai.NewClient(ctx, cfg)
 	if clientErr != nil {
@@ -79,6 +88,12 @@ func (r *Recognizer) RecognizeBeer(ctx context.Context, image []byte, mediaType 
 
 	resp, respErr := r.client.Models.GenerateContent(ctx, r.model, contents, cfg)
 	if respErr != nil {
+		if errors.Is(respErr, context.DeadlineExceeded) {
+			return recognition.Result{}, &recognition.ProviderTimeoutError{
+				After: requestTimeout,
+				Err:   respErr,
+			}
+		}
 		apiErr, ok := errors.AsType[genai.APIError](respErr)
 		if ok {
 			switch apiErr.Code {
@@ -155,6 +170,14 @@ func resultSchema() *genai.Schema {
 				Type:        genai.TypeString,
 				Description: "Brewery or producer name; empty when unknown.",
 			},
+			fieldCountry: {
+				Type:        genai.TypeString,
+				Description: "Brewery country of origin; empty when unknown.",
+			},
+			fieldCountryCode: {
+				Type:        genai.TypeString,
+				Description: "Uppercase ISO 3166-1 alpha-2 country code; empty when unknown.",
+			},
 			fieldConfidence: {
 				Type:        genai.TypeNumber,
 				Description: "Overall confidence from 0 to 1.",
@@ -167,10 +190,12 @@ func resultSchema() *genai.Schema {
 			},
 		},
 		PropertyOrdering: []string{
-			fieldRecognized, fieldBeerName, fieldBeerType, fieldStyle, fieldBrewery, fieldConfidence, fieldNotes,
+			fieldRecognized, fieldBeerName, fieldBeerType, fieldStyle, fieldBrewery,
+			fieldCountry, fieldCountryCode, fieldConfidence, fieldNotes,
 		},
 		Required: []string{
-			fieldRecognized, fieldBeerName, fieldBeerType, fieldStyle, fieldBrewery, fieldConfidence, fieldNotes,
+			fieldRecognized, fieldBeerName, fieldBeerType, fieldStyle, fieldBrewery,
+			fieldCountry, fieldCountryCode, fieldConfidence, fieldNotes,
 		},
 	}
 }
@@ -186,6 +211,11 @@ func parseResult(raw string) (recognition.Result, error) {
 	result.BeerType = strings.TrimSpace(result.BeerType)
 	result.Style = strings.TrimSpace(result.Style)
 	result.Brewery = strings.TrimSpace(result.Brewery)
+	result.Country = strings.TrimSpace(result.Country)
+	result.CountryCode = strings.ToUpper(strings.TrimSpace(result.CountryCode))
+	if len(result.CountryCode) != countryCodeLength {
+		result.CountryCode = ""
+	}
 	result.Notes = strings.TrimSpace(result.Notes)
 
 	if result.Confidence < 0 || result.Confidence > 1 {
