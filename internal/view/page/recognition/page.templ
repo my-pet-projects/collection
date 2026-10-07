@@ -12,15 +12,19 @@ type PageData struct {
 	layout.Page
 }
 
+type ResultData struct {
+	Recognition recognitiondomain.Result
+}
+
 templ Page(page PageData) {
 	@layout.BaseLayout() {
 		@header.PageHeaderSimple("Recognize Beer", "Take a clear photo of the bottle or label", "images")
-		<div class="mx-auto max-w-3xl space-y-6">
+		<div class="mx-auto max-w-3xl space-y-6" x-data="{ preview: '', fileName: '', recognized: false, savingDraft: false }">
 			<div
 				class="overflow-hidden rounded-2xl bg-white p-4 shadow-xl ring-1 ring-gray-200/50 sm:p-6 lg:p-8"
-				x-data="{ preview: '', fileName: '' }"
 			>
 				<form
+					id="recognition-form"
 					hx-post="/workspace/recognition/beer"
 					hx-target="#recognition-result"
 					hx-swap="innerHTML"
@@ -39,6 +43,7 @@ templ Page(page PageData) {
 									URL.revokeObjectURL(preview);
 									preview = '';
 									fileName = '';
+									recognized = false;
 									$refs.fileInput.value = '';
 									document.getElementById('recognition-result').innerHTML = '';
 								"
@@ -71,6 +76,7 @@ templ Page(page PageData) {
 									if (preview) URL.revokeObjectURL(preview);
 									preview = URL.createObjectURL(file);
 									fileName = file.name;
+									recognized = false;
 									document.getElementById('recognition-result').innerHTML = '';
 								}
 							"
@@ -79,7 +85,7 @@ templ Page(page PageData) {
 					</label>
 					<button
 						type="submit"
-						x-show="preview"
+						x-show="preview && !recognized"
 						class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-amber-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-amber-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-600 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
 					>
 						<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
@@ -94,7 +100,8 @@ templ Page(page PageData) {
 							<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
 							<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4Z"></path>
 						</svg>
-						Analyzing the label…
+						<span x-show="!savingDraft">Analyzing the label…</span>
+						<span x-show="savingDraft">Saving draft…</span>
 					</div>
 				</div>
 			</div>
@@ -103,7 +110,8 @@ templ Page(page PageData) {
 	}
 }
 
-templ Result(result recognitiondomain.Result) {
+templ Result(data ResultData) {
+	{{ result := data.Recognition }}
 	<div class="overflow-hidden rounded-2xl bg-white p-5 shadow-xl ring-1 ring-gray-200/50 sm:p-7">
 		<div class="mb-5 flex flex-wrap items-center justify-between gap-3">
 			<h2 class="text-xl font-semibold text-gray-900">Recognition result</h2>
@@ -127,6 +135,13 @@ templ Result(result recognitiondomain.Result) {
 			@ResultField("Brewery", result.Brewery)
 			@ResultField("Type", result.BeerType)
 			@ResultField("Style", result.Style)
+			if result.Country == "" {
+				@ResultField("Country", result.CountryCode)
+			} else if result.CountryCode == "" {
+				@ResultField("Country", result.Country)
+			} else {
+				@ResultField("Country", fmt.Sprintf("%s (%s)", result.Country, result.CountryCode))
+			}
 			@ResultField("Model", result.Model)
 		</dl>
 		if result.Notes != "" {
@@ -135,7 +150,42 @@ templ Result(result recognitiondomain.Result) {
 				<p class="mt-1 text-sm leading-relaxed text-gray-700">{ result.Notes }</p>
 			</div>
 		}
+		<span class="hidden" x-init="recognized = true"></span>
+		<input type="hidden" form="recognition-form" name="recognitionBeerName" value={ result.BeerName }/>
+		<input type="hidden" form="recognition-form" name="recognitionBeerType" value={ result.BeerType }/>
+		<input type="hidden" form="recognition-form" name="recognitionStyle" value={ result.Style }/>
+		<input type="hidden" form="recognition-form" name="recognitionBrewery" value={ result.Brewery }/>
+		<input type="hidden" form="recognition-form" name="recognitionCountry" value={ result.Country }/>
+		<input type="hidden" form="recognition-form" name="recognitionCountryCode" value={ result.CountryCode }/>
+		<input type="hidden" form="recognition-form" name="recognitionConfidence" value={ fmt.Sprint(result.Confidence) }/>
+		<input type="hidden" form="recognition-form" name="recognitionNotes" value={ result.Notes }/>
+		<input type="hidden" form="recognition-form" name="recognitionModel" value={ result.Model }/>
+		<button
+			type="button"
+			hx-post="/workspace/recognition/beer/draft"
+			hx-include="#recognition-form"
+			hx-encoding="multipart/form-data"
+			hx-target="#recognition-result"
+			hx-swap="innerHTML"
+			hx-indicator="#recognition-spinner"
+			@click="savingDraft = true"
+			@htmx:after-request.window="savingDraft = false"
+			:class="{ 'pointer-events-none opacity-60': savingDraft }"
+			class="mt-5 inline-flex w-full items-center justify-center rounded-xl bg-green-700 px-5 py-3 text-sm font-semibold text-white hover:bg-green-600 sm:w-auto"
+		>
+			<span x-show="!savingDraft">Save beer draft and bottle image</span>
+			<span x-show="savingDraft">Saving draft…</span>
+		</button>
 		<p class="mt-5 text-xs text-gray-400">AI output can be incorrect. Verify the label before using these details.</p>
+	</div>
+}
+
+templ DraftSaved(beerID int) {
+	<div class="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-green-50 p-5 shadow-sm ring-1 ring-green-200">
+		<p class="text-sm font-medium text-green-900">Draft beer and bottle image saved.</p>
+		<a href={ templ.URL(fmt.Sprintf("/workspace/beer/%d/overview", beerID)) } class="rounded-lg bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-600">
+			Review beer
+		</a>
 	</div>
 }
 

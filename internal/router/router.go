@@ -31,7 +31,7 @@ type Deps struct {
 }
 
 // New creates and configures the HTTP router with all application routes.
-func New(deps Deps) (http.Handler, error) {
+func New(deps Deps) (http.Handler, error) { //nolint:funlen
 	// Create handlers
 	homeHandler := handler.NewHomeHandler(deps.BeerService, deps.Logger)
 	geoHandler := handler.NewGeographyHandler(deps.GeoService, deps.Logger)
@@ -42,7 +42,7 @@ func New(deps Deps) (http.Handler, error) {
 	uploadHandler := handler.NewUploadHandler(deps.ImageService, deps.Logger)
 	authHandler := handler.NewAuthenticationHandler(deps.Cfg, deps.Logger)
 	similarityHandler := handler.NewSimilarityHandler(deps.SimilarityService, deps.Logger)
-	recognitionHandler := handler.NewRecognitionHandler(deps.BeerRecognizer, deps.Logger)
+	recognitionHandler := handler.NewRecognitionHandler(deps.BeerRecognizer, deps.BeerService, deps.ImageService, deps.Logger)
 	countrySlotConfigHandler := handler.NewCountrySlotConfigHandler(deps.CollectionService, deps.Logger)
 	appHandler := web.NewAppHandler(deps.Logger)
 
@@ -82,6 +82,7 @@ func New(deps Deps) (http.Handler, error) {
 		router.Get("/workspace/beer/{id}/overview", appHandler.Handle(beerHandler.HandleBeerPage))
 		router.Get("/workspace/beer/{id}/images", appHandler.Handle(beerImagesHandler.HandleBeerImagesPage))
 		router.Post("/workspace/beer", appHandler.Handle(beerHandler.SubmitBeerPage))
+		router.Post("/workspace/beer/{id}/brewery/{breweryID}", appHandler.Handle(beerHandler.AssignBrewery))
 		router.Post("/workspace/beer/{id}/images", appHandler.Handle(beerImagesHandler.SubmitBeerImages))
 		router.Delete("/workspace/beer/{id}", appHandler.Handle(beerHandler.DeleteBeer))
 	})
@@ -128,6 +129,7 @@ func New(deps Deps) (http.Handler, error) {
 	router.With(middleware.WithAuthentication(deps.Cfg, deps.Logger)).Group(func(router chi.Router) {
 		router.Get("/workspace/recognition/beer", appHandler.Handle(recognitionHandler.HandlePage))
 		router.Post("/workspace/recognition/beer", appHandler.Handle(recognitionHandler.RecognizeBeer))
+		router.Post("/workspace/recognition/beer/draft", appHandler.Handle(recognitionHandler.SaveBeerDraft))
 	})
 
 	// Authenticated routes - Settings

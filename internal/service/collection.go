@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"log/slog"
 	"strings"
@@ -34,7 +33,7 @@ func NewCollectionService(
 func (s CollectionService) GetNextAvailableCollectionSlot(ctx context.Context, beer model.Beer) (*model.Slot, error) {
 	country := beer.GetCountry()
 	if country == nil {
-		return nil, errors.New("beer country is nil")
+		return nil, nil
 	}
 	slotConfig, err := s.countrySlotConfigStore.FetchByCountryCode(ctx, country.Cca3)
 	if err != nil {

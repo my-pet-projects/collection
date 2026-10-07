@@ -105,6 +105,9 @@ func (s *loggingResponseWriter) Header() http.Header {
 }
 
 func (r *loggingResponseWriter) Write(b []byte) (int, error) {
+	if r.responseData.status == 0 {
+		r.responseData.status = http.StatusOK
+	}
 	size, err := r.wrapped.Write(b)
 	r.responseData.size += size
 	if err != nil {
@@ -114,8 +117,16 @@ func (r *loggingResponseWriter) Write(b []byte) (int, error) {
 }
 
 func (r *loggingResponseWriter) WriteHeader(statusCode int) {
+	if r.responseData.status != 0 {
+		return
+	}
 	r.wrapped.WriteHeader(statusCode)
 	r.responseData.status = statusCode
+}
+
+// ResponseCommitted reports whether response headers were written.
+func (r *loggingResponseWriter) ResponseCommitted() bool {
+	return r.responseData.status != 0
 }
 
 func headerLogField(header http.Header) []slog.Attr {

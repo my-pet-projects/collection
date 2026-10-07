@@ -55,6 +55,15 @@ type MediaImage struct {
 }
 
 func NewMediaImage(formValues UploadFormValues) (*MediaImage, error) {
+	return newMediaImage(formValues, nil)
+}
+
+// NewMediaImageOfType creates an image with an explicit beer media type.
+func NewMediaImageOfType(formValues UploadFormValues, mediaType BeerMediaType) (*MediaImage, error) {
+	return newMediaImage(formValues, &mediaType)
+}
+
+func newMediaImage(formValues UploadFormValues, mediaType *BeerMediaType) (*MediaImage, error) {
 	image, _, decodeErr := image.Decode(bytes.NewReader(formValues.Content))
 	if decodeErr != nil {
 		return nil, fmt.Errorf("decode image: %w", decodeErr)
@@ -68,9 +77,15 @@ func NewMediaImage(formValues UploadFormValues) (*MediaImage, error) {
 		return nil, errors.New("invalid image dimensions")
 	}
 
-	beerMediaType, typeErr := NewBeerMediaType(imageMetadata)
-	if typeErr != nil {
-		return nil, fmt.Errorf("unknown beer media type: %w", typeErr)
+	var beerMediaType BeerMediaType
+	if mediaType != nil {
+		beerMediaType = *mediaType
+	} else {
+		typeFromSize, typeErr := NewBeerMediaType(imageMetadata)
+		if typeErr != nil {
+			return nil, fmt.Errorf("unknown beer media type: %w", typeErr)
+		}
+		beerMediaType = typeFromSize
 	}
 
 	mediaImage := &MediaImage{

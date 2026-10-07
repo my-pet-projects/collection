@@ -4,16 +4,18 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
-	"strconv"
 	"strings"
 
 	"github.com/my-pet-projects/collection/internal/apperr"
 	"github.com/my-pet-projects/collection/internal/model"
+	"github.com/my-pet-projects/collection/internal/recognition"
 	"github.com/my-pet-projects/collection/internal/service"
 	"github.com/my-pet-projects/collection/internal/view/layout"
 	beerpage "github.com/my-pet-projects/collection/internal/view/page/beer"
 	"github.com/my-pet-projects/collection/internal/web"
 )
+
+const maxBreweryMatches = 3
 
 // BeerHandler handles beer-related HTTP requests.
 type BeerHandler struct {
@@ -59,7 +61,7 @@ func (h *BeerHandler) HandleBeerListPage(reqResp *web.ReqRespPair) error {
 }
 
 func (h *BeerHandler) HandleBeerPage(reqResp *web.ReqRespPair) error {
-	beerId, parseErr := strconv.Atoi(reqResp.Request.PathValue("id"))
+	beerId, parseErr := reqResp.GetIntPathParam("id")
 	if parseErr != nil {
 		return reqResp.RenderError(http.StatusInternalServerError, parseErr)
 	}
@@ -77,19 +79,32 @@ func (h *BeerHandler) HandleBeerPage(reqResp *web.ReqRespPair) error {
 	}
 
 	page := layout.Page{Title: fmt.Sprintf("Edit Beer - %s", beer.Brand)}
+
+	var breweryMatches []recognition.BreweryMatch
+	if beer.BreweryID == nil && beer.RecognitionData != nil {
+		breweryMatches = recognition.MatchBreweries(
+			beer.RecognitionData.Brewery,
+			beer.RecognitionData.CountryCode,
+			breweries,
+			maxBreweryMatches,
+		)
+	}
+
 	beerPage := beerpage.BeerPageData{
 		Page: page,
 		Beer: *beer,
 		FormParams: beerpage.BeerFormParams{
-			ID:        beer.ID,
-			Brand:     beer.Brand,
-			Type:      beer.Type,
-			BreweryID: beer.BreweryID,
-			Breweries: breweries,
-			StyleID:   beer.StyleID,
-			Styles:    styles,
-			IsActive:  beer.IsActive,
-			Brewery:   beer.Brewery,
+			ID:              beer.ID,
+			Brand:           beer.Brand,
+			Type:            beer.Type,
+			BreweryID:       beer.BreweryID,
+			Breweries:       breweries,
+			StyleID:         beer.StyleID,
+			Styles:          styles,
+			IsActive:        beer.IsActive,
+			Brewery:         beer.Brewery,
+			RecognitionData: beer.RecognitionData,
+			BreweryMatches:  breweryMatches,
 		},
 	}
 
@@ -118,12 +133,10 @@ func (h *BeerHandler) HandleCreateBeerPage(reqResp *web.ReqRespPair) error {
 }
 
 func (h *BeerHandler) SubmitBeerPage(reqResp *web.ReqRespPair) error {
-	idStr := reqResp.Request.FormValue("id")
-	id, _ := strconv.Atoi(idStr)
-	breweryIdStr := reqResp.Request.FormValue("brewery")
-	breweryId, _ := strconv.Atoi(breweryIdStr)
-	styleIdStr := reqResp.Request.FormValue("style")
-	styleId, _ := strconv.Atoi(styleIdStr)
+	id, breweryID, styleID, identifierErr := beerFormIdentifiers(reqResp)
+	if identifierErr != nil {
+		return identifierErr
+	}
 	beerTypeStr := strings.TrimSpace(reqResp.Request.FormValue("type"))
 	var beerType *string
 	if beerTypeStr != "" {
@@ -134,8 +147,9 @@ func (h *BeerHandler) SubmitBeerPage(reqResp *web.ReqRespPair) error {
 		ID:        id,
 		Brand:     strings.TrimSpace(reqResp.Request.FormValue("brand")),
 		Type:      beerType,
-		BreweryID: &breweryId,
-		StyleID:   &styleId,
+		BreweryID: breweryID,
+		StyleID:   styleID,
+		IsActive:  isActive,
 	}
 
 	breweries, breweriesErr := h.breweryService.ListBreweries(reqResp.Request.Context())
@@ -154,7 +168,7 @@ func (h *BeerHandler) SubmitBeerPage(reqResp *web.ReqRespPair) error {
 	}
 
 	if formParams.ID == 0 {
-		newBeer, createErr := h.beerService.CreateBeer(reqResp.Request.Context(), formParams.Brand, formParams.Type, &styleId, &breweryId, isActive)
+		newBeer, createErr := h.beerService.CreateBeer(reqResp.Request.Context(), formParams.Brand, formParams.Type, styleID, breweryID, isActive)
 		if createErr != nil {
 			h.logger.Error("create beer", slog.Any("error", createErr))
 			return reqResp.Render(beerpage.Form(formParams, beerpage.BeerFormErrors{Error: createErr.Error()}))
@@ -162,13 +176,31 @@ func (h *BeerHandler) SubmitBeerPage(reqResp *web.ReqRespPair) error {
 		return reqResp.Redirect(fmt.Sprintf("/workspace/beer/%d/overview", newBeer.ID))
 	}
 
-	updErr := h.beerService.UpdateBeer(reqResp.Request.Context(), formParams.ID, formParams.Brand, formParams.Type, &styleId, &breweryId, isActive)
+	updErr := h.beerService.UpdateBeer(reqResp.Request.Context(), formParams.ID, formParams.Brand, formParams.Type, styleID, breweryID, isActive)
 	if updErr != nil {
 		h.logger.Error("update beer", slog.Any("error", updErr))
 		return reqResp.Render(beerpage.Form(formParams, beerpage.BeerFormErrors{Error: updErr.Error()}))
 	}
 
 	return reqResp.Render(beerpage.Form(formParams, beerpage.BeerFormErrors{}))
+}
+
+// AssignBrewery confirms a brewery suggestion for a beer.
+func (h *BeerHandler) AssignBrewery(reqResp *web.ReqRespPair) error {
+	beerID, beerErr := reqResp.GetIntPathParam("id")
+	if beerErr != nil {
+		return apperr.NewBadRequestError("Invalid beer identifier", beerErr)
+	}
+	breweryID, breweryErr := reqResp.GetIntPathParam("breweryID")
+	if breweryErr != nil {
+		return apperr.NewBadRequestError("Invalid brewery identifier", breweryErr)
+	}
+
+	assignErr := h.beerService.AssignBrewery(reqResp.Request.Context(), beerID, breweryID)
+	if assignErr != nil {
+		return apperr.NewInternalServerError("Failed to assign brewery", assignErr)
+	}
+	return reqResp.Redirect(fmt.Sprintf("/workspace/beer/%d/overview", beerID))
 }
 
 func (h *BeerHandler) ListBeers(reqResp *web.ReqRespPair) error {
@@ -231,4 +263,24 @@ func (h *BeerHandler) DeleteBeer(reqResp *web.ReqRespPair) error {
 	}
 
 	return reqResp.Redirect("/workspace/beer")
+}
+
+func beerFormIdentifiers(reqResp *web.ReqRespPair) (int, *int, *int, error) {
+	idValue, idErr := reqResp.GetOptionalIntFormValue("id")
+	if idErr != nil {
+		return 0, nil, nil, apperr.NewBadRequestError("Invalid beer identifier", idErr)
+	}
+	id := 0
+	if idValue != nil {
+		id = *idValue
+	}
+	breweryID, breweryErr := reqResp.GetOptionalIntFormValue("brewery")
+	if breweryErr != nil {
+		return 0, nil, nil, apperr.NewBadRequestError("Invalid brewery identifier", breweryErr)
+	}
+	styleID, styleErr := reqResp.GetOptionalIntFormValue("style")
+	if styleErr != nil {
+		return 0, nil, nil, apperr.NewBadRequestError("Invalid style identifier", styleErr)
+	}
+	return id, breweryID, styleID, nil
 }

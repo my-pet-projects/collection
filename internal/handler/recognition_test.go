@@ -15,6 +15,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/my-pet-projects/collection/internal/model"
 	"github.com/my-pet-projects/collection/internal/recognition"
 	"github.com/my-pet-projects/collection/internal/web"
 )
@@ -24,6 +25,44 @@ type fakeBeerRecognizer struct {
 	err       error
 	mediaType string
 	image     []byte
+}
+
+type fakeRecognizedBeerService struct {
+	snapshot model.BeerRecognitionSnapshot
+	deleted  int
+	err      error
+}
+
+func (f *fakeRecognizedBeerService) CreateRecognizedBeer(
+	_ context.Context,
+	snapshot model.BeerRecognitionSnapshot,
+) (*model.Beer, error) {
+	f.snapshot = snapshot
+	if f.err != nil {
+		return nil, f.err
+	}
+	return &model.Beer{ID: 42, Brand: snapshot.BeerName, RecognitionData: &snapshot}, nil
+}
+
+func (f *fakeRecognizedBeerService) DeleteBeer(_ context.Context, id int) error {
+	f.deleted = id
+	return nil
+}
+
+type fakeBottleImageService struct {
+	beerID int
+	image  model.UploadFormValues
+	err    error
+}
+
+func (f *fakeBottleImageService) SaveBeerBottle(
+	_ context.Context,
+	beerID int,
+	image model.UploadFormValues,
+) error {
+	f.beerID = beerID
+	f.image = image
+	return f.err
 }
 
 func (f *fakeBeerRecognizer) RecognizeBeer(
@@ -40,15 +79,19 @@ func TestRecognitionHandlerRecognizesAndRendersResult(t *testing.T) {
 	t.Parallel()
 
 	fake := &fakeBeerRecognizer{result: recognition.Result{
-		Recognized: true,
-		BeerName:   "Punk IPA",
-		BeerType:   "IPA",
-		Style:      "India Pale Ale",
-		Brewery:    "BrewDog",
-		Confidence: 0.92,
-		Model:      "gemini-3.5-flash",
+		Recognized:  true,
+		BeerName:    "Punk IPA",
+		BeerType:    "IPA",
+		Style:       "India Pale Ale",
+		Brewery:     "BrewDog",
+		Country:     "Scotland",
+		CountryCode: "GB",
+		Confidence:  0.92,
+		Model:       "gemini-3.5-flash",
 	}}
-	handler := NewRecognitionHandler(fake, slog.New(slog.DiscardHandler))
+	beerService := &fakeRecognizedBeerService{}
+	imageService := &fakeBottleImageService{}
+	handler := NewRecognitionHandler(fake, beerService, imageService, slog.New(slog.DiscardHandler))
 	req := newRecognitionRequest(t, "label.png", makePNG(t))
 	recorder := httptest.NewRecorder()
 
@@ -57,7 +100,10 @@ func TestRecognitionHandlerRecognizesAndRendersResult(t *testing.T) {
 		t.Fatalf("RecognizeBeer() error = %v", err)
 	}
 	body := recorder.Body.String()
-	for _, expected := range []string{"Punk IPA", "BrewDog", "92% confidence", "gemini-3.5-flash"} {
+	for _, expected := range []string{
+		"Punk IPA", "BrewDog", "Scotland (GB)", "92% confidence", "gemini-3.5-flash",
+		"Save beer draft and bottle image", `/workspace/recognition/beer/draft`,
+	} {
 		if !strings.Contains(body, expected) {
 			t.Fatalf("response does not contain %q: %s", expected, body)
 		}
@@ -68,13 +114,52 @@ func TestRecognitionHandlerRecognizesAndRendersResult(t *testing.T) {
 	if len(fake.image) == 0 {
 		t.Fatal("provider received an empty image")
 	}
+	if beerService.snapshot.BeerName != "" {
+		t.Fatalf("beer was saved before confirmation: %#v", beerService.snapshot)
+	}
+	if imageService.beerID != 0 {
+		t.Fatalf("image was saved before confirmation for beer %d", imageService.beerID)
+	}
+}
+
+func TestRecognitionHandlerSavesConfirmedResult(t *testing.T) {
+	t.Parallel()
+
+	recognizer := &fakeBeerRecognizer{}
+	beerService := &fakeRecognizedBeerService{}
+	imageService := &fakeBottleImageService{}
+	handler := NewRecognitionHandler(
+		recognizer,
+		beerService,
+		imageService,
+		slog.New(slog.DiscardHandler),
+	)
+	req := newRecognitionRequestWithFields(t, "label.png", makePNG(t), recognitionSaveFields())
+	recorder := httptest.NewRecorder()
+
+	err := handler.SaveBeerDraft(&web.ReqRespPair{Request: req, Response: recorder})
+	if err != nil {
+		t.Fatalf("SaveBeerDraft() error = %v", err)
+	}
+	if beerService.snapshot.BeerName != "Punk IPA" {
+		t.Fatalf("saved beer name = %q", beerService.snapshot.BeerName)
+	}
+	if imageService.beerID != 42 || imageService.image.Filename != "label.png" {
+		t.Fatalf("saved image = %#v for beer %d", imageService.image, imageService.beerID)
+	}
+	if !strings.Contains(recorder.Body.String(), "Draft beer and bottle image saved") {
+		t.Fatalf("unexpected response: %s", recorder.Body.String())
+	}
+	if len(recognizer.image) != 0 {
+		t.Fatal("recognizer was called again while saving")
+	}
 }
 
 func TestRecognitionHandlerRejectsOversizedFile(t *testing.T) {
 	t.Parallel()
 
 	fake := &fakeBeerRecognizer{}
-	handler := NewRecognitionHandler(fake, slog.New(slog.DiscardHandler))
+	handler := newTestRecognitionHandler(fake)
 	content := make([]byte, maxUploadSize+1)
 	req := newRecognitionRequest(t, "large.jpg", content)
 	recorder := httptest.NewRecorder()
@@ -95,7 +180,7 @@ func TestRecognitionHandlerRendersProviderFailure(t *testing.T) {
 	t.Parallel()
 
 	fake := &fakeBeerRecognizer{err: errors.New("provider unavailable")}
-	handler := NewRecognitionHandler(fake, slog.New(slog.DiscardHandler))
+	handler := newTestRecognitionHandler(fake)
 	req := newRecognitionRequest(t, "label.png", makePNG(t))
 	recorder := httptest.NewRecorder()
 
@@ -112,7 +197,7 @@ func TestRecognitionHandlerRendersBusyProviderMessage(t *testing.T) {
 	t.Parallel()
 
 	fake := &fakeBeerRecognizer{err: recognition.ErrProviderBusy}
-	handler := NewRecognitionHandler(fake, slog.New(slog.DiscardHandler))
+	handler := newTestRecognitionHandler(fake)
 	req := newRecognitionRequest(t, "label.png", makePNG(t))
 	recorder := httptest.NewRecorder()
 
@@ -132,7 +217,7 @@ func TestRecognitionHandlerRendersQuotaMessage(t *testing.T) {
 		RetryAfter: 13112 * time.Second,
 		Err:        errors.New("quota exceeded"),
 	}}
-	handler := NewRecognitionHandler(fake, slog.New(slog.DiscardHandler))
+	handler := newTestRecognitionHandler(fake)
 	req := newRecognitionRequest(t, "label.png", makePNG(t))
 	recorder := httptest.NewRecorder()
 
@@ -141,13 +226,53 @@ func TestRecognitionHandlerRendersQuotaMessage(t *testing.T) {
 		t.Fatalf("RecognizeBeer() error = %v", err)
 	}
 	body := recorder.Body.String()
-	if !strings.Contains(body, "Gemini quota has been reached") ||
+	if !strings.Contains(body, "AI provider quota has been reached") ||
 		!strings.Contains(body, "3h38m32s") {
 		t.Fatalf("unexpected response: %s", body)
 	}
 }
 
+func TestRecognitionHandlerRemovesDraftWhenBottleSaveFails(t *testing.T) {
+	t.Parallel()
+
+	recognizer := &fakeBeerRecognizer{result: recognition.Result{
+		Recognized: true,
+		BeerName:   "Punk IPA",
+	}}
+	beerService := &fakeRecognizedBeerService{}
+	imageService := &fakeBottleImageService{err: errors.New("storage unavailable")}
+	handler := NewRecognitionHandler(
+		recognizer,
+		beerService,
+		imageService,
+		slog.New(slog.DiscardHandler),
+	)
+	req := newRecognitionRequestWithFields(t, "label.png", makePNG(t), recognitionSaveFields())
+	recorder := httptest.NewRecorder()
+
+	err := handler.SaveBeerDraft(&web.ReqRespPair{Request: req, Response: recorder})
+	if err != nil {
+		t.Fatalf("SaveBeerDraft() error = %v", err)
+	}
+	if beerService.deleted != 42 {
+		t.Fatalf("deleted beer ID = %d, want 42", beerService.deleted)
+	}
+	if !strings.Contains(recorder.Body.String(), "could not be saved") {
+		t.Fatalf("unexpected response: %s", recorder.Body.String())
+	}
+}
+
 func newRecognitionRequest(t *testing.T, filename string, content []byte) *http.Request {
+	t.Helper()
+	return newRecognitionRequestWithFields(t, filename, content, nil)
+}
+
+func newRecognitionRequestWithFields(
+	t *testing.T,
+	filename string,
+	content []byte,
+	fields map[string]string,
+) *http.Request {
 	t.Helper()
 
 	var body bytes.Buffer
@@ -160,6 +285,12 @@ func newRecognitionRequest(t *testing.T, filename string, content []byte) *http.
 	if writeErr != nil {
 		t.Fatalf("write multipart file: %v", writeErr)
 	}
+	for name, value := range fields {
+		fieldErr := writer.WriteField(name, value)
+		if fieldErr != nil {
+			t.Fatalf("write multipart field %q: %v", name, fieldErr)
+		}
+	}
 	closeErr := writer.Close()
 	if closeErr != nil {
 		t.Fatalf("close multipart writer: %v", closeErr)
@@ -168,6 +299,28 @@ func newRecognitionRequest(t *testing.T, filename string, content []byte) *http.
 	req := httptest.NewRequest(http.MethodPost, "/workspace/recognition/beer", &body)
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 	return req
+}
+
+func recognitionSaveFields() map[string]string {
+	return map[string]string{
+		"recognitionBeerName":    "Punk IPA",
+		"recognitionBeerType":    "IPA",
+		"recognitionStyle":       "India Pale Ale",
+		"recognitionBrewery":     "BrewDog",
+		"recognitionCountry":     "Scotland",
+		"recognitionCountryCode": "GB",
+		"recognitionConfidence":  "0.92",
+		"recognitionModel":       "gemini-3.5-flash",
+	}
+}
+
+func newTestRecognitionHandler(recognizer recognition.Recognizer) RecognitionHandler {
+	return NewRecognitionHandler(
+		recognizer,
+		&fakeRecognizedBeerService{},
+		&fakeBottleImageService{},
+		slog.New(slog.DiscardHandler),
+	)
 }
 
 func makePNG(t *testing.T) []byte {

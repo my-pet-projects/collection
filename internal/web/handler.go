@@ -1,6 +1,8 @@
 package web
 
 import (
+	"bytes"
+	"context"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -16,6 +18,10 @@ import (
 )
 
 type HandlerFunc func(reqResp *ReqRespPair) error
+
+type responseCommitter interface {
+	ResponseCommitted() bool
+}
 
 type AppHandler struct {
 	logger *slog.Logger
@@ -33,8 +39,19 @@ func (h AppHandler) Handle(handlerFun HandlerFunc) http.HandlerFunc {
 		}
 		handlerErr := handlerFun(reqResp)
 		if handlerErr != nil {
+			requestErr := r.Context().Err()
+			requestEnded := errors.Is(requestErr, context.Canceled) || errors.Is(requestErr, context.DeadlineExceeded)
+			handlerEnded := errors.Is(handlerErr, context.Canceled) || errors.Is(handlerErr, context.DeadlineExceeded)
+			if requestEnded && handlerEnded {
+				return
+			}
+			committer, responseWasCommitted := w.(responseCommitter)
+			if responseWasCommitted && committer.ResponseCommitted() {
+				h.logger.Warn("Failed to finish response", slog.Any("error", handlerErr))
+				return
+			}
 			h.logger.Error("Failed to handle request", slog.Any("error", handlerErr))
-			reqResp.RenderAppError(handlerErr) //nolint:errcheck,gosec
+			reqResp.RenderAppError(handlerErr) //nolint:contextcheck,errcheck,gosec // Request context is held by ReqRespPair.
 			return
 		}
 	}
@@ -53,8 +70,17 @@ func (rrp *ReqRespPair) Text(status int, msg string) error {
 }
 
 func (rrp *ReqRespPair) Render(c templ.Component) error {
+	var response bytes.Buffer
+	renderErr := c.Render(rrp.Request.Context(), &response)
+	if renderErr != nil {
+		return renderErr
+	}
+
+	rrp.Response.Header().Set("Content-Type", "text/html; charset=utf-8")
+	rrp.Response.Header().Set("Content-Length", strconv.Itoa(response.Len()))
 	rrp.Response.WriteHeader(http.StatusOK)
-	return c.Render(rrp.Request.Context(), rrp.Response)
+	_, writeErr := response.WriteTo(rrp.Response)
+	return writeErr //nolint:wrapcheck
 }
 
 func (rrp *ReqRespPair) RenderErrorPage(code int, err error) error {
@@ -101,6 +127,28 @@ func (rrp *ReqRespPair) GetIntQueryParam(name string) (int, error) {
 		param = parsedVal
 	}
 	return param, nil
+}
+
+// GetIntPathParam reads an integer path parameter.
+func (rrp *ReqRespPair) GetIntPathParam(name string) (int, error) {
+	value, err := strconv.Atoi(rrp.Request.PathValue(name))
+	if err != nil {
+		return 0, fmt.Errorf("parse int path param: %w", err)
+	}
+	return value, nil
+}
+
+// GetOptionalIntFormValue reads an optional integer form value.
+func (rrp *ReqRespPair) GetOptionalIntFormValue(name string) (*int, error) {
+	value := strings.TrimSpace(rrp.Request.FormValue(name))
+	if value == "" || value == "0" {
+		return nil, nil
+	}
+	parsed, err := strconv.Atoi(value)
+	if err != nil {
+		return nil, fmt.Errorf("parse int form value: %w", err)
+	}
+	return &parsed, nil
 }
 
 func (rrp *ReqRespPair) GetStringQueryParam(name string) (string, error) {
