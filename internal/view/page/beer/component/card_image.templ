@@ -30,7 +30,7 @@ templ bottleImage(media model.BeerMedia) {
 		tabindex="0"
 		aria-label="Enlarge bottle image"
 	>
-		<div class="flex h-20 w-12 items-center justify-center rounded-lg border border-slate-200/60 bg-white p-1.5 shadow-sm transition duration-300 ease-in-out hover:scale-105 sm:h-28 sm:w-14 sm:rounded-xl sm:p-2">
+		<div class="relative flex h-20 w-12 items-center justify-center overflow-hidden rounded-lg border border-slate-200/60 bg-white p-1.5 shadow-sm transition duration-300 ease-in-out hover:scale-105 sm:h-28 sm:w-14 sm:rounded-xl sm:p-2">
 			<!-- Shimmer placeholder -->
 			<div
 				x-show="isIntersected && !imageLoaded"
@@ -70,7 +70,7 @@ templ capImage(media model.BeerMedia) {
 		tabindex="0"
 		aria-label="Enlarge cap image"
 	>
-		<div class="flex h-20 w-20 items-center justify-center rounded-full border border-slate-200/60 bg-white p-1.5 shadow-sm transition duration-300 ease-in-out hover:scale-105 sm:h-28 sm:w-28 sm:p-2">
+		<div class="relative flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border border-slate-200/60 bg-white p-1.5 shadow-sm transition duration-300 ease-in-out hover:scale-105 sm:h-28 sm:w-28 sm:p-2">
 			<!-- Shimmer placeholder -->
 			<div
 				x-show="isIntersected && !imageLoaded"
@@ -110,7 +110,7 @@ templ labelImage(media model.BeerMedia) {
 		tabindex="0"
 		aria-label="Enlarge label image"
 	>
-		<div class="flex h-20 w-full items-center justify-center overflow-hidden rounded-lg border border-slate-200/60 bg-white p-1.5 shadow-sm transition duration-300 ease-in-out hover:scale-105 sm:h-28 sm:rounded-xl sm:p-2">
+		<div class="relative flex h-20 w-full items-center justify-center overflow-hidden rounded-lg border border-slate-200/60 bg-white p-1.5 shadow-sm transition duration-300 ease-in-out hover:scale-105 sm:h-28 sm:rounded-xl sm:p-2">
 			<!-- Shimmer placeholder -->
 			<div
 				x-show="isIntersected && !imageLoaded"
@@ -152,7 +152,7 @@ templ capImageWithIndex(media model.BeerMedia, index int) {
 		tabindex="0"
 		aria-label="Enlarge cap image"
 	>
-		<div class="flex h-20 w-20 items-center justify-center rounded-full border border-slate-200/60 bg-white p-1.5 shadow-sm transition duration-300 ease-in-out hover:scale-105 sm:h-28 sm:w-28 sm:p-2">
+		<div class="relative flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border border-slate-200/60 bg-white p-1.5 shadow-sm transition duration-300 ease-in-out hover:scale-105 sm:h-28 sm:w-28 sm:p-2">
 			<!-- Shimmer placeholder -->
 			<div
 				x-show="isIntersected && !imageLoaded"

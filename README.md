@@ -9,6 +9,7 @@ A web application for managing a beer bottle cap collection.
 ```bash
 turso auth login
 turso db shell beer-collection .dump > ./dumps/beer-collection-dump.sql
+turso db shell geography .dump > ./dumps/geography-dump.sql
 ```
 
 ### Import from dump

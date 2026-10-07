@@ -5,8 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
-	"slices"
-	"strings"
 
 	"github.com/my-pet-projects/collection/internal/db"
 	"github.com/my-pet-projects/collection/internal/model"
@@ -25,51 +23,31 @@ func NewCollectionService(beerMediaStore *db.BeerMediaStore, logger *slog.Logger
 }
 
 func (s CollectionService) GetNextAvailableCollectionSlot(ctx context.Context, beer model.Beer) (*model.Slot, error) {
-	filter := model.MediaItemsFilter{IncludeAll: true}
-	mediaItems, mediaItemsErr := s.beerMediaStore.FetchMediaItems(ctx, filter)
-	if mediaItemsErr != nil {
-		return nil, fmt.Errorf("fetch media items: %w", mediaItemsErr)
-	}
-
-	collectionSlots := make([]model.Slot, 0)
-	for _, item := range mediaItems {
-		slot := item.GetSlot()
-		if !slot.IsEmpty() {
-			collectionSlots = append(collectionSlots, slot)
-		}
-	}
-
-	slices.SortFunc(collectionSlots, func(a, b model.Slot) int {
-		return strings.Compare(a.String(), b.String())
-	})
-
 	country := beer.GetCountry()
 	if country == nil {
 		return nil, errors.New("beer country is nil")
 	}
 	geoPrefix := getGeoPrefix(country)
 
-	filteredByGeo := make([]model.Slot, 0)
-	for _, slot := range collectionSlots {
-		if slot.GeoPrefix == geoPrefix {
-			filteredByGeo = append(filteredByGeo, slot)
-		}
+	occupiedSlotIDs, err := s.beerMediaStore.FetchOccupiedSlotIDs(ctx, geoPrefix)
+	if err != nil {
+		return nil, fmt.Errorf("fetch occupied slot IDs: %w", err)
 	}
 
-	if len(filteredByGeo) == 0 {
+	if len(occupiedSlotIDs) == 0 {
 		firstSlot := model.NewFirstSlot(geoPrefix)
 		return &firstSlot, nil
 	}
 
-	nextSlot := s.findFirstAvailableSlot(filteredByGeo, geoPrefix)
+	nextSlot := s.findFirstAvailableSlot(occupiedSlotIDs, geoPrefix)
 
 	return &nextSlot, nil
 }
 
-func (s CollectionService) findFirstAvailableSlot(occupiedSlots []model.Slot, geoPrefix string) model.Slot {
-	occupiedMap := make(map[string]bool)
-	for _, slot := range occupiedSlots {
-		occupiedMap[slot.String()] = true
+func (s CollectionService) findFirstAvailableSlot(occupiedSlotIDs []string, geoPrefix string) model.Slot {
+	occupiedMap := make(map[string]struct{}, len(occupiedSlotIDs))
+	for _, slotID := range occupiedSlotIDs {
+		occupiedMap[slotID] = struct{}{}
 	}
 
 	const (
@@ -84,13 +62,13 @@ func (s CollectionService) findFirstAvailableSlot(occupiedSlots []model.Slot, ge
 	maxIterations := maxSheets * colsPerSheet * rowsPerSheet
 	currentSlot := model.NewFirstSlot(geoPrefix)
 	for range maxIterations {
-		if !occupiedMap[currentSlot.String()] {
+		if _, occupied := occupiedMap[currentSlot.String()]; !occupied {
 			return currentSlot
 		}
 		currentSlot = currentSlot.NextSlot()
 	}
 
-	return occupiedSlots[len(occupiedSlots)-1].NextSlot()
+	return currentSlot
 }
 
 func getGeoPrefix(country *model.Country) string {
@@ -139,8 +117,12 @@ func getGeoPrefix(country *model.Country) string {
 		"Western Asia":       "MIDE",
 		"Central Asia":       "CASP",
 		"South-Eastern Asia": "SEAS",
+		"South America":      "SA",
 	}
 
+	if country.Cca3 == "BRA" {
+		return country.Cca3
+	}
 	if country.Subregion != nil {
 		if group, exists := subRegionGroupings[*country.Subregion]; exists {
 			return group

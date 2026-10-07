@@ -9,6 +9,7 @@ SHELL := /bin/bash
 APP_NAME := collection
 BUILD_DIR := build
 TMP_DIR := tmp
+DUMP_DIR := dumps
 CMD_DIR := cmd/collection
 MAIN_FILE := $(CMD_DIR)/main.go
 BUILD_OUTPUT := $(BUILD_DIR)/$(APP_NAME)
@@ -88,3 +89,24 @@ deps/update:
 	@go mod tidy
 	@go mod vendor
 	@echo "✅ Dependencies updated"
+
+.PHONY: db/dump
+db/dump:
+	@echo "🔐 Authenticating with Turso..."
+	@turso auth login
+	@echo
+
+	@echo "📦 Preparing database dump directory..."
+	@mkdir -p $(DUMP_DIR)
+	@rm -f $(DUMP_DIR)/*.tmp
+
+	@echo "🍺 Dumping beer-collection..."
+	@turso db shell beer-collection .dump > $(DUMP_DIR)/beer-collection-dump.sql.tmp
+	@mv $(DUMP_DIR)/beer-collection-dump.sql.tmp $(DUMP_DIR)/beer-collection-dump.sql
+
+	@echo "🌍 Dumping geography..."
+	@turso db shell geography .dump > $(DUMP_DIR)/geography-dump.sql.tmp
+	@mv $(DUMP_DIR)/geography-dump.sql.tmp $(DUMP_DIR)/geography-dump.sql
+	@echo
+
+	@echo "✅ Database dumps complete: $(DUMP_DIR)/"

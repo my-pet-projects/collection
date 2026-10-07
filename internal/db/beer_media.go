@@ -60,6 +60,21 @@ func (s BeerMediaStore) FetchMediaItems(ctx context.Context, filter model.MediaI
 	return items, result.Error
 }
 
+func (s BeerMediaStore) FetchOccupiedSlotIDs(ctx context.Context, geoPrefix string) ([]string, error) {
+	var slotIDs []string
+
+	result := s.db.gorm.
+		WithContext(ctx).
+		Debug().
+		Model(&model.BeerMedia{}).
+		Where("slot_id IS NOT NULL").
+		Where("slot_id != ''").
+		Where("slot_id LIKE ?", geoPrefix+"-%").
+		Pluck("slot_id", &slotIDs)
+
+	return slotIDs, result.Error
+}
+
 func (s BeerMediaStore) SimilarMediaItems(ctx context.Context, item model.BeerMedia) ([]model.BeerMedia, error) {
 	var items []model.BeerMedia
 	result := s.db.gorm.

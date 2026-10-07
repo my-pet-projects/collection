@@ -99,7 +99,7 @@ func bottleImage(media model.BeerMedia) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" class=\"order-first flex shrink-0 cursor-pointer items-end justify-center\" role=\"button\" tabindex=\"0\" aria-label=\"Enlarge bottle image\"><div class=\"flex h-20 w-12 items-center justify-center rounded-lg border border-slate-200/60 bg-white p-1.5 shadow-sm transition duration-300 ease-in-out hover:scale-105 sm:h-28 sm:w-14 sm:rounded-xl sm:p-2\"><!-- Shimmer placeholder --><div x-show=\"isIntersected && !imageLoaded\" class=\"h-full w-full animate-pulse rounded-lg bg-slate-200\"></div><!-- Actual image -->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" class=\"order-first flex shrink-0 cursor-pointer items-end justify-center\" role=\"button\" tabindex=\"0\" aria-label=\"Enlarge bottle image\"><div class=\"relative flex h-20 w-12 items-center justify-center overflow-hidden rounded-lg border border-slate-200/60 bg-white p-1.5 shadow-sm transition duration-300 ease-in-out hover:scale-105 sm:h-28 sm:w-14 sm:rounded-xl sm:p-2\"><!-- Shimmer placeholder --><div x-show=\"isIntersected && !imageLoaded\" class=\"h-full w-full animate-pulse rounded-lg bg-slate-200\"></div><!-- Actual image -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -204,7 +204,7 @@ func capImage(media model.BeerMedia) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\" class=\"flex shrink-0 cursor-pointer items-end justify-center\" role=\"button\" tabindex=\"0\" aria-label=\"Enlarge cap image\"><div class=\"flex h-20 w-20 items-center justify-center rounded-full border border-slate-200/60 bg-white p-1.5 shadow-sm transition duration-300 ease-in-out hover:scale-105 sm:h-28 sm:w-28 sm:p-2\"><!-- Shimmer placeholder --><div x-show=\"isIntersected && !imageLoaded\" class=\"h-full w-full animate-pulse rounded-full bg-slate-200\"></div><!-- Actual image -->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\" class=\"flex shrink-0 cursor-pointer items-end justify-center\" role=\"button\" tabindex=\"0\" aria-label=\"Enlarge cap image\"><div class=\"relative flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border border-slate-200/60 bg-white p-1.5 shadow-sm transition duration-300 ease-in-out hover:scale-105 sm:h-28 sm:w-28 sm:p-2\"><!-- Shimmer placeholder --><div x-show=\"isIntersected && !imageLoaded\" class=\"h-full w-full animate-pulse rounded-full bg-slate-200\"></div><!-- Actual image -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -309,7 +309,7 @@ func labelImage(media model.BeerMedia) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "\" class=\"order-last flex min-w-0 flex-1 cursor-pointer items-end justify-center\" role=\"button\" tabindex=\"0\" aria-label=\"Enlarge label image\"><div class=\"flex h-20 w-full items-center justify-center overflow-hidden rounded-lg border border-slate-200/60 bg-white p-1.5 shadow-sm transition duration-300 ease-in-out hover:scale-105 sm:h-28 sm:rounded-xl sm:p-2\"><!-- Shimmer placeholder --><div x-show=\"isIntersected && !imageLoaded\" class=\"h-full w-full animate-pulse rounded-lg bg-slate-200\"></div><!-- Actual image -->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "\" class=\"order-last flex min-w-0 flex-1 cursor-pointer items-end justify-center\" role=\"button\" tabindex=\"0\" aria-label=\"Enlarge label image\"><div class=\"relative flex h-20 w-full items-center justify-center overflow-hidden rounded-lg border border-slate-200/60 bg-white p-1.5 shadow-sm transition duration-300 ease-in-out hover:scale-105 sm:h-28 sm:rounded-xl sm:p-2\"><!-- Shimmer placeholder --><div x-show=\"isIntersected && !imageLoaded\" class=\"h-full w-full animate-pulse rounded-lg bg-slate-200\"></div><!-- Actual image -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -440,7 +440,7 @@ func capImageWithIndex(media model.BeerMedia, index int) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "\" class=\"flex shrink-0 cursor-pointer items-end justify-center\" role=\"button\" tabindex=\"0\" aria-label=\"Enlarge cap image\"><div class=\"flex h-20 w-20 items-center justify-center rounded-full border border-slate-200/60 bg-white p-1.5 shadow-sm transition duration-300 ease-in-out hover:scale-105 sm:h-28 sm:w-28 sm:p-2\"><!-- Shimmer placeholder --><div x-show=\"isIntersected && !imageLoaded\" class=\"h-full w-full animate-pulse rounded-full bg-slate-200\"></div><!-- Actual image -->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "\" class=\"flex shrink-0 cursor-pointer items-end justify-center\" role=\"button\" tabindex=\"0\" aria-label=\"Enlarge cap image\"><div class=\"relative flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border border-slate-200/60 bg-white p-1.5 shadow-sm transition duration-300 ease-in-out hover:scale-105 sm:h-28 sm:w-28 sm:p-2\"><!-- Shimmer placeholder --><div x-show=\"isIntersected && !imageLoaded\" class=\"h-full w-full animate-pulse rounded-full bg-slate-200\"></div><!-- Actual image -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
