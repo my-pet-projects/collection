@@ -39,6 +39,11 @@ templ StylesIconSVG() {
 	<circle cx="17.5" cy="17.5" r="3.5"></circle>
 }
 
+templ SettingsIconSVG() {
+	<path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"></path>
+	<path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.56V21h-4v-.09A1.7 1.7 0 0 0 8.97 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.56-1.03H3v-4h.09A1.7 1.7 0 0 0 4.6 8.94a1.7 1.7 0 0 0-.34-1.88L4.2 7l2.83-2.83.06.06a1.7 1.7 0 0 0 1.88.34H9A1.7 1.7 0 0 0 10 3.09V3h4v.09a1.7 1.7 0 0 0 1.03 1.56 1.7 1.7 0 0 0 1.88-.34l.06-.06L19.8 7l-.06.06a1.7 1.7 0 0 0-.34 1.88V9a1.7 1.7 0 0 0 1.51 1H21v4h-.09A1.7 1.7 0 0 0 19.4 15Z"></path>
+}
+
 // PageHeader renders a consistent page header with icon, title, subtitle, and optional action button.
 // Pass children to override the default link-based action button with custom content (e.g., HTMX buttons).
 templ PageHeader(params PageHeaderParams) {
@@ -58,6 +63,8 @@ templ PageHeader(params PageHeaderParams) {
 							@UploadIconSVG()
 						case "styles":
 							@StylesIconSVG()
+						case "settings":
+							@SettingsIconSVG()
 						default:
 							@BeerIconSVG()
 					}

@@ -36,14 +36,13 @@ templ navLogo() {
 }
 
 templ desktopNavItems() {
-	<div class="hidden sm:ml-8 sm:flex sm:space-x-4">
+	<div class="hidden lg:ml-6 lg:flex lg:space-x-1 xl:ml-8 xl:space-x-4">
 		@navLink("/workspace/beer", "Beers", beerIcon(), util.UrlStartsWith(ctx, "/workspace/beer") && !util.UrlStartsWith(ctx, "/workspace/beer-style"))
 		@navLink("/workspace/brewery", "Breweries", breweryIcon(), util.UrlStartsWith(ctx, "/workspace/brewery"))
-		@navLink("/workspace/beer-style", "Styles", stylesIcon(), util.UrlStartsWith(ctx, "/workspace/beer-style"))
-		@navLink("/workspace/images", "Images", imagesIcon(), util.UrlStartsWith(ctx, "/workspace/images") && !util.UrlStartsWith(ctx, "/workspace/images/upload"))
 		@navLink("/workspace/images/upload", "Upload", uploadIcon(), util.UrlStartsWith(ctx, "/workspace/images/upload"))
 		@navLink("/workspace/search", "Search", searchIcon(), util.UrlStartsWith(ctx, "/workspace/search"))
 		@navLink("/workspace/recognition/beer", "Recognize", recognitionIcon(), util.UrlStartsWith(ctx, "/workspace/recognition"))
+		@desktopManageMenu()
 	</div>
 }
 
@@ -61,8 +60,52 @@ templ navLink(href string, label string, icon templ.Component, isActive bool) {
 	</a>
 }
 
+templ desktopManageMenu() {
+	{{ isActive := util.UrlStartsWith(ctx, "/workspace/settings") ||
+		util.UrlStartsWith(ctx, "/workspace/beer-style") ||
+		(util.UrlStartsWith(ctx, "/workspace/images") && !util.UrlStartsWith(ctx, "/workspace/images/upload")) }}
+	<div class="relative" x-data="{ open: false }">
+		<button
+			type="button"
+			@click="open = !open"
+			@click.away="open = false"
+			class={ "inline-flex h-full items-center rounded-t-lg border-b-3 px-3 py-2 text-sm font-medium transition-all duration-200",
+				templ.KV("border-b-amber-500 text-gray-900", isActive),
+				templ.KV("border-b-transparent text-gray-500 hover:border-b-gray-300 hover:text-gray-700", !isActive) }
+			aria-label="Open manage menu"
+		>
+			<span class="mr-2 h-5 w-5">
+				@manageIcon()
+			</span>
+			Manage
+			<svg class="ml-1 h-4 w-4 transition-transform" x-bind:class="{ 'rotate-180': open }" viewBox="0 0 20 20" fill="currentColor">
+				<path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"></path>
+			</svg>
+		</button>
+		<div
+			x-show="open"
+			x-transition
+			class="absolute right-0 top-14 z-50 w-52 rounded-xl bg-white py-2 shadow-xl ring-1 ring-gray-200"
+			style="display: none;"
+		>
+			<a href="/workspace/images" class="flex items-center px-4 py-3 text-sm font-medium text-gray-700 transition-colors hover:bg-amber-50 hover:text-amber-700">
+				<span class="mr-3 h-5 w-5">@imagesIcon()</span>
+				Images
+			</a>
+			<a href="/workspace/beer-style" class="flex items-center px-4 py-3 text-sm font-medium text-gray-700 transition-colors hover:bg-amber-50 hover:text-amber-700">
+				<span class="mr-3 h-5 w-5">@stylesIcon()</span>
+				Beer styles
+			</a>
+			<a href="/workspace/settings/slots" class="flex items-center px-4 py-3 text-sm font-medium text-gray-700 transition-colors hover:bg-amber-50 hover:text-amber-700">
+				<span class="mr-3 h-5 w-5">@settingsIcon()</span>
+				Collection slots
+			</a>
+		</div>
+	</div>
+}
+
 templ mobileMenuButton() {
-	<div class="flex items-center sm:hidden" x-data="{ open: false }">
+	<div class="flex items-center lg:hidden" x-data="{ open: false }">
 		<button
 			@click="open = !open"
 			class="inline-flex items-center justify-center rounded-lg p-2 text-gray-400 transition-all duration-200 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
@@ -88,16 +131,18 @@ templ mobileMenu() {
 		x-transition:leave="transition ease-in duration-150"
 		x-transition:leave-start="opacity-100 scale-100"
 		x-transition:leave-end="opacity-0 scale-95"
-		class="absolute right-4 top-16 z-50 w-64 rounded-xl bg-white py-2 shadow-xl ring-1 ring-gray-200"
+		class="absolute right-4 top-16 z-50 max-h-[calc(100vh-5rem)] w-64 overflow-y-auto rounded-xl bg-white py-2 shadow-xl ring-1 ring-gray-200"
 		style="display: none;"
 	>
 		@mobileNavLink("/workspace/beer", "Beers", beerIcon(), util.UrlStartsWith(ctx, "/workspace/beer") && !util.UrlStartsWith(ctx, "/workspace/beer-style"))
 		@mobileNavLink("/workspace/brewery", "Breweries", breweryIcon(), util.UrlStartsWith(ctx, "/workspace/brewery"))
-		@mobileNavLink("/workspace/beer-style", "Styles", stylesIcon(), util.UrlStartsWith(ctx, "/workspace/beer-style"))
-		@mobileNavLink("/workspace/images", "Images", imagesIcon(), util.UrlStartsWith(ctx, "/workspace/images") && !util.UrlStartsWith(ctx, "/workspace/images/upload"))
 		@mobileNavLink("/workspace/images/upload", "Upload", uploadIcon(), util.UrlStartsWith(ctx, "/workspace/images/upload"))
 		@mobileNavLink("/workspace/search", "Search", searchIcon(), util.UrlStartsWith(ctx, "/workspace/search"))
 		@mobileNavLink("/workspace/recognition/beer", "Recognize", recognitionIcon(), util.UrlStartsWith(ctx, "/workspace/recognition"))
+		<div class="mt-1 border-t border-gray-100 px-4 pb-1 pt-3 text-xs font-semibold uppercase tracking-wide text-gray-400">Manage</div>
+		@mobileNavLink("/workspace/images", "Images", imagesIcon(), util.UrlStartsWith(ctx, "/workspace/images") && !util.UrlStartsWith(ctx, "/workspace/images/upload"))
+		@mobileNavLink("/workspace/beer-style", "Beer styles", stylesIcon(), util.UrlStartsWith(ctx, "/workspace/beer-style"))
+		@mobileNavLink("/workspace/settings/slots", "Collection slots", settingsIcon(), util.UrlStartsWith(ctx, "/workspace/settings/slots"))
 	</div>
 }
 
@@ -118,7 +163,7 @@ templ mobileNavLink(href string, label string, icon templ.Component, isActive bo
 templ userProfile() {
 	<div class="flex items-center space-x-3">
 		{{ user, ok := util.UserFromContext[model.User](ctx) }}
-		<div class="hidden text-right sm:block">
+		<div class="hidden text-right xl:block">
 			if ok && user.IsAuthenticated() {
 				<div class="text-sm font-medium text-gray-900">{ user.GetDisplayName() }</div>
 				<div class="text-xs text-gray-500">Beer Enthusiast</div>
@@ -220,5 +265,26 @@ templ recognitionIcon() {
 		<path d="M15 8h.01"></path>
 		<path d="M3 6a2 2 0 0 1 2-2h2l1-2h8l1 2h2a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"></path>
 		<circle cx="12" cy="13" r="4"></circle>
+	</svg>
+}
+
+templ settingsIcon() {
+	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+		<path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"></path>
+		<path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.56V21h-4v-.09A1.7 1.7 0 0 0 8.97 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.56-1.03H3v-4h.09A1.7 1.7 0 0 0 4.6 8.94a1.7 1.7 0 0 0-.34-1.88L4.2 7l2.83-2.83.06.06a1.7 1.7 0 0 0 1.88.34H9A1.7 1.7 0 0 0 10 3.09V3h4v.09a1.7 1.7 0 0 0 1.03 1.56 1.7 1.7 0 0 0 1.88-.34l.06-.06L19.8 7l-.06.06a1.7 1.7 0 0 0-.34 1.88V9a1.7 1.7 0 0 0 1.51 1H21v4h-.09A1.7 1.7 0 0 0 19.4 15Z"></path>
+	</svg>
+}
+
+templ manageIcon() {
+	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+		<path d="M4 6h10"></path>
+		<path d="M18 6h2"></path>
+		<path d="M4 12h2"></path>
+		<path d="M10 12h10"></path>
+		<path d="M4 18h6"></path>
+		<path d="M14 18h6"></path>
+		<circle cx="16" cy="6" r="2"></circle>
+		<circle cx="8" cy="12" r="2"></circle>
+		<circle cx="12" cy="18" r="2"></circle>
 	</svg>
 }
