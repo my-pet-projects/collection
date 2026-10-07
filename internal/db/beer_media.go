@@ -4,6 +4,7 @@ import (
 	"context"
 	"log/slog"
 
+	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
 	"github.com/my-pet-projects/collection/internal/model"
@@ -94,19 +95,38 @@ func (s BeerMediaStore) UpdateMediaItems(ctx context.Context, items []model.Beer
 	return res.Error
 }
 
-func (s BeerMediaStore) DeleteBeerMedia(ctx context.Context, item model.BeerMedia) error {
-	res := s.db.gorm.
-		Debug().
-		Delete(&model.BeerMedia{ID: item.ID})
-	if res.Error != nil {
-		return res.Error
-	}
+func (s BeerMediaStore) DeleteBeerMedia(ctx context.Context, item model.BeerMedia) (bool, error) {
+	mediaItemDeleted := false
+	err := s.db.gorm.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		res := tx.
+			Debug().
+			Delete(&model.BeerMedia{ID: item.ID})
+		if res.Error != nil {
+			return res.Error
+		}
 
-	res = s.db.gorm.
-		Debug().
-		Delete(&model.MediaItem{ID: item.MediaID})
+		var references int64
+		res = tx.
+			Model(&model.BeerMedia{}).
+			Where("media_id = ?", item.MediaID).
+			Count(&references)
+		if res.Error != nil {
+			return res.Error
+		}
+		if references > 0 {
+			return nil
+		}
 
-	return res.Error
+		res = tx.
+			Debug().
+			Delete(&model.MediaItem{ID: item.MediaID})
+		if res.Error != nil {
+			return res.Error
+		}
+		mediaItemDeleted = true
+		return nil
+	})
+	return mediaItemDeleted, err
 }
 
 // FetchCapMediaWithoutHash returns all crown cap BeerMedia records where the perceptual hash is empty.

@@ -129,7 +129,7 @@ INSERT INTO breweries VALUES(65,'Hasseröder Brauerei',2810808,'hasseroder braue
 INSERT INTO breweries VALUES(66,'Natakhtari Brewery (АО «Ломиси»)',611717,'natakhtari brewery (ао ломиси)','GE','https://untappd.com/w/natakhtari-brewery/69812');
 INSERT INTO breweries VALUES(67,'Harboes Bryggeri',2613460,'harboes bryggeri','DK','https://untappd.com/w/harboes-bryggeri/3872');
 INSERT INTO breweries VALUES(68,'Altenmünster Brauer Bier GmbH',2873291,'altenmunster brauer bier gmbh','DE','https://untappd.com/w/altenmuenster-brauer-bier-gmbh/606266');
-INSERT INTO breweries VALUES(69,'Palmbräu Eppingen GmbH',2929831,'palmbrau eppingen gmbh','DE',NULL);
+INSERT INTO breweries VALUES(69,'Palmbräu',2929831,'palmbrau','DE','https://untappd.com/w/palmbrau/24722');
 INSERT INTO breweries VALUES(70,'Allgäuer Brauhaus',2891621,'allgauer brauhaus','DE','https://untappd.com/w/allgauer-brauhaus/4674');
 INSERT INTO breweries VALUES(71,'Carlsberg Polska',756135,'carlsberg polska','PL','https://untappd.com/w/carlsberg-polska/5960');
 INSERT INTO breweries VALUES(72,'Browar Lwówek',3092638,'browar lwowek','PL','https://untappd.com/w/browar-lwowek/17819');
@@ -286,7 +286,7 @@ INSERT INTO breweries VALUES(223,'Rye River Brewing Company',2965529,'rye river 
 INSERT INTO breweries VALUES(224,'Schlossbrauerei Irlbach',2895823,'schlossbrauerei irlbach','DE','https://untappd.com/w/schlossbrauerei-irlbach/23374');
 INSERT INTO breweries VALUES(225,'AB InBev Efes',524901,'ab inbev efes','RU','https://untappd.com/w/ab-inbev-efes/33116');
 INSERT INTO breweries VALUES(226,'Vasileostrovskaya Brewery (Василеостровская Пивоварня)',498817,'vasileostrovskaya brewery (василеостровская пивоварня)','RU','https://untappd.com/w/vasileostrovskaya-brewery/10410');
-INSERT INTO breweries VALUES(227,'Bavaria Brouwerij',2751316,'bavaria brouwerij','NL',NULL);
+INSERT INTO breweries VALUES(227,'Royal Swinkels',2751316,'royal swinkels','NL','https://untappd.com/w/SwinkelsFamilyBrewers/109');
 INSERT INTO breweries VALUES(228,'Pivovar Černá Hora',3078085,'pivovar cerna hora','CZ','https://untappd.com/w/pivovar-cerna-hora/14876');
 INSERT INTO breweries VALUES(229,'Budějovický Budvar',3077916,'budejovicky budvar','CZ','https://untappd.com/w/budejovicky-budvar/245');
 INSERT INTO breweries VALUES(230,'SIA Valmiermuižas Alus',453754,'sia valmiermuizas alus','LV','https://untappd.com/w/sia-valmiermuizas-alus/12561');
@@ -462,7 +462,7 @@ INSERT INTO breweries VALUES(401,'Heidelberger Brauerei',2907911,'heidelberger b
 INSERT INTO breweries VALUES(402,'Brooklyn Brewery',4254985,'brooklyn brewery','US','https://untappd.com/w/brooklyn-brewery/259');
 INSERT INTO breweries VALUES(403,'Browar Czarny Kot (Dionizos Radom)',760778,'browar czarny kot (dionizos radom)','PL','https://untappd.com/w/browar-czarny-kot-dionizos-radom/70736');
 INSERT INTO breweries VALUES(404,'Jopen',2755003,'jopen','NL','https://untappd.com/w/jopen/620');
-INSERT INTO breweries VALUES(405,'Brasserie Grain d''Orge',3021000,'brasserie grain dorge','FR',NULL);
+INSERT INTO breweries VALUES(405,'Brasserie Grain d''Orge',3021000,'brasserie grain dorge','FR','https://untappd.com/w/brasserie-grain-d-orge/193');
 INSERT INTO breweries VALUES(406,'Haller Löwenbräu',2835482,'haller lowenbrau','DE','https://untappd.com/w/haller-lowenbrau/36144');
 INSERT INTO breweries VALUES(407,'Eagle Brewery (Wells & Young''s Ltd)',2656046,'eagle brewery (wells & young''s ltd)','GB','https://untappd.com/w/eagle-brewery/1348');
 INSERT INTO breweries VALUES(408,'Pivovary Staropramen',3067696,'pivovary staropramen','CZ','https://untappd.com/w/pivovary-staropramen/998');
@@ -539,7 +539,7 @@ INSERT INTO breweries VALUES(479,'Pivovara Daruvar',3202184,'pivovara daruvar','
 INSERT INTO breweries VALUES(480,'Marksovsky Pivzavod (Марксовский Пивзавод)',529073,'marksovsky pivzavod (марксовскии пивзавод)','RU','https://untappd.com/w/marksovsky-pivzavod-marksovskij-pivzavod/29411');
 INSERT INTO breweries VALUES(481,'Pivovarský dům Benedict (PIVO Praha, s.r.o.)',3067696,'pivovarsky dum benedict (pivo praha, s.r.o.)','CZ','https://untappd.com/w/pivovarsky-dum-benedict/5963');
 INSERT INTO breweries VALUES(482,'Объединенные пивоварни Хайнекен',498817,'объединенные пивоварни хаинекен','RU','https://untappd.com/w/obedinyonnye-pivovarni-holding/78690');
-INSERT INTO breweries VALUES(483,'Пивоваренный завод им. Степана Разина',498817,'пивоваренныи завод им. степана разина','RU',NULL);
+INSERT INTO breweries VALUES(483,'Объединённые Пивоварни - Холдинг (Пивоваренный завод им. Степана Разина)',498817,'объединенные пивоварни - холдинг (пивоваренныи завод им. степана разина)','RU','https://untappd.com/w/obedinyonnye-pivovarni-holding/78690');
 INSERT INTO breweries VALUES(484,'Bohemia Regent',3064079,'bohemia regent','CZ','https://untappd.com/w/bohemia-regent/5967');
 INSERT INTO breweries VALUES(485,'Brauerei Wieselburg',2761314,'brauerei wieselburg','AT','https://untappd.com/w/brauerei-wieselburg/104470');
 INSERT INTO breweries VALUES(486,'Tucher Bräu',2861650,'tucher brau','DE','https://untappd.com/w/tucher-brau/8309');
@@ -631,7 +631,7 @@ INSERT INTO breweries VALUES(572,'Brauerei Schimpfle',2920812,'brauerei schimpfl
 INSERT INTO breweries VALUES(573,'Meckatzer Löwenbräu',2907399,'meckatzer lowenbrau','DE','https://untappd.com/w/meckatzer-lowenbrau/845');
 INSERT INTO breweries VALUES(574,'Brouwerij Mort Subite',2803033,'brouwerij mort subite','BE','https://untappd.com/w/brouwerij-mort-subite/274');
 INSERT INTO breweries VALUES(575,'La Trop - Brasserie Carteron  (La ptite brasserie)',2976742,'la trop - brasserie carteron  (la ptite brasserie)','FR','https://untappd.com/w/la-trop-brasserie-carteron-la-ptite-brasserie/544130');
-INSERT INTO breweries VALUES(577,'REWE Markt GmbH',2809138,'rewe markt gmbh','DE',NULL);
+INSERT INTO breweries VALUES(577,'REWE',2809138,'rewe','DE','https://untappd.com/w/rewe/281970');
 INSERT INTO breweries VALUES(578,'Privatbrauerei Hoepfner',2892794,'privatbrauerei hoepfner','DE','https://untappd.com/w/privatbrauerei-hoepfner/8807');
 INSERT INTO breweries VALUES(579,'Browar Ciechan',774208,'browar ciechan','PL','https://untappd.com/w/browar-ciechan/13386');
 INSERT INTO breweries VALUES(580,'Kaiser-Brauerei Geislingen',2921653,'kaiser-brauerei geislingen','DE','https://untappd.com/w/kaiser-brauerei-geislingen/74078');
@@ -780,7 +780,7 @@ INSERT INTO breweries VALUES(728,'Engelbräu Rettenberg',2847985,'engelbrau rett
 INSERT INTO breweries VALUES(729,'Brasserie Goudale (La Kékette)',2998150,'brasserie goudale (la kekette)','FR','https://untappd.com/w/brasserie-goudale/1439');
 INSERT INTO breweries VALUES(730,'Schwarzbräu',2803655,'schwarzbrau','DE','https://untappd.com/w/schwarzbrau/26885');
 INSERT INTO breweries VALUES(731,'Moosehead Breweries Limited',6138517,'moosehead breweries limited','CA','https://untappd.com/w/moosehead-breweries-limited/886');
-INSERT INTO breweries VALUES(732,'Высокогорная Кельская Пивоварня',615914,'высокогорная кельская пивоварня','GE',NULL);
+INSERT INTO breweries VALUES(732,'Высокогорная Кельская Пивоварня',615914,'высокогорная кельская пивоварня','GE','https://untappd.com/w/vysokogornaya-kelskaya-pivovarnya/545155');
 INSERT INTO breweries VALUES(733,'Krug-Bräu',2815297,'krug-brau','DE','https://untappd.com/w/krug-brau/13821');
 INSERT INTO breweries VALUES(734,'Бобруйский бровар',630468,'бобруискии бровар','BY','https://untappd.com/w/bobrujskij-brovar/28932');
 INSERT INTO breweries VALUES(735,'Pivovar Jihlava',3074199,'pivovar jihlava','CZ','https://untappd.com/w/pivovar-jihlava/14262');
@@ -893,7 +893,7 @@ INSERT INTO breweries VALUES(842,'Cerveza Caleya',3110962,'cerveza caleya','ES',
 INSERT INTO breweries VALUES(843,'Pagoa Euskal Garagardoa',3110044,'pagoa euskal garagardoa','ES','https://untappd.com/w/pagoa-euskal-garagardoa/18222');
 INSERT INTO breweries VALUES(844,'Mala Gissona',3112011,'mala gissona','ES','https://untappd.com/w/mala-gissona/191473');
 INSERT INTO breweries VALUES(845,'Brasserie Markus',3022540,'brasserie markus','FR','https://untappd.com/w/brasserie-markus/228800');
-INSERT INTO breweries VALUES(846,'Birra Flea',3175722,'birra flea','IT',NULL);
+INSERT INTO breweries VALUES(846,'Birra Flea',3175722,'birra flea','IT','https://untappd.com/w/BirraArtigianaleFlea/71729');
 CREATE TABLE IF NOT EXISTS `beers` (
    `id` integer NOT NULL PRIMARY KEY AUTOINCREMENT
  ,  `brand` varchar(100) NOT NULL
@@ -3556,8 +3556,7 @@ INSERT INTO beers VALUES(2677,'Mira FM Olympic White',NULL,36,781,1,'2026-10-04 
 INSERT INTO beers VALUES(2678,'Markus Ambrée',NULL,20,845,1,'2026-10-04 20:35:52',NULL,'markus ambree',NULL);
 INSERT INTO beers VALUES(2679,'Bohemia Reserva 150',NULL,1,169,0,'2026-10-06 15:55:18.93257934+00:00','2026-10-06 15:56:08.116349187+00:00','bohemia reserva 150',NULL);
 INSERT INTO beers VALUES(2681,'MA.MA','Matilde Mattia IPA',26,846,0,'2026-10-07 10:14:44.21858753+00:00','2026-10-07 10:32:46.968064458+00:00','ma.ma matilde mattia ipa',NULL);
-INSERT INTO beers VALUES(2682,'Tannenzäpfle Weizen Bock','Weizen Bock',NULL,502,0,'2026-10-07 14:49:31.842188+00:00','2026-10-07 14:52:08.255418+00:00','tannenzapfle weizen bock weizen bock','{"beerName":"Tannenzäpfle Weizen Bock","beerType":"Weizen Bock","style":"Weizenbock","brewery":"Badische Staatsbrauerei Rothaus","country":"Germany","countryCode":"DE","confidence":0.98,"model":"gemini-3.5-flash-lite","notes":"Rothaus Tannenzäpfle Weizen Bock clearly visible.","recognizedAt":"2026-10-07T14:49:31.658784Z"}');
-INSERT INTO beers VALUES(2684,'Aubeloun','India Pale Ale',NULL,NULL,0,'2026-10-07 15:17:53.258402+00:00',NULL,'aubeloun india pale ale','{"beerName":"Aubeloun","beerType":"India Pale Ale","style":"India Pale Ale","brewery":"Brasserie de l''Abbaye du Val-Dieu","country":"Belgium","countryCode":"BE","confidence":0.85,"model":"gemini-3.5-flash-lite","notes":"Brewery identified from label style and typical Belgian abbey production, beer name is Aubeloun IPA.","recognizedAt":"2026-10-07T15:17:53.169704Z"}');
+INSERT INTO beers VALUES(2684,'Aubeloun','India Pale Ale',NULL,541,0,'2026-10-07 15:17:53.258402+00:00','2026-10-07 19:06:19.938006+00:00','aubeloun india pale ale','{"beerName":"Aubeloun","beerType":"India Pale Ale","style":"India Pale Ale","brewery":"Brasserie de l''Abbaye du Val-Dieu","country":"Belgium","countryCode":"BE","confidence":0.85,"model":"gemini-3.5-flash-lite","notes":"Brewery identified from label style and typical Belgian abbey production, beer name is Aubeloun IPA.","recognizedAt":"2026-10-07T15:17:53.169704Z"}');
 CREATE TABLE IF NOT EXISTS `beer_medias` (
    `id` integer NOT NULL PRIMARY KEY AUTOINCREMENT
  ,  `media_id` integer NOT NULL
@@ -11071,7 +11070,6 @@ INSERT INTO beer_medias VALUES(8113,8114,2627,3,'ESP/PRT-C3-D5');
 INSERT INTO beer_medias VALUES(8114,8115,2681,3,'ITA-C2-D2');
 INSERT INTO beer_medias VALUES(8115,8116,2625,3,'ESP/PRT-C3-D3');
 INSERT INTO beer_medias VALUES(8116,8117,2681,1,NULL);
-INSERT INTO beer_medias VALUES(8117,8118,2682,1,NULL);
 INSERT INTO beer_medias VALUES(8119,8120,2684,1,NULL);
 CREATE TABLE IF NOT EXISTS `media_items` (
    `id` integer NOT NULL PRIMARY KEY AUTOINCREMENT
@@ -18578,7 +18576,6 @@ INSERT INTO media_items VALUES(8114,'4e8780af238ea61879c3555d4d7c925f.png','2026
 INSERT INTO media_items VALUES(8115,'4d41f5c307e527da337301b37917f212.png','20261006_105357.png','image/png','4d41f5c307e527da337301b37917f212','2026-10-06 15:57:02.748168373+00:00','2026-10-06 15:57:02.748168373+00:00',173723,800,800,'');
 INSERT INTO media_items VALUES(8116,'3873145ab0041185279c424b966f4027.png','20261006_105004.png','image/png','3873145ab0041185279c424b966f4027','2026-10-07 10:08:42.89170354+00:00','2026-10-07 10:08:42.89170354+00:00',198396,800,800,'');
 INSERT INTO media_items VALUES(8117,'89ff904e6edb0d285a99b0bc18ffcffc.png','Ma-ma-Matilde-Mattia-Ipa-50-Cl_7696118_-vKygJG7AK2A6Ri62.png','image/png','89ff904e6edb0d285a99b0bc18ffcffc','2026-10-07 10:32:57.861010958+00:00','2026-10-07 10:32:57.861010958+00:00',19833,138,400,'');
-INSERT INTO media_items VALUES(8118,'8c20fe7a1515b2f67544d25dd402a8df.png','20261007_162821.jpg','image/jpeg','8c20fe7a1515b2f67544d25dd402a8df','2026-10-07 14:49:32.413185+00:00','2026-10-07 15:36:07.319037+00:00',2791034,4000,1848,'');
 INSERT INTO media_items VALUES(8120,'caa1469b2def9946beeddd969c56ef74.png','20261007_162745.jpg','image/jpeg','caa1469b2def9946beeddd969c56ef74','2026-10-07 15:17:53.867328+00:00','2026-10-07 15:17:53.867328+00:00',2615467,4000,1848,'');
 CREATE TABLE IF NOT EXISTS `beer_media_types` (
    `id` integer NOT NULL PRIMARY KEY AUTOINCREMENT

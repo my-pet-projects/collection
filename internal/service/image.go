@@ -172,14 +172,17 @@ func (s ImageService) DeleteBeerMedia(ctx context.Context, id int) error {
 		return errors.New("has assigned collection slot")
 	}
 
+	mediaItemDeleted, delErr := s.beerMediaStore.DeleteBeerMedia(ctx, item)
+	if delErr != nil {
+		return fmt.Errorf("delete beer media item: %w", delErr)
+	}
+	if !mediaItemDeleted {
+		return nil
+	}
+
 	s3DelErr := s.s3Storage.Delete(ctx, item.Media.ExternalFilename)
 	if s3DelErr != nil {
 		return fmt.Errorf("delete s3 image: %w", s3DelErr)
-	}
-
-	delErr := s.beerMediaStore.DeleteBeerMedia(ctx, item)
-	if delErr != nil {
-		return fmt.Errorf("delete beer media item: %w", delErr)
 	}
 
 	return nil
