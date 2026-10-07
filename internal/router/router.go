@@ -43,6 +43,7 @@ func New(deps Deps) (http.Handler, error) {
 	authHandler := handler.NewAuthenticationHandler(deps.Cfg, deps.Logger)
 	similarityHandler := handler.NewSimilarityHandler(deps.SimilarityService, deps.Logger)
 	recognitionHandler := handler.NewRecognitionHandler(deps.BeerRecognizer, deps.Logger)
+	countrySlotConfigHandler := handler.NewCountrySlotConfigHandler(deps.CollectionService, deps.Logger)
 	appHandler := web.NewAppHandler(deps.Logger)
 
 	router := chi.NewRouter()
@@ -127,6 +128,12 @@ func New(deps Deps) (http.Handler, error) {
 	router.With(middleware.WithAuthentication(deps.Cfg, deps.Logger)).Group(func(router chi.Router) {
 		router.Get("/workspace/recognition/beer", appHandler.Handle(recognitionHandler.HandlePage))
 		router.Post("/workspace/recognition/beer", appHandler.Handle(recognitionHandler.RecognizeBeer))
+	})
+
+	// Authenticated routes - Settings
+	router.With(middleware.WithAuthentication(deps.Cfg, deps.Logger)).Group(func(router chi.Router) {
+		router.Get("/workspace/settings/slots", appHandler.Handle(countrySlotConfigHandler.HandlePage))
+		router.Put("/workspace/settings/slots/{countryCode}", appHandler.Handle(countrySlotConfigHandler.Update))
 	})
 
 	// Not found handler

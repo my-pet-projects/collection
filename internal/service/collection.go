@@ -5,135 +5,81 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"strings"
 
 	"github.com/my-pet-projects/collection/internal/db"
 	"github.com/my-pet-projects/collection/internal/model"
 )
 
 type CollectionService struct {
-	beerMediaStore *db.BeerMediaStore
-	logger         *slog.Logger
+	beerMediaStore         *db.BeerMediaStore
+	countrySlotConfigStore *db.CountrySlotConfigStore
+	logger                 *slog.Logger
 }
 
-func NewCollectionService(beerMediaStore *db.BeerMediaStore, logger *slog.Logger) CollectionService {
+// NewCollectionService creates a collection service.
+func NewCollectionService(
+	beerMediaStore *db.BeerMediaStore,
+	countrySlotConfigStore *db.CountrySlotConfigStore,
+	logger *slog.Logger,
+) CollectionService {
 	return CollectionService{
-		beerMediaStore: beerMediaStore,
-		logger:         logger,
+		beerMediaStore:         beerMediaStore,
+		countrySlotConfigStore: countrySlotConfigStore,
+		logger:                 logger,
 	}
 }
 
+// GetNextAvailableCollectionSlot returns the next available slot for a beer.
 func (s CollectionService) GetNextAvailableCollectionSlot(ctx context.Context, beer model.Beer) (*model.Slot, error) {
 	country := beer.GetCountry()
 	if country == nil {
 		return nil, errors.New("beer country is nil")
 	}
-	geoPrefix := getGeoPrefix(country)
+	slotConfig, err := s.countrySlotConfigStore.FetchByCountryCode(ctx, country.Cca3)
+	if err != nil {
+		return nil, fmt.Errorf("fetch slot configuration for country %s: %w", country.Cca3, err)
+	}
 
-	occupiedSlotIDs, err := s.beerMediaStore.FetchOccupiedSlotIDs(ctx, geoPrefix)
+	occupiedSlotIDs, err := s.beerMediaStore.FetchOccupiedSlotIDs(ctx, slotConfig.Prefix)
 	if err != nil {
 		return nil, fmt.Errorf("fetch occupied slot IDs: %w", err)
 	}
 
-	if len(occupiedSlotIDs) == 0 {
-		firstSlot := model.NewFirstSlot(geoPrefix)
-		return &firstSlot, nil
+	nextSlot, err := model.FindFirstAvailableSlot(occupiedSlotIDs, slotConfig.Prefix, slotConfig.RowsPerSheet)
+	if err != nil {
+		return nil, fmt.Errorf("find available collection slot: %w", err)
 	}
-
-	nextSlot := s.findFirstAvailableSlot(occupiedSlotIDs, geoPrefix)
 
 	return &nextSlot, nil
 }
 
-func (s CollectionService) findFirstAvailableSlot(occupiedSlotIDs []string, geoPrefix string) model.Slot {
-	occupiedMap := make(map[string]struct{}, len(occupiedSlotIDs))
-	for _, slotID := range occupiedSlotIDs {
-		occupiedMap[slotID] = struct{}{}
+// GetCountrySlotConfigs returns all country slot configurations.
+func (s CollectionService) GetCountrySlotConfigs(ctx context.Context) ([]model.CountrySlotConfig, error) {
+	configs, err := s.countrySlotConfigStore.FetchAll(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("fetch country slot configurations: %w", err)
 	}
 
-	const (
-		maxSheets    = 100
-		colsPerSheet = 7
-	)
-
-	rowsPerSheet := model.RowSizeForPrefix(geoPrefix)
-
-	// Keep checking slots until we find an empty one
-	// Safety limit to prevent infinite loops
-	maxIterations := maxSheets * colsPerSheet * rowsPerSheet
-	currentSlot := model.NewFirstSlot(geoPrefix)
-	for range maxIterations {
-		if _, occupied := occupiedMap[currentSlot.String()]; !occupied {
-			return currentSlot
-		}
-		currentSlot = currentSlot.NextSlot()
-	}
-
-	return currentSlot
+	return configs, nil
 }
 
-func getGeoPrefix(country *model.Country) string {
-	countryGroupings := map[string]string{
-		"GBR": "GBR/IRL",
-		"IRL": "GBR/IRL",
-		"ESP": "ESP/PRT",
-		"PRT": "ESP/PRT",
-		"BOL": "BOL/PER",
-		"PER": "BOL/PER",
-		"CHL": "CHL/ARG",
-		"ARG": "CHL/ARG",
-		"BLR": "RUS",
-		"CHE": "DEU",
-		"AND": "FRA", //nolint:goconst
-		"LUX": "FRA",
-		"SMR": "FRA",
-		"CYP": "GRC",
-		"SVN": "BALK",
-		"EST": "BALT", //nolint:goconst
-		"LVA": "BALT",
-		"LTU": "BALT",
-		"DNK": "SCND", //nolint:goconst
-		"NOR": "SCND",
-		"SWE": "SCND",
-		"FIN": "SCND",
-		"SVK": "CARP",
-		"HUN": "CARP",
-		"ARM": "CASP", //nolint:goconst
-		"GEO": "CASP",
-		"AZE": "CASP",
+// UpdateCountrySlotConfig updates a country slot configuration.
+func (s CollectionService) UpdateCountrySlotConfig(ctx context.Context, config model.CountrySlotConfig) (*model.CountrySlotConfig, error) {
+	config.CountryCode = strings.ToUpper(strings.TrimSpace(config.CountryCode))
+	config.Prefix = strings.ToUpper(strings.TrimSpace(config.Prefix))
+
+	err := s.countrySlotConfigStore.Update(ctx, config)
+	if err != nil {
+		return nil, fmt.Errorf("update country slot configuration: %w", err)
 	}
 
-	regionGroupings := map[string]string{
-		"Africa":  "AF",
-		"Oceania": "OC",
+	updated, err := s.countrySlotConfigStore.FetchByCountryCode(ctx, config.CountryCode)
+	if err != nil {
+		return nil, fmt.Errorf("fetch updated country slot configuration: %w", err)
 	}
 
-	subRegionGroupings := map[string]string{
-		"North America":      "NA",
-		"Caribbean":          "NA",
-		"Central America":    "NA",
-		"Southeast Europe":   "BALK",
-		"Southern Asia":      "INDO",
-		"Eastern Asia":       "EAAS",
-		"Western Asia":       "MIDE",
-		"Central Asia":       "CASP",
-		"South-Eastern Asia": "SEAS",
-		"South America":      "SA",
-	}
+	updated.Country = config.Country
 
-	if country.Cca3 == "BRA" {
-		return country.Cca3
-	}
-	if country.Subregion != nil {
-		if group, exists := subRegionGroupings[*country.Subregion]; exists {
-			return group
-		}
-	}
-	if group, exists := regionGroupings[country.Region]; exists {
-		return group
-	}
-	if group, exists := countryGroupings[country.Cca3]; exists {
-		return group
-	}
-
-	return country.Cca3
+	return updated, nil
 }

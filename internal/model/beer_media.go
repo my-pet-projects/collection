@@ -3,7 +3,6 @@ package model
 import (
 	"errors"
 	"fmt"
-	"slices"
 	"strconv"
 	"strings"
 )
@@ -60,12 +59,12 @@ func (s Slot) IsEmpty() bool {
 	return s.GeoPrefix == "" && s.SheetID == "" && s.SheetSlot == ""
 }
 
-func (s Slot) NextSlot() Slot {
+// NextSlot returns the next slot for the configured sheet size.
+func (s Slot) NextSlot(rowsPerSheet int) Slot {
 	var sheetSlot string
 	sheetID := s.SheetID
 
-	rowSize := RowSizeForPrefix(s.GeoPrefix)
-	lastSheetSlot := "G" + fmt.Sprintf("%d", rowSize)
+	lastSheetSlot := "G" + fmt.Sprintf("%d", rowsPerSheet)
 
 	// Check if we're at the last slot of the current sheet
 	if s.SheetSlot == lastSheetSlot {
@@ -79,7 +78,7 @@ func (s Slot) NextSlot() Slot {
 		sheetID = fmt.Sprintf("C%d", sheetNum+1)
 		sheetSlot = "A1"
 	} else {
-		sheetSlot = s.incrementSheetSlot(s.SheetSlot, rowSize)
+		sheetSlot = s.incrementSheetSlot(s.SheetSlot, rowsPerSheet)
 	}
 
 	return Slot{
@@ -154,16 +153,4 @@ func (t BeerMediaType) IsLabel() bool {
 
 func (t BeerMediaType) IsCap() bool {
 	return t == BeerMediaCrownCap || t == BeerMediaTwistOffCap || t == BeerMediaPullOffCap || t == BeerMediaCeramicCap
-}
-
-func RowSizeForPrefix(geoPrefix string) int {
-	const (
-		smallSheetRows = 5
-		largeSheetRows = 6
-	)
-	smallSheetsGeoPrefixes := []string{"CASP", "OC", "INDO", "MIDE", "EAAS", "SEAS"}
-	if slices.Contains(smallSheetsGeoPrefixes, geoPrefix) {
-		return smallSheetRows
-	}
-	return largeSheetRows
 }

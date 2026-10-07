@@ -98,6 +98,7 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 	breweryStore := db.NewBreweryStore(dbClient, logger)
 	mediaStore := db.NewMediaStore(dbClient, logger)
 	beerMediaStore := db.NewBeerMediaStore(dbClient, logger)
+	countrySlotConfigStore := db.NewCountrySlotConfigStore(dbClient, logger)
 
 	// Initialize AWS S3
 	sdkConfig, sdkConfigErr := awscfg.LoadDefaultConfig(ctx,
@@ -117,7 +118,7 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 	breweryService := service.NewBreweryService(&breweryStore, &geoStore, logger)
 	beerService := service.NewBeerService(&beerStore, &styleStore, &breweryStore, logger)
 	imageService := service.NewImageService(&mediaStore, &beerStore, &beerMediaStore, &s3Storage, logger)
-	collectionService := service.NewCollectionService(&beerMediaStore, logger)
+	collectionService := service.NewCollectionService(&beerMediaStore, &countrySlotConfigStore, logger)
 
 	hasher := img.NewHasher()
 	similarityService := service.NewSimilarityService(&beerMediaStore, &s3Storage, hasher, logger)
