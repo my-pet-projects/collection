@@ -9,6 +9,7 @@ import (
 
 	"github.com/my-pet-projects/collection/internal/apperr"
 	"github.com/my-pet-projects/collection/internal/config"
+	"github.com/my-pet-projects/collection/internal/finder"
 	"github.com/my-pet-projects/collection/internal/handler"
 	"github.com/my-pet-projects/collection/internal/recognition"
 	"github.com/my-pet-projects/collection/internal/service"
@@ -27,6 +28,7 @@ type Deps struct {
 	CollectionService service.CollectionService
 	SimilarityService service.SimilarityService
 	BeerRecognizer    recognition.Recognizer
+	Finder            finder.Finder
 	Logger            *slog.Logger
 }
 
@@ -35,8 +37,8 @@ func New(deps Deps) (http.Handler, error) { //nolint:funlen
 	// Create handlers
 	homeHandler := handler.NewHomeHandler(deps.BeerService, deps.Logger)
 	geoHandler := handler.NewGeographyHandler(deps.GeoService, deps.Logger)
-	beerHandler := handler.NewBeerHandler(deps.BeerService, deps.BreweryService, deps.Logger)
-	breweryHandler := handler.NewBreweryHandler(deps.BreweryService, deps.Logger)
+	beerHandler := handler.NewBeerHandler(deps.BeerService, deps.BreweryService, deps.Finder, deps.Logger)
+	breweryHandler := handler.NewBreweryHandler(deps.BreweryService, deps.Finder, deps.Logger)
 	beerStyleHandler := handler.NewBeerStyleHandler(deps.BeerService, deps.Logger)
 	beerImagesHandler := handler.NewBeerImagesHandler(deps.BeerService, deps.ImageService, deps.CollectionService, deps.Logger)
 	uploadHandler := handler.NewUploadHandler(deps.ImageService, deps.Logger)

@@ -64,6 +64,27 @@ templ Form(params BreweryFormParams, errs BreweryFormErrors) {
 			@form.FormField(form.FormFieldProps{ID: "name", Label: "Brewery", Error: errs.Name, Required: true}) {
 				@form.TextInput("name", "name", "Enter brewery name", params.Name, errs.Name != "")
 			}
+			<!-- Untappd URL -->
+			@form.FormField(form.FormFieldProps{ID: "untappd-url", Label: "Untappd URL", Error: errs.UntappdURL}) {
+				<div class="flex items-center gap-3">
+					<div class="min-w-0 flex-1">
+						@form.TextInput("untappd-url", "untappdUrl", "https://untappd.com/...", params.UntappdURL, errs.UntappdURL != "")
+					</div>
+					if params.ResolvedUntappdURL != "" {
+						<a
+							href={ templ.URL(params.ResolvedUntappdURL) }
+							target="_blank"
+							rel="noopener noreferrer"
+							class="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-xl bg-amber-50 px-4 text-sm font-semibold text-amber-700 ring-1 ring-inset ring-amber-200 transition-colors hover:bg-amber-100 hover:text-amber-900 focus:outline-none focus:ring-2 focus:ring-amber-500"
+						>
+							Open
+							<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5H19.5V10.5M19 5L10 14M6.75 6.75H5.625C5.004 6.75 4.5 7.254 4.5 7.875V18.375C4.5 18.996 5.004 19.5 5.625 19.5H16.125C16.746 19.5 17.25 18.996 17.25 18.375V17.25"></path>
+							</svg>
+						</a>
+					}
+				</div>
+			}
 			<!-- Country Selection -->
 			@form.FormField(form.FormFieldProps{ID: "country-select", Label: "Country", Error: errs.Country, Required: true}) {
 				<div id="country-container">

@@ -18,10 +18,16 @@ type Config struct {
 	AuthConfig         AuthConfig
 	APIKeys            APIKeys
 	RecognitionConfig  RecognitionConfig
+	UntappdConfig      UntappdConfig
 }
 
 type APIKeys struct {
 	HuggingFace string
+}
+
+type UntappdConfig struct {
+	AlgoliaAppID  string
+	AlgoliaAPIKey string
 }
 
 type RecognitionConfig struct {
@@ -62,7 +68,7 @@ func requireEnv(key string) (string, error) {
 }
 
 // NewConfig creates application configuration.
-func NewConfig() (*Config, error) { //nolint:cyclop
+func NewConfig() (*Config, error) { //nolint:cyclop,funlen
 	env, err := requireEnv("APP_ENV")
 	if err != nil {
 		return nil, err
@@ -129,6 +135,14 @@ func NewConfig() (*Config, error) { //nolint:cyclop
 	if err != nil {
 		return nil, err
 	}
+	untappdAlgoliaAppID, err := requireEnv("UNTAPPD_ALGOLIA_APP_ID")
+	if err != nil {
+		return nil, err
+	}
+	untappdAlgoliaAPIKey, err := requireEnv("UNTAPPD_ALGOLIA_API_KEY")
+	if err != nil {
+		return nil, err
+	}
 
 	cfg := &Config{
 		Env: env,
@@ -158,6 +172,10 @@ func NewConfig() (*Config, error) { //nolint:cyclop
 			Provider:     strings.ToLower(strings.TrimSpace(aiProvider)),
 			Model:        strings.TrimSpace(aiModel),
 			GeminiAPIKey: geminiAPIKey,
+		},
+		UntappdConfig: UntappdConfig{
+			AlgoliaAppID:  untappdAlgoliaAppID,
+			AlgoliaAPIKey: untappdAlgoliaAPIKey,
 		},
 	}
 

@@ -13,6 +13,7 @@ import (
 
 	"github.com/my-pet-projects/collection/internal/config"
 	"github.com/my-pet-projects/collection/internal/db"
+	untappdfinder "github.com/my-pet-projects/collection/internal/finder/untappd"
 	"github.com/my-pet-projects/collection/internal/img"
 	"github.com/my-pet-projects/collection/internal/log"
 	"github.com/my-pet-projects/collection/internal/recognition"
@@ -119,6 +120,10 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 	beerService := service.NewBeerService(&beerStore, &styleStore, &breweryStore, logger)
 	imageService := service.NewImageService(&mediaStore, &beerStore, &beerMediaStore, &s3Storage, logger)
 	collectionService := service.NewCollectionService(&beerMediaStore, &countrySlotConfigStore, logger)
+	externalFinder := untappdfinder.NewFinder(
+		cfg.UntappdConfig.AlgoliaAppID,
+		cfg.UntappdConfig.AlgoliaAPIKey,
+	)
 
 	hasher := img.NewHasher()
 	similarityService := service.NewSimilarityService(&beerMediaStore, &s3Storage, hasher, logger)
@@ -138,6 +143,7 @@ func InitializeRouter(ctx context.Context, cfg *config.Config, dbClient *db.DbCl
 		CollectionService: collectionService,
 		SimilarityService: similarityService,
 		BeerRecognizer:    beerRecognizer,
+		Finder:            externalFinder,
 		Logger:            logger,
 	}
 

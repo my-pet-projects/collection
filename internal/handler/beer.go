@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/my-pet-projects/collection/internal/apperr"
+	"github.com/my-pet-projects/collection/internal/finder"
 	"github.com/my-pet-projects/collection/internal/model"
 	"github.com/my-pet-projects/collection/internal/recognition"
 	"github.com/my-pet-projects/collection/internal/service"
@@ -21,14 +22,21 @@ const maxBreweryMatches = 3
 type BeerHandler struct {
 	beerService    service.BeerService
 	breweryService service.BreweryService
+	finder         finder.Finder
 	logger         *slog.Logger
 }
 
 // NewBeerHandler creates a new BeerHandler.
-func NewBeerHandler(beerService service.BeerService, breweryService service.BreweryService, logger *slog.Logger) *BeerHandler {
+func NewBeerHandler(
+	beerService service.BeerService,
+	breweryService service.BreweryService,
+	externalFinder finder.Finder,
+	logger *slog.Logger,
+) *BeerHandler {
 	return &BeerHandler{
 		beerService:    beerService,
 		breweryService: breweryService,
+		finder:         externalFinder,
 		logger:         logger,
 	}
 }
@@ -80,6 +88,11 @@ func (h *BeerHandler) HandleBeerPage(reqResp *web.ReqRespPair) error {
 
 	page := layout.Page{Title: fmt.Sprintf("Edit Beer - %s", beer.Brand)}
 
+	untappdURL, untappdErr := h.finder.FindBeerURL(reqResp.Request.Context(), beer.Brand, beer.GetType())
+	if untappdErr != nil {
+		h.logger.Warn("find beer on Untappd", slog.Int("beer_id", beer.ID), slog.Any("error", untappdErr))
+	}
+
 	var breweryMatches []recognition.BreweryMatch
 	if beer.BreweryID == nil && beer.RecognitionData != nil {
 		breweryMatches = recognition.MatchBreweries(
@@ -105,6 +118,7 @@ func (h *BeerHandler) HandleBeerPage(reqResp *web.ReqRespPair) error {
 			Brewery:         beer.Brewery,
 			RecognitionData: beer.RecognitionData,
 			BreweryMatches:  breweryMatches,
+			UntappdURL:      untappdURL,
 		},
 	}
 
@@ -144,12 +158,13 @@ func (h *BeerHandler) SubmitBeerPage(reqResp *web.ReqRespPair) error {
 	}
 	isActive := reqResp.Request.FormValue("isActive") == "true"
 	formParams := beerpage.BeerFormParams{
-		ID:        id,
-		Brand:     strings.TrimSpace(reqResp.Request.FormValue("brand")),
-		Type:      beerType,
-		BreweryID: breweryID,
-		StyleID:   styleID,
-		IsActive:  isActive,
+		ID:         id,
+		Brand:      strings.TrimSpace(reqResp.Request.FormValue("brand")),
+		Type:       beerType,
+		BreweryID:  breweryID,
+		StyleID:    styleID,
+		IsActive:   isActive,
+		UntappdURL: strings.TrimSpace(reqResp.Request.FormValue("untappdUrl")),
 	}
 
 	breweries, breweriesErr := h.breweryService.ListBreweries(reqResp.Request.Context())

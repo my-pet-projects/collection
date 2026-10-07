@@ -1,6 +1,9 @@
 package brewery
 
 import (
+	"net/url"
+	"strings"
+
 	"github.com/my-pet-projects/collection/internal/model"
 	"github.com/my-pet-projects/collection/internal/view/layout"
 )
@@ -30,10 +33,12 @@ type PageParams struct {
 }
 
 type BreweryFormParams struct {
-	Id          int
-	Name        string
-	CountryCode string
-	CityId      int
+	Id                 int
+	Name               string
+	CountryCode        string
+	CityId             int
+	UntappdURL         string
+	ResolvedUntappdURL string
 }
 
 func (p BreweryFormParams) Validate() (BreweryFormErrors, bool) {
@@ -51,6 +56,10 @@ func (p BreweryFormParams) Validate() (BreweryFormErrors, bool) {
 		errs.City = "City is required"
 		hasErrs = true
 	}
+	if p.UntappdURL != "" && !isUntappdURL(p.UntappdURL) {
+		errs.UntappdURL = "Enter a valid untappd.com URL"
+		hasErrs = true
+	}
 	return errs, hasErrs
 }
 
@@ -59,7 +68,17 @@ func (p BreweryFormParams) IsNew() bool {
 }
 
 type BreweryFormErrors struct {
-	Name    string
-	Country string
-	City    string
+	Name       string
+	Country    string
+	City       string
+	UntappdURL string
+}
+
+func isUntappdURL(value string) bool {
+	parsed, parseErr := url.ParseRequestURI(strings.TrimSpace(value))
+	if parseErr != nil || parsed.Scheme != "https" {
+		return false
+	}
+	return strings.EqualFold(parsed.Hostname(), "untappd.com") ||
+		strings.EqualFold(parsed.Hostname(), "www.untappd.com")
 }
