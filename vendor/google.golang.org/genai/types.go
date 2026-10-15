@@ -152,6 +152,28 @@ const (
 	APISpecElasticSearch APISpec = "ELASTIC_SEARCH"
 )
 
+// SafetyPolicy
+type SafetyPolicy string
+
+const (
+	// Unspecified safety policy. This value should not be used.
+	SafetyPolicyUnspecified SafetyPolicy = "SAFETY_POLICY_UNSPECIFIED"
+	// Financial transactions safety policy.
+	SafetyPolicyFinancialTransactions SafetyPolicy = "FINANCIAL_TRANSACTIONS"
+	// Sensitive data modification safety policy.
+	SafetyPolicySensitiveDataModification SafetyPolicy = "SENSITIVE_DATA_MODIFICATION"
+	// Communication tool safety policy.
+	SafetyPolicyCommunicationTool SafetyPolicy = "COMMUNICATION_TOOL"
+	// Account creation safety policy.
+	SafetyPolicyAccountCreation SafetyPolicy = "ACCOUNT_CREATION"
+	// Data modification safety policy.
+	SafetyPolicyDataModification SafetyPolicy = "DATA_MODIFICATION"
+	// User consent management safety policy.
+	SafetyPolicyUserConsentManagement SafetyPolicy = "USER_CONSENT_MANAGEMENT"
+	// Legal terms and agreements safety policy.
+	SafetyPolicyLegalTermsAndAgreements SafetyPolicy = "LEGAL_TERMS_AND_AGREEMENTS"
+)
+
 // The environment being operated.
 type Environment string
 
@@ -164,28 +186,6 @@ const (
 	EnvironmentMobile Environment = "ENVIRONMENT_MOBILE"
 	// Operates in a desktop environment.
 	EnvironmentDesktop Environment = "ENVIRONMENT_DESKTOP"
-)
-
-// SafetyPolicy
-type SafetyPolicy string
-
-const (
-	// Unspecified safety policy.
-	SafetyPolicyUnspecified SafetyPolicy = "SAFETY_POLICY_UNSPECIFIED"
-	// Safety policy for financial transactions.
-	SafetyPolicyFinancialTransactions SafetyPolicy = "FINANCIAL_TRANSACTIONS"
-	// Safety policy for sensitive data modification.
-	SafetyPolicySensitiveDataModification SafetyPolicy = "SENSITIVE_DATA_MODIFICATION"
-	// Safety policy for communication tools (e.g. Gmail, Chat, Meet).
-	SafetyPolicyCommunicationTool SafetyPolicy = "COMMUNICATION_TOOL"
-	// Safety policy for account creation.
-	SafetyPolicyAccountCreation SafetyPolicy = "ACCOUNT_CREATION"
-	// Safety policy for data modification.
-	SafetyPolicyDataModification SafetyPolicy = "DATA_MODIFICATION"
-	// Safety policy for user consent management.
-	SafetyPolicyUserConsentManagement SafetyPolicy = "USER_CONSENT_MANAGEMENT"
-	// Safety policy for legal terms and agreements.
-	SafetyPolicyLegalTermsAndAgreements SafetyPolicy = "LEGAL_TERMS_AND_AGREEMENTS"
 )
 
 // Sites with confidence level chosen & above this value will be blocked from the search
@@ -1623,6 +1623,57 @@ type Transcription struct {
 	SpeakerLabel string `json:"speakerLabel,omitempty"`
 	// Optional. Detailed word-level transcriptions and timing details.
 	Words []*WordInfo `json:"words,omitempty"`
+	// Optional. Start offset in time of the transcription relative to the start of the
+	// audio.
+	StartOffset time.Duration `json:"startOffset,omitempty"`
+	// Optional. End offset in time of the transcription relative to the start of the audio.
+	EndOffset time.Duration `json:"endOffset,omitempty"`
+}
+
+func (t *Transcription) UnmarshalJSON(data []byte) error {
+	type Alias Transcription
+	aux := &struct {
+		StartOffset *InternalDurationJSON `json:"startOffset,omitempty"`
+		EndOffset   *InternalDurationJSON `json:"endOffset,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(t),
+	}
+
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	if !reflect.ValueOf(aux.StartOffset).IsZero() {
+		t.StartOffset = time.Duration(*aux.StartOffset)
+	}
+
+	if !reflect.ValueOf(aux.EndOffset).IsZero() {
+		t.EndOffset = time.Duration(*aux.EndOffset)
+	}
+
+	return nil
+}
+
+func (t *Transcription) MarshalJSON() ([]byte, error) {
+	type Alias Transcription
+	aux := &struct {
+		StartOffset *InternalDurationJSON `json:"startOffset,omitempty"`
+		EndOffset   *InternalDurationJSON `json:"endOffset,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(t),
+	}
+
+	if !reflect.ValueOf(t.StartOffset).IsZero() {
+		aux.StartOffset = (*InternalDurationJSON)(&t.StartOffset)
+	}
+
+	if !reflect.ValueOf(t.EndOffset).IsZero() {
+		aux.EndOffset = (*InternalDurationJSON)(&t.EndOffset)
+	}
+
+	return json.Marshal(aux)
 }
 
 // A datatype containing media content.
@@ -2337,8 +2388,7 @@ type ComputerUse struct {
 	ExcludedPredefinedFunctions []string `json:"excludedPredefinedFunctions,omitempty"`
 	// Optional. Enables the prompt injection detection check on computer-use request.
 	EnablePromptInjectionDetection *bool `json:"enablePromptInjectionDetection,omitempty"`
-	// Optional. Disabled safety policies for computer use. This field is not supported
-	// in Vertex AI.
+	// Optional. Disabled safety policies for computer use.
 	DisabledSafetyPolicies []SafetyPolicy `json:"disabledSafetyPolicies,omitempty"`
 }
 
@@ -3074,6 +3124,11 @@ type GenerateContentConfig struct {
 	// previous response that stopped with `finish_reason` set to
 	// `CONTINUATION`.
 	ContinuationToken []byte `json:"continuationToken,omitempty"`
+	// Optional. Defaults to true. When a response ends with finish reason
+	// `CONTINUATION`, the SDK sends the same request again with the response's
+	// continuation token until the model finishes. Timeouts, retries and
+	// billing apply to each request. Set to false to turn this off.
+	AutomaticContinuation *bool `json:"automaticContinuation,omitempty"`
 }
 
 func (c GenerateContentConfig) ToGenerationConfig(backend Backend) (*GenerationConfig, error) {
@@ -3919,6 +3974,24 @@ func (r *GenerateContentResponse) CodeExecutionResult() string {
 	}
 
 	return ""
+}
+
+// InitialPromptTokenCount returns the prompt token count from the initial request
+// prior to any continuation hops.
+func (r *GenerateContentResponse) InitialPromptTokenCount() int32 {
+	if r == nil || r.UsageMetadata == nil {
+		return 0
+	}
+	return r.UsageMetadata.InitialPromptTokenCount()
+}
+
+// InitialPromptTokenCount returns the prompt token count from the initial request
+// prior to any continuation hops.
+func (u *GenerateContentResponseUsageMetadata) InitialPromptTokenCount() int32 {
+	if u == nil {
+		return 0
+	}
+	return getInitialPromptTokenCount(u)
 }
 
 // Optional parameters for the EmbedContent method.
@@ -6250,7 +6323,7 @@ type TuningJob struct {
 	VeoLoraTuningSpec *VeoLoraTuningSpec `json:"veoLoraTuningSpec,omitempty"`
 
 	DistillationSamplingSpec *DistillationSamplingSpec `json:"distillationSamplingSpec,omitempty"`
-	// The Cloud Storage metrics URI associated with this tuning job.
+	// Output only. The Cloud Storage metrics URI associated with this TuningJob.
 	GCSMetricsURI string `json:"gcsMetricsUri,omitempty"`
 }
 
@@ -8281,6 +8354,8 @@ type RealtimeInputConfig struct {
 	ActivityHandling ActivityHandling `json:"activityHandling,omitempty"`
 	// Optional. Defines which input is included in the user's turn.
 	TurnCoverage TurnCoverage `json:"turnCoverage,omitempty"`
+	// Optional. If true, enables interim transcript timestamps.
+	InterimTranscriptTimestampEnabled *bool `json:"interimTranscriptTimestampEnabled,omitempty"`
 }
 
 // Configuration of session resumption mechanism.

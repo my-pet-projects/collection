@@ -98,6 +98,7 @@ func (s *Webhooks) List(ctx context.Context, request operations.ListWebhooksRequ
 		defer cancel()
 	}
 
+	ctx = utils.WithOperation(ctx, "ListWebhooks")
 	req, err := http.NewRequestWithContext(ctx, "GET", opURL, nil)
 	if err != nil {
 		return nil, fmt.Errorf("error creating request: %w", err)
@@ -319,6 +320,7 @@ func (s *Webhooks) Create(ctx context.Context, request operations.CreateWebhookR
 		defer cancel()
 	}
 
+	ctx = utils.WithOperation(ctx, "CreateWebhook")
 	req, err := http.NewRequestWithContext(ctx, "POST", opURL, bodyReader)
 	if err != nil {
 		return nil, fmt.Errorf("error creating request: %w", err)
@@ -748,6 +750,7 @@ func (s *Webhooks) Get(ctx context.Context, request operations.GetWebhookRequest
 		defer cancel()
 	}
 
+	ctx = utils.WithOperation(ctx, "GetWebhook")
 	req, err := http.NewRequestWithContext(ctx, "GET", opURL, nil)
 	if err != nil {
 		return nil, fmt.Errorf("error creating request: %w", err)
@@ -949,7 +952,7 @@ func (s *Webhooks) Update(ctx context.Context, request operations.UpdateWebhookR
 		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
-	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, true, "Body", "json", `request:"mediaType=application/json"`)
+	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "Body", "json", `request:"mediaType=application/json"`)
 	if err != nil {
 		return nil, err
 	}
@@ -965,6 +968,7 @@ func (s *Webhooks) Update(ctx context.Context, request operations.UpdateWebhookR
 		defer cancel()
 	}
 
+	ctx = utils.WithOperation(ctx, "UpdateWebhook")
 	req, err := http.NewRequestWithContext(ctx, "PATCH", opURL, bodyReader)
 	if err != nil {
 		return nil, fmt.Errorf("error creating request: %w", err)
@@ -1393,7 +1397,7 @@ func (s *Webhooks) RotateSigningSecret(ctx context.Context, request operations.R
 		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
-	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, true, "Body", "json", `request:"mediaType=application/json"`)
+	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "Body", "json", `request:"mediaType=application/json"`)
 	if err != nil {
 		return nil, err
 	}
@@ -1409,6 +1413,7 @@ func (s *Webhooks) RotateSigningSecret(ctx context.Context, request operations.R
 		defer cancel()
 	}
 
+	ctx = utils.WithOperation(ctx, "RotateSigningSecret")
 	req, err := http.NewRequestWithContext(ctx, "POST", opURL, bodyReader)
 	if err != nil {
 		return nil, fmt.Errorf("error creating request: %w", err)
