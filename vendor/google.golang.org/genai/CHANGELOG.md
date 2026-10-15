@@ -1,5 +1,58 @@
 # Changelog
 
+## [1.75.0](https://github.com/googleapis/go-genai/compare/v1.74.0...v1.75.0) (2026-10-14)
+
+
+### Features
+
+* **interactions:** add gemini-4-argon to Model enum ([f8f7050](https://github.com/googleapis/go-genai/commit/f8f7050219c05206b0a7d0aab4b72e9e19c109a1))
+
+
+### Bug Fixes
+
+* clear continuation state and preserve prompt feedback when continuation hop returns no candidates ([f0c1430](https://github.com/googleapis/go-genai/commit/f0c1430ab13067edfbc1a56f0a8588b185c363bc))
+* fix the grounding metadata merging for automatic continuation in generate content and generate content stream ([19689a2](https://github.com/googleapis/go-genai/commit/19689a2f60df26f143a985fb1c6af52a619eb3df))
+* make continuation streams retry dropped hops, stop on prompt_feedback, and keep real errors in generate_content ([0828ad4](https://github.com/googleapis/go-genai/commit/0828ad45c7ac1dc27f0df9e55085ac4c2c39c748))
+
+## [1.74.0](https://github.com/googleapis/go-genai/compare/v1.73.0...v1.74.0) (2026-10-13)
+
+
+### Features
+
+* accumulate streaming continuation usage metadata and expose InitialPromptTokenCount ([67c96f3](https://github.com/googleapis/go-genai/commit/67c96f328b8bd89a25f85cfecad6b927307fe0dc))
+* Add `continuation_token` to the Interactions `interaction.status_update` event. ([397c14f](https://github.com/googleapis/go-genai/commit/397c14f0c3613f0d41a4da53548b57c3a5bbdf5f))
+* Add a CONTINUATION_REQUIRED Interaction status ([125cd3e](https://github.com/googleapis/go-genai/commit/125cd3efb20140dddcf6284ae06c237af696b742))
+* add billable token counts fields ([43c5132](https://github.com/googleapis/go-genai/commit/43c513202463ea63cdfe687daeee6cf7d2aa891a))
+* Add startOffset/endOffset to Transcription and interimTranscriptTimestampEnabled to RealtimeInputConfig ([3db3beb](https://github.com/googleapis/go-genai/commit/3db3beb49453f6944af5970c6983beb2defa14c0))
+* Add usage in InteractionStatusUpdate events ([ba9bb94](https://github.com/googleapis/go-genai/commit/ba9bb94e383a0c05ddf657441cb785749d974447))
+* **cli:** update Speakeasy generator to v2.948.0, bump CLI to v0.4.2, and apply CLI overlay fixes ([f660ee9](https://github.com/googleapis/go-genai/commit/f660ee9fc22393ab1192eb6ad7a2f9bda2f47322))
+* Support automatic continuation (long decoding) ([1f7179b](https://github.com/googleapis/go-genai/commit/1f7179b48142fffa8bc0fa6aa1a632633688b16a))
+
+
+### Bug Fixes
+
+* clear intermediate CONTINUATION FinishReason in streaming continuation ([2c08efa](https://github.com/googleapis/go-genai/commit/2c08efadeae762fa7b47151d685fcf131f56ace2))
+* **genai:** deduplicate Flash and Omni descriptions in ModelOption ([1957e9c](https://github.com/googleapis/go-genai/commit/1957e9c4684682ebd330d5a50ba73bd669eeffb7))
+* Raise default HTTP timeouts so long-running requests aren't killed client-side ([2e7f4aa](https://github.com/googleapis/go-genai/commit/2e7f4aac28828ce1979922365a9374dbc2c5a12b))
+* resume streaming generation from the latest checkpoint continuation token on mid-stream errors or cutoffs ([3e51164](https://github.com/googleapis/go-genai/commit/3e51164726dc40c482c6862c36ea64676bcb120e))
+* Update EnvironmentConfig.env schema to map keys to EnvVar or string. ([b84d964](https://github.com/googleapis/go-genai/commit/b84d9642bc7cfe357c66df891133068341db4f40))
+
+## [1.73.0](https://github.com/googleapis/go-genai/compare/v1.72.0...v1.73.0) (2026-10-07)
+
+
+### Features
+
+* add `lyria-3.5`, `gemini-omni-1.1-flash`, and `gemini-omni-flash-preview` to Interactions `Model` enum ([0a17bc3](https://github.com/googleapis/go-genai/commit/0a17bc3e070ec7e26c5677072162486578fb418c))
+* **go:** expose Voices service on genai.Client and add Voices examples ([770093f](https://github.com/googleapis/go-genai/commit/770093f72c1a01f00237cb5695d728110c19b8c1))
+* Support `"allowlist": "disabled"` in environment network config. ([3a7595e](https://github.com/googleapis/go-genai/commit/3a7595eccddf2530209ac9eb044802c71c246eb0))
+* support continuation_token in Interactions ([5fed937](https://github.com/googleapis/go-genai/commit/5fed9374ce1a519114650287bd99dd46f1689cd2))
+* update discovery doc ([aeef05c](https://github.com/googleapis/go-genai/commit/aeef05c7b2a0c12a01051ff4e3ec005b85e57faa))
+
+
+### Bug Fixes
+
+* **gemini-api-cli:** remove unsupported 2.5 and 1.6 models from Interactions model options and CLI examples ([b1c58b2](https://github.com/googleapis/go-genai/commit/b1c58b217d7b555fcdc685eb0ec5e3b2b236384a))
+
 ## [1.72.0](https://github.com/googleapis/go-genai/compare/v1.71.0...v1.72.0) (2026-10-01)
 
 
