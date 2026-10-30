@@ -333,6 +333,9 @@ func (u *CreateAgentInteractionResponseFormat) UnmarshalJSON(data []byte) error 
 	}
 
 	if len(candidates) == 0 {
+		if !json.Valid(data) {
+			return fmt.Errorf("could not unmarshal `%s` into any supported union types for CreateAgentInteractionResponseFormat", string(data))
+		}
 		u.UnknownRaw = json.RawMessage(data)
 		u.Type = CreateAgentInteractionResponseFormatTypeUnknown
 		return nil
@@ -357,6 +360,9 @@ func (u *CreateAgentInteractionResponseFormat) UnmarshalJSON(data []byte) error 
 		return nil
 	}
 
+	if !json.Valid(data) {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for CreateAgentInteractionResponseFormat", string(data))
+	}
 	u.UnknownRaw = json.RawMessage(data)
 	u.Type = CreateAgentInteractionResponseFormatTypeUnknown
 	return nil
@@ -385,6 +391,10 @@ type CreateAgentInteraction struct {
 	AgentConfig *CreateAgentInteractionAgentConfig `json:"agent_config,omitzero"`
 	// Input only. Whether to run the model interaction in the background.
 	Background *bool `json:"background,omitzero"`
+	// Opaque token to resume a long decode. Output: set when status is
+	// REQUIRES_CONTINUATION and decoding can be resumed. Input: pass the latest
+	// token back unchanged in CreateInteraction to continue decoding.
+	ContinuationToken *string `json:"continuation_token,omitzero"`
 	// The environment configuration for the interaction. Can be an object
 	// specifying remote environment sources or a string referencing an existing
 	// environment ID.
@@ -484,6 +494,13 @@ func (c *CreateAgentInteraction) GetBackground() *bool {
 		return nil
 	}
 	return c.Background
+}
+
+func (c *CreateAgentInteraction) GetContinuationToken() *string {
+	if c == nil {
+		return nil
+	}
+	return c.ContinuationToken
 }
 
 func (c *CreateAgentInteraction) GetEnvironment() *CreateAgentInteractionEnvironment {

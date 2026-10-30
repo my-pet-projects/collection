@@ -34,18 +34,16 @@ const (
 func (e EnvironmentNetworkEnum) ToPointer() *EnvironmentNetworkEnum {
 	return &e
 }
-func (e *EnvironmentNetworkEnum) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *EnvironmentNetworkEnum) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "disabled":
+			return true
+		}
 	}
-	switch v {
-	case "disabled":
-		*e = EnvironmentNetworkEnum(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for EnvironmentNetworkEnum: %v", v)
-	}
+	return false
 }
 
 type EnvironmentNetworkUnionType string
@@ -122,6 +120,9 @@ func (u *EnvironmentNetworkUnion) UnmarshalJSON(data []byte) error {
 	}
 
 	if len(candidates) == 0 {
+		if !json.Valid(data) {
+			return fmt.Errorf("could not unmarshal `%s` into any supported union types for EnvironmentNetworkUnion", string(data))
+		}
 		u.UnknownRaw = json.RawMessage(data)
 		u.Type = EnvironmentNetworkUnionTypeUnknown
 		return nil
@@ -146,6 +147,9 @@ func (u *EnvironmentNetworkUnion) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 
+	if !json.Valid(data) {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for EnvironmentNetworkUnion", string(data))
+	}
 	u.UnknownRaw = json.RawMessage(data)
 	u.Type = EnvironmentNetworkUnionTypeUnknown
 	return nil
