@@ -108,6 +108,10 @@ func (u *InteractionAgentConfig) UnmarshalJSON(data []byte) (err error) {
 
 	dis := new(discriminator)
 	if err := json.Unmarshal(data, &dis); err != nil {
+		var syntaxErr *json.SyntaxError
+		if errors.As(err, &syntaxErr) {
+			return fmt.Errorf("could not unmarshal discriminator: %w", err)
+		}
 		u.UnknownRaw = json.RawMessage(data)
 		u.Type = InteractionAgentConfigTypeUnknown
 		return nil
@@ -262,6 +266,9 @@ func (u *InteractionEnvironment) UnmarshalJSON(data []byte) error {
 	}
 
 	if len(candidates) == 0 {
+		if !json.Valid(data) {
+			return fmt.Errorf("could not unmarshal `%s` into any supported union types for InteractionEnvironment", string(data))
+		}
 		u.UnknownRaw = json.RawMessage(data)
 		u.Type = InteractionEnvironmentTypeUnknown
 		return nil
@@ -286,6 +293,9 @@ func (u *InteractionEnvironment) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 
+	if !json.Valid(data) {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for InteractionEnvironment", string(data))
+	}
 	u.UnknownRaw = json.RawMessage(data)
 	u.Type = InteractionEnvironmentTypeUnknown
 	return nil
@@ -381,6 +391,9 @@ func (u *InteractionResponseFormat) UnmarshalJSON(data []byte) error {
 	}
 
 	if len(candidates) == 0 {
+		if !json.Valid(data) {
+			return fmt.Errorf("could not unmarshal `%s` into any supported union types for InteractionResponseFormat", string(data))
+		}
 		u.UnknownRaw = json.RawMessage(data)
 		u.Type = InteractionResponseFormatTypeUnknown
 		return nil
@@ -405,6 +418,9 @@ func (u *InteractionResponseFormat) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 
+	if !json.Valid(data) {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for InteractionResponseFormat", string(data))
+	}
 	u.UnknownRaw = json.RawMessage(data)
 	u.Type = InteractionResponseFormatTypeUnknown
 	return nil
@@ -429,14 +445,15 @@ func (u InteractionResponseFormat) MarshalJSON() ([]byte, error) {
 type InteractionStatus string
 
 const (
-	InteractionStatusInProgress     InteractionStatus = "in_progress"
-	InteractionStatusRequiresAction InteractionStatus = "requires_action"
-	InteractionStatusCompleted      InteractionStatus = "completed"
-	InteractionStatusFailed         InteractionStatus = "failed"
-	InteractionStatusCancelled      InteractionStatus = "cancelled"
-	InteractionStatusIncomplete     InteractionStatus = "incomplete"
-	InteractionStatusBudgetExceeded InteractionStatus = "budget_exceeded"
-	InteractionStatusQueued         InteractionStatus = "queued"
+	InteractionStatusInProgress           InteractionStatus = "in_progress"
+	InteractionStatusRequiresAction       InteractionStatus = "requires_action"
+	InteractionStatusCompleted            InteractionStatus = "completed"
+	InteractionStatusFailed               InteractionStatus = "failed"
+	InteractionStatusCancelled            InteractionStatus = "cancelled"
+	InteractionStatusIncomplete           InteractionStatus = "incomplete"
+	InteractionStatusBudgetExceeded       InteractionStatus = "budget_exceeded"
+	InteractionStatusQueued               InteractionStatus = "queued"
+	InteractionStatusRequiresContinuation InteractionStatus = "requires_continuation"
 )
 
 func (e InteractionStatus) ToPointer() *InteractionStatus {
@@ -447,7 +464,7 @@ func (e InteractionStatus) ToPointer() *InteractionStatus {
 func (e *InteractionStatus) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "in_progress", "requires_action", "completed", "failed", "cancelled", "incomplete", "budget_exceeded", "queued":
+		case "in_progress", "requires_action", "completed", "failed", "cancelled", "incomplete", "budget_exceeded", "queued", "requires_continuation":
 			return true
 		}
 	}
@@ -464,6 +481,14 @@ type Interaction struct {
 	//
 	// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 	CachedContent *string `json:"cached_content,omitzero"`
+	// The IDs of all server interactions merged into this response when automatic continuation is enabled, in order (ending with the final hop's ID).
+	//
+	// Note: this is added by the SDK.
+	ContinuationIds []string `json:"continuation_ids,omitzero"`
+	// Opaque token to resume a long decode. Output: set when status is
+	// REQUIRES_CONTINUATION and decoding can be resumed. Input: pass the latest
+	// token back unchanged in CreateInteraction to continue decoding.
+	ContinuationToken *string `json:"continuation_token,omitzero"`
 	// Required. Output only. The time at which the response was created in ISO 8601 format
 	// (YYYY-MM-DDThh:mm:ssZ).
 	Created *string `json:"created,omitzero"`
@@ -542,6 +567,7 @@ func (i *Interaction) UnmarshalJSON(data []byte) error {
 	if err := utils.UnmarshalJSON(data, &i, "", false, nil); err != nil {
 		return err
 	}
+	i.populateOutputProperties()
 	return nil
 }
 
@@ -592,6 +618,20 @@ func (i *Interaction) GetCachedContent() *string {
 		return nil
 	}
 	return i.CachedContent
+}
+
+func (i *Interaction) GetContinuationIds() []string {
+	if i == nil {
+		return nil
+	}
+	return i.ContinuationIds
+}
+
+func (i *Interaction) GetContinuationToken() *string {
+	if i == nil {
+		return nil
+	}
+	return i.ContinuationToken
 }
 
 func (i *Interaction) GetCreated() *string {

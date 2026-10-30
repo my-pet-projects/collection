@@ -39,7 +39,7 @@ type PingWebhookRequest struct {
 	APIVersion *string `pathParam:"style=simple,explode=false,name=api_version"`
 	// Required. The ID of the webhook to ping.
 	ID string `pathParam:"style=simple,explode=false,name=id"`
-	// Required. The request body.
+	// The request body.
 	Body *webhooks.PingWebhookRequest `request:"mediaType=application/json"`
 }
 

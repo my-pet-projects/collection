@@ -185,31 +185,6 @@ func computeTokensResponseFromVertex(fromObject map[string]any, parentObject map
 	return toObject, nil
 }
 
-func computerUseToVertex(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
-	toObject = make(map[string]any)
-
-	fromEnvironment := InternalGetValueByPath(fromObject, []string{"environment"})
-	if fromEnvironment != nil {
-		InternalSetValueByPath(toObject, []string{"environment"}, fromEnvironment)
-	}
-
-	fromExcludedPredefinedFunctions := InternalGetValueByPath(fromObject, []string{"excludedPredefinedFunctions"})
-	if fromExcludedPredefinedFunctions != nil {
-		InternalSetValueByPath(toObject, []string{"excludedPredefinedFunctions"}, fromExcludedPredefinedFunctions)
-	}
-
-	fromEnablePromptInjectionDetection := InternalGetValueByPath(fromObject, []string{"enablePromptInjectionDetection"})
-	if fromEnablePromptInjectionDetection != nil {
-		InternalSetValueByPath(toObject, []string{"enablePromptInjectionDetection"}, fromEnablePromptInjectionDetection)
-	}
-
-	if InternalGetValueByPath(fromObject, []string{"disabledSafetyPolicies"}) != nil {
-		return nil, fmt.Errorf("disabledSafetyPolicies parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.")
-	}
-
-	return toObject, nil
-}
-
 func contentEmbeddingFromVertex(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -1074,6 +1049,65 @@ func functionCallingConfigToMldev(fromObject map[string]any, parentObject map[st
 	return toObject, nil
 }
 
+func functionResponsePartToVertex(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromInlineData := InternalGetValueByPath(fromObject, []string{"inlineData"})
+	if fromInlineData != nil {
+		InternalSetValueByPath(toObject, []string{"inlineData"}, fromInlineData)
+	}
+
+	fromFileData := InternalGetValueByPath(fromObject, []string{"fileData"})
+	if fromFileData != nil {
+		InternalSetValueByPath(toObject, []string{"fileData"}, fromFileData)
+	}
+
+	if InternalGetValueByPath(fromObject, []string{"mediaProcessing"}) != nil {
+		return nil, fmt.Errorf("mediaProcessing parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.")
+	}
+
+	return toObject, nil
+}
+
+func functionResponseToVertex(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+	if InternalGetValueByPath(fromObject, []string{"willContinue"}) != nil {
+		return nil, fmt.Errorf("willContinue parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.")
+	}
+
+	fromScheduling := InternalGetValueByPath(fromObject, []string{"scheduling"})
+	if fromScheduling != nil {
+		InternalSetValueByPath(toObject, []string{"scheduling"}, fromScheduling)
+	}
+
+	fromParts := InternalGetValueByPath(fromObject, []string{"parts"})
+	if fromParts != nil {
+		fromParts, err = InternalApplyConverterToSliceWithRoot(fromParts.([]any), functionResponsePartToVertex, rootObject)
+		if err != nil {
+			return nil, err
+		}
+
+		InternalSetValueByPath(toObject, []string{"parts"}, fromParts)
+	}
+
+	fromId := InternalGetValueByPath(fromObject, []string{"id"})
+	if fromId != nil {
+		InternalSetValueByPath(toObject, []string{"id"}, fromId)
+	}
+
+	fromName := InternalGetValueByPath(fromObject, []string{"name"})
+	if fromName != nil {
+		InternalSetValueByPath(toObject, []string{"name"}, fromName)
+	}
+
+	fromResponse := InternalGetValueByPath(fromObject, []string{"response"})
+	if fromResponse != nil {
+		InternalSetValueByPath(toObject, []string{"response"}, fromResponse)
+	}
+
+	return toObject, nil
+}
+
 func generateContentConfigToMldev(ac *InternalAPIClient, fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -1296,6 +1330,15 @@ func generateContentConfigToMldev(ac *InternalAPIClient, fromObject map[string]a
 	fromContinuationToken := InternalGetValueByPath(fromObject, []string{"continuationToken"})
 	if fromContinuationToken != nil {
 		InternalSetValueByPath(parentObject, []string{"continuationToken"}, fromContinuationToken)
+	}
+
+	if InternalGetValueByPath(fromObject, []string{"generationOutputConfig"}) != nil {
+		return nil, fmt.Errorf("generationOutputConfig parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
+	}
+
+	fromStore := InternalGetValueByPath(fromObject, []string{"store"})
+	if fromStore != nil {
+		InternalSetValueByPath(parentObject, []string{"store"}, fromStore)
 	}
 
 	return toObject, nil
@@ -1526,6 +1569,15 @@ func generateContentConfigToVertex(ac *InternalAPIClient, fromObject map[string]
 	fromContinuationToken := InternalGetValueByPath(fromObject, []string{"continuationToken"})
 	if fromContinuationToken != nil {
 		InternalSetValueByPath(parentObject, []string{"continuationToken"}, fromContinuationToken)
+	}
+
+	fromGenerationOutputConfig := InternalGetValueByPath(fromObject, []string{"generationOutputConfig"})
+	if fromGenerationOutputConfig != nil {
+		InternalSetValueByPath(parentObject, []string{"outputConfig"}, fromGenerationOutputConfig)
+	}
+
+	if InternalGetValueByPath(fromObject, []string{"store"}) != nil {
+		return nil, fmt.Errorf("store parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.")
 	}
 
 	return toObject, nil
@@ -3296,6 +3348,11 @@ func partToVertex(fromObject map[string]any, parentObject map[string]any, rootOb
 
 	fromFunctionResponse := InternalGetValueByPath(fromObject, []string{"functionResponse"})
 	if fromFunctionResponse != nil {
+		fromFunctionResponse, err = functionResponseToVertex(fromFunctionResponse.(map[string]any), toObject, rootObject)
+		if err != nil {
+			return nil, err
+		}
+
 		InternalSetValueByPath(toObject, []string{"functionResponse"}, fromFunctionResponse)
 	}
 
@@ -3946,11 +4003,6 @@ func toolToVertex(fromObject map[string]any, parentObject map[string]any, rootOb
 
 	fromComputerUse := InternalGetValueByPath(fromObject, []string{"computerUse"})
 	if fromComputerUse != nil {
-		fromComputerUse, err = computerUseToVertex(fromComputerUse.(map[string]any), toObject, rootObject)
-		if err != nil {
-			return nil, err
-		}
-
 		InternalSetValueByPath(toObject, []string{"computerUse"}, fromComputerUse)
 	}
 
@@ -5585,19 +5637,87 @@ var breakingChangeWarningGenerateVideosNotSource sync.Once
 var deprecationWarningGenerateVideosFromSource sync.Once
 
 // GenerateContent generates content based on the provided model, contents, and configuration.
+//
+// A response that stops before the model finishes is continued automatically: the same request is
+// sent again with the response's continuation token until the model finishes. The responses are
+// returned merged into one, with their parts concatenated and their usage metadata summed. Each
+// request is billed, including any that succeeded before a later one failed. Set
+// [GenerateContentConfig.AutomaticContinuation] to false to turn this off.
 func (m Models) GenerateContent(ctx context.Context, model string, contents []*Content, config *GenerateContentConfig) (*GenerateContentResponse, error) {
 	if config != nil {
 		config.setDefaults()
 	}
-	return m.generateContent(ctx, model, contents, config)
+	enableContinuation := shouldEnableAutomaticContinuation(config)
+	response, err := m.generateContent(ctx, model, contents, config)
+	if err != nil {
+		return nil, err
+	}
+	if !enableContinuation {
+		return response, nil
+	}
+
+	hopResponses := []*GenerateContentResponse{response}
+	for {
+		nextToken := shouldContinueGeneration(response)
+		if len(nextToken) == 0 {
+			break
+		}
+
+		callConfig := prepareContinuationConfig(config, nextToken)
+		response, err = m.generateContent(ctx, model, contents, callConfig)
+		if err != nil {
+			return nil, err
+		}
+		hopResponses = append(hopResponses, response)
+	}
+
+	if len(hopResponses) > 1 {
+		return mergeContinuationResponses(hopResponses)
+	}
+
+	return response, nil
 }
 
 // GenerateContentStream generates a stream of content based on the provided model, contents, and configuration.
+//
+// A response that stops before the model finishes is continued automatically: the same request is
+// sent again with the response's continuation token until the model finishes, and the chunks of
+// every request are emitted in order. The usage metadata in a chunk is accumulated across
+// continuation requests. Each request is billed, including any that succeeded before a later one
+// failed. Set [GenerateContentConfig.AutomaticContinuation] to false to turn this off.
 func (m Models) GenerateContentStream(ctx context.Context, model string, contents []*Content, config *GenerateContentConfig) iter.Seq2[*GenerateContentResponse, error] {
 	if config != nil {
 		config.setDefaults()
 	}
-	return m.generateContentStream(ctx, model, contents, config)
+	enableContinuation := shouldEnableAutomaticContinuation(config)
+
+	return func(yield func(*GenerateContentResponse, error) bool) {
+		state := newStreamContinuation(config, enableContinuation)
+		for {
+			callConfig := state.startHop()
+			var hopErr error
+			for chunk, err := range m.generateContentStream(ctx, model, contents, callConfig) {
+				if err != nil {
+					hopErr = err
+					break
+				}
+				if !yield(state.observe(chunk), nil) {
+					return
+				}
+			}
+
+			resume, err := state.endHop(ctx, hopErr)
+			if resume {
+				continue
+			}
+			if err != nil {
+				yield(nil, err)
+			}
+			// Otherwise the API returned no error, so end the stream normally; the
+			// caller keeps every chunk already yielded.
+			return
+		}
+	}
 }
 
 // List retrieves a paginated list of models resources.

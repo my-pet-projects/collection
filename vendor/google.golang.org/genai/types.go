@@ -152,40 +152,40 @@ const (
 	APISpecElasticSearch APISpec = "ELASTIC_SEARCH"
 )
 
-// The environment being operated.
-type Environment string
-
-const (
-	// Defaults to browser.
-	EnvironmentUnspecified Environment = "ENVIRONMENT_UNSPECIFIED"
-	// Operates in a web browser.
-	EnvironmentBrowser Environment = "ENVIRONMENT_BROWSER"
-	// Operates in a mobile environment.
-	EnvironmentMobile Environment = "ENVIRONMENT_MOBILE"
-	// Operates in a desktop environment.
-	EnvironmentDesktop Environment = "ENVIRONMENT_DESKTOP"
-)
-
 // SafetyPolicy
 type SafetyPolicy string
 
 const (
-	// Unspecified safety policy.
+	// The safety policy is unspecified.
 	SafetyPolicyUnspecified SafetyPolicy = "SAFETY_POLICY_UNSPECIFIED"
-	// Safety policy for financial transactions.
+	// Policy that restricts financial transactions.
 	SafetyPolicyFinancialTransactions SafetyPolicy = "FINANCIAL_TRANSACTIONS"
-	// Safety policy for sensitive data modification.
+	// Policy that restricts modification of sensitive data.
 	SafetyPolicySensitiveDataModification SafetyPolicy = "SENSITIVE_DATA_MODIFICATION"
-	// Safety policy for communication tools (e.g. Gmail, Chat, Meet).
+	// Policy that restricts the use of communication tools.
 	SafetyPolicyCommunicationTool SafetyPolicy = "COMMUNICATION_TOOL"
-	// Safety policy for account creation.
+	// Policy that restricts the creation of accounts.
 	SafetyPolicyAccountCreation SafetyPolicy = "ACCOUNT_CREATION"
-	// Safety policy for data modification.
+	// Policy that restricts general data modification.
 	SafetyPolicyDataModification SafetyPolicy = "DATA_MODIFICATION"
-	// Safety policy for user consent management.
+	// Policy that restricts user consent management.
 	SafetyPolicyUserConsentManagement SafetyPolicy = "USER_CONSENT_MANAGEMENT"
-	// Safety policy for legal terms and agreements.
+	// Policy that restricts interaction with legal terms and agreements.
 	SafetyPolicyLegalTermsAndAgreements SafetyPolicy = "LEGAL_TERMS_AND_AGREEMENTS"
+)
+
+// The target environment where the computer use tool operates.
+type Environment string
+
+const (
+	// The environment is unspecified.
+	EnvironmentUnspecified Environment = "ENVIRONMENT_UNSPECIFIED"
+	// The tool operates in a web browser.
+	EnvironmentBrowser Environment = "ENVIRONMENT_BROWSER"
+	// The tool operates in a mobile environment.
+	EnvironmentMobile Environment = "ENVIRONMENT_MOBILE"
+	// The tool operates in a desktop environment.
+	EnvironmentDesktop Environment = "ENVIRONMENT_DESKTOP"
 )
 
 // Sites with confidence level chosen & above this value will be blocked from the search
@@ -1438,12 +1438,11 @@ type FunctionResponseBlob struct {
 	// Optional. Display name of the blob. Used to provide a label or filename to distinguish
 	// blobs. This field is only returned in PromptMessage for prompt management. It is
 	// currently used in the Gemini GenerateContent calls only when server side tools (code_execution,
-	// google_search, and url_context) are enabled. This field is not supported in Gemini
-	// API.
+	// google_search, and url_context) are enabled.
 	DisplayName string `json:"displayName,omitempty"`
 }
 
-// URI based data for function response. This data type is not supported in Gemini API.
+// URI based data for function response.
 type FunctionResponseFileData struct {
 	// Required. URI.
 	FileURI string `json:"fileUri,omitempty"`
@@ -1464,8 +1463,12 @@ type FunctionResponseFileData struct {
 type FunctionResponsePart struct {
 	// Inline media bytes.
 	InlineData *FunctionResponseBlob `json:"inlineData,omitempty"`
-	// URI based data. This field is not supported in Gemini API.
+	// URI based data.
 	FileData *FunctionResponseFileData `json:"fileData,omitempty"`
+	// Optional. How the model processes this part's media for understanding. Only meaningful
+	// for video parts (`inline_data` or `file_data` with video mime). Non-video parts ignore
+	// this field. This field is not supported in Vertex AI.
+	MediaProcessing MediaProcessing `json:"mediaProcessing,omitempty"`
 }
 
 // NewFunctionResponsePartFromURI builds a FunctionResponsePart from a given file URI and mime type.
@@ -1623,6 +1626,57 @@ type Transcription struct {
 	SpeakerLabel string `json:"speakerLabel,omitempty"`
 	// Optional. Detailed word-level transcriptions and timing details.
 	Words []*WordInfo `json:"words,omitempty"`
+	// Optional. Start offset in time of the transcription relative to the start of the
+	// audio.
+	StartOffset time.Duration `json:"startOffset,omitempty"`
+	// Optional. End offset in time of the transcription relative to the start of the audio.
+	EndOffset time.Duration `json:"endOffset,omitempty"`
+}
+
+func (t *Transcription) UnmarshalJSON(data []byte) error {
+	type Alias Transcription
+	aux := &struct {
+		StartOffset *InternalDurationJSON `json:"startOffset,omitempty"`
+		EndOffset   *InternalDurationJSON `json:"endOffset,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(t),
+	}
+
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	if !reflect.ValueOf(aux.StartOffset).IsZero() {
+		t.StartOffset = time.Duration(*aux.StartOffset)
+	}
+
+	if !reflect.ValueOf(aux.EndOffset).IsZero() {
+		t.EndOffset = time.Duration(*aux.EndOffset)
+	}
+
+	return nil
+}
+
+func (t *Transcription) MarshalJSON() ([]byte, error) {
+	type Alias Transcription
+	aux := &struct {
+		StartOffset *InternalDurationJSON `json:"startOffset,omitempty"`
+		EndOffset   *InternalDurationJSON `json:"endOffset,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(t),
+	}
+
+	if !reflect.ValueOf(t.StartOffset).IsZero() {
+		aux.StartOffset = (*InternalDurationJSON)(&t.StartOffset)
+	}
+
+	if !reflect.ValueOf(t.EndOffset).IsZero() {
+		aux.EndOffset = (*InternalDurationJSON)(&t.EndOffset)
+	}
+
+	return json.Marshal(aux)
 }
 
 // A datatype containing media content.
@@ -2325,20 +2379,19 @@ type Retrieval struct {
 	VertexRAGStore *VertexRAGStore `json:"vertexRagStore,omitempty"`
 }
 
-// Tool to support computer use.
+// A tool that enables the model to interact directly with a computer environment.
 type ComputerUse struct {
-	// Required. The environment being operated.
+	// Required. The target environment where the computer use tool operates.
 	Environment Environment `json:"environment,omitempty"`
-	// Optional. By default, [predefined functions](https://cloud.google.com/vertex-ai/generative-ai/docs/computer-use#supported-actions)
-	// are included in the final model call. Some of them can be explicitly excluded from
-	// being automatically included. This can serve two purposes: 1. Using a more restricted
-	// / different action space. 2. Improving the definitions / instructions of predefined
-	// functions.
+	// Optional. A list of predefined functions to explicitly exclude from the model call.
+	// By default, [predefined functions](https://cloud.google.com/vertex-ai/generative-ai/docs/computer-use#supported-actions)
+	// are included. Excluding functions allows for a more restricted action space or custom
+	// definitions for predefined functions.
 	ExcludedPredefinedFunctions []string `json:"excludedPredefinedFunctions,omitempty"`
-	// Optional. Enables the prompt injection detection check on computer-use request.
+	// Optional. Whether to enable the prompt injection detection check on the computer
+	// use request.
 	EnablePromptInjectionDetection *bool `json:"enablePromptInjectionDetection,omitempty"`
-	// Optional. Disabled safety policies for computer use. This field is not supported
-	// in Vertex AI.
+	// Optional. A list of safety policies to disable for the computer use tool.
 	DisabledSafetyPolicies []SafetyPolicy `json:"disabledSafetyPolicies,omitempty"`
 }
 
@@ -2556,8 +2609,8 @@ type ToolParallelAISearch struct {
 type URLContext struct {
 }
 
-// A transport that can stream HTTP requests and responses. Next ID: 6. This data type
-// is not supported in Vertex AI.
+// A transport that can stream HTTP requests and responses. This data type is not supported
+// in Vertex AI.
 type StreamableHTTPTransport struct {
 	// Optional. Optional: Fields for authentication headers, timeouts, etc., if needed.
 	Headers map[string]string `json:"headers,omitempty"`
@@ -2618,8 +2671,8 @@ func (s *StreamableHTTPTransport) MarshalJSON() ([]byte, error) {
 }
 
 // A MCPServer is a server that can be called by the model to perform actions. It is
-// a server that implements the MCP protocol. Next ID: 7. This data type is not supported
-// in Vertex AI.
+// a server that implements the MCP protocol. This data type is not supported in Vertex
+// AI.
 type MCPServer struct {
 	// The name of the MCPServer.
 	Name string `json:"name,omitempty"`
@@ -2800,6 +2853,16 @@ type ImageConfig struct {
 	// Optional. The image output format for generated images. This field is not supported
 	// in Gemini API.
 	ImageOutputOptions *ImageConfigImageOutputOptions `json:"imageOutputOptions,omitempty"`
+}
+
+// Configuration for persisting output assets to external storage.
+type GenerationOutputConfig struct {
+	// Optional. The Cloud Storage URI prefix or directory where
+	// generated media assets should be written (e.g. "gs://my-bucket/prefix/").
+	// Supported URI schemes: "gs://". When set, media bytes are written directly
+	// to this location and returned as FileData with a file_uri instead of raw
+	// inline bytes.
+	OutputURIPrefix string `json:"outputUriPrefix,omitempty"`
 }
 
 // The configuration for automated routing. When automated routing is specified, the
@@ -3074,6 +3137,18 @@ type GenerateContentConfig struct {
 	// previous response that stopped with `finish_reason` set to
 	// `CONTINUATION`.
 	ContinuationToken []byte `json:"continuationToken,omitempty"`
+	// Optional. Defaults to true. When a response ends with finish reason
+	// `CONTINUATION`, the SDK sends the same request again with the response's
+	// continuation token until the model finishes. Timeouts, retries and
+	// billing apply to each request. Set to false to turn this off.
+	AutomaticContinuation *bool `json:"automaticContinuation,omitempty"`
+	// Optional. Configuration for persisting output assets to external
+	// storage.
+	GenerationOutputConfig *GenerationOutputConfig `json:"generationOutputConfig,omitempty"`
+	// Optional. Configures the logging behavior for a given request. If set, it
+	// takes precedence over the project-level logging config. This field is not
+	// supported in Gemini Enterprise Agent Platform.
+	Store *bool `json:"store,omitempty"`
 }
 
 func (c GenerateContentConfig) ToGenerationConfig(backend Backend) (*GenerationConfig, error) {
@@ -3634,8 +3709,9 @@ type Candidate struct {
 	// Output only. Metadata returned when the model uses the `url_context` tool to get
 	// information from a user-provided URL.
 	URLContextMetadata *URLContextMetadata `json:"urlContextMetadata,omitempty"`
-	// Optional. An opaque continuation token returned when `finish_reason` is
-	// `CONTINUATION`. Pass it in a subsequent request to continue generation.
+	// Output only. An optional opaque continuation token returned when `finish_reason`
+	// is `CONTINUATION`. Clients can pass this token in a subsequent `GenerateContentRequest`
+	// to continue generation.
 	ContinuationToken []byte `json:"continuationToken,omitempty"`
 }
 
@@ -3919,6 +3995,24 @@ func (r *GenerateContentResponse) CodeExecutionResult() string {
 	}
 
 	return ""
+}
+
+// InitialPromptTokenCount returns the prompt token count from the initial request
+// prior to any continuation hops.
+func (r *GenerateContentResponse) InitialPromptTokenCount() int32 {
+	if r == nil || r.UsageMetadata == nil {
+		return 0
+	}
+	return r.UsageMetadata.InitialPromptTokenCount()
+}
+
+// InitialPromptTokenCount returns the prompt token count from the initial request
+// prior to any continuation hops.
+func (u *GenerateContentResponseUsageMetadata) InitialPromptTokenCount() int32 {
+	if u == nil {
+		return 0
+	}
+	return getInitialPromptTokenCount(u)
 }
 
 // Optional parameters for the EmbedContent method.
@@ -6250,7 +6344,7 @@ type TuningJob struct {
 	VeoLoraTuningSpec *VeoLoraTuningSpec `json:"veoLoraTuningSpec,omitempty"`
 
 	DistillationSamplingSpec *DistillationSamplingSpec `json:"distillationSamplingSpec,omitempty"`
-	// The Cloud Storage metrics URI associated with this tuning job.
+	// Output only. The Cloud Storage metrics URI associated with this TuningJob.
 	GCSMetricsURI string `json:"gcsMetricsUri,omitempty"`
 }
 
@@ -8281,6 +8375,8 @@ type RealtimeInputConfig struct {
 	ActivityHandling ActivityHandling `json:"activityHandling,omitempty"`
 	// Optional. Defines which input is included in the user's turn.
 	TurnCoverage TurnCoverage `json:"turnCoverage,omitempty"`
+	// Optional. If true, enables interim transcript timestamps.
+	InterimTranscriptTimestampEnabled *bool `json:"interimTranscriptTimestampEnabled,omitempty"`
 }
 
 // Configuration of session resumption mechanism.
@@ -8472,6 +8568,36 @@ type LiveClientToolResponse struct {
 	FunctionResponses []*FunctionResponse `json:"functionResponses,omitempty"`
 }
 
+// A wrapper around the list of tools.
+// This wrapper exists because a bare `repeated Tool` field cannot tell apart
+// "not sending a tools update" from "clearing all tools": an unset repeated
+// field and an empty repeated field look identical on the wire. Wrapping the
+// list in a message adds a presence bit, so the two cases become: - `tools`
+// field unset: no update; keep the previously provided tools. - `tools` field
+// set (even with an empty list): replace the current tools with the provided
+// list, which may be empty to clear all tools.
+type LiveClientContextUpdateTools struct {
+	// Optional. The list of tools the model may use to generate the next response.
+	Tools []*Tool `json:"tools,omitempty"`
+}
+
+// Updates to the context of the current session.
+// Only fields that are set will be updated. Updates are guaranteed to be
+// processed *in order* with the rest of the inputs.
+type LiveClientContextUpdate struct {
+	// Optional. Updated system instruction for the model. If set, overrides `BidiGenerateContentSetup.system_instruction`.
+	// The system instructions are part of the model preamble, so updating them invalidates
+	// the prefix cache. Clients should only update this field when strictly necessary as
+	// it might have a performance impact on the model generation.
+	SystemInstruction *Content `json:"systemInstruction,omitempty"`
+	// Optional. An updated list of tools the model may use to generate the subsequent responses.
+	// If set, this list replaces the previously provided tools. The tools are part of the
+	// model preamble, so updating them invalidates the prefix cache. Clients should only
+	// update this field when strictly necessary as it might have a performance impact on
+	// the model generation.
+	Tools *LiveClientContextUpdateTools `json:"tools,omitempty"`
+}
+
 // Messages sent by the client in the API call.
 type LiveClientMessage struct {
 	// Optional. Message to be sent by the system when connecting to the API. SDK users
@@ -8483,6 +8609,8 @@ type LiveClientMessage struct {
 	RealtimeInput *LiveClientRealtimeInput `json:"realtimeInput,omitempty"`
 	// Optional. Response to a `ToolCallMessage` received from the server.
 	ToolResponse *LiveClientToolResponse `json:"toolResponse,omitempty"`
+	// Optional. Updates to the context of the current session.
+	ContextUpdate *LiveClientContextUpdate `json:"contextUpdate,omitempty"`
 }
 
 // Session config for the API connection.
@@ -8561,6 +8689,9 @@ type LiveConnectConfig struct {
 	SafetySettings []*SafetySetting `json:"safetySettings,omitempty"`
 	// Optional. Config for translation.
 	TranslationConfig *TranslationConfig `json:"translationConfig,omitempty"`
+	// Optional. Labels with user-defined metadata for the session. In Gemini
+	// Enterprise Agent Platform, they are used for billing and reporting.
+	Labels map[string]string `json:"labels,omitempty"`
 }
 
 // Parameters for sending client content to the live API.
