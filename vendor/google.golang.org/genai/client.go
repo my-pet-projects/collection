@@ -56,6 +56,8 @@ type Client struct {
 
 	// Interactions provides access to the Interactions service.
 	Interactions *interactions.Interactions
+	// Voices provides access to the Voices service.
+	Voices *interactions.Voices
 	// Webhooks provides access to the Webhooks service.
 	Webhooks *interactions.Webhooks
 	// Agents provides access to the Agents service.
@@ -409,12 +411,15 @@ func newInteractionsClient(apiClient *InternalAPIClient) *interactions.GenAI {
 	if cc.APIKey != "" {
 		sec.APIKey = &cc.APIKey
 	}
+	headers := make(http.Header)
 	if cc.HTTPOptions.Headers != nil {
-		sec.DefaultHeaders = make(map[string]string)
-		for key, values := range cc.HTTPOptions.Headers {
-			if len(values) > 0 {
-				sec.DefaultHeaders[key] = values[0]
-			}
+		headers = cc.HTTPOptions.Headers.Clone()
+	}
+	appendSDKHeaders(headers)
+	sec.DefaultHeaders = make(map[string]string, len(headers))
+	for key, values := range headers {
+		if len(values) > 0 {
+			sec.DefaultHeaders[key] = strings.Join(values, " ")
 		}
 	}
 	if sec.APIKey != nil || len(sec.DefaultHeaders) > 0 {
@@ -489,6 +494,7 @@ func NewClient(ctx context.Context, cc *ClientConfig) (*Client, error) {
 		Tunings:          &Tunings{apiClient: ac},
 		AuthTokens:       &Tokens{apiClient: ac},
 		Interactions:     interactionsClient.Interactions,
+		Voices:           interactionsClient.Voices,
 		Webhooks:         interactionsClient.Webhooks,
 		Agents:           interactionsClient.Agents,
 		Credentials:      interactionsClient.Credentials,
