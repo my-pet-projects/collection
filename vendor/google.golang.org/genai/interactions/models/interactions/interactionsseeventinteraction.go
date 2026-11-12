@@ -24,12 +24,15 @@ import (
 type InteractionSseEventInteractionStatus string
 
 const (
-	InteractionSseEventInteractionStatusInProgress     InteractionSseEventInteractionStatus = "in_progress"
-	InteractionSseEventInteractionStatusRequiresAction InteractionSseEventInteractionStatus = "requires_action"
-	InteractionSseEventInteractionStatusCompleted      InteractionSseEventInteractionStatus = "completed"
-	InteractionSseEventInteractionStatusFailed         InteractionSseEventInteractionStatus = "failed"
-	InteractionSseEventInteractionStatusCancelled      InteractionSseEventInteractionStatus = "cancelled"
-	InteractionSseEventInteractionStatusIncomplete     InteractionSseEventInteractionStatus = "incomplete"
+	InteractionSseEventInteractionStatusInProgress           InteractionSseEventInteractionStatus = "in_progress"
+	InteractionSseEventInteractionStatusRequiresAction       InteractionSseEventInteractionStatus = "requires_action"
+	InteractionSseEventInteractionStatusCompleted            InteractionSseEventInteractionStatus = "completed"
+	InteractionSseEventInteractionStatusFailed               InteractionSseEventInteractionStatus = "failed"
+	InteractionSseEventInteractionStatusCancelled            InteractionSseEventInteractionStatus = "cancelled"
+	InteractionSseEventInteractionStatusIncomplete           InteractionSseEventInteractionStatus = "incomplete"
+	InteractionSseEventInteractionStatusBudgetExceeded       InteractionSseEventInteractionStatus = "budget_exceeded"
+	InteractionSseEventInteractionStatusQueued               InteractionSseEventInteractionStatus = "queued"
+	InteractionSseEventInteractionStatusRequiresContinuation InteractionSseEventInteractionStatus = "requires_continuation"
 )
 
 func (e InteractionSseEventInteractionStatus) ToPointer() *InteractionSseEventInteractionStatus {
@@ -40,7 +43,7 @@ func (e InteractionSseEventInteractionStatus) ToPointer() *InteractionSseEventIn
 func (e *InteractionSseEventInteractionStatus) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "in_progress", "requires_action", "completed", "failed", "cancelled", "incomplete":
+		case "in_progress", "requires_action", "completed", "failed", "cancelled", "incomplete", "budget_exceeded", "queued", "requires_continuation":
 			return true
 		}
 	}
@@ -53,6 +56,8 @@ func (e *InteractionSseEventInteractionStatus) IsExact() bool {
 type InteractionSseEventInteraction struct {
 	// The agent to interact with.
 	Agent *string `json:"agent,omitzero"`
+	// Output only. Opaque token to resume a long decode when status is incomplete.
+	ContinuationToken *string `json:"continuation_token,omitzero"`
 	// Output only. The time at which the response was created in ISO 8601 format.
 	Created *string `json:"created,omitzero"`
 	// Required. Output only. A unique identifier for the interaction completion.
@@ -88,6 +93,13 @@ func (i *InteractionSseEventInteraction) GetAgent() *string {
 		return nil
 	}
 	return i.Agent
+}
+
+func (i *InteractionSseEventInteraction) GetContinuationToken() *string {
+	if i == nil {
+		return nil
+	}
+	return i.ContinuationToken
 }
 
 func (i *InteractionSseEventInteraction) GetCreated() *string {

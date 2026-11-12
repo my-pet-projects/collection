@@ -62,6 +62,120 @@ func liveClientContentToVertex(fromObject map[string]any, parentObject map[strin
 	return toObject, nil
 }
 
+func liveClientContextUpdateToMldev(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromSystemInstruction := InternalGetValueByPath(fromObject, []string{"systemInstruction"})
+	if fromSystemInstruction != nil {
+		fromSystemInstruction, err = InternalTContent(fromSystemInstruction)
+		if err != nil {
+			return nil, err
+		}
+
+		fromSystemInstruction, err = contentToMldev(fromSystemInstruction.(map[string]any), toObject, rootObject)
+		if err != nil {
+			return nil, err
+		}
+
+		InternalSetValueByPath(toObject, []string{"systemInstruction"}, fromSystemInstruction)
+	}
+
+	fromTools := InternalGetValueByPath(fromObject, []string{"tools"})
+	if fromTools != nil {
+		fromTools, err = liveClientContextUpdateToolsToMldev(fromTools.(map[string]any), toObject, rootObject)
+		if err != nil {
+			return nil, err
+		}
+
+		InternalSetValueByPath(toObject, []string{"tools"}, fromTools)
+	}
+
+	return toObject, nil
+}
+
+func liveClientContextUpdateToVertex(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromSystemInstruction := InternalGetValueByPath(fromObject, []string{"systemInstruction"})
+	if fromSystemInstruction != nil {
+		fromSystemInstruction, err = InternalTContent(fromSystemInstruction)
+		if err != nil {
+			return nil, err
+		}
+
+		fromSystemInstruction, err = contentToVertex(fromSystemInstruction.(map[string]any), toObject, rootObject)
+		if err != nil {
+			return nil, err
+		}
+
+		InternalSetValueByPath(toObject, []string{"systemInstruction"}, fromSystemInstruction)
+	}
+
+	fromTools := InternalGetValueByPath(fromObject, []string{"tools"})
+	if fromTools != nil {
+		fromTools, err = liveClientContextUpdateToolsToVertex(fromTools.(map[string]any), toObject, rootObject)
+		if err != nil {
+			return nil, err
+		}
+
+		InternalSetValueByPath(toObject, []string{"tools"}, fromTools)
+	}
+
+	return toObject, nil
+}
+
+func liveClientContextUpdateToolsToMldev(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromTools := InternalGetValueByPath(fromObject, []string{"tools"})
+	if fromTools != nil {
+		fromTools, err = applyItemTransformerToSlice(fromTools.([]any), tTool)
+		if err != nil {
+			return nil, err
+		}
+
+		fromTools, err = InternalTTools(fromTools)
+		if err != nil {
+			return nil, err
+		}
+
+		fromTools, err = InternalApplyConverterToSliceWithRoot(fromTools.([]any), toolToMldev, rootObject)
+		if err != nil {
+			return nil, err
+		}
+
+		InternalSetValueByPath(toObject, []string{"tools"}, fromTools)
+	}
+
+	return toObject, nil
+}
+
+func liveClientContextUpdateToolsToVertex(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromTools := InternalGetValueByPath(fromObject, []string{"tools"})
+	if fromTools != nil {
+		fromTools, err = applyItemTransformerToSlice(fromTools.([]any), tTool)
+		if err != nil {
+			return nil, err
+		}
+
+		fromTools, err = InternalTTools(fromTools)
+		if err != nil {
+			return nil, err
+		}
+
+		fromTools, err = InternalApplyConverterToSliceWithRoot(fromTools.([]any), toolToVertex, rootObject)
+		if err != nil {
+			return nil, err
+		}
+
+		InternalSetValueByPath(toObject, []string{"tools"}, fromTools)
+	}
+
+	return toObject, nil
+}
+
 func liveClientMessageToMldev(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -93,6 +207,16 @@ func liveClientMessageToMldev(fromObject map[string]any, parentObject map[string
 	fromToolResponse := InternalGetValueByPath(fromObject, []string{"toolResponse"})
 	if fromToolResponse != nil {
 		InternalSetValueByPath(toObject, []string{"toolResponse"}, fromToolResponse)
+	}
+
+	fromContextUpdate := InternalGetValueByPath(fromObject, []string{"contextUpdate"})
+	if fromContextUpdate != nil {
+		fromContextUpdate, err = liveClientContextUpdateToMldev(fromContextUpdate.(map[string]any), toObject, rootObject)
+		if err != nil {
+			return nil, err
+		}
+
+		InternalSetValueByPath(toObject, []string{"contextUpdate"}, fromContextUpdate)
 	}
 
 	return toObject, nil
@@ -128,7 +252,22 @@ func liveClientMessageToVertex(fromObject map[string]any, parentObject map[strin
 
 	fromToolResponse := InternalGetValueByPath(fromObject, []string{"toolResponse"})
 	if fromToolResponse != nil {
+		fromToolResponse, err = liveClientToolResponseToVertex(fromToolResponse.(map[string]any), toObject, rootObject)
+		if err != nil {
+			return nil, err
+		}
+
 		InternalSetValueByPath(toObject, []string{"toolResponse"}, fromToolResponse)
+	}
+
+	fromContextUpdate := InternalGetValueByPath(fromObject, []string{"contextUpdate"})
+	if fromContextUpdate != nil {
+		fromContextUpdate, err = liveClientContextUpdateToVertex(fromContextUpdate.(map[string]any), toObject, rootObject)
+		if err != nil {
+			return nil, err
+		}
+
+		InternalSetValueByPath(toObject, []string{"contextUpdate"}, fromContextUpdate)
 	}
 
 	return toObject, nil
@@ -359,6 +498,22 @@ func liveClientSetupToVertex(fromObject map[string]any, parentObject map[string]
 	return toObject, nil
 }
 
+func liveClientToolResponseToVertex(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromFunctionResponses := InternalGetValueByPath(fromObject, []string{"functionResponses"})
+	if fromFunctionResponses != nil {
+		fromFunctionResponses, err = InternalApplyConverterToSliceWithRoot(fromFunctionResponses.([]any), functionResponseToVertex, rootObject)
+		if err != nil {
+			return nil, err
+		}
+
+		InternalSetValueByPath(toObject, []string{"functionResponses"}, fromFunctionResponses)
+	}
+
+	return toObject, nil
+}
+
 func liveConnectConfigToMldev(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -511,6 +666,11 @@ func liveConnectConfigToMldev(fromObject map[string]any, parentObject map[string
 		InternalSetValueByPath(parentObject, []string{"setup", "generationConfig", "translationConfig"}, fromTranslationConfig)
 	}
 
+	fromLabels := InternalGetValueByPath(fromObject, []string{"labels"})
+	if fromLabels != nil {
+		InternalSetValueByPath(parentObject, []string{"setup", "labels"}, fromLabels)
+	}
+
 	return toObject, nil
 }
 
@@ -660,6 +820,11 @@ func liveConnectConfigToVertex(fromObject map[string]any, parentObject map[strin
 	fromTranslationConfig := InternalGetValueByPath(fromObject, []string{"translationConfig"})
 	if fromTranslationConfig != nil {
 		InternalSetValueByPath(parentObject, []string{"setup", "generationConfig", "translationConfig"}, fromTranslationConfig)
+	}
+
+	fromLabels := InternalGetValueByPath(fromObject, []string{"labels"})
+	if fromLabels != nil {
+		InternalSetValueByPath(parentObject, []string{"setup", "labels"}, fromLabels)
 	}
 
 	return toObject, nil
