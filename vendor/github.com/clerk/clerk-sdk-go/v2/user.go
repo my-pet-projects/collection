@@ -44,6 +44,7 @@ type User struct {
 	LastActiveAt                  *int64                    `json:"last_active_at"`
 	MFAEnabledAt                  *int64                    `json:"mfa_enabled_at"`
 	Locale                        *string                   `json:"locale"`
+	Timezone                      *string                   `json:"timezone"`
 	MFADisabledAt                 *int64                    `json:"mfa_disabled_at"`
 	LegalAcceptedAt               *int64                    `json:"legal_accepted_at"`
 }
@@ -98,6 +99,15 @@ type UserList struct {
 	APIResource
 	Users      []*User `json:"data"`
 	TotalCount int64   `json:"total_count"`
+}
+
+// UserMergeResult is the result of merging one user into another.
+type UserMergeResult struct {
+	APIResource
+	// User is the user that remains, as it is after the merge.
+	User *User `json:"user"`
+	// DeletedUser is the merged user as it was before it was deleted.
+	DeletedUser *User `json:"deleted_user"`
 }
 
 type SAMLAccountConnection struct {

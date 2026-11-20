@@ -62,6 +62,120 @@ func liveClientContentToVertex(fromObject map[string]any, parentObject map[strin
 	return toObject, nil
 }
 
+func liveClientContextUpdateToMldev(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromSystemInstruction := InternalGetValueByPath(fromObject, []string{"systemInstruction"})
+	if fromSystemInstruction != nil {
+		fromSystemInstruction, err = InternalTContent(fromSystemInstruction)
+		if err != nil {
+			return nil, err
+		}
+
+		fromSystemInstruction, err = contentToMldev(fromSystemInstruction.(map[string]any), toObject, rootObject)
+		if err != nil {
+			return nil, err
+		}
+
+		InternalSetValueByPath(toObject, []string{"systemInstruction"}, fromSystemInstruction)
+	}
+
+	fromTools := InternalGetValueByPath(fromObject, []string{"tools"})
+	if fromTools != nil {
+		fromTools, err = liveClientContextUpdateToolsToMldev(fromTools.(map[string]any), toObject, rootObject)
+		if err != nil {
+			return nil, err
+		}
+
+		InternalSetValueByPath(toObject, []string{"tools"}, fromTools)
+	}
+
+	return toObject, nil
+}
+
+func liveClientContextUpdateToVertex(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromSystemInstruction := InternalGetValueByPath(fromObject, []string{"systemInstruction"})
+	if fromSystemInstruction != nil {
+		fromSystemInstruction, err = InternalTContent(fromSystemInstruction)
+		if err != nil {
+			return nil, err
+		}
+
+		fromSystemInstruction, err = contentToVertex(fromSystemInstruction.(map[string]any), toObject, rootObject)
+		if err != nil {
+			return nil, err
+		}
+
+		InternalSetValueByPath(toObject, []string{"systemInstruction"}, fromSystemInstruction)
+	}
+
+	fromTools := InternalGetValueByPath(fromObject, []string{"tools"})
+	if fromTools != nil {
+		fromTools, err = liveClientContextUpdateToolsToVertex(fromTools.(map[string]any), toObject, rootObject)
+		if err != nil {
+			return nil, err
+		}
+
+		InternalSetValueByPath(toObject, []string{"tools"}, fromTools)
+	}
+
+	return toObject, nil
+}
+
+func liveClientContextUpdateToolsToMldev(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromTools := InternalGetValueByPath(fromObject, []string{"tools"})
+	if fromTools != nil {
+		fromTools, err = applyItemTransformerToSlice(fromTools.([]any), tTool)
+		if err != nil {
+			return nil, err
+		}
+
+		fromTools, err = InternalTTools(fromTools)
+		if err != nil {
+			return nil, err
+		}
+
+		fromTools, err = InternalApplyConverterToSliceWithRoot(fromTools.([]any), toolToMldev, rootObject)
+		if err != nil {
+			return nil, err
+		}
+
+		InternalSetValueByPath(toObject, []string{"tools"}, fromTools)
+	}
+
+	return toObject, nil
+}
+
+func liveClientContextUpdateToolsToVertex(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromTools := InternalGetValueByPath(fromObject, []string{"tools"})
+	if fromTools != nil {
+		fromTools, err = applyItemTransformerToSlice(fromTools.([]any), tTool)
+		if err != nil {
+			return nil, err
+		}
+
+		fromTools, err = InternalTTools(fromTools)
+		if err != nil {
+			return nil, err
+		}
+
+		fromTools, err = InternalApplyConverterToSliceWithRoot(fromTools.([]any), toolToVertex, rootObject)
+		if err != nil {
+			return nil, err
+		}
+
+		InternalSetValueByPath(toObject, []string{"tools"}, fromTools)
+	}
+
+	return toObject, nil
+}
+
 func liveClientMessageToMldev(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -93,6 +207,16 @@ func liveClientMessageToMldev(fromObject map[string]any, parentObject map[string
 	fromToolResponse := InternalGetValueByPath(fromObject, []string{"toolResponse"})
 	if fromToolResponse != nil {
 		InternalSetValueByPath(toObject, []string{"toolResponse"}, fromToolResponse)
+	}
+
+	fromContextUpdate := InternalGetValueByPath(fromObject, []string{"contextUpdate"})
+	if fromContextUpdate != nil {
+		fromContextUpdate, err = liveClientContextUpdateToMldev(fromContextUpdate.(map[string]any), toObject, rootObject)
+		if err != nil {
+			return nil, err
+		}
+
+		InternalSetValueByPath(toObject, []string{"contextUpdate"}, fromContextUpdate)
 	}
 
 	return toObject, nil
@@ -128,7 +252,22 @@ func liveClientMessageToVertex(fromObject map[string]any, parentObject map[strin
 
 	fromToolResponse := InternalGetValueByPath(fromObject, []string{"toolResponse"})
 	if fromToolResponse != nil {
+		fromToolResponse, err = liveClientToolResponseToVertex(fromToolResponse.(map[string]any), toObject, rootObject)
+		if err != nil {
+			return nil, err
+		}
+
 		InternalSetValueByPath(toObject, []string{"toolResponse"}, fromToolResponse)
+	}
+
+	fromContextUpdate := InternalGetValueByPath(fromObject, []string{"contextUpdate"})
+	if fromContextUpdate != nil {
+		fromContextUpdate, err = liveClientContextUpdateToVertex(fromContextUpdate.(map[string]any), toObject, rootObject)
+		if err != nil {
+			return nil, err
+		}
+
+		InternalSetValueByPath(toObject, []string{"contextUpdate"}, fromContextUpdate)
 	}
 
 	return toObject, nil
@@ -359,6 +498,22 @@ func liveClientSetupToVertex(fromObject map[string]any, parentObject map[string]
 	return toObject, nil
 }
 
+func liveClientToolResponseToVertex(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromFunctionResponses := InternalGetValueByPath(fromObject, []string{"functionResponses"})
+	if fromFunctionResponses != nil {
+		fromFunctionResponses, err = InternalApplyConverterToSliceWithRoot(fromFunctionResponses.([]any), functionResponseToVertex, rootObject)
+		if err != nil {
+			return nil, err
+		}
+
+		InternalSetValueByPath(toObject, []string{"functionResponses"}, fromFunctionResponses)
+	}
+
+	return toObject, nil
+}
+
 func liveConnectConfigToMldev(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -511,6 +666,11 @@ func liveConnectConfigToMldev(fromObject map[string]any, parentObject map[string
 		InternalSetValueByPath(parentObject, []string{"setup", "generationConfig", "translationConfig"}, fromTranslationConfig)
 	}
 
+	fromLabels := InternalGetValueByPath(fromObject, []string{"labels"})
+	if fromLabels != nil {
+		InternalSetValueByPath(parentObject, []string{"setup", "labels"}, fromLabels)
+	}
+
 	return toObject, nil
 }
 
@@ -660,6 +820,11 @@ func liveConnectConfigToVertex(fromObject map[string]any, parentObject map[strin
 	fromTranslationConfig := InternalGetValueByPath(fromObject, []string{"translationConfig"})
 	if fromTranslationConfig != nil {
 		InternalSetValueByPath(parentObject, []string{"setup", "generationConfig", "translationConfig"}, fromTranslationConfig)
+	}
+
+	fromLabels := InternalGetValueByPath(fromObject, []string{"labels"})
+	if fromLabels != nil {
+		InternalSetValueByPath(parentObject, []string{"setup", "labels"}, fromLabels)
 	}
 
 	return toObject, nil
@@ -956,67 +1121,6 @@ func sessionResumptionConfigToMldev(fromObject map[string]any, parentObject map[
 
 	if InternalGetValueByPath(fromObject, []string{"transparent"}) != nil {
 		return nil, fmt.Errorf("transparent parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
-	}
-
-	return toObject, nil
-}
-
-func usageMetadataFromVertex(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
-	toObject = make(map[string]any)
-
-	fromPromptTokenCount := InternalGetValueByPath(fromObject, []string{"promptTokenCount"})
-	if fromPromptTokenCount != nil {
-		InternalSetValueByPath(toObject, []string{"promptTokenCount"}, fromPromptTokenCount)
-	}
-
-	fromCachedContentTokenCount := InternalGetValueByPath(fromObject, []string{"cachedContentTokenCount"})
-	if fromCachedContentTokenCount != nil {
-		InternalSetValueByPath(toObject, []string{"cachedContentTokenCount"}, fromCachedContentTokenCount)
-	}
-
-	fromResponseTokenCount := InternalGetValueByPath(fromObject, []string{"candidatesTokenCount"})
-	if fromResponseTokenCount != nil {
-		InternalSetValueByPath(toObject, []string{"responseTokenCount"}, fromResponseTokenCount)
-	}
-
-	fromToolUsePromptTokenCount := InternalGetValueByPath(fromObject, []string{"toolUsePromptTokenCount"})
-	if fromToolUsePromptTokenCount != nil {
-		InternalSetValueByPath(toObject, []string{"toolUsePromptTokenCount"}, fromToolUsePromptTokenCount)
-	}
-
-	fromThoughtsTokenCount := InternalGetValueByPath(fromObject, []string{"thoughtsTokenCount"})
-	if fromThoughtsTokenCount != nil {
-		InternalSetValueByPath(toObject, []string{"thoughtsTokenCount"}, fromThoughtsTokenCount)
-	}
-
-	fromTotalTokenCount := InternalGetValueByPath(fromObject, []string{"totalTokenCount"})
-	if fromTotalTokenCount != nil {
-		InternalSetValueByPath(toObject, []string{"totalTokenCount"}, fromTotalTokenCount)
-	}
-
-	fromPromptTokensDetails := InternalGetValueByPath(fromObject, []string{"promptTokensDetails"})
-	if fromPromptTokensDetails != nil {
-		InternalSetValueByPath(toObject, []string{"promptTokensDetails"}, fromPromptTokensDetails)
-	}
-
-	fromCacheTokensDetails := InternalGetValueByPath(fromObject, []string{"cacheTokensDetails"})
-	if fromCacheTokensDetails != nil {
-		InternalSetValueByPath(toObject, []string{"cacheTokensDetails"}, fromCacheTokensDetails)
-	}
-
-	fromResponseTokensDetails := InternalGetValueByPath(fromObject, []string{"candidatesTokensDetails"})
-	if fromResponseTokensDetails != nil {
-		InternalSetValueByPath(toObject, []string{"responseTokensDetails"}, fromResponseTokensDetails)
-	}
-
-	fromToolUsePromptTokensDetails := InternalGetValueByPath(fromObject, []string{"toolUsePromptTokensDetails"})
-	if fromToolUsePromptTokensDetails != nil {
-		InternalSetValueByPath(toObject, []string{"toolUsePromptTokensDetails"}, fromToolUsePromptTokensDetails)
-	}
-
-	fromTrafficType := InternalGetValueByPath(fromObject, []string{"trafficType"})
-	if fromTrafficType != nil {
-		InternalSetValueByPath(toObject, []string{"trafficType"}, fromTrafficType)
 	}
 
 	return toObject, nil

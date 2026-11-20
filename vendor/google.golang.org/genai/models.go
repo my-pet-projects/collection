@@ -185,31 +185,6 @@ func computeTokensResponseFromVertex(fromObject map[string]any, parentObject map
 	return toObject, nil
 }
 
-func computerUseToVertex(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
-	toObject = make(map[string]any)
-
-	fromEnvironment := InternalGetValueByPath(fromObject, []string{"environment"})
-	if fromEnvironment != nil {
-		InternalSetValueByPath(toObject, []string{"environment"}, fromEnvironment)
-	}
-
-	fromExcludedPredefinedFunctions := InternalGetValueByPath(fromObject, []string{"excludedPredefinedFunctions"})
-	if fromExcludedPredefinedFunctions != nil {
-		InternalSetValueByPath(toObject, []string{"excludedPredefinedFunctions"}, fromExcludedPredefinedFunctions)
-	}
-
-	fromEnablePromptInjectionDetection := InternalGetValueByPath(fromObject, []string{"enablePromptInjectionDetection"})
-	if fromEnablePromptInjectionDetection != nil {
-		InternalSetValueByPath(toObject, []string{"enablePromptInjectionDetection"}, fromEnablePromptInjectionDetection)
-	}
-
-	if InternalGetValueByPath(fromObject, []string{"disabledSafetyPolicies"}) != nil {
-		return nil, fmt.Errorf("disabledSafetyPolicies parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.")
-	}
-
-	return toObject, nil
-}
-
 func contentEmbeddingFromVertex(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -743,6 +718,11 @@ func embedContentConfigToVertex(fromObject map[string]any, parentObject map[stri
 		if fromTaskType != nil {
 			InternalSetValueByPath(parentObject, []string{"embedContentConfig", "taskType"}, fromTaskType)
 		}
+	} else if discriminatorTaskType.(string) == "BATCH_EMBED_CONTENTS" {
+		fromTaskType := InternalGetValueByPath(fromObject, []string{"taskType"})
+		if fromTaskType != nil {
+			InternalSetValueByPath(parentObject, []string{"requests[]", "embedContentConfig", "taskType"}, fromTaskType)
+		}
 	}
 
 	var discriminatorTitle any = InternalGetValueByPath(rootObject, []string{"embeddingApiType"})
@@ -759,6 +739,11 @@ func embedContentConfigToVertex(fromObject map[string]any, parentObject map[stri
 		if fromTitle != nil {
 			InternalSetValueByPath(parentObject, []string{"embedContentConfig", "title"}, fromTitle)
 		}
+	} else if discriminatorTitle.(string) == "BATCH_EMBED_CONTENTS" {
+		fromTitle := InternalGetValueByPath(fromObject, []string{"title"})
+		if fromTitle != nil {
+			InternalSetValueByPath(parentObject, []string{"requests[]", "embedContentConfig", "title"}, fromTitle)
+		}
 	}
 
 	var discriminatorOutputDimensionality any = InternalGetValueByPath(rootObject, []string{"embeddingApiType"})
@@ -774,6 +759,11 @@ func embedContentConfigToVertex(fromObject map[string]any, parentObject map[stri
 		fromOutputDimensionality := InternalGetValueByPath(fromObject, []string{"outputDimensionality"})
 		if fromOutputDimensionality != nil {
 			InternalSetValueByPath(parentObject, []string{"embedContentConfig", "outputDimensionality"}, fromOutputDimensionality)
+		}
+	} else if discriminatorOutputDimensionality.(string) == "BATCH_EMBED_CONTENTS" {
+		fromOutputDimensionality := InternalGetValueByPath(fromObject, []string{"outputDimensionality"})
+		if fromOutputDimensionality != nil {
+			InternalSetValueByPath(parentObject, []string{"requests[]", "embedContentConfig", "outputDimensionality"}, fromOutputDimensionality)
 		}
 	}
 
@@ -802,6 +792,11 @@ func embedContentConfigToVertex(fromObject map[string]any, parentObject map[stri
 		if fromAutoTruncate != nil {
 			InternalSetValueByPath(parentObject, []string{"embedContentConfig", "autoTruncate"}, fromAutoTruncate)
 		}
+	} else if discriminatorAutoTruncate.(string) == "BATCH_EMBED_CONTENTS" {
+		fromAutoTruncate := InternalGetValueByPath(fromObject, []string{"autoTruncate"})
+		if fromAutoTruncate != nil {
+			InternalSetValueByPath(parentObject, []string{"requests[]", "embedContentConfig", "autoTruncate"}, fromAutoTruncate)
+		}
 	}
 
 	var discriminatorDocumentOcr any = InternalGetValueByPath(rootObject, []string{"embeddingApiType"})
@@ -813,6 +808,11 @@ func embedContentConfigToVertex(fromObject map[string]any, parentObject map[stri
 		if fromDocumentOcr != nil {
 			InternalSetValueByPath(parentObject, []string{"embedContentConfig", "documentOcr"}, fromDocumentOcr)
 		}
+	} else if discriminatorDocumentOcr.(string) == "BATCH_EMBED_CONTENTS" {
+		fromDocumentOcr := InternalGetValueByPath(fromObject, []string{"documentOcr"})
+		if fromDocumentOcr != nil {
+			InternalSetValueByPath(parentObject, []string{"requests[]", "embedContentConfig", "documentOcr"}, fromDocumentOcr)
+		}
 	}
 
 	var discriminatorAudioTrackExtraction any = InternalGetValueByPath(rootObject, []string{"embeddingApiType"})
@@ -823,6 +823,11 @@ func embedContentConfigToVertex(fromObject map[string]any, parentObject map[stri
 		fromAudioTrackExtraction := InternalGetValueByPath(fromObject, []string{"audioTrackExtraction"})
 		if fromAudioTrackExtraction != nil {
 			InternalSetValueByPath(parentObject, []string{"embedContentConfig", "audioTrackExtraction"}, fromAudioTrackExtraction)
+		}
+	} else if discriminatorAudioTrackExtraction.(string) == "BATCH_EMBED_CONTENTS" {
+		fromAudioTrackExtraction := InternalGetValueByPath(fromObject, []string{"audioTrackExtraction"})
+		if fromAudioTrackExtraction != nil {
+			InternalSetValueByPath(parentObject, []string{"requests[]", "embedContentConfig", "audioTrackExtraction"}, fromAudioTrackExtraction)
 		}
 	}
 
@@ -863,6 +868,10 @@ func embedContentParametersPrivateToMldev(ac *InternalAPIClient, fromObject map[
 		if err != nil {
 			return nil, err
 		}
+	}
+
+	if InternalGetValueByPath(fromObject, []string{"batchContents"}) != nil {
+		return nil, fmt.Errorf("batchContents parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	fromConfig := InternalGetValueByPath(fromObject, []string{"config"})
@@ -928,6 +937,27 @@ func embedContentParametersPrivateToVertex(ac *InternalAPIClient, fromObject map
 		}
 	}
 
+	var discriminatorBatchContents any = InternalGetValueByPath(rootObject, []string{"embeddingApiType"})
+	if discriminatorBatchContents == nil {
+		discriminatorBatchContents = "PREDICT"
+	}
+	if discriminatorBatchContents.(string) == "BATCH_EMBED_CONTENTS" {
+		fromBatchContents := InternalGetValueByPath(fromObject, []string{"batchContents"})
+		if fromBatchContents != nil {
+			fromBatchContents, err = InternalTContents(fromBatchContents)
+			if err != nil {
+				return nil, err
+			}
+
+			fromBatchContents, err = InternalApplyConverterToSliceWithRoot(fromBatchContents.([]any), contentToVertex, rootObject)
+			if err != nil {
+				return nil, err
+			}
+
+			InternalSetValueByPath(toObject, []string{"requests[]", "content"}, fromBatchContents)
+		}
+	}
+
 	fromConfig := InternalGetValueByPath(fromObject, []string{"config"})
 	if fromConfig != nil {
 		_, err = embedContentConfigToVertex(fromConfig.(map[string]any), toObject, rootObject)
@@ -957,6 +987,11 @@ func embedContentResponseFromMldev(fromObject map[string]any, parentObject map[s
 		InternalSetValueByPath(toObject, []string{"metadata"}, fromMetadata)
 	}
 
+	fromUsageMetadata := InternalGetValueByPath(fromObject, []string{"usageMetadata"})
+	if fromUsageMetadata != nil {
+		InternalSetValueByPath(toObject, []string{"usageMetadata"}, fromUsageMetadata)
+	}
+
 	return toObject, nil
 }
 
@@ -983,6 +1018,21 @@ func embedContentResponseFromVertex(fromObject map[string]any, parentObject map[
 		InternalSetValueByPath(toObject, []string{"metadata"}, fromMetadata)
 	}
 
+	fromTruncated := InternalGetValueByPath(fromObject, []string{"truncated"})
+	if fromTruncated != nil {
+		InternalSetValueByPath(toObject, []string{"truncated"}, fromTruncated)
+	}
+
+	fromUsageMetadata := InternalGetValueByPath(fromObject, []string{"usageMetadata"})
+	if fromUsageMetadata != nil {
+		fromUsageMetadata, err = usageMetadataFromVertex(fromUsageMetadata.(map[string]any), toObject, rootObject)
+		if err != nil {
+			return nil, err
+		}
+
+		InternalSetValueByPath(toObject, []string{"usageMetadata"}, fromUsageMetadata)
+	}
+
 	if rootObject != nil && getValueByPath(rootObject, []string{"embeddingApiType"}) != nil && getValueByPath(rootObject, []string{"embeddingApiType"}).(string) == "EMBED_CONTENT" {
 		embedding := getValueByPath(fromObject, []string{"embedding"})
 		usageMetadata := getValueByPath(fromObject, []string{"usageMetadata"})
@@ -1003,6 +1053,15 @@ func embedContentResponseFromVertex(fromObject map[string]any, parentObject map[
 			}
 			embedding.(map[string]any)["statistics"] = stats
 			setValueByPath(toObject, []string{"embeddings"}, []any{embedding})
+		}
+	} else if rootObject != nil && getValueByPath(rootObject, []string{"embeddingApiType"}) != nil && getValueByPath(rootObject, []string{"embeddingApiType"}).(string) == "BATCH_EMBED_CONTENTS" {
+		embeddings := getValueByPath(fromObject, []string{"embeddings"})
+		if embeddingsSlice, ok := embeddings.([]any); ok {
+			converted, err := InternalApplyConverterToSliceWithRoot(embeddingsSlice, contentEmbeddingFromVertex, rootObject)
+			if err != nil {
+				return nil, err
+			}
+			setValueByPath(toObject, []string{"embeddings"}, converted)
 		}
 	}
 
@@ -1069,6 +1128,90 @@ func functionCallingConfigToMldev(fromObject map[string]any, parentObject map[st
 
 	if InternalGetValueByPath(fromObject, []string{"streamFunctionCallArguments"}) != nil {
 		return nil, fmt.Errorf("streamFunctionCallArguments parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
+	}
+
+	return toObject, nil
+}
+
+func functionResponsePartToVertex(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromInlineData := InternalGetValueByPath(fromObject, []string{"inlineData"})
+	if fromInlineData != nil {
+		InternalSetValueByPath(toObject, []string{"inlineData"}, fromInlineData)
+	}
+
+	fromFileData := InternalGetValueByPath(fromObject, []string{"fileData"})
+	if fromFileData != nil {
+		InternalSetValueByPath(toObject, []string{"fileData"}, fromFileData)
+	}
+
+	if InternalGetValueByPath(fromObject, []string{"mediaProcessing"}) != nil {
+		return nil, fmt.Errorf("mediaProcessing parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.")
+	}
+
+	fromMediaResolution := InternalGetValueByPath(fromObject, []string{"mediaResolution"})
+	if fromMediaResolution != nil {
+		InternalSetValueByPath(toObject, []string{"mediaResolution"}, fromMediaResolution)
+	}
+
+	fromVideoMetadata := InternalGetValueByPath(fromObject, []string{"videoMetadata"})
+	if fromVideoMetadata != nil {
+		InternalSetValueByPath(toObject, []string{"videoMetadata"}, fromVideoMetadata)
+	}
+
+	fromDocumentMetadata := InternalGetValueByPath(fromObject, []string{"documentMetadata"})
+	if fromDocumentMetadata != nil {
+		InternalSetValueByPath(toObject, []string{"documentMetadata"}, fromDocumentMetadata)
+	}
+
+	fromSpreadsheetMetadata := InternalGetValueByPath(fromObject, []string{"spreadsheetMetadata"})
+	if fromSpreadsheetMetadata != nil {
+		InternalSetValueByPath(toObject, []string{"spreadsheetMetadata"}, fromSpreadsheetMetadata)
+	}
+
+	fromAudioMetadata := InternalGetValueByPath(fromObject, []string{"audioMetadata"})
+	if fromAudioMetadata != nil {
+		InternalSetValueByPath(toObject, []string{"audioMetadata"}, fromAudioMetadata)
+	}
+
+	return toObject, nil
+}
+
+func functionResponseToVertex(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+	if InternalGetValueByPath(fromObject, []string{"willContinue"}) != nil {
+		return nil, fmt.Errorf("willContinue parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.")
+	}
+
+	fromScheduling := InternalGetValueByPath(fromObject, []string{"scheduling"})
+	if fromScheduling != nil {
+		InternalSetValueByPath(toObject, []string{"scheduling"}, fromScheduling)
+	}
+
+	fromParts := InternalGetValueByPath(fromObject, []string{"parts"})
+	if fromParts != nil {
+		fromParts, err = InternalApplyConverterToSliceWithRoot(fromParts.([]any), functionResponsePartToVertex, rootObject)
+		if err != nil {
+			return nil, err
+		}
+
+		InternalSetValueByPath(toObject, []string{"parts"}, fromParts)
+	}
+
+	fromId := InternalGetValueByPath(fromObject, []string{"id"})
+	if fromId != nil {
+		InternalSetValueByPath(toObject, []string{"id"}, fromId)
+	}
+
+	fromName := InternalGetValueByPath(fromObject, []string{"name"})
+	if fromName != nil {
+		InternalSetValueByPath(toObject, []string{"name"}, fromName)
+	}
+
+	fromResponse := InternalGetValueByPath(fromObject, []string{"response"})
+	if fromResponse != nil {
+		InternalSetValueByPath(toObject, []string{"response"}, fromResponse)
 	}
 
 	return toObject, nil
@@ -1296,6 +1439,15 @@ func generateContentConfigToMldev(ac *InternalAPIClient, fromObject map[string]a
 	fromContinuationToken := InternalGetValueByPath(fromObject, []string{"continuationToken"})
 	if fromContinuationToken != nil {
 		InternalSetValueByPath(parentObject, []string{"continuationToken"}, fromContinuationToken)
+	}
+
+	if InternalGetValueByPath(fromObject, []string{"generationOutputConfig"}) != nil {
+		return nil, fmt.Errorf("generationOutputConfig parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
+	}
+
+	fromStore := InternalGetValueByPath(fromObject, []string{"store"})
+	if fromStore != nil {
+		InternalSetValueByPath(parentObject, []string{"store"}, fromStore)
 	}
 
 	return toObject, nil
@@ -1526,6 +1678,15 @@ func generateContentConfigToVertex(ac *InternalAPIClient, fromObject map[string]
 	fromContinuationToken := InternalGetValueByPath(fromObject, []string{"continuationToken"})
 	if fromContinuationToken != nil {
 		InternalSetValueByPath(parentObject, []string{"continuationToken"}, fromContinuationToken)
+	}
+
+	fromGenerationOutputConfig := InternalGetValueByPath(fromObject, []string{"generationOutputConfig"})
+	if fromGenerationOutputConfig != nil {
+		InternalSetValueByPath(parentObject, []string{"outputConfig"}, fromGenerationOutputConfig)
+	}
+
+	if InternalGetValueByPath(fromObject, []string{"store"}) != nil {
+		return nil, fmt.Errorf("store parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.")
 	}
 
 	return toObject, nil
@@ -1851,108 +2012,6 @@ func generateImagesResponseFromVertex(fromObject map[string]any, parentObject ma
 	return toObject, nil
 }
 
-func generateVideosConfigToMldev(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
-	toObject = make(map[string]any)
-
-	fromNumberOfVideos := InternalGetValueByPath(fromObject, []string{"numberOfVideos"})
-	if fromNumberOfVideos != nil {
-		InternalSetValueByPath(parentObject, []string{"parameters", "sampleCount"}, fromNumberOfVideos)
-	}
-
-	if InternalGetValueByPath(fromObject, []string{"outputGcsUri"}) != nil {
-		return nil, fmt.Errorf("outputGcsUri parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
-	}
-
-	if InternalGetValueByPath(fromObject, []string{"fps"}) != nil {
-		return nil, fmt.Errorf("fps parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
-	}
-
-	fromDurationSeconds := InternalGetValueByPath(fromObject, []string{"durationSeconds"})
-	if fromDurationSeconds != nil {
-		InternalSetValueByPath(parentObject, []string{"parameters", "durationSeconds"}, fromDurationSeconds)
-	}
-
-	if InternalGetValueByPath(fromObject, []string{"seed"}) != nil {
-		return nil, fmt.Errorf("seed parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
-	}
-
-	fromAspectRatio := InternalGetValueByPath(fromObject, []string{"aspectRatio"})
-	if fromAspectRatio != nil {
-		InternalSetValueByPath(parentObject, []string{"parameters", "aspectRatio"}, fromAspectRatio)
-	}
-
-	fromResolution := InternalGetValueByPath(fromObject, []string{"resolution"})
-	if fromResolution != nil {
-		InternalSetValueByPath(parentObject, []string{"parameters", "resolution"}, fromResolution)
-	}
-
-	fromPersonGeneration := InternalGetValueByPath(fromObject, []string{"personGeneration"})
-	if fromPersonGeneration != nil {
-		InternalSetValueByPath(parentObject, []string{"parameters", "personGeneration"}, fromPersonGeneration)
-	}
-
-	if InternalGetValueByPath(fromObject, []string{"pubsubTopic"}) != nil {
-		return nil, fmt.Errorf("pubsubTopic parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
-	}
-
-	fromNegativePrompt := InternalGetValueByPath(fromObject, []string{"negativePrompt"})
-	if fromNegativePrompt != nil {
-		InternalSetValueByPath(parentObject, []string{"parameters", "negativePrompt"}, fromNegativePrompt)
-	}
-
-	fromEnhancePrompt := InternalGetValueByPath(fromObject, []string{"enhancePrompt"})
-	if fromEnhancePrompt != nil {
-		InternalSetValueByPath(parentObject, []string{"parameters", "enhancePrompt"}, fromEnhancePrompt)
-	}
-
-	if InternalGetValueByPath(fromObject, []string{"generateAudio"}) != nil {
-		return nil, fmt.Errorf("generateAudio parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
-	}
-
-	fromLastFrame := InternalGetValueByPath(fromObject, []string{"lastFrame"})
-	if fromLastFrame != nil {
-		fromLastFrame, err = imageToMldev(fromLastFrame.(map[string]any), toObject, rootObject)
-		if err != nil {
-			return nil, err
-		}
-
-		InternalSetValueByPath(parentObject, []string{"instances[0]", "lastFrame"}, fromLastFrame)
-	}
-
-	fromReferenceImages := InternalGetValueByPath(fromObject, []string{"referenceImages"})
-	if fromReferenceImages != nil {
-		fromReferenceImages, err = InternalApplyConverterToSliceWithRoot(fromReferenceImages.([]any), videoGenerationReferenceImageToMldev, rootObject)
-		if err != nil {
-			return nil, err
-		}
-
-		InternalSetValueByPath(parentObject, []string{"instances[0]", "referenceImages"}, fromReferenceImages)
-	}
-
-	if InternalGetValueByPath(fromObject, []string{"mask"}) != nil {
-		return nil, fmt.Errorf("mask parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
-	}
-
-	if InternalGetValueByPath(fromObject, []string{"compressionQuality"}) != nil {
-		return nil, fmt.Errorf("compressionQuality parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
-	}
-
-	if InternalGetValueByPath(fromObject, []string{"labels"}) != nil {
-		return nil, fmt.Errorf("labels parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
-	}
-
-	fromWebhookConfig := InternalGetValueByPath(fromObject, []string{"webhookConfig"})
-	if fromWebhookConfig != nil {
-		InternalSetValueByPath(parentObject, []string{"webhookConfig"}, fromWebhookConfig)
-	}
-
-	if InternalGetValueByPath(fromObject, []string{"resizeMode"}) != nil {
-		return nil, fmt.Errorf("resizeMode parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
-	}
-
-	return toObject, nil
-}
-
 func generateVideosConfigToVertex(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -2068,42 +2127,6 @@ func generateVideosConfigToVertex(fromObject map[string]any, parentObject map[st
 	return toObject, nil
 }
 
-func generateVideosOperationFromMldev(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
-	toObject = make(map[string]any)
-
-	fromName := InternalGetValueByPath(fromObject, []string{"name"})
-	if fromName != nil {
-		InternalSetValueByPath(toObject, []string{"name"}, fromName)
-	}
-
-	fromMetadata := InternalGetValueByPath(fromObject, []string{"metadata"})
-	if fromMetadata != nil {
-		InternalSetValueByPath(toObject, []string{"metadata"}, fromMetadata)
-	}
-
-	fromDone := InternalGetValueByPath(fromObject, []string{"done"})
-	if fromDone != nil {
-		InternalSetValueByPath(toObject, []string{"done"}, fromDone)
-	}
-
-	fromError := InternalGetValueByPath(fromObject, []string{"error"})
-	if fromError != nil {
-		InternalSetValueByPath(toObject, []string{"error"}, fromError)
-	}
-
-	fromResponse := InternalGetValueByPath(fromObject, []string{"response", "generateVideoResponse"})
-	if fromResponse != nil {
-		fromResponse, err = generateVideosResponseFromMldev(fromResponse.(map[string]any), toObject, rootObject)
-		if err != nil {
-			return nil, err
-		}
-
-		InternalSetValueByPath(toObject, []string{"response"}, fromResponse)
-	}
-
-	return toObject, nil
-}
-
 func generateVideosOperationFromVertex(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -2135,63 +2158,6 @@ func generateVideosOperationFromVertex(fromObject map[string]any, parentObject m
 		}
 
 		InternalSetValueByPath(toObject, []string{"response"}, fromResponse)
-	}
-
-	return toObject, nil
-}
-
-func generateVideosParametersToMldev(ac *InternalAPIClient, fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
-	toObject = make(map[string]any)
-
-	fromModel := InternalGetValueByPath(fromObject, []string{"model"})
-	if fromModel != nil {
-		fromModel, err = InternalTModel(ac, fromModel)
-		if err != nil {
-			return nil, err
-		}
-
-		InternalSetValueByPath(toObject, []string{"_url", "model"}, fromModel)
-	}
-
-	fromPrompt := InternalGetValueByPath(fromObject, []string{"prompt"})
-	if fromPrompt != nil {
-		InternalSetValueByPath(toObject, []string{"instances[0]", "prompt"}, fromPrompt)
-	}
-
-	fromImage := InternalGetValueByPath(fromObject, []string{"image"})
-	if fromImage != nil {
-		fromImage, err = imageToMldev(fromImage.(map[string]any), toObject, rootObject)
-		if err != nil {
-			return nil, err
-		}
-
-		InternalSetValueByPath(toObject, []string{"instances[0]", "image"}, fromImage)
-	}
-
-	fromVideo := InternalGetValueByPath(fromObject, []string{"video"})
-	if fromVideo != nil {
-		fromVideo, err = videoToMldev(fromVideo.(map[string]any), toObject, rootObject)
-		if err != nil {
-			return nil, err
-		}
-
-		InternalSetValueByPath(toObject, []string{"instances[0]", "video"}, fromVideo)
-	}
-
-	fromSource := InternalGetValueByPath(fromObject, []string{"source"})
-	if fromSource != nil {
-		_, err = generateVideosSourceToMldev(fromSource.(map[string]any), toObject, rootObject)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	fromConfig := InternalGetValueByPath(fromObject, []string{"config"})
-	if fromConfig != nil {
-		_, err = generateVideosConfigToMldev(fromConfig.(map[string]any), toObject, rootObject)
-		if err != nil {
-			return nil, err
-		}
 	}
 
 	return toObject, nil
@@ -2254,32 +2220,6 @@ func generateVideosParametersToVertex(ac *InternalAPIClient, fromObject map[stri
 	return toObject, nil
 }
 
-func generateVideosResponseFromMldev(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
-	toObject = make(map[string]any)
-
-	fromGeneratedVideos := InternalGetValueByPath(fromObject, []string{"generatedSamples"})
-	if fromGeneratedVideos != nil {
-		fromGeneratedVideos, err = InternalApplyConverterToSliceWithRoot(fromGeneratedVideos.([]any), generatedVideoFromMldev, rootObject)
-		if err != nil {
-			return nil, err
-		}
-
-		InternalSetValueByPath(toObject, []string{"generatedVideos"}, fromGeneratedVideos)
-	}
-
-	fromRaiMediaFilteredCount := InternalGetValueByPath(fromObject, []string{"raiMediaFilteredCount"})
-	if fromRaiMediaFilteredCount != nil {
-		InternalSetValueByPath(toObject, []string{"raiMediaFilteredCount"}, fromRaiMediaFilteredCount)
-	}
-
-	fromRaiMediaFilteredReasons := InternalGetValueByPath(fromObject, []string{"raiMediaFilteredReasons"})
-	if fromRaiMediaFilteredReasons != nil {
-		InternalSetValueByPath(toObject, []string{"raiMediaFilteredReasons"}, fromRaiMediaFilteredReasons)
-	}
-
-	return toObject, nil
-}
-
 func generateVideosResponseFromVertex(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -2301,37 +2241,6 @@ func generateVideosResponseFromVertex(fromObject map[string]any, parentObject ma
 	fromRaiMediaFilteredReasons := InternalGetValueByPath(fromObject, []string{"raiMediaFilteredReasons"})
 	if fromRaiMediaFilteredReasons != nil {
 		InternalSetValueByPath(toObject, []string{"raiMediaFilteredReasons"}, fromRaiMediaFilteredReasons)
-	}
-
-	return toObject, nil
-}
-
-func generateVideosSourceToMldev(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
-	toObject = make(map[string]any)
-
-	fromPrompt := InternalGetValueByPath(fromObject, []string{"prompt"})
-	if fromPrompt != nil {
-		InternalSetValueByPath(parentObject, []string{"instances[0]", "prompt"}, fromPrompt)
-	}
-
-	fromImage := InternalGetValueByPath(fromObject, []string{"image"})
-	if fromImage != nil {
-		fromImage, err = imageToMldev(fromImage.(map[string]any), toObject, rootObject)
-		if err != nil {
-			return nil, err
-		}
-
-		InternalSetValueByPath(parentObject, []string{"instances[0]", "image"}, fromImage)
-	}
-
-	fromVideo := InternalGetValueByPath(fromObject, []string{"video"})
-	if fromVideo != nil {
-		fromVideo, err = videoToMldev(fromVideo.(map[string]any), toObject, rootObject)
-		if err != nil {
-			return nil, err
-		}
-
-		InternalSetValueByPath(parentObject, []string{"instances[0]", "video"}, fromVideo)
 	}
 
 	return toObject, nil
@@ -2420,22 +2329,6 @@ func generatedImageMaskFromVertex(fromObject map[string]any, parentObject map[st
 	fromLabels := InternalGetValueByPath(fromObject, []string{"labels"})
 	if fromLabels != nil {
 		InternalSetValueByPath(toObject, []string{"labels"}, fromLabels)
-	}
-
-	return toObject, nil
-}
-
-func generatedVideoFromMldev(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
-	toObject = make(map[string]any)
-
-	fromVideo := InternalGetValueByPath(fromObject, []string{"video"})
-	if fromVideo != nil {
-		fromVideo, err = videoFromMldev(fromVideo.(map[string]any), toObject, rootObject)
-		if err != nil {
-			return nil, err
-		}
-
-		InternalSetValueByPath(toObject, []string{"video"}, fromVideo)
 	}
 
 	return toObject, nil
@@ -2776,30 +2669,6 @@ func imageFromVertex(fromObject map[string]any, parentObject map[string]any, roo
 		}
 
 		InternalSetValueByPath(toObject, []string{"imageBytes"}, fromImageBytes)
-	}
-
-	fromMimeType := InternalGetValueByPath(fromObject, []string{"mimeType"})
-	if fromMimeType != nil {
-		InternalSetValueByPath(toObject, []string{"mimeType"}, fromMimeType)
-	}
-
-	return toObject, nil
-}
-
-func imageToMldev(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
-	toObject = make(map[string]any)
-	if InternalGetValueByPath(fromObject, []string{"gcsUri"}) != nil {
-		return nil, fmt.Errorf("gcsUri parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
-	}
-
-	fromImageBytes := InternalGetValueByPath(fromObject, []string{"imageBytes"})
-	if fromImageBytes != nil {
-		fromImageBytes, err = InternalTBytes(fromImageBytes)
-		if err != nil {
-			return nil, err
-		}
-
-		InternalSetValueByPath(toObject, []string{"bytesBase64Encoded"}, fromImageBytes)
 	}
 
 	fromMimeType := InternalGetValueByPath(fromObject, []string{"mimeType"})
@@ -3263,6 +3132,21 @@ func partToMldev(fromObject map[string]any, parentObject map[string]any, rootObj
 		InternalSetValueByPath(toObject, []string{"speechMetadata"}, fromSpeechMetadata)
 	}
 
+	fromDocumentMetadata := InternalGetValueByPath(fromObject, []string{"documentMetadata"})
+	if fromDocumentMetadata != nil {
+		InternalSetValueByPath(toObject, []string{"documentMetadata"}, fromDocumentMetadata)
+	}
+
+	fromSpreadsheetMetadata := InternalGetValueByPath(fromObject, []string{"spreadsheetMetadata"})
+	if fromSpreadsheetMetadata != nil {
+		InternalSetValueByPath(toObject, []string{"spreadsheetMetadata"}, fromSpreadsheetMetadata)
+	}
+
+	fromAudioMetadata := InternalGetValueByPath(fromObject, []string{"audioMetadata"})
+	if fromAudioMetadata != nil {
+		InternalSetValueByPath(toObject, []string{"audioMetadata"}, fromAudioMetadata)
+	}
+
 	return toObject, nil
 }
 
@@ -3296,6 +3180,11 @@ func partToVertex(fromObject map[string]any, parentObject map[string]any, rootOb
 
 	fromFunctionResponse := InternalGetValueByPath(fromObject, []string{"functionResponse"})
 	if fromFunctionResponse != nil {
+		fromFunctionResponse, err = functionResponseToVertex(fromFunctionResponse.(map[string]any), toObject, rootObject)
+		if err != nil {
+			return nil, err
+		}
+
 		InternalSetValueByPath(toObject, []string{"functionResponse"}, fromFunctionResponse)
 	}
 
@@ -3349,6 +3238,21 @@ func partToVertex(fromObject map[string]any, parentObject map[string]any, rootOb
 	fromSpeechMetadata := InternalGetValueByPath(fromObject, []string{"speechMetadata"})
 	if fromSpeechMetadata != nil {
 		InternalSetValueByPath(toObject, []string{"speechMetadata"}, fromSpeechMetadata)
+	}
+
+	fromDocumentMetadata := InternalGetValueByPath(fromObject, []string{"documentMetadata"})
+	if fromDocumentMetadata != nil {
+		InternalSetValueByPath(toObject, []string{"documentMetadata"}, fromDocumentMetadata)
+	}
+
+	fromSpreadsheetMetadata := InternalGetValueByPath(fromObject, []string{"spreadsheetMetadata"})
+	if fromSpreadsheetMetadata != nil {
+		InternalSetValueByPath(toObject, []string{"spreadsheetMetadata"}, fromSpreadsheetMetadata)
+	}
+
+	fromAudioMetadata := InternalGetValueByPath(fromObject, []string{"audioMetadata"})
+	if fromAudioMetadata != nil {
+		InternalSetValueByPath(toObject, []string{"audioMetadata"}, fromAudioMetadata)
 	}
 
 	return toObject, nil
@@ -3946,11 +3850,6 @@ func toolToVertex(fromObject map[string]any, parentObject map[string]any, rootOb
 
 	fromComputerUse := InternalGetValueByPath(fromObject, []string{"computerUse"})
 	if fromComputerUse != nil {
-		fromComputerUse, err = computerUseToVertex(fromComputerUse.(map[string]any), toObject, rootObject)
-		if err != nil {
-			return nil, err
-		}
-
 		InternalSetValueByPath(toObject, []string{"computerUse"}, fromComputerUse)
 	}
 
@@ -4248,27 +4147,62 @@ func upscaleImageResponseFromVertex(fromObject map[string]any, parentObject map[
 	return toObject, nil
 }
 
-func videoFromMldev(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
+func usageMetadataFromVertex(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
-	fromUri := InternalGetValueByPath(fromObject, []string{"uri"})
-	if fromUri != nil {
-		InternalSetValueByPath(toObject, []string{"uri"}, fromUri)
+	fromPromptTokenCount := InternalGetValueByPath(fromObject, []string{"promptTokenCount"})
+	if fromPromptTokenCount != nil {
+		InternalSetValueByPath(toObject, []string{"promptTokenCount"}, fromPromptTokenCount)
 	}
 
-	fromVideoBytes := InternalGetValueByPath(fromObject, []string{"encodedVideo"})
-	if fromVideoBytes != nil {
-		fromVideoBytes, err = InternalTBytes(fromVideoBytes)
-		if err != nil {
-			return nil, err
-		}
-
-		InternalSetValueByPath(toObject, []string{"videoBytes"}, fromVideoBytes)
+	fromCachedContentTokenCount := InternalGetValueByPath(fromObject, []string{"cachedContentTokenCount"})
+	if fromCachedContentTokenCount != nil {
+		InternalSetValueByPath(toObject, []string{"cachedContentTokenCount"}, fromCachedContentTokenCount)
 	}
 
-	fromMimeType := InternalGetValueByPath(fromObject, []string{"encoding"})
-	if fromMimeType != nil {
-		InternalSetValueByPath(toObject, []string{"mimeType"}, fromMimeType)
+	fromResponseTokenCount := InternalGetValueByPath(fromObject, []string{"candidatesTokenCount"})
+	if fromResponseTokenCount != nil {
+		InternalSetValueByPath(toObject, []string{"responseTokenCount"}, fromResponseTokenCount)
+	}
+
+	fromToolUsePromptTokenCount := InternalGetValueByPath(fromObject, []string{"toolUsePromptTokenCount"})
+	if fromToolUsePromptTokenCount != nil {
+		InternalSetValueByPath(toObject, []string{"toolUsePromptTokenCount"}, fromToolUsePromptTokenCount)
+	}
+
+	fromThoughtsTokenCount := InternalGetValueByPath(fromObject, []string{"thoughtsTokenCount"})
+	if fromThoughtsTokenCount != nil {
+		InternalSetValueByPath(toObject, []string{"thoughtsTokenCount"}, fromThoughtsTokenCount)
+	}
+
+	fromTotalTokenCount := InternalGetValueByPath(fromObject, []string{"totalTokenCount"})
+	if fromTotalTokenCount != nil {
+		InternalSetValueByPath(toObject, []string{"totalTokenCount"}, fromTotalTokenCount)
+	}
+
+	fromPromptTokensDetails := InternalGetValueByPath(fromObject, []string{"promptTokensDetails"})
+	if fromPromptTokensDetails != nil {
+		InternalSetValueByPath(toObject, []string{"promptTokensDetails"}, fromPromptTokensDetails)
+	}
+
+	fromCacheTokensDetails := InternalGetValueByPath(fromObject, []string{"cacheTokensDetails"})
+	if fromCacheTokensDetails != nil {
+		InternalSetValueByPath(toObject, []string{"cacheTokensDetails"}, fromCacheTokensDetails)
+	}
+
+	fromResponseTokensDetails := InternalGetValueByPath(fromObject, []string{"candidatesTokensDetails"})
+	if fromResponseTokensDetails != nil {
+		InternalSetValueByPath(toObject, []string{"responseTokensDetails"}, fromResponseTokensDetails)
+	}
+
+	fromToolUsePromptTokensDetails := InternalGetValueByPath(fromObject, []string{"toolUsePromptTokensDetails"})
+	if fromToolUsePromptTokensDetails != nil {
+		InternalSetValueByPath(toObject, []string{"toolUsePromptTokensDetails"}, fromToolUsePromptTokensDetails)
+	}
+
+	fromTrafficType := InternalGetValueByPath(fromObject, []string{"trafficType"})
+	if fromTrafficType != nil {
+		InternalSetValueByPath(toObject, []string{"trafficType"}, fromTrafficType)
 	}
 
 	return toObject, nil
@@ -4321,27 +4255,6 @@ func videoGenerationMaskToVertex(fromObject map[string]any, parentObject map[str
 	return toObject, nil
 }
 
-func videoGenerationReferenceImageToMldev(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
-	toObject = make(map[string]any)
-
-	fromImage := InternalGetValueByPath(fromObject, []string{"image"})
-	if fromImage != nil {
-		fromImage, err = imageToMldev(fromImage.(map[string]any), toObject, rootObject)
-		if err != nil {
-			return nil, err
-		}
-
-		InternalSetValueByPath(toObject, []string{"image"}, fromImage)
-	}
-
-	fromReferenceType := InternalGetValueByPath(fromObject, []string{"referenceType"})
-	if fromReferenceType != nil {
-		InternalSetValueByPath(toObject, []string{"referenceType"}, fromReferenceType)
-	}
-
-	return toObject, nil
-}
-
 func videoGenerationReferenceImageToVertex(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -4358,32 +4271,6 @@ func videoGenerationReferenceImageToVertex(fromObject map[string]any, parentObje
 	fromReferenceType := InternalGetValueByPath(fromObject, []string{"referenceType"})
 	if fromReferenceType != nil {
 		InternalSetValueByPath(toObject, []string{"referenceType"}, fromReferenceType)
-	}
-
-	return toObject, nil
-}
-
-func videoToMldev(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
-	toObject = make(map[string]any)
-
-	fromUri := InternalGetValueByPath(fromObject, []string{"uri"})
-	if fromUri != nil {
-		InternalSetValueByPath(toObject, []string{"uri"}, fromUri)
-	}
-
-	fromVideoBytes := InternalGetValueByPath(fromObject, []string{"videoBytes"})
-	if fromVideoBytes != nil {
-		fromVideoBytes, err = InternalTBytes(fromVideoBytes)
-		if err != nil {
-			return nil, err
-		}
-
-		InternalSetValueByPath(toObject, []string{"encodedVideo"}, fromVideoBytes)
-	}
-
-	fromMimeType := InternalGetValueByPath(fromObject, []string{"mimeType"})
-	if fromMimeType != nil {
-		InternalSetValueByPath(toObject, []string{"encoding"}, fromMimeType)
 	}
 
 	return toObject, nil
@@ -4577,10 +4464,10 @@ func (m Models) generateContentStream(ctx context.Context, model string, content
 }
 
 // EmbedContent generates embeddings for the provided contents using the specified model.
-func (m Models) embedContent(ctx context.Context, model string, contents []*Content, content *Content, embeddingApiType *EmbeddingAPIType, config *EmbedContentConfig) (*EmbedContentResponse, error) {
+func (m Models) embedContent(ctx context.Context, model string, contents []*Content, content *Content, embeddingApiType *EmbeddingAPIType, batchContents []*Content, config *EmbedContentConfig) (*EmbedContentResponse, error) {
 	parameterMap := make(map[string]any)
 
-	kwargs := map[string]any{"model": model, "contents": contents, "content": content, "embeddingApiType": embeddingApiType, "config": config}
+	kwargs := map[string]any{"model": model, "contents": contents, "content": content, "embeddingApiType": embeddingApiType, "batchContents": batchContents, "config": config}
 	InternalDeepMarshal(kwargs, &parameterMap)
 
 	var httpOptions *HTTPOptions
@@ -4616,9 +4503,13 @@ func (m Models) embedContent(ctx context.Context, model string, contents []*Cont
 		delete(body, "_url")
 	}
 	if m.apiClient.ClientConfig().Backend == BackendVertexAI {
-		if tIsVertexEmbedContentModel(parameterMap["model"].(string)) {
+		apiType, _ := parameterMap["embeddingApiType"].(string)
+		switch apiType {
+		case "BATCH_EMBED_CONTENTS":
+			path, err = InternalFormatMap("{model}:batchEmbedContents", urlParams)
+		case "EMBED_CONTENT":
 			path, err = InternalFormatMap("{model}:embedContent", urlParams)
-		} else {
+		default:
 			path, err = InternalFormatMap("{model}:predict", urlParams)
 		}
 	} else {
@@ -5524,8 +5415,9 @@ func (m Models) generateVideos(ctx context.Context, model string, prompt *string
 		toConverter = generateVideosParametersToVertex
 		fromConverter = generateVideosOperationFromVertex
 	} else {
-		toConverter = generateVideosParametersToMldev
-		fromConverter = generateVideosOperationFromMldev
+
+		return nil, fmt.Errorf("method GenerateVideos is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode. You can choose to use Gemini Enterprise Agent Platform by setting ClientConfig.Backend to BackendEnterprise.")
+
 	}
 
 	body, err := toConverter(m.apiClient, parameterMap, nil, parameterMap)
@@ -5539,7 +5431,11 @@ func (m Models) generateVideos(ctx context.Context, model string, prompt *string
 		urlParams = body["_url"].(map[string]any)
 		delete(body, "_url")
 	}
-	path, err = InternalFormatMap("{model}:predictLongRunning", urlParams)
+	if m.apiClient.ClientConfig().Backend == BackendVertexAI {
+		path, err = InternalFormatMap("{model}:predictLongRunning", urlParams)
+	} else {
+		path, err = InternalFormatMap("None", urlParams)
+	}
 	if err != nil {
 		return nil, fmt.Errorf("invalid url params: %#v.\n%w", urlParams, err)
 	}
@@ -5585,19 +5481,87 @@ var breakingChangeWarningGenerateVideosNotSource sync.Once
 var deprecationWarningGenerateVideosFromSource sync.Once
 
 // GenerateContent generates content based on the provided model, contents, and configuration.
+//
+// A response that stops before the model finishes is continued automatically: the same request is
+// sent again with the response's continuation token until the model finishes. The responses are
+// returned merged into one, with their parts concatenated and their usage metadata summed. Each
+// request is billed, including any that succeeded before a later one failed. Set
+// [GenerateContentConfig.AutomaticContinuation] to false to turn this off.
 func (m Models) GenerateContent(ctx context.Context, model string, contents []*Content, config *GenerateContentConfig) (*GenerateContentResponse, error) {
 	if config != nil {
 		config.setDefaults()
 	}
-	return m.generateContent(ctx, model, contents, config)
+	enableContinuation := shouldEnableAutomaticContinuation(config)
+	response, err := m.generateContent(ctx, model, contents, config)
+	if err != nil {
+		return nil, err
+	}
+	if !enableContinuation {
+		return response, nil
+	}
+
+	hopResponses := []*GenerateContentResponse{response}
+	for {
+		nextToken := shouldContinueGeneration(response)
+		if len(nextToken) == 0 {
+			break
+		}
+
+		callConfig := prepareContinuationConfig(config, nextToken)
+		response, err = m.generateContent(ctx, model, contents, callConfig)
+		if err != nil {
+			return nil, err
+		}
+		hopResponses = append(hopResponses, response)
+	}
+
+	if len(hopResponses) > 1 {
+		return mergeContinuationResponses(hopResponses)
+	}
+
+	return response, nil
 }
 
 // GenerateContentStream generates a stream of content based on the provided model, contents, and configuration.
+//
+// A response that stops before the model finishes is continued automatically: the same request is
+// sent again with the response's continuation token until the model finishes, and the chunks of
+// every request are emitted in order. The usage metadata in a chunk is accumulated across
+// continuation requests. Each request is billed, including any that succeeded before a later one
+// failed. Set [GenerateContentConfig.AutomaticContinuation] to false to turn this off.
 func (m Models) GenerateContentStream(ctx context.Context, model string, contents []*Content, config *GenerateContentConfig) iter.Seq2[*GenerateContentResponse, error] {
 	if config != nil {
 		config.setDefaults()
 	}
-	return m.generateContentStream(ctx, model, contents, config)
+	enableContinuation := shouldEnableAutomaticContinuation(config)
+
+	return func(yield func(*GenerateContentResponse, error) bool) {
+		state := newStreamContinuation(config, enableContinuation)
+		for {
+			callConfig := state.startHop()
+			var hopErr error
+			for chunk, err := range m.generateContentStream(ctx, model, contents, callConfig) {
+				if err != nil {
+					hopErr = err
+					break
+				}
+				if !yield(state.observe(chunk), nil) {
+					return
+				}
+			}
+
+			resume, err := state.endHop(ctx, hopErr)
+			if resume {
+				continue
+			}
+			if err != nil {
+				yield(nil, err)
+			}
+			// Otherwise the API returned no error, so end the stream normally; the
+			// caller keeps every chunk already yielded.
+			return
+		}
+	}
 }
 
 // List retrieves a paginated list of models resources.
@@ -5659,7 +5623,7 @@ func (m Models) All(ctx context.Context) iter.Seq2[*Model, error] {
 // GenerateImages generates images based on the provided model, prompt, and configuration.
 func (m Models) GenerateImages(ctx context.Context, model string, prompt string, config *GenerateImagesConfig) (*GenerateImagesResponse, error) {
 	deprecationWarningGenerateImages.Do(func() {
-		log.Println("The GenerateImages method is deprecated and will be removed in the next major release (not before Jan. 1 2027). Please use the GenerateContent method with image models instead. See https://ai.google.dev/gemini-api/docs/deprecations#imagen-models and https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/capabilities/image-generation#generate-images")
+		log.Println("The GenerateImages method is deprecated and will be removed in the next major release (not before Jan. 1 2027). Please use the GenerateContent method with image models instead. See https://aistudio.google.com/docs/deprecations#imagen-models and https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/capabilities/image-generation#generate-images")
 	})
 	apiResponse, err := m.generateImages(ctx, model, prompt, config)
 	if err != nil {
@@ -5751,16 +5715,24 @@ func (m Models) GenerateVideosFromSource(ctx context.Context, model string, sour
 func (m Models) EmbedContent(ctx context.Context, model string, contents []*Content, config *EmbedContentConfig) (*EmbedContentResponse, error) {
 	// if not Vertex, call embedContent normally
 	if m.apiClient.clientConfig.Backend != BackendVertexAI {
-		return m.embedContent(ctx, model, contents, nil, nil, config)
+		return m.embedContent(ctx, model, contents, nil, nil, nil, config)
 	}
 	if tIsVertexEmbedContentModel(model) {
 		if len(contents) > 1 {
-			return nil, fmt.Errorf("the embedContent API for this model only supports one content at a time")
+			if tIsVertexMaasModel(model) {
+				return nil, fmt.Errorf("the embedContent API for this model only supports one content at a time")
+			}
+			eab := EmbeddingAPITypeBatchEmbedContents
+			return m.embedContent(ctx, model, nil, nil, &eab, contents, config)
+		}
+		var firstContent *Content
+		if len(contents) > 0 {
+			firstContent = contents[0]
 		}
 		eac := EmbeddingAPITypeEmbedContent
-		return m.embedContent(ctx, model, contents, contents[0], &eac, config)
+		return m.embedContent(ctx, model, nil, firstContent, &eac, nil, config)
 	} else {
 		eap := EmbeddingAPITypePredict
-		return m.embedContent(ctx, model, contents, nil, &eap, config)
+		return m.embedContent(ctx, model, contents, nil, &eap, nil, config)
 	}
 }

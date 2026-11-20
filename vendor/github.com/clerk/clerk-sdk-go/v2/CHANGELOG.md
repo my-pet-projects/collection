@@ -2,6 +2,20 @@
 
 ## Next release
 
+## 2.9.0
+
+- Fix the `http` middleware's JWK cache extending an entry's expiry on every cache hit. Entries now expire one hour after they're fetched.
+- Scope the `http` middleware's JWK cache to the Clerk instance a key was fetched for, so a process that serves several instances keeps their keys separate. A custom `Backend` that doesn't implement the new `clerk.CacheScoper` interface skips the cache. Add `clerktest.ConvertToJWKS`.
+- Add support for changing when a session expires with `session.Update`. The new `ExpireAt` applies to that session only and can exceed the instance's session lifetime.
+- Add support for merging two users with `user.Merge`, which moves the `FromUserID` user's identifications, second factors, organization memberships and metadata onto another user and deletes the `FromUserID` user. It returns a `clerk.UserMergeResult` holding the remaining user and the deleted one. Set `DryRun` to preview a merge.
+
+## 2.8.0
+
+- Update go-jose dependency to v4.1.6 to fix [GHSA-mgcc-cww5-fp2q](https://github.com/advisories/GHSA-mgcc-cww5-fp2q), where a crafted token could tie up a CPU in `jwt.Decode` and the `http` middleware. Tokens signed with an algorithm go-jose doesn't support now fail in `jwt.Decode`, so the middleware treats them as missing instead of calling the authorization failure handler.
+- Add support for permanently deleting an invitation with `invitation.Delete`. Unlike `invitation.Revoke`, this removes the invitation record and the stored copies of its invitation email, so it can be used to honor a data erasure request from someone who was invited but never signed up.
+- Add support for removing a user's password with `user.RemovePassword`.
+- Add `SkipRestrictionChecks` to `user.CreateParams`. Creating a user now runs the instance's allowlist, blocklist, blocked disposable email domains and blocked email subaddresses, the same as sign-up does; set this to exempt a single create, for a backend creating a user it already trusts.
+
 ## 2.3.1
 
 - Fix parsing the org claims in the new JWT session token version.

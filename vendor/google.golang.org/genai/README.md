@@ -5,7 +5,7 @@
 
 The Google Gen AI Go SDK provides an interface for developers to integrate
 Google's generative models into their Go applications. It supports the
-[Gemini Developer API](https://ai.google.dev/gemini-api/docs) and
+[Gemini Developer API](https://aistudio.google.com/docs) and
 [Gemini Enterprise Agent Platform](https://docs.cloud.google.com/gemini-enterprise-agent-platform)
 APIs.
 
@@ -37,7 +37,7 @@ parts := []*genai.Part{
   {Text: "What's this image about?"},
   {InlineData: &genai.Blob{Data: imageBytes, MIMEType: "image/jpeg"}},
 }
-result, err := client.Models.GenerateContent(ctx, "gemini-flash-latest", []*genai.Content{{Parts: parts}}, nil)
+result, err := client.Models.GenerateContent(ctx, "gemini-3.8-flash", []*genai.Content{{Parts: parts}}, nil)
 ```
 
 ## Installation and usage
@@ -120,7 +120,7 @@ func main() {
 	}
 
 	body := operations.NewCreateInteractionRequestBody(interactions.CreateModelInteraction{
-		Model: interactions.Model("gemini-flash-latest"),
+		Model: interactions.Model("gemini-3.8-flash"),
 		Input: genai.Ptr(interactions.NewInteractionsInput("Tell me a short joke about programming.")),
 	})
 

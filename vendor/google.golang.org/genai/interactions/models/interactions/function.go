@@ -22,12 +22,21 @@ import (
 
 // Function - A tool that can be used by the model.
 type Function struct {
+	// If true, the function's loading is deferred.
+	DeferLoading *bool `json:"defer_loading,omitzero"`
 	// A description of the function.
 	Description *string `json:"description,omitzero"`
 	// The name of the function.
 	Name *string `json:"name,omitzero"`
 	// The JSON Schema for the function's parameters.
+	//
+	// Supports a subset of JSON Schema. `minLength`, `maxLength`,
+	// `minProperties`, `maxProperties`, `uniqueItems`, `contains`,
+	// `minContains`, and `maxContains` are ignored and not enforced.
 	Parameters any `json:"parameters,omitzero"`
+	// A brief description of the function, shown to the model as a
+	// short summary of functions with `defer_loading` set to true.
+	ShortDescription *string `json:"short_description,omitzero"`
 	//lint:ignore U1000 accessed via reflection for JSON marshaling
 	type_ string `const:"function" json:"type"`
 }
@@ -41,6 +50,13 @@ func (f *Function) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	return nil
+}
+
+func (f *Function) GetDeferLoading() *bool {
+	if f == nil {
+		return nil
+	}
+	return f.DeferLoading
 }
 
 func (f *Function) GetDescription() *string {
@@ -62,6 +78,13 @@ func (f *Function) GetParameters() any {
 		return nil
 	}
 	return f.Parameters
+}
+
+func (f *Function) GetShortDescription() *string {
+	if f == nil {
+		return nil
+	}
+	return f.ShortDescription
 }
 
 func (f *Function) GetType() string {
