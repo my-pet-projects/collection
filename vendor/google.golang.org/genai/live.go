@@ -74,6 +74,7 @@ func (r *Live) Connect(context context.Context, model string, config *LiveConnec
 
 	var u url.URL
 	var header http.Header = mergeHeaders(&httpOptions, nil)
+	appendSDKHeaders(header)
 	if r.apiClient.clientConfig.Backend == BackendVertexAI {
 		hasStandardAuth := r.apiClient.clientConfig.Project != "" && r.apiClient.clientConfig.Location != ""
 		if r.apiClient.clientConfig.Credentials != nil {
@@ -267,6 +268,14 @@ type LiveToolResponseInput = LiveSendToolResponseParameters
 // field when establishing the connection via [Live.Connect].
 func (s *Session) SendToolResponse(input LiveToolResponseInput) error {
 	return s.send(input.toLiveClientMessage())
+}
+
+// Preview. SendContextUpdate transmits a [LiveClientContextUpdate] over the established WebSocket connection.
+//
+// Updates to the context of the current session. Only fields that are set will be updated.
+// Updates are guaranteed to be processed in order with the rest of the inputs.
+func (s *Session) SendContextUpdate(input LiveClientContextUpdate) error {
+	return s.send(&LiveClientMessage{ContextUpdate: &input})
 }
 
 // Send transmits a LiveClientMessage over the established connection.

@@ -34,18 +34,16 @@ const (
 func (e EnvironmentNetworkEnum) ToPointer() *EnvironmentNetworkEnum {
 	return &e
 }
-func (e *EnvironmentNetworkEnum) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *EnvironmentNetworkEnum) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "disabled":
+			return true
+		}
 	}
-	switch v {
-	case "disabled":
-		*e = EnvironmentNetworkEnum(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for EnvironmentNetworkEnum: %v", v)
-	}
+	return false
 }
 
 type EnvironmentNetworkUnionType string
@@ -122,6 +120,9 @@ func (u *EnvironmentNetworkUnion) UnmarshalJSON(data []byte) error {
 	}
 
 	if len(candidates) == 0 {
+		if !json.Valid(data) {
+			return fmt.Errorf("could not unmarshal `%s` into any supported union types for EnvironmentNetworkUnion", string(data))
+		}
 		u.UnknownRaw = json.RawMessage(data)
 		u.Type = EnvironmentNetworkUnionTypeUnknown
 		return nil
@@ -146,6 +147,9 @@ func (u *EnvironmentNetworkUnion) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 
+	if !json.Valid(data) {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for EnvironmentNetworkUnion", string(data))
+	}
 	u.UnknownRaw = json.RawMessage(data)
 	u.Type = EnvironmentNetworkUnionTypeUnknown
 	return nil
@@ -194,6 +198,16 @@ type Environment struct {
 	// Output only. The time at which the environment was created in ISO 8601 format
 	// (YYYY-MM-DDThh:mm:ssZ).
 	Created *string `json:"created,omitzero"`
+	// Output only. Arbitrary customer-defined JSON configuration passed through to the
+	// self-hosted environment poller. Only populated for `self_hosted`
+	// environments when configured.
+	CustomConfig map[string]any `json:"custom_config,omitzero"`
+	// Output only. Secret token generated upon environment creation for self_hosted
+	// environments. Used by the self-hosted sandbox daemon to authenticate
+	// polling and streaming requests. Only returned in the CreateEnvironment
+	// response; omitted from subsequent GetEnvironment and ListEnvironments
+	// calls.
+	EnvironmentKey *string `json:"environment_key,omitzero"`
 	// Output only. The number of files in the environment, output only.
 	FileCount *int64 `integer:"string" json:"file_count,omitzero"`
 	// Required. Output only. The ID of the environment.
@@ -201,6 +215,8 @@ type Environment struct {
 	// Output only. The time at which the environment was last accessed in ISO 8601 format
 	// (YYYY-MM-DDThh:mm:ssZ).
 	LastAccessed *string `json:"last_accessed,omitzero"`
+	// The compute lifecycle mode for an environment.
+	Mode *interactions.EnvironmentMode `json:"mode,omitzero"`
 	// Network configuration for the environment.
 	Network *EnvironmentNetworkUnion `json:"network,omitzero"`
 	// Output only. The total size of the environment files in bytes, output only.
@@ -232,6 +248,20 @@ func (e *Environment) GetCreated() *string {
 	return e.Created
 }
 
+func (e *Environment) GetCustomConfig() map[string]any {
+	if e == nil {
+		return nil
+	}
+	return e.CustomConfig
+}
+
+func (e *Environment) GetEnvironmentKey() *string {
+	if e == nil {
+		return nil
+	}
+	return e.EnvironmentKey
+}
+
 func (e *Environment) GetFileCount() *int64 {
 	if e == nil {
 		return nil
@@ -251,6 +281,13 @@ func (e *Environment) GetLastAccessed() *string {
 		return nil
 	}
 	return e.LastAccessed
+}
+
+func (e *Environment) GetMode() *interactions.EnvironmentMode {
+	if e == nil {
+		return nil
+	}
+	return e.Mode
 }
 
 func (e *Environment) GetNetwork() *EnvironmentNetworkUnion {
