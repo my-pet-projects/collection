@@ -44,6 +44,7 @@ type User struct {
 	LastActiveAt                  *int64                    `json:"last_active_at"`
 	MFAEnabledAt                  *int64                    `json:"mfa_enabled_at"`
 	Locale                        *string                   `json:"locale"`
+	Timezone                      *string                   `json:"timezone"`
 	MFADisabledAt                 *int64                    `json:"mfa_disabled_at"`
 	LegalAcceptedAt               *int64                    `json:"legal_accepted_at"`
 }
@@ -98,6 +99,40 @@ type UserList struct {
 	APIResource
 	Users      []*User `json:"data"`
 	TotalCount int64   `json:"total_count"`
+}
+
+type UserSearchList struct {
+	APIResource
+	Users  []*User           `json:"data"`
+	Cursor *UserSearchCursor `json:"cursor"`
+}
+
+// PaginationCursor contains the cursors for pagination.
+type PaginationCursor struct {
+	StartingAfter *string `json:"starting_after"`
+	EndingBefore  *string `json:"ending_before"`
+	HasNextPage   bool    `json:"has_next_page"`
+}
+
+// UserSearchCursor links a page of users to the pages around it.
+type UserSearchCursor struct {
+	PaginationCursor
+	// RemainingCountExact is the number of users from the start of this
+	// page onward. It is set when the request asked for a remaining count
+	// and the count is exact.
+	RemainingCountExact *int64 `json:"remaining_count_exact,omitempty"`
+	// RemainingCountAtLeast is set instead when more users remain than the
+	// ceiling the request asked for, and equals that ceiling.
+	RemainingCountAtLeast *int64 `json:"remaining_count_at_least,omitempty"`
+}
+
+// UserMergeResult is the result of merging one user into another.
+type UserMergeResult struct {
+	APIResource
+	// User is the user that remains, as it is after the merge.
+	User *User `json:"user"`
+	// DeletedUser is the merged user as it was before it was deleted.
+	DeletedUser *User `json:"deleted_user"`
 }
 
 type SAMLAccountConnection struct {

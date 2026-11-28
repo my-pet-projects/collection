@@ -22,9 +22,8 @@ func Get(ctx context.Context, id string) (*clerk.User, error) {
 //
 // If any of the deprecated metadata fields on UpdateParams is set, the
 // SDK splits the call: non-metadata fields are sent via PATCH /users/{id}
-// (the historical behavior), and the metadata fields are then sent via
-// PUT /users/{id}/metadata (the dedicated metadata endpoint). When only
-// metadata fields are set, the PATCH call is skipped. The returned user
+// and the metadata fields are then sent via PUT /users/{id}/metadata (the dedicated metadata endpoint).
+// When only metadata fields are set, the PATCH call is skipped. The returned user
 // reflects the response of the final call made.
 func Update(ctx context.Context, id string, params *UpdateParams) (*clerk.User, error) {
 	return getClient().Update(ctx, id, params)
@@ -49,7 +48,7 @@ func UpdateMetadata(ctx context.Context, id string, params *UpdateMetadataParams
 // ReplaceMetadata replaces the user's metadata. Each metadata
 // field included in the request overwrites the stored value
 // (rather than merging with it). Fields omitted from the request
-// are left untouched. To clear a column, pass an empty object
+// are left untouched. To clear metadata, pass an empty object
 // ({}) for that field.
 func ReplaceMetadata(ctx context.Context, id string, params *ReplaceMetadataParams) (*clerk.User, error) {
 	return getClient().ReplaceMetadata(ctx, id, params)
@@ -65,9 +64,27 @@ func List(ctx context.Context, params *ListParams) (*clerk.UserList, error) {
 	return getClient().List(ctx, params)
 }
 
+// ListWithoutCount returns a list of users without fetching the total count.
+// Unlike [List], it makes no request to GET /v1/users/count, which can be
+// slow for a search over many users. There is no total, so page until a page
+// holds fewer users than the limit.
+func ListWithoutCount(ctx context.Context, params *ListParams) ([]*clerk.User, error) {
+	return getClient().ListWithoutCount(ctx, params)
+}
+
 // Count returns the total count of users satisfying the parameters.
 func Count(ctx context.Context, params *ListParams) (*TotalCount, error) {
 	return getClient().Count(ctx, params)
+}
+
+// Search returns one page of users matching the parameters, or of all users
+// when none are set. Pages are linked by the cursors in the response. Pass a
+// cursor's StartingAfter to read the next page or its EndingBefore to read the
+// previous one. A page read backward can hold fewer users than
+// [SearchParams.Limit]. Cursors belong to the [SearchParams.OrderBy] and
+// filters they were issued for.
+func Search(ctx context.Context, params *SearchParams) (*clerk.UserSearchList, error) {
+	return getClient().Search(ctx, params)
 }
 
 // ListOAuthAccessTokens retrieves a list of the user's access
@@ -99,6 +116,16 @@ func Lock(ctx context.Context, id string) (*clerk.User, error) {
 // Unlock removes the lock for a user.
 func Unlock(ctx context.Context, id string) (*clerk.User, error) {
 	return getClient().Unlock(ctx, id)
+}
+
+// Merge moves the identifications, connected accounts, second factors,
+// organization memberships and metadata of the FromUserID user onto the user
+// with the given id, then deletes the FromUserID user. Where both users have a
+// value, the user with the given id keeps its own.
+//
+// A merge cannot be undone. Set DryRun to preview one.
+func Merge(ctx context.Context, id string, params *MergeParams) (*clerk.UserMergeResult, error) {
+	return getClient().Merge(ctx, id, params)
 }
 
 // ListOrganizationMemberships lists all the user's organization memberships.
@@ -141,6 +168,13 @@ func DeleteBackupCode(ctx context.Context, userID string) (*MultifactorAuthentic
 // DeleteExternalAccount deletes an external account by its ID.
 func DeleteExternalAccount(ctx context.Context, params *DeleteExternalAccountParams) (*clerk.DeletedResource, error) {
 	return getClient().DeleteExternalAccount(ctx, params)
+}
+
+// RemovePassword removes a user's password without requiring their current password.
+// Password removal is allowed even when the user has no other sign-in method configured.
+// Existing sessions remain active by default. Set SignOutOfOtherSessions to true to revoke them.
+func RemovePassword(ctx context.Context, userID string, params *RemovePasswordParams) (*clerk.User, error) {
+	return getClient().RemovePassword(ctx, userID, params)
 }
 
 // VerifyPassword verifies a user's password, returns an error if the password is incorrect.

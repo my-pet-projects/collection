@@ -35,6 +35,7 @@ const (
 	ToolTypeGoogleSearch  ToolType = "google_search"
 	ToolTypeMcpServer     ToolType = "mcp_server"
 	ToolTypeRetrieval     ToolType = "retrieval"
+	ToolTypeToolSearch    ToolType = "tool_search"
 	ToolTypeURLContext    ToolType = "url_context"
 	ToolTypeUnknown       ToolType = "UNKNOWN"
 )
@@ -49,6 +50,7 @@ type Tool struct {
 	GoogleSearch  *GoogleSearch   `queryParam:"inline" union:"member"`
 	MCPServer     *MCPServer      `queryParam:"inline" union:"member"`
 	Retrieval     *Retrieval      `queryParam:"inline" union:"member"`
+	ToolSearch    *ToolSearch     `queryParam:"inline" union:"member"`
 	URLContext    *URLContext     `queryParam:"inline" union:"member"`
 	UnknownRaw    json.RawMessage `json:"-" union:"unknown"`
 
@@ -56,7 +58,7 @@ type Tool struct {
 }
 
 type ToolMember interface {
-	CodeExecution | ComputerUse | FileSearch | Function | GoogleMaps | GoogleSearch | MCPServer | Retrieval | URLContext
+	CodeExecution | ComputerUse | FileSearch | Function | GoogleMaps | GoogleSearch | MCPServer | Retrieval | ToolSearch | URLContext
 }
 
 func NewTool[T ToolMember](val T) Tool {
@@ -109,6 +111,12 @@ func NewTool[T ToolMember](val T) Tool {
 			Retrieval: &v,
 			Type:      typ,
 		}
+	case ToolSearch:
+		typ := ToolTypeToolSearch
+		return Tool{
+			ToolSearch: &v,
+			Type:       typ,
+		}
 	case URLContext:
 		typ := ToolTypeURLContext
 		return Tool{
@@ -148,6 +156,10 @@ func (u *Tool) UnmarshalJSON(data []byte) (err error) {
 
 	dis := new(discriminator)
 	if err := json.Unmarshal(data, &dis); err != nil {
+		var syntaxErr *json.SyntaxError
+		if errors.As(err, &syntaxErr) {
+			return fmt.Errorf("could not unmarshal discriminator: %w", err)
+		}
 		u.UnknownRaw = json.RawMessage(data)
 		u.Type = ToolTypeUnknown
 		return nil
@@ -231,6 +243,15 @@ func (u *Tool) UnmarshalJSON(data []byte) (err error) {
 		u.Retrieval = retrieval
 		u.Type = ToolTypeRetrieval
 		return nil
+	case "tool_search":
+		toolSearch := new(ToolSearch)
+		if err := utils.UnmarshalJSON(data, &toolSearch, "", true, nil); err != nil {
+			return fmt.Errorf("could not unmarshal `%s` into expected (Type == tool_search) type ToolSearch within Tool: %w", string(data), err)
+		}
+
+		u.ToolSearch = toolSearch
+		u.Type = ToolTypeToolSearch
+		return nil
 	case "url_context":
 		urlContext := new(URLContext)
 		if err := utils.UnmarshalJSON(data, &urlContext, "", true, nil); err != nil {
@@ -279,6 +300,10 @@ func (u Tool) MarshalJSON() ([]byte, error) {
 
 	if u.Retrieval != nil {
 		return utils.MarshalJSON(u.Retrieval, "", true)
+	}
+
+	if u.ToolSearch != nil {
+		return utils.MarshalJSON(u.ToolSearch, "", true)
 	}
 
 	if u.URLContext != nil {
