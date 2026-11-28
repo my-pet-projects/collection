@@ -71,6 +71,7 @@ type GenAI struct {
 	Environments *Environments
 	Agents       *Agents
 	Credentials  *Credentials
+	Decisions    *Decisions
 	Interactions *Interactions
 	Triggers     *Triggers
 	Voices       *Voices
@@ -181,7 +182,7 @@ func New(opts ...SDKOption) *GenAI {
 
 	// Use WithClient to override the default client if you would like to customize the timeout
 	if sdk.sdkConfiguration.Client == nil {
-		sdk.sdkConfiguration.Client = &http.Client{Timeout: 60 * time.Second}
+		sdk.sdkConfiguration.Client = &http.Client{}
 	}
 
 	sdk.sdkConfiguration = sdk.hooks.SDKInit(sdk.sdkConfiguration)
@@ -189,6 +190,7 @@ func New(opts ...SDKOption) *GenAI {
 	sdk.Environments = newEnvironments(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Agents = newAgents(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Credentials = newCredentials(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.Decisions = newDecisions(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Interactions = newInteractions(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Triggers = newTriggers(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Voices = newVoices(sdk, sdk.sdkConfiguration, sdk.hooks)

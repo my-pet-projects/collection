@@ -120,13 +120,19 @@ func sendRequest(ctx context.Context, ac *apiClient, path string, method string,
 }
 
 func downloadFile(ctx context.Context, ac *apiClient, path string, httpOptions *HTTPOptions) ([]byte, error) {
-	// The client and request timeout are not used for downloadFile.
-	// TODO(b/427540996): implement timeout.
 	req, patchedHTTPOptions, err := buildRequest(ctx, ac, path, nil, http.MethodGet, httpOptions)
 	if err != nil {
 		return nil, err
 	}
-	req = req.WithContext(ctx)
+
+	requestContext := ctx
+	timeout := patchedHTTPOptions.Timeout
+	var cancel context.CancelFunc
+	if timeout != nil && *timeout > 0*time.Second && isTimeoutBeforeDeadline(ctx, *timeout) {
+		requestContext, cancel = context.WithTimeout(ctx, *timeout)
+		defer cancel()
+	}
+	req = req.WithContext(requestContext)
 
 	resp, err := doRequest(ac, req, patchedHTTPOptions.RetryOptions)
 	if err != nil {
@@ -177,7 +183,9 @@ func (ac *apiClient) createAPIURL(suffix, method string, httpOptions *HTTPOption
 		}
 		finalURL = u.JoinPath(httpOptions.APIVersion, path)
 	} else {
-		if !strings.Contains(path, fmt.Sprintf("/%s/", httpOptions.APIVersion)) {
+		if strings.Contains(path, apiVersionPlaceholder) {
+			path = resolveAPIVersionInPath(path, httpOptions.APIVersion)
+		} else if !strings.Contains(path, fmt.Sprintf("/%s/", httpOptions.APIVersion)) {
 			path = fmt.Sprintf("%s/%s", httpOptions.APIVersion, path)
 		}
 		finalURL = u.JoinPath(path)
@@ -185,6 +193,20 @@ func (ac *apiClient) createAPIURL(suffix, method string, httpOptions *HTTPOption
 
 	finalURL.RawQuery = query
 	return finalURL, nil
+}
+
+const apiVersionPlaceholder = "{api_version}"
+
+// resolveAPIVersionInPath substitutes "{api_version}" in a path template such
+// as "upload/{api_version}/files". When apiVersion is empty, the placeholder
+// segment is omitted without leaving a double slash (e.g. "upload/files").
+func resolveAPIVersionInPath(path, apiVersion string) string {
+	if apiVersion != "" {
+		return strings.ReplaceAll(path, apiVersionPlaceholder, apiVersion)
+	}
+	path = strings.ReplaceAll(path, apiVersionPlaceholder+"/", "")
+	path = strings.ReplaceAll(path, "/"+apiVersionPlaceholder, "")
+	return strings.ReplaceAll(path, apiVersionPlaceholder, "")
 }
 
 // patchHTTPOptions merges two HttpOptions objects, creating a new one.
@@ -439,6 +461,10 @@ func deserializeUnaryResponse(resp *http.Response) (map[string]any, error) {
 			return nil, fmt.Errorf("deserializeUnaryResponse: error unmarshalling response: %w\n%s", err, respBody)
 		}
 	}
+	// A JSON null body unmarshals to a nil map.
+	if output == nil {
+		output = make(map[string]any)
+	}
 
 	httpResponse := map[string]any{
 		"headers": resp.Header,
@@ -480,6 +506,15 @@ func iterateResponseStream[R any](rs *responseStream[R], responseConverter func(
 					err = fmt.Errorf("iterateResponseStream: error unmarshalling data %s:%s. error: %w", string(prefix), string(data), err)
 					if !yield(nil, err) {
 						return
+					}
+				}
+				if respRaw["error"] != nil {
+					var respWithError responseWithError
+					if err := json.Unmarshal(data, &respWithError); err == nil && respWithError.ErrorInfo != nil {
+						if !yield(nil, *respWithError.ErrorInfo) {
+							return
+						}
+						continue
 					}
 				}
 				// Step 2: The toStruct function calls fromConverter(handle Vertex and MLDev schema
@@ -676,8 +711,14 @@ func (ac *apiClient) upload(ctx context.Context, r io.Reader, uploadURL string, 
 				}
 			}
 
-			// TODO(b/427540996): Support timeout.
-			req, err := http.NewRequestWithContext(ctx, http.MethodPost, finalUploadURL, bytes.NewReader(buffer[:bytesRead]))
+			requestContext := ctx
+			timeout := patchedHTTPOptions.Timeout
+			var cancel context.CancelFunc
+			if timeout != nil && *timeout > 0*time.Second && isTimeoutBeforeDeadline(ctx, *timeout) {
+				requestContext, cancel = context.WithTimeout(ctx, *timeout)
+				defer cancel()
+			}
+			req, err := http.NewRequestWithContext(requestContext, http.MethodPost, finalUploadURL, bytes.NewReader(buffer[:bytesRead]))
 			if err != nil {
 				return nil, fmt.Errorf("Failed to create upload request for chunk at offset %d: %w", offset, err)
 			}
@@ -687,7 +728,10 @@ func (ac *apiClient) upload(ctx context.Context, r io.Reader, uploadURL string, 
 			if ac.clientConfig.APIKey != "" {
 				req.Header.Set("x-goog-api-key", ac.clientConfig.APIKey)
 			}
-			// TODO(b/427540996): Add timeout logging.
+			timeoutSeconds := inferTimeout(ctx, ac, patchedHTTPOptions.Timeout).Seconds()
+			if timeoutSeconds > 0 {
+				req.Header.Set("x-server-timeout", strconv.FormatInt(int64(math.Ceil(timeoutSeconds)), 10))
+			}
 
 			req.Header.Set("X-Goog-Upload-Command", uploadCommand)
 			req.Header.Set("X-Goog-Upload-Offset", strconv.FormatInt(offset, 10))
